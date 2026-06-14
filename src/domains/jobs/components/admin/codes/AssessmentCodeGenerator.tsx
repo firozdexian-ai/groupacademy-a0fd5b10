@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { getCurrentUser } from "@/lib/auth";
 import { insertAssessmentAccessCode } from "@/domains/jobs/repo/jobsRepo";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
@@ -24,7 +24,7 @@ import { InlineSpinner } from "@/components/common/InlineSpinner";
 /**
  * Platform Logic: Cryptographic Handshake Node
  * High-fidelity orchestrator for generating single-use assessment access artifacts.
- * 2026 Standard: Executive Logic geometry with reinforced auth telemetry.
+ * 2026 Standard:  geometry with reinforced auth telemetry.
  */
 
 interface AssessmentCodeGeneratorProps {
@@ -74,7 +74,7 @@ export function AssessmentCodeGenerator({ leadEmail, leadName }: AssessmentCodeG
 
  setGeneratedCode(code);
  toast.success("Access code generated.");
- } catch (error: any) {
+ } catch (error: unknown) {
  console.error("Code Generation Fault:", error);
  toast.error("Transmission Error: Failed to synchronize access node.");
  } finally {
@@ -213,3 +213,5 @@ export function AssessmentCodeGenerator({ leadEmail, leadName }: AssessmentCodeG
  </Dialog>
  );
 }
+
+

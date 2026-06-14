@@ -1,4 +1,4 @@
-import * as React from 'npm:react@18.3.1'
+﻿import * as React from 'npm:react@18.3.1'
 import {
   Body, Button, Container, Head, Heading, Html, Preview, Text,
 } from 'npm:@react-email/components@0.0.22'
@@ -18,12 +18,12 @@ const TalentInviteEmail = ({ name, personal_note }: TalentInviteProps) => (
     <Preview>You've been invited to join {SITE_NAME}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>You're Invited! 🚀</Heading>
+        <Heading style={h1}>You're Invited! ðŸš€</Heading>
         <Text style={text}>
           {name ? `Hi ${name},` : 'Hi there,'}
         </Text>
         <Text style={text}>
-          You've been identified as a top candidate and personally invited to join <strong>{SITE_NAME}</strong> — 
+          You've been identified as a top candidate and personally invited to join <strong>{SITE_NAME}</strong> â€” 
           a platform where ambitious professionals access AI-powered career tools, curated job opportunities, and industry-aligned training.
         </Text>
         {personal_note ? (
@@ -59,3 +59,4 @@ const text = { fontSize: '14px', color: '#677280', lineHeight: '1.6', margin: '0
 const noteBox = { fontSize: '14px', color: '#333333', lineHeight: '1.6', margin: '0 0 20px', padding: '16px', backgroundColor: '#f0f7ff', borderRadius: '8px', borderLeft: '4px solid #2A7DDE', fontStyle: 'italic' as const }
 const button = { backgroundColor: '#2A7DDE', color: '#ffffff', fontSize: '14px', borderRadius: '8px', padding: '12px 24px', textDecoration: 'none', fontWeight: '600' as const }
 const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+

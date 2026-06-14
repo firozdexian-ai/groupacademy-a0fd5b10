@@ -1,5 +1,5 @@
-// Talent Mirror — cross-course mastery rollup for the authenticated learner.
-// Phase 2.8 — read-only aggregation over talent_skill_profile + content + course_modules.
+﻿// Talent Mirror â€” cross-course mastery rollup for the authenticated learner.
+// Phase 2.8 â€” read-only aggregation over talent_skill_profile + content + course_modules.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -54,8 +54,8 @@ Deno.serve(async (req) => {
     admin.from("course_modules").select("id,title,content_id").in("id", moduleIds),
   ]);
 
-  const contentById = new Map((contents ?? []).map((c: any) => [c.id, c]));
-  const moduleById = new Map((modules ?? []).map((m: any) => [m.id, m]));
+  const contentById = new Map((contents ?? []).map((c: unknown) => [c.id, c]));
+  const moduleById = new Map((modules ?? []).map((m: unknown) => [m.id, m]));
 
   const now = Date.now();
   let dueNow = 0;
@@ -107,7 +107,7 @@ Deno.serve(async (req) => {
   }).sort((a, b) => a.avg_mastery - b.avg_mastery);
 
   const allSorted = [...profiles].sort((a, b) => Number(a.mastery) - Number(b.mastery));
-  const mapTopic = (p: any) => ({
+  const mapTopic = (p: unknown) => ({
     topic_tag: p.topic_tag,
     module_title: moduleById.get(p.module_id)?.title ?? null,
     course_title: contentById.get(p.content_id)?.title ?? null,
@@ -130,3 +130,5 @@ Deno.serve(async (req) => {
     strongest_topics: allSorted.slice(-5).reverse().map(mapTopic),
   });
 });
+
+

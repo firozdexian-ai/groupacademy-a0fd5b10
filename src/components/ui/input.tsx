@@ -1,10 +1,10 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Technical Data Acquisition Node (Input)
  * Hardened atomic form field ensuring zero Cumulative Layout Shift (CLS) and seamless global token symmetry.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
   ({ className, type, ...props }, ref) => {
@@ -26,3 +26,4 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
 Input.displayName = "Input_Core_Acquisition_Node";
 
 export { Input };
+

@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+﻿import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
@@ -65,7 +65,7 @@ export default defineConfig(({ mode }) => ({
         clientsClaim: true,
         runtimeCaching: [
           {
-            // Supabase API — network first with offline fallback
+            // Supabase API â€” network first with offline fallback
             urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
             handler: "NetworkFirst",
             options: {
@@ -79,7 +79,7 @@ export default defineConfig(({ mode }) => ({
             },
           },
           {
-            // JS/CSS chunks — stale while revalidate for fast loads
+            // JS/CSS chunks â€” stale while revalidate for fast loads
             urlPattern: /\/assets\/.*\.(?:js|css)$/i,
             handler: "StaleWhileRevalidate",
             options: {
@@ -117,7 +117,7 @@ export default defineConfig(({ mode }) => ({
             },
           },
           {
-            // Supabase storage — cache first for uploaded images
+            // Supabase storage â€” cache first for uploaded images
             urlPattern: /^https:\/\/.*\.supabase\.co\/storage\/.*/i,
             handler: "CacheFirst",
             options: {
@@ -165,3 +165,4 @@ export default defineConfig(({ mode }) => ({
     },
   },
 }));
+

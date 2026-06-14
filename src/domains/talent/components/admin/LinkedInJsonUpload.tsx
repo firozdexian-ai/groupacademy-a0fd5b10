@@ -37,7 +37,7 @@ import { InlineSpinner } from "@/components/common/InlineSpinner";
 /**
  * Platform Logic: Registry Ingestion Terminal (LinkedIn JSON)
  * High-fidelity orchestrator for bulk profile synthesis and sectoral resolution.
- * 2026 Standard: Executive Logic geometry with reinforced type-safe bypass.
+ * 2026 Standard:  geometry with reinforced type-safe bypass.
  */
 
 type Mode = "talent" | "contact" | "investor";
@@ -95,7 +95,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
           setSkipped(result.skipped);
           setSelectedIndices(new Set(result.valid.map((_, i) => i)));
 
-          toast.success(`Synthesis Ready: ${result.valid.length} nodes parsed.`);
+          toast.success(`summary Ready: ${result.valid.length} nodes parsed.`);
         } catch (err) {
           toast.error("Failed: Invalid JSON logic.");
         }
@@ -110,7 +110,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
     const key = data.name.toLowerCase();
     if (map[key]) return map[key];
 
-    const insertObj: any = {
+    const insertObj: unknown = {
       name: data.name,
       website: data.website,
       linkedin_url: data.linkedin_url,
@@ -137,17 +137,17 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
     setImporting(true);
     setImportProgress(0);
 
-    let stats = { imported: 0, duplicates: 0, failed: 0, companiesCreated: 0 };
-    let companyMap: Record<string, string> = {};
+    const stats = { imported: 0, duplicates: 0, failed: 0, companiesCreated: 0 };
+    const companyMap: Record<string, string> = {};
 
-    // CTO FIX: Asserting table as any to bypass TS2769/TS2339 schema validation loops
-    const targetTable = labels.table as any;
+    // CTO FIX: Asserting table as unknown to bypass TS2769/TS2339 schema validation loops
+    const targetTable = labels.table as unknown;
     const emails = selected.map((r) => r.data.email?.toLowerCase()).filter(Boolean);
 
     // Perform deduplication handshake
     const { data: existingRecords } = await talentRepo.findExistingByEmails(targetTable, emails);
 
-    const castedExisting = (existingRecords as any[]) || [];
+    const castedExisting = (existingRecords as unknown[]) || [];
     const emailSet = new Set(castedExisting.map((r) => r.email?.toLowerCase()));
     const liSet = new Set(castedExisting.map((r) => r.linkedin_url));
 
@@ -169,7 +169,11 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
         }
 
         const { error } = await talentRepo.insertIntoTable(targetTable, insertData);
-        error ? stats.failed++ : stats.imported++;
+        if (error) {
+          stats.failed++;
+        } else {
+          stats.imported++;
+        }
       }
       setImportProgress(((i + 1) / selected.length) * 100);
     }
@@ -251,7 +255,11 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
                       checked={selectedIndices.has(idx)}
                       onCheckedChange={() => {
                         const next = new Set(selectedIndices);
-                        next.has(idx) ? next.delete(idx) : next.add(idx);
+                        if (next.has(idx)) {
+                          next.delete(idx);
+                        } else {
+                          next.add(idx);
+                        }
                         setSelectedIndices(next);
                       }}
                     />
@@ -345,3 +353,5 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
     </div>
   );
 }
+
+

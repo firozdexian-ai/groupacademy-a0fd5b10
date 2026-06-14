@@ -1,4 +1,4 @@
-import { useSyncExternalStore, useCallback } from "react";
+﻿import { useSyncExternalStore, useCallback } from "react";
 
 /**
  * GroUp Academy: Viewport Responsive Sensor (V5.6.0)
@@ -8,7 +8,7 @@ import { useSyncExternalStore, useCallback } from "react";
  */
 
 export function useMediaQuery(query: string): boolean {
-  // HUD: BINDING_VIEWPORT_LISTENER
+  // dashboard: BINDING_VIEWPORT_LISTENER
   const subscribe = useCallback(
     (callback: () => void) => {
       if (typeof window === "undefined") return () => {};
@@ -21,14 +21,15 @@ export function useMediaQuery(query: string): boolean {
     [query],
   );
 
-  // HUD: EXTRACTING_SNAPSHOT
+  // dashboard: EXTRACTING_SNAPSHOT
   const getSnapshot = () => {
     if (typeof window === "undefined") return false;
     return window.matchMedia(query).matches;
   };
 
-  // HUD: SSR_FALLBACK
+  // dashboard: SSR_FALLBACK
   const getServerSnapshot = () => false;
 
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
+

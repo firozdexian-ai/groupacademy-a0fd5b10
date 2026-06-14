@@ -1,4 +1,4 @@
-/**
+﻿/**
  * GroUp Academy: IR Nexus & Intelligence Hub
  * CTO Version: May 2026 (Phase IR-Z0 Hardened)
  * Fixes: B2 (Hardcoded placeholders), P4 (Consolidated Overview), B1 (Schema Alignment)
@@ -238,7 +238,7 @@ export function IRDashboard({ onNavigate }: IRDashboardProps) {
 }
 
 // ATOMIC SUB-COMPONENTS
-function KPICard({ title, value, icon: Icon, subtext, variant = "default" }: any) {
+function KPICard({ title, value, icon: Icon, subtext, variant = "default" }: unknown) {
   return (
     <Card className="rounded-2xl border border-border/60 bg-card shadow-xl overflow-hidden group hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 text-left">
       <CardHeader className="flex flex-row items-center justify-between pb-2 p-6">
@@ -267,7 +267,7 @@ function KPICard({ title, value, icon: Icon, subtext, variant = "default" }: any
   );
 }
 
-function ActionNode({ icon: Icon, label, count, onClick }: any) {
+function ActionNode({ icon: Icon, label, count, onClick }: unknown) {
   return (
     <button
       onClick={onClick}
@@ -309,3 +309,5 @@ function SkeletonGrid() {
     </div>
   );
 }
+
+

@@ -1,4 +1,4 @@
-// Admin Report Builder — turns NL brief into a JSON report spec, then resolves
+﻿// Admin Report Builder â€” turns NL brief into a JSON report spec, then resolves
 // every section via whitelisted analyst RPCs. Super-admin only.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
@@ -29,7 +29,7 @@ const PLAN_TOOL = {
               title: { type: "string" },
               source: {
                 type: "object",
-                description: "Resolves to data. fn ∈ {metric, top_n, series}",
+                description: "Resolves to data. fn âˆˆ {metric, top_n, series}",
                 properties: {
                   fn: { type: "string", enum: ["metric", "top_n", "series"] },
                   metric: { type: "string" },
@@ -80,8 +80,8 @@ Deno.serve(async (req) => {
 
     // CTO PATCH: Injecting strict schema guardrails into the System Prompt
     const systemPrompt = `You design crisp executive reports for GroUp Academy. Today: ${new Date().toISOString().slice(0, 10)}.
-Compose 3–6 sections. Use 'kpi' for headline numbers, 'line' for trends, 'bar' / 'pie' for comparisons.
-Always include a 'period' (from/to ISO). Never invent data — every section must specify a 'source' that perfectly matches the rules below.
+Compose 3â€“6 sections. Use 'kpi' for headline numbers, 'line' for trends, 'bar' / 'pie' for comparisons.
+Always include a 'period' (from/to ISO). Never invent data â€” every section must specify a 'source' that perfectly matches the rules below.
 
 STRICT SCHEMA RULES:
 Valid metrics: talents_count, transactions_count, transactions_revenue_bdt (fiat purchases only), jobs_count, job_applications_count, companies_count, enrollments_count, agent_sessions_count, credits_issued, credits_spent.
@@ -160,3 +160,4 @@ Valid top_n combinations ONLY:
     });
   }
 });
+

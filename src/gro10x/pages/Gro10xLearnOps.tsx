@@ -1,6 +1,6 @@
-/**
- * Gro10x Learn Ops — B2B company admin dashboard for the learning system.
- * Tabs: Overview · Assignments · Catalog · Team · Wallet
+﻿/**
+ * Gro10x Learn Ops â€” B2B company admin dashboard for the learning system.
+ * Tabs: Overview Â· Assignments Â· Catalog Â· Team Â· Wallet
  */
 import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
@@ -26,7 +26,7 @@ export default function Gro10xLearnOps() {
   const { companyId, role, isLoading } = useActiveCompany();
   const [tab, setTab] = useState<Tab>("overview");
 
-  if (isLoading) return <div className="p-4 text-sm text-slate-400">Loading…</div>;
+  if (isLoading) return <div className="p-4 text-sm text-slate-400">Loadingâ€¦</div>;
   if (!companyId)
     return (
       <div className="p-4">
@@ -100,7 +100,7 @@ function StatCard({ label, value, hint }: { label: string; value: string | numbe
 
 function OverviewPane({ companyId }: { companyId: string }) {
   const { data, isLoading } = useOrgLearningHealth(companyId);
-  if (isLoading) return <p className="text-xs text-slate-500">Loading KPIs…</p>;
+  if (isLoading) return <p className="text-xs text-slate-500">Loading KPIsâ€¦</p>;
   if (!data) return null;
   return (
     <div className="grid grid-cols-2 gap-2">
@@ -116,7 +116,7 @@ function OverviewPane({ companyId }: { companyId: string }) {
 
 function AssignmentsPane({ companyId, canAssign }: { companyId: string; canAssign: boolean }) {
   const { data: rows, isLoading } = useOrgAssignments(companyId);
-  if (isLoading) return <p className="text-xs text-slate-500">Loading…</p>;
+  if (isLoading) return <p className="text-xs text-slate-500">Loadingâ€¦</p>;
   if (!rows || rows.length === 0)
     return (
       <div className={`${GRO10X_PANEL} border border-white/10 rounded-2xl p-4 text-center`}>
@@ -127,7 +127,7 @@ function AssignmentsPane({ companyId, canAssign }: { companyId: string; canAssig
     );
   return (
     <ul className="space-y-2">
-      {rows.map((a: any) => (
+      {rows.map((a: unknown) => (
         <li
           key={a.id}
           className={`${GRO10X_PANEL} border border-white/10 rounded-2xl p-3`}
@@ -137,7 +137,7 @@ function AssignmentsPane({ companyId, canAssign }: { companyId: string; canAssig
             <StatusPill status={a.status} />
           </div>
           <div className="mt-1 flex flex-wrap items-center gap-2 text-[10px] text-slate-500">
-            {a.cohort?.name && <span>Cohort · {a.cohort.name}</span>}
+            {a.cohort?.name && <span>Cohort Â· {a.cohort.name}</span>}
             {a.due_at && <span>Due {new Date(a.due_at).toLocaleDateString()}</span>}
             {a.budget_credits > 0 && <span>{a.budget_credits} cr</span>}
           </div>
@@ -167,7 +167,7 @@ function CatalogPane({ companyId, canAssign }: { companyId: string; canAssign: b
   const assign = useAssignTalents();
   const [busy, setBusy] = useState<string | null>(null);
 
-  if (catalog.isLoading) return <p className="text-xs text-slate-500">Loading…</p>;
+  if (catalog.isLoading) return <p className="text-xs text-slate-500">Loadingâ€¦</p>;
   if (!catalog.data || catalog.data.length === 0)
     return (
       <div className={`${GRO10X_PANEL} border border-white/10 rounded-2xl p-4 text-center`}>
@@ -219,7 +219,7 @@ function TeamPane({ companyId }: { companyId: string }) {
           .in("user_id", userIds);
         if (error) throw error;
         const mapping: Record<string, string> = {};
-        talentsData?.forEach((t: any) => {
+        talentsData?.forEach((t: unknown) => {
           if (t.user_id && t.full_name) {
             mapping[t.user_id] = t.full_name;
           }
@@ -232,7 +232,7 @@ function TeamPane({ companyId }: { companyId: string }) {
     fetchTalentNames();
   }, [userIds]);
 
-  if (isLoading) return <p className="text-xs text-slate-500">Loading…</p>;
+  if (isLoading) return <p className="text-xs text-slate-500">Loadingâ€¦</p>;
   if (!data || data.length === 0)
     return (
       <div className={`${GRO10X_PANEL} border border-white/10 rounded-2xl p-4 text-center`}>
@@ -241,7 +241,7 @@ function TeamPane({ companyId }: { companyId: string }) {
     );
 
   // group by user
-  const byUser = new Map<string, any[]>();
+  const byUser = new Map<string, unknown[]>();
   for (const r of data) {
     const k = r.user_id ?? "unknown";
     byUser.set(k, [...(byUser.get(k) ?? []), r]);
@@ -253,7 +253,7 @@ function TeamPane({ companyId }: { companyId: string }) {
         const avgProgress = Math.round(
           rows.reduce((s, r) => s + (r.progress ?? 0), 0) / rows.length,
         );
-        const displayName = talentNames[uid] || rows[0]?.talent_name || `Talent · ${uid.slice(0, 8)}`;
+        const displayName = talentNames[uid] || rows[0]?.talent_name || `Talent Â· ${uid.slice(0, 8)}`;
         return (
           <li key={uid} className={`${GRO10X_PANEL} border border-white/10 rounded-2xl p-3`}>
             <div className="flex items-center justify-between">
@@ -266,7 +266,7 @@ function TeamPane({ companyId }: { companyId: string }) {
                 style={{ width: `${Math.min(100, avgProgress)}%` }}
               />
             </div>
-            <p className="text-[10px] text-slate-500 mt-1">Avg progress · {avgProgress}%</p>
+            <p className="text-[10px] text-slate-500 mt-1">Avg progress Â· {avgProgress}%</p>
           </li>
         );
       })}
@@ -277,7 +277,7 @@ function TeamPane({ companyId }: { companyId: string }) {
 function WalletPane({ companyId }: { companyId: string }) {
   const { data, isLoading } = useOrgWallet(companyId);
   const seats = useOrgSeats(companyId);
-  if (isLoading) return <p className="text-xs text-slate-500">Loading…</p>;
+  if (isLoading) return <p className="text-xs text-slate-500">Loadingâ€¦</p>;
   return (
     <div className="space-y-3">
       <div className={`${GRO10X_PANEL} border border-white/10 rounded-2xl p-4`}>
@@ -294,13 +294,13 @@ function WalletPane({ companyId }: { companyId: string }) {
         <div>
           <h3 className="text-xs font-semibold text-slate-300 mb-2">Seat packs</h3>
           <ul className="space-y-2">
-            {seats.data.map((s: any) => (
+            {seats.data.map((s: unknown) => (
               <li
                 key={s.id}
                 className={`${GRO10X_PANEL} border border-white/10 rounded-2xl p-3 flex items-center justify-between`}
               >
                 <div>
-                  <p className="text-sm">{s.content?.title ?? "Any course"}</p>
+                  <p className="text-sm">{s.content?.title ?? "unknown course"}</p>
                   <p className="text-[10px] text-slate-500">
                     {s.seats_used}/{s.seats_total} used
                   </p>
@@ -320,7 +320,7 @@ function WalletPane({ companyId }: { companyId: string }) {
       <div>
         <h3 className="text-xs font-semibold text-slate-300 mb-2">Recent activity</h3>
         <ul className="space-y-1">
-          {(data?.transactions ?? []).slice(0, 10).map((t: any) => (
+          {(data?.transactions ?? []).slice(0, 10).map((t: unknown) => (
             <li
               key={t.id}
               className={`${GRO10X_PANEL} border border-white/10 rounded-xl px-3 py-2 flex items-center justify-between text-xs`}
@@ -337,3 +337,5 @@ function WalletPane({ companyId }: { companyId: string }) {
     </div>
   );
 }
+
+

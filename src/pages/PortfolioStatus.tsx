@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { listPortfolioRequestsByEmailFull } from "@/domains/marketing/repo/marketingRepo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,12 +33,12 @@ interface PortfolioRequest {
   email: string;
   status: string;
   portfolio_url: string | null;
-  portfolio_credentials: Record<string, any> | null;
+  portfolio_credentials: Record<string, unknown> | null;
   created_at: string;
   updated_at: string;
 }
 
-const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
+const statusConfig: Record<string, { label: string; color: string; icon: unknown }> = {
   pending: { label: "In Review", color: "text-amber-600 bg-amber-500/10 border-amber-500/20", icon: Clock },
   contacted: {
     label: "Handshake Initiated",
@@ -78,7 +78,7 @@ export default function PortfolioStatus() {
         "Search sequence timed out.",
       );
 
-      setRequests((data || []) as any);
+      setRequests((data || []) as unknown);
 
       if (!data?.length) {
         toast({
@@ -87,7 +87,7 @@ export default function PortfolioStatus() {
           variant: "destructive",
         });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast({ title: "Sync Error", description: err.message, variant: "destructive" });
     } finally {
       setIsLoading(false);
@@ -180,7 +180,7 @@ export default function PortfolioStatus() {
                     </CardHeader>
 
                     <CardContent className="p-8 space-y-10">
-                      {/* Timeline HUD */}
+                      {/* Timeline dashboard */}
                       {request.status !== "cancelled" && (
                         <div className="relative pt-2 px-2">
                           <div className="absolute top-[18px] left-0 right-0 h-1 bg-muted rounded-full overflow-hidden">
@@ -319,3 +319,5 @@ export default function PortfolioStatus() {
     </div>
   );
 }
+
+

@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef, useCallback } from "react";
+﻿import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { listActiveBannersForPlacement } from "@/domains/marketing/repo/marketingRepo";
@@ -43,7 +43,7 @@ const FOCAL_TO_OBJECT_POSITION_MAP: Record<string, string> = {
 /**
  * GroUp Academy: Authoritative Promotional Banner Carousel Ledger (BannerCarousel)
  * Operational component processing admin-managed media banners, asset formatting, and structural redirect handshakes.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function BannerCarousel({ compact = false, placement = "carousel", className }: BannerCarouselProps) {
   const navigate = useNavigate();
@@ -79,7 +79,7 @@ export function BannerCarousel({ compact = false, placement = "carousel", classN
       const bannersPayloadData = await listActiveBannersForPlacement(placement);
 
       const continuousCurrentEpochTimestampNum = Date.now();
-      const synchronizedFilteredBannersList = (bannersPayloadData || []).filter((bannerItem: any) => {
+      const synchronizedFilteredBannersList = (bannersPayloadData || []).filter((bannerItem: unknown) => {
         const isChronologyStartValidBool =
           !bannerItem.start_at || new Date(bannerItem.start_at).getTime() <= continuousCurrentEpochTimestampNum;
         const isChronologyEndValidBool =
@@ -250,7 +250,7 @@ export function BannerCarousel({ compact = false, placement = "carousel", classN
           />
         )}
 
-        {/* HUD OVERLAY LEVEL 1: CALL TO ACTION FLOATING INTERACTION SECTOR */}
+        {/* dashboard OVERLAY LEVEL 1: CALL TO ACTION FLOATING INTERACTION SECTOR */}
         {activeBannerObjectNode.cta_label && (
           <button
             type="button"
@@ -261,7 +261,7 @@ export function BannerCarousel({ compact = false, placement = "carousel", classN
           </button>
         )}
 
-        {/* HUD OVERLAY LEVEL 2: NAVIGATION TRIGGER DECISION VECTOR CONTROLS */}
+        {/* dashboard OVERLAY LEVEL 2: NAVIGATION TRIGGER DECISION VECTOR CONTROLS */}
         {banners.length > 1 && (
           <>
             <Button
@@ -286,7 +286,7 @@ export function BannerCarousel({ compact = false, placement = "carousel", classN
               <ChevronRight className="w-4 h-4 stroke-[2.5]" />
             </Button>
 
-            {/* HUD OVERLAY LEVEL 3: SECTOR CAROUSEL SEQUENCE INDICATION CHIPS */}
+            {/* dashboard OVERLAY LEVEL 3: SECTOR CAROUSEL SEQUENCE INDICATION CHIPS */}
             <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10 select-none pointer-events-auto h-2">
               {banners.map((_, dotIndex) => {
                 const isDotIndexActiveBool = dotIndex === currentIndex;
@@ -328,3 +328,5 @@ export function BannerCarousel({ compact = false, placement = "carousel", classN
 }
 
 export default BannerCarousel;
+
+

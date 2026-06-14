@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useApplicationHireState } from "@/hooks/useInterviews";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,7 +21,7 @@ interface Props {
 /**
  * GroUp Academy: Pipeline Progression Node (InterviewPanel)
  * CTO Reference: Authoritative component orchestrating interview lifecycles and offer issuance logic.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function InterviewPanel({ applicationId, companyId, talentId, actorRole }: Props) {
   const queryClient = useQueryClient();
@@ -80,7 +80,7 @@ export function InterviewPanel({ applicationId, companyId, talentId, actorRole }
     if (!interview || !interview.selected_slot_id || !interview.slots) return "";
 
     try {
-      const activeSlotMatch = interview.slots.find((slotItem: any) => slotItem?.id === interview.selected_slot_id);
+      const activeSlotMatch = interview.slots.find((slotItem: unknown) => slotItem?.id === interview.selected_slot_id);
       if (!activeSlotMatch || !activeSlotMatch.starts_at) {
         throw new Error(`Target slot allocation reference token [${interview.selected_slot_id}] missing.`);
       }
@@ -328,3 +328,5 @@ export function InterviewPanel({ applicationId, companyId, talentId, actorRole }
     </div>
   );
 }
+
+

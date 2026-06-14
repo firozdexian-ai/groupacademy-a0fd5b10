@@ -51,7 +51,7 @@ type ChannelConn = {
   id: string;
   agent_key: string;
   channel_provider: string;
-  credentials: any;
+  credentials: unknown;
   is_active: boolean;
   updated_at: string;
 };
@@ -71,13 +71,13 @@ const EVENT_TOPIC_PRESETS = ["*", "new_lead", "auth_struggle", "onboarding", "tr
 const ANY_AGENT = "__ANY__";
 const CUSTOM_TOPIC = "__CUSTOM__";
 
-const credSummary = (c: any) => {
-  if (!c || typeof c !== "object") return "—";
+const credSummary = (c: unknown) => {
+  if (!c || typeof c !== "object") return "â€”";
   const keys = Object.keys(c);
   if (!keys.length) return "{}";
   const first = keys[0];
   const v = String(c[first] ?? "");
-  const masked = v.length > 6 ? `••••${v.slice(-4)}` : "••••";
+  const masked = v.length > 6 ? `â€¢â€¢â€¢â€¢${v.slice(-4)}` : "â€¢â€¢â€¢â€¢";
   return `{${first}: ${masked}${keys.length > 1 ? `, +${keys.length - 1}` : ""}}`;
 };
 
@@ -150,18 +150,18 @@ function StatusStrip() {
       const [templates, instances, channels, routes] = await Promise.all([
         countAiAgentsByTemplateFlag(true),
         countAiAgentsByTemplateFlag(false),
-        countActiveWorkforceChannelConnections(),
-        countActiveWorkforceRoutingRules(),
+        countActiveWorkforceChannelConnections(),
+        countActiveWorkforceRoutingRules(),
       ]);
       return { templates, instances, channels, routes };
     },
   });
 
   const tiles = [
-    { label: "Master Templates", value: data?.templates ?? "—", color: "text-primary" },
-    { label: "Assigned Profiles", value: data?.instances ?? "—", color: "text-emerald-500" },
-    { label: "Connected Streams", value: data?.channels ?? "—", color: "text-cyan-400" },
-    { label: "Active Notification Rules", value: data?.routes ?? "—", color: "text-amber-400" },
+    { label: "Master Templates", value: data?.templates ?? "â€”", color: "text-primary" },
+    { label: "Assigned Profiles", value: data?.instances ?? "â€”", color: "text-emerald-500" },
+    { label: "Connected Streams", value: data?.channels ?? "â€”", color: "text-cyan-400" },
+    { label: "Active Notification Rules", value: data?.routes ?? "â€”", color: "text-amber-400" },
   ];
 
   return (
@@ -182,7 +182,7 @@ function StatusStrip() {
 }
 
 // =====================================================
-// TAB 1 — AI ASSISTANTS POOL
+// TAB 1 â€” AI ASSISTANTS POOL
 // =====================================================
 function FleetPanel() {
   const qc = useQueryClient();
@@ -287,7 +287,7 @@ function FleetPanel() {
                       )}
                     </td>
                     {filter === "instances" && (
-                      <td className="py-4 px-4 text-muted-foreground text-left uppercase text-xs">{parent?.name ?? "—"}</td>
+                      <td className="py-4 px-4 text-muted-foreground text-left uppercase text-xs">{parent?.name ?? "â€”"}</td>
                     )}
                     <td className="py-4 px-4 text-right pr-4">
                       <span
@@ -319,7 +319,7 @@ function FleetPanel() {
   );
 }
 
-function HireDialog({ templates, companies, onClose, onDone }: any) {
+function HireDialog({ templates, companies, onClose, onDone }: unknown) {
   const [templateId, setTemplateId] = useState("");
   const [companyId, setCompanyId] = useState("");
 
@@ -330,7 +330,7 @@ function HireDialog({ templates, companies, onClose, onDone }: any) {
       const tpl = await getAiAgentById(templateId);
       if (!tpl) throw new Error("Specified master template could not be loaded.");
 
-      const company = companies.find((c: any) => c.id === companyId);
+      const company = companies.find((c: unknown) => c.id === companyId);
       const slug =
         company?.slug ||
         company?.name
@@ -338,7 +338,7 @@ function HireDialog({ templates, companies, onClose, onDone }: any) {
           .replace(/[^a-z0-9]+/g, "-")
           .slice(0, 20) ||
         "co";
-      const { id, created_at, updated_at, ...rest } = tpl as any;
+      const { id, created_at, updated_at, ...rest } = tpl as unknown;
       const newAgentKey = `${tpl.agent_key}__${slug}__${Math.random().toString(36).slice(2, 6)}`;
 
       const { error: e2 } = await cloneAiAgentInstance({
@@ -358,7 +358,7 @@ function HireDialog({ templates, companies, onClose, onDone }: any) {
       onDone();
       onClose();
     },
-    onError: (e: any) => toast.error(e?.message ?? "Could not assign assistant profile."),
+    onError: (e: unknown) => toast.error(e?.message ?? "Could not assign assistant profile."),
   });
 
   return (
@@ -374,7 +374,7 @@ function HireDialog({ templates, companies, onClose, onDone }: any) {
             className="w-full p-3 bg-background border border-border rounded-md text-sm font-medium focus:ring-1 focus:ring-primary"
           >
             <option value="">Select template configuration...</option>
-            {templates.map((t: any) => (
+            {templates.map((t: unknown) => (
               <option key={t.id} value={t.id}>
                 {t.name} ({t.agent_key})
               </option>
@@ -390,7 +390,7 @@ function HireDialog({ templates, companies, onClose, onDone }: any) {
             className="w-full p-3 bg-background border border-border rounded-md text-sm font-medium focus:ring-1 focus:ring-primary"
           >
             <option value="">Select destination company profile...</option>
-            {companies.map((c: any) => (
+            {companies.map((c: unknown) => (
               <option key={c.id} value={c.id}>
                 {c.name}
               </option>
@@ -419,7 +419,7 @@ function HireDialog({ templates, companies, onClose, onDone }: any) {
 }
 
 // =====================================================
-// TAB 2 — INTEGRATION CHANNELS
+// TAB 2 â€” INTEGRATION CHANNELS
 // =====================================================
 function ChannelsPanel() {
   const qc = useQueryClient();
@@ -445,16 +445,16 @@ function ChannelsPanel() {
       qc.invalidateQueries({ queryKey: ["wcc-channels"] });
       qc.invalidateQueries({ queryKey: ["wcc-kpis"] });
     },
-    onError: (e: any) => toast.error(e?.message ?? "Could not detach connection mapping."),
+    onError: (e: unknown) => toast.error(e?.message ?? "Could not detach connection mapping."),
   });
 
   async function activateTelegramWebhook(c: ChannelConn) {
-    const botToken = (c.credentials as any)?.bot_token;
+    const botToken = (c.credentials as unknown)?.bot_token;
     if (!botToken) {
       toast.error("This integration contains no verified bot_token parameter.");
       return;
     }
-    const projectRef = (import.meta as any).env?.VITE_SUPABASE_PROJECT_ID;
+    const projectRef = (import.meta as unknown).env?.VITE_SUPABASE_PROJECT_ID;
     const defaultBase = projectRef ? `https://${projectRef}.supabase.co` : "";
     const base = window.prompt(
       "Confirm core messaging API base endpoint URL configuration:",
@@ -472,7 +472,7 @@ function ChannelsPanel() {
       } else {
         toast.error(`Channel provider verification rejected: ${data.description ?? "Access Denied"}`);
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error("Network synchronization time out. Please check server status.");
     }
   }
@@ -584,7 +584,7 @@ function ChannelsPanel() {
   );
 }
 
-function ChannelDialog({ editing, instances, onClose, onDone }: any) {
+function ChannelDialog({ editing, instances, onClose, onDone }: unknown) {
   const [agentKey, setAgentKey] = useState(editing?.agent_key ?? "");
   const [provider, setProvider] = useState(editing?.channel_provider ?? "telegram");
   const [credText, setCredText] = useState(
@@ -596,7 +596,7 @@ function ChannelDialog({ editing, instances, onClose, onDone }: any) {
   let parsed = null;
   try {
     parsed = JSON.parse(credText);
-  } catch (e: any) {
+  } catch (e: unknown) {
     jsonError = e.message;
   }
 
@@ -618,7 +618,7 @@ function ChannelDialog({ editing, instances, onClose, onDone }: any) {
       onDone();
       onClose();
     },
-    onError: (e: any) => toast.error(e?.message ?? "Failed to save configuration rules."),
+    onError: (e: unknown) => toast.error(e?.message ?? "Failed to save configuration rules."),
   });
 
   return (
@@ -635,7 +635,7 @@ function ChannelDialog({ editing, instances, onClose, onDone }: any) {
             className="w-full p-3 bg-background border border-border rounded-md text-sm font-medium disabled:opacity-50 focus:ring-1 focus:ring-primary"
           >
             <option value="">Select active configuration profile...</option>
-            {instances.map((i: any) => (
+            {instances.map((i: unknown) => (
               <option key={i.agent_key} value={i.agent_key}>
                 {i.name}
               </option>
@@ -703,7 +703,7 @@ function ChannelDialog({ editing, instances, onClose, onDone }: any) {
 }
 
 // =====================================================
-// TAB 3 — EVENT NOTIFICATION RULES
+// TAB 3 â€” EVENT NOTIFICATION RULES
 // =====================================================
 function RoutingPanel() {
   const qc = useQueryClient();
@@ -861,7 +861,7 @@ function TelegramScannerDialog({ onClose }: { onClose: () => void }) {
     queryFn: async () => {
       const data = await telegramDiagnostic({});
       if (!data?.ok) throw new Error(data?.error ?? "Synchronization scan failed to pull data feeds.");
-      return data as { ok: true; count: number; total_updates: number; chats: any[] };
+      return data as { ok: true; count: number; total_updates: number; chats: unknown[] };
     },
     retry: false,
   });
@@ -882,7 +882,7 @@ function TelegramScannerDialog({ onClose }: { onClose: () => void }) {
             </p>
           </div>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground text-xl px-2 border-0 bg-transparent cursor-pointer">
-            ×
+            Ã—
           </button>
         </div>
 
@@ -909,7 +909,7 @@ function TelegramScannerDialog({ onClose }: { onClose: () => void }) {
 
           {scanQ.data && scanQ.data.chats.length > 0 && (
             <div className="space-y-2">
-              {scanQ.data.chats.map((c: any) => (
+              {scanQ.data.chats.map((c: unknown) => (
                 <div
                   key={c.chat_id}
                   className="border border-border/50 rounded-md p-3 flex items-start justify-between gap-3 hover:bg-muted/30 transition-colors text-left"
@@ -967,7 +967,7 @@ function TelegramScannerDialog({ onClose }: { onClose: () => void }) {
   );
 }
 
-function RoutingDialog({ editing, agents, onClose, onDone }: any) {
+function RoutingDialog({ editing, agents, onClose, onDone }: unknown) {
   const [agentKey, setAgentKey] = useState(editing?.agent_key ?? ANY_AGENT);
   const [topic, setTopic] = useState(editing?.event_topic ?? "*");
   const [provider, setProvider] = useState(editing?.channel_provider ?? "telegram");
@@ -994,7 +994,7 @@ function RoutingDialog({ editing, agents, onClose, onDone }: any) {
       onDone();
       onClose();
     },
-    onError: (e: any) => toast.error(e?.message ?? "Failed to save notifications criteria mapping rules."),
+    onError: (e: unknown) => toast.error(e?.message ?? "Failed to save notifications criteria mapping rules."),
   });
 
   return (
@@ -1010,8 +1010,8 @@ function RoutingDialog({ editing, agents, onClose, onDone }: any) {
               onChange={(e) => setAgentKey(e.target.value)}
               className="w-full p-3 bg-background border border-border rounded-md text-sm font-medium focus:ring-1 focus:ring-primary"
             >
-              <option value={ANY_AGENT}>Global Scope (Any Active Instance)</option>
-              {agents.map((a: any) => (
+              <option value={ANY_AGENT}>Global Scope (unknown Active Instance)</option>
+              {agents.map((a: unknown) => (
                 <option key={a.agent_key} value={a.agent_key}>
                   {a.name} {a.is_template ? "(Template)" : ""}
                 </option>
@@ -1099,3 +1099,4 @@ function RoutingDialog({ editing, agents, onClose, onDone }: any) {
 }
 
 export default WorkforceCommandCenter;
+

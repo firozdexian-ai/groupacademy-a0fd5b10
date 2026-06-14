@@ -1,5 +1,5 @@
-/**
- * Phase C2 — draft_module_outline tool handler.
+﻿/**
+ * Phase C2 â€” draft_module_outline tool handler.
  * Generates 4-6 module titles + objectives via Lovable AI for a given course
  * (content_id), and optionally inserts them as empty course_modules rows
  * (only when no modules exist yet, so we never clobber the instructor's work).
@@ -52,7 +52,7 @@ serve(async (req) => {
     if (!eng) {
       const { data: roles } = await admin
         .from("user_roles").select("role").eq("user_id", user.id);
-      const isAdmin = (roles ?? []).some((r: any) => ["admin", "super_admin"].includes(r.role));
+      const isAdmin = (roles ?? []).some((r: unknown) => ["admin", "super_admin"].includes(r.role));
       if (!isAdmin) return j({ ok: false, error: "forbidden" }, 403);
     }
 
@@ -119,7 +119,7 @@ serve(async (req) => {
     }
 
     return j({ ok: true, modules, inserted });
-  } catch (e: any) {
+  } catch (e: unknown) {
     return j({ ok: false, error: String(e?.message || e) }, 500);
   }
 });
@@ -130,3 +130,5 @@ function j(body: unknown, status = 200) {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
+
+

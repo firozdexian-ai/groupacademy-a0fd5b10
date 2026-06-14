@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+﻿import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   CommandDialog,
@@ -36,7 +36,7 @@ const NAV_ITEMS = [
   { url: "/gro10x/billing", label: "Billing", icon: CreditCard },
 ];
 
-const ICONS: Record<string, any> = {
+const ICONS: Record<string, unknown> = {
   company: Building2,
   talent: User,
   course: GraduationCap,
@@ -59,7 +59,7 @@ export function Gro10xCommandPalette() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // ⌘K / Ctrl+K
+  // âŒ˜K / Ctrl+K
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -79,7 +79,7 @@ export function Gro10xCommandPalette() {
     }
     const t = setTimeout(async () => {
       setLoading(true);
-      const d = (await gro10xGlobalSearch(q, 6)) as any;
+      const d = (await gro10xGlobalSearch(q, 6)) as unknown;
       setResults({
         company: d.companies ?? [],
         talent: d.talents ?? [],
@@ -116,13 +116,13 @@ export function Gro10xCommandPalette() {
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
       <CommandInput
-        placeholder="Search companies, talents, jobs, courses…"
+        placeholder="Search companies, talents, jobs, coursesâ€¦"
         value={q}
         onValueChange={setQ}
       />
       <CommandList>
         <CommandEmpty>
-          {loading ? "Searching…" : "No results found."}
+          {loading ? "Searchingâ€¦" : "No results found."}
         </CommandEmpty>
 
         <CommandGroup heading="Navigate">
@@ -175,3 +175,5 @@ export function Gro10xCommandPalette() {
     </CommandDialog>
   );
 }
+
+

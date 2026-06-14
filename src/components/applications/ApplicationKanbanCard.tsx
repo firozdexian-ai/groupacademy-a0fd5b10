@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+﻿import { useMemo } from "react";
 import { formatDistanceToNow, isValid } from "date-fns";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -69,14 +69,14 @@ export function ApplicationKanbanCard({ app, onClick, className }: ApplicationKa
           )}
         </div>
 
-        {/* METRICS HUD: BADGE_STATUS_ROW */}
+        {/* METRICS dashboard: BADGE_STATUS_ROW */}
         <div className="flex flex-col items-end gap-1.5 shrink-0">
           {typeof app.ai_match_score === "number" && (
             <Badge
               variant="secondary"
               className="font-black bg-primary/10 text-primary text-[10px] h-5 px-1.5 rounded-md"
             >
-              🔥 {app.ai_match_score}%
+              ðŸ”¥ {app.ai_match_score}%
             </Badge>
           )}
           {app.sourced && (
@@ -100,3 +100,4 @@ export function ApplicationKanbanCard({ app, onClick, className }: ApplicationKa
     </Card>
   );
 }
+

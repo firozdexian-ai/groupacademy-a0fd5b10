@@ -1,4 +1,4 @@
-import { Dialog, DialogPortal, DialogOverlay } from "@/components/ui/dialog";
+﻿import { Dialog, DialogPortal, DialogOverlay } from "@/components/ui/dialog";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { LogOut } from "lucide-react";
 import { PhoneCaptureStep } from "./PhoneCaptureStep";
@@ -12,7 +12,7 @@ interface Props {
 
 /**
  * Uncloseable modal that gates the app until a phone number is captured.
- * Used for OAuth users (and any talent missing a phone) per the mandatory
+ * Used for OAuth users (and unknown talent missing a phone) per the mandatory
  * global phone capture rule. A small "Sign out" link in the corner is the
  * recovery hatch so users are never permanently locked out.
  */
@@ -55,3 +55,5 @@ export function PhoneCaptureModal({ open, onComplete }: Props) {
     </Dialog>
   );
 }
+
+

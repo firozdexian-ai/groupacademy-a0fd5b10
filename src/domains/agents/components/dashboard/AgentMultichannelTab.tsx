@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AI_AGENTS } from "@/lib/constants/agents";
@@ -16,7 +16,7 @@ import { trackError } from "@/lib/errorTracking";
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy — Career Guidance System: Agent Multichannel Messaging & Notification Router Component
+ * Group Academy â€” Career Guidance System: Agent Multichannel Messaging & Notification Router Component
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/command-center?tab=multichannel (Operator Notification Canvas Viewport)
  * Operations Mode: Automated Efficiency mapping system hooks to Telegram communication webhooks.
@@ -46,13 +46,13 @@ type Rule = {
 };
 
 const agentLabel = (key: string | null | undefined) => {
-  if (!key) return "Global (Any Assistant)";
+  if (!key) return "Global (unknown Assistant)";
   return AI_AGENTS.find((a) => a.id === key)?.name ?? key;
 };
 
-const maskToken = (t: string) => (!t ? "—" : t.length <= 8 ? "••••" : `••••${t.slice(-4)}`);
+const maskToken = (t: string) => (!t ? "â€”" : t.length <= 8 ? "â€¢â€¢â€¢â€¢" : `â€¢â€¢â€¢â€¢${t.slice(-4)}`);
 
-// ─── BOT INTEGRATIONS CREDENTIALS SUB-PANEL ───────────────────────────
+// â”€â”€â”€ BOT INTEGRATIONS CREDENTIALS SUB-PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function BotCredentialsPanel() {
   const qc = useQueryClient();
@@ -100,7 +100,7 @@ function BotCredentialsPanel() {
       setReveal(false);
       setDraft({ agent_key: "", bot_token: "", bot_username: "", is_active: true });
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       trackError("multichannel-credentials-save-failure", { error: err.message, editingKey: editing?.agent_key });
       toast.error(err.message);
     },
@@ -115,7 +115,7 @@ function BotCredentialsPanel() {
       toast.success("Credential mapping severed");
       qc.invalidateQueries({ queryKey: ["agent_bot_credentials"] });
     },
-    onError: (err: any) => trackError("multichannel-credentials-delete-failure", { error: err.message }),
+    onError: (err: unknown) => trackError("multichannel-credentials-delete-failure", { error: err.message }),
   });
 
   const startEdit = (c: Cred) => {
@@ -303,7 +303,7 @@ function BotCredentialsPanel() {
   );
 }
 
-// ─── EVENT ROUTING CRITERIA RULES SUB-PANEL ─────────────────────────
+// â”€â”€â”€ EVENT ROUTING CRITERIA RULES SUB-PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 type RuleDraft = {
   id?: string;
@@ -386,7 +386,7 @@ function RoutingRulesPanel() {
       setOpen(false);
       setEditing(null);
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       trackError("multichannel-rules-save-failure", { error: err.message, editingId: editing?.id });
       toast.error(err.message);
     },
@@ -401,7 +401,7 @@ function RoutingRulesPanel() {
       toast.success("Routing criteria rule archived");
       qc.invalidateQueries({ queryKey: ["agent_routing_rules"] });
     },
-    onError: (err: any) => trackError("multichannel-rules-delete-failure", { error: err.message }),
+    onError: (err: unknown) => trackError("multichannel-rules-delete-failure", { error: err.message }),
   });
 
   const toggleActive = useMutation({
@@ -410,7 +410,7 @@ function RoutingRulesPanel() {
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["agent_routing_rules"] }),
-    onError: (err: any) => trackError("multichannel-rules-toggle-failure", { error: err.message }),
+    onError: (err: unknown) => trackError("multichannel-rules-toggle-failure", { error: err.message }),
   });
 
   const startCreate = () => {
@@ -487,7 +487,7 @@ function RoutingRulesPanel() {
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
                     <SelectItem value={ANY_AGENT} className="text-sm font-medium">
-                      Global (Any Assistant)
+                      Global (unknown Assistant)
                     </SelectItem>
                     {AI_AGENTS.map((a) => (
                       <SelectItem key={a.id} value={a.id} className="text-sm font-medium">
@@ -692,7 +692,7 @@ function RoutingRulesPanel() {
   );
 }
 
-// ─── CENTRAL CONTROLLER DOMAIN CONTAINER WRAPPER ───────────────────
+// â”€â”€â”€ CENTRAL CONTROLLER DOMAIN CONTAINER WRAPPER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export function AgentMultichannelTab() {
   return (
@@ -739,3 +739,5 @@ export function AgentMultichannelTab() {
 }
 
 export default AgentMultichannelTab;
+
+

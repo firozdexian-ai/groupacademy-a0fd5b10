@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPaymentConfigSettings, updatePlatformSettingByKey } from "@/domains/finance/repo/financeRepo";
 import { updateStripeSecret } from "@/domains/finance/api/financeApi";
@@ -430,3 +430,4 @@ function StatusTile({ icon: Icon, label, value, active, color, bg }: StatusTileP
 }
 
 export default PaymentSettingsTab;
+

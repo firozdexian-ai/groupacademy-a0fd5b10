@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+﻿import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
@@ -21,7 +21,7 @@ export function GoogleSignInButton({ className, label = "Continue with Google" }
   const redirectPendingRef = useRef(false);
 
   // If the user closes/cancels the OAuth popup, the window regains focus
-  // without a redirect. Only re-enable the button in that case — never
+  // without a redirect. Only re-enable the button in that case â€” never
   // while a redirect is genuinely in flight (would allow double-click).
   useEffect(() => {
     let mounted = true;
@@ -47,7 +47,7 @@ export function GoogleSignInButton({ className, label = "Continue with Google" }
     redirectPendingRef.current = true;
     try {
       await signInWithGoogle();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("[GoogleSignIn] OAuth failed:", err?.message || err);
       redirectPendingRef.current = false;
       setLoading(false);
@@ -99,3 +99,5 @@ export function GoogleSignInButton({ className, label = "Continue with Google" }
     </Button>
   );
 }
+
+

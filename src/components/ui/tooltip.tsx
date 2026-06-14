@@ -1,11 +1,11 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Authoritative Metadata Disclosure Node (Tooltip)
  * Hardened WAI-ARIA compliant overlay isolating contextual briefs and safeguarding panel boundaries from edge clipping.
- * Version: Launch Candidate · Phase Z0 Lifecycle & Collision Bounds Locked
+ * Version: Launch Candidate Â· Phase Z0 Lifecycle & Collision Bounds Locked
  */
 
 const TooltipProvider = TooltipPrimitive.Provider;
@@ -34,3 +34,4 @@ const TooltipContent = React.forwardRef<
 TooltipContent.displayName = "Tooltip_Core_Content_Node";
 
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };
+

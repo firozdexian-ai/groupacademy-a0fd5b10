@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+﻿import { useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -22,7 +22,7 @@ export interface EventsTabProps {
 
 type EventFilter = "in_person" | "competitions" | "abroad";
 
-const filterOptions: { key: EventFilter; icon: any; label: string }[] = [
+const filterOptions: { key: EventFilter; icon: unknown; label: string }[] = [
   { key: "in_person", icon: MapPin, label: "In-Person Seminars" },
   { key: "competitions", icon: Trophy, label: "Challenges" },
   { key: "abroad", icon: Globe, label: "Study Abroad" },
@@ -126,7 +126,7 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
   const isLoading =
     (eventType === "in_person" && eventsLoading) || (eventType === "competitions" && competitionsLoading);
 
-  const EventCard = ({ event }: { event: any }) => {
+  const EventCard = ({ event }: { event: unknown }) => {
     if (!event || !event.id) return null;
 
     const eventDate = event.event_date ? new Date(event.event_date) : null;
@@ -384,3 +384,5 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
     </div>
   );
 }
+
+

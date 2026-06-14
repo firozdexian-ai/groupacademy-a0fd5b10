@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+﻿import { useEffect, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { trackError, trackEvent } from "@/lib/errorTracking";
@@ -43,7 +43,7 @@ interface StageNavigationProps {
 /**
  * GroUp Academy: Authoritative Sequential Trajectory Controller (StageNavigation)
  * An adaptive horizontal step orchestration layout enforcing strict linear learning tracks.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function StageNavigation({
   currentStage,
@@ -182,3 +182,4 @@ export function StageNavigation({
     </div>
   );
 }
+

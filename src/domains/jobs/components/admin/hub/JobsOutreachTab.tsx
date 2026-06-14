@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from "react";
+﻿import { useState, useEffect, lazy, Suspense } from "react";
 import { listActiveJobsForOutreach } from "@/domains/jobs/repo/jobsRepo";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -83,7 +83,7 @@ export function JobsOutreachTab() {
               <SelectContent className="rounded-xl border-2">
                 {jobs.map((j) => (
                   <SelectItem key={j.id} value={j.id} className="font-bold text-[10px] uppercase">
-                    {j.title} — {j.company_name}
+                    {j.title} â€” {j.company_name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -136,3 +136,4 @@ export function JobsOutreachTab() {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { getGigsHubDashboard } from "@/domains/gigs/repo/gigsRepo";
 
 /**
@@ -10,13 +10,13 @@ import { getGigsHubDashboard } from "@/domains/gigs/repo/gigsRepo";
 
 export interface GigsHubDashboard {
   talent_id: string | null;
-  featured: any[];
+  featured: unknown[];
   submission_counts: Record<string, { total: number; pending: number }>;
-  my_bids: any[];
-  my_contracts: any[];
-  top_matches: any[];
-  course_projects: any[];
-  marketplace_projects: any[];
+  my_bids: unknown[];
+  my_contracts: unknown[];
+  top_matches: unknown[];
+  course_projects: unknown[];
+  marketplace_projects: unknown[];
   generated_at: string;
 }
 
@@ -32,11 +32,11 @@ export function useGigsHubDashboard(enabled = true) {
     enabled,
     staleTime: 2 * 60 * 1000, // 2-minute performance consistency baseline
     queryFn: async (): Promise<GigsHubDashboard> => {
-      // HUD: EXECUTING_MARKETPLACE_AGGREGATION_SYNC
-      let data: any;
+      // dashboard: EXECUTING_MARKETPLACE_AGGREGATION_SYNC
+      let data: unknown;
       try {
         data = await getGigsHubDashboard();
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] ANOMALY: get_gigs_hub_dashboard RPC handshake failed.", {
           code: error?.code,
           message: error?.message,
@@ -62,3 +62,5 @@ export function useGigsHubDashboard(enabled = true) {
     },
   });
 }
+
+

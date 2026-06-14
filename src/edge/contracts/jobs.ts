@@ -1,5 +1,5 @@
-/**
- * Jobs domain — edge function contracts (Phase 9d).
+﻿/**
+ * Jobs domain â€” edge function contracts (Phase 9d).
  *
  * Mirrors the talent/agents convention: per-function Request type +
  * Zod Response schema with `.passthrough()`. Request shapes preserve
@@ -322,3 +322,4 @@ export const EnhanceCoverLetterResponseSchema = z
 export type EnhanceCoverLetterResponse = z.infer<
   typeof EnhanceCoverLetterResponseSchema
 >;
+

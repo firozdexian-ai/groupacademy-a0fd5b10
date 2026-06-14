@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { type ButtonProps, buttonVariants } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import { type ButtonProps, buttonVariants } from "@/components/ui/button";
 /**
  * GroUp Academy: Authoritative Data Registry Sequence Navigation Protocol (Pagination)
  * Hardened WAI-ARIA compliant pagination tracker providing pixel-perfect horizontal lines and zero layout shifts.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
   <nav
@@ -117,3 +117,4 @@ export {
   PaginationNext,
   PaginationPrevious,
 };
+

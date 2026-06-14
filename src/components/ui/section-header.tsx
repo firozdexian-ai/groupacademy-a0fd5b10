@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,7 @@ interface SectionHeaderProps {
 /**
  * GroUp Academy: Technical Architecture Landmark Descriptor Node (SectionHeader)
  * Hardened heading row isolating visual counters and securing micro-trigger alignment blocks from layout shifting.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Locked
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Locked
  */
 export function SectionHeader({
   icon: LandmarkIconNode,
@@ -55,7 +55,7 @@ export function SectionHeader({
         className,
       )}
     >
-      {/* HUD LEVEL 1: STRUCTURAL IDENTITY LANDMARK CORE INFO HUB */}
+      {/* dashboard LEVEL 1: STRUCTURAL IDENTITY LANDMARK CORE INFO HUB */}
       <div className="flex items-center gap-2.5 min-w-0">
         {LandmarkIconNode && (
           <div
@@ -89,7 +89,7 @@ export function SectionHeader({
         </div>
       </div>
 
-      {/* HUD LEVEL 2: NAVIGATION SEQUENCE TARGET ACCESS ACTION CONTROLLERS */}
+      {/* dashboard LEVEL 2: NAVIGATION SEQUENCE TARGET ACCESS ACTION CONTROLLERS */}
       {hasActiveSequenceTriggerRoute && (
         <Button
           type="button"
@@ -108,3 +108,4 @@ export function SectionHeader({
     </div>
   );
 }
+

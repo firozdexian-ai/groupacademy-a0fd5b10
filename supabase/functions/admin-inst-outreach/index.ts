@@ -1,4 +1,4 @@
-// Admin Institutions Outreach — drafts mailto B2B messages to universities,
+﻿// Admin Institutions Outreach â€” drafts mailto B2B messages to universities,
 // colleges, training partners and partner organizations. No emails are sent
 // from the platform; the operator opens mailto: links in their own client.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
@@ -47,7 +47,7 @@ partners, and partner organizations.
 - Always CALL TOOLS to look up current data; never invent contacts.
 - For each suggested message, output a markdown mailto: link the operator can
   click. Format: [Email NAME](mailto:EMAIL?subject=...&body=...).
-- Subjects must be short and specific. Bodies should be 4–8 short lines.
+- Subjects must be short and specific. Bodies should be 4â€“8 short lines.
 - Never claim that the platform sent anything. The operator sends from their
   own email client.
 Today: ${new Date().toISOString().slice(0, 10)}.`;
@@ -73,7 +73,7 @@ Deno.serve(async (req) => {
     const admin = createClient(SUPA_URL, SERVICE_KEY);
     const { data: roleRows } = await admin
       .from("user_roles").select("role").eq("user_id", userData.user.id);
-    const roles = (roleRows ?? []).map((r: any) => r.role);
+    const roles = (roleRows ?? []).map((r: unknown) => r.role);
     if (!roles.includes("super_admin") && !roles.includes("admin")) {
       return json({ error: "forbidden" }, 403);
     }
@@ -116,12 +116,12 @@ Deno.serve(async (req) => {
       }
     }
     return json({ message: "Sorry, I could not complete that request." });
-  } catch (e: any) {
+  } catch (e: unknown) {
     return json({ error: e?.message ?? "unknown" }, 500);
   }
 });
 
-async function runTool(admin: any, name: string, args: any) {
+async function runTool(admin: unknown, name: string, args: unknown) {
   if (name === "list_institutions") {
     const limit = args.limit ?? 25;
     let q = admin.from("institutions").select("id,name,type,country,website,contact_name,contact_email,contact_phone,status").limit(limit);
@@ -140,9 +140,11 @@ async function runTool(admin: any, name: string, args: any) {
   return { error: "unknown_tool" };
 }
 
-function json(body: any, status = 200) {
+function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
+
+

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { listCareerAssessmentLeads } from "@/domains/jobs/repo/jobsRepo";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
@@ -31,7 +31,7 @@ import { cn } from "@/lib/utils";
 /**
  * Platform Logic: Strategic Recruitment Ledger (Assessment Leads)
  * High-fidelity monitor for talent readiness artifacts and conversion telemetry.
- * 2026 Standard: Executive Logic geometry with reinforced data range guards.
+ * 2026 Standard:  geometry with reinforced data range guards.
  */
 
 interface AssessmentLead {
@@ -83,7 +83,7 @@ export function JobsAssessmentLeadsTab() {
       );
       setLeads(rows);
       setTotalCount(count);
-    } catch (err: any) {
+    } catch (err: unknown) {
 
       console.error("Registry Sync Fault:", err);
       setError(err.message || "Failed to synchronize assessment leads");
@@ -300,7 +300,7 @@ export function JobsAssessmentLeadsTab() {
         </CardContent>
       </Card>
 
-      {/* Logic Pagination HUD */}
+      {/* Logic Pagination dashboard */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between p-6 bg-muted/20 rounded-2xl border border-border/60">
           <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
@@ -343,3 +343,5 @@ export function JobsAssessmentLeadsTab() {
     </div>
   );
 }
+
+

@@ -72,7 +72,7 @@ export function PostCard({ post }: PostCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const { isSaved, toggleSave } = useSavedItems();
 
-  const saved = isSaved(post.id, "post" as any);
+  const saved = isSaved(post.id, "post" as unknown);
   const pollOptions = post.pollOptions || [];
 
   // Synchronize server state queries for community poll data parameters
@@ -84,6 +84,8 @@ export function PostCard({ post }: PostCardProps) {
     castVote,
     isLoading: pollLoading,
   } = usePollVoting(post.id, pollOptions);
+
+  const trackerRef = useImpressionTracker(post?.id || "", "feed");
 
   // Monitor visibility state to track card content impressions
   useEffect(() => {
@@ -113,7 +115,7 @@ export function PostCard({ post }: PostCardProps) {
     trackEvent("feed_post_save_toggled", { postId: post.id, nextState: !saved });
 
     try {
-      await toggleSave(post.id, "post" as any);
+      await toggleSave(post.id, "post" as unknown);
 
       // Invalidate query tags to refresh bookmarked list layout immediately
       queryClient.invalidateQueries({ queryKey: ["saved-items"] });
@@ -148,8 +150,6 @@ export function PostCard({ post }: PostCardProps) {
     trackEvent("feed_post_reported_by_user", { postId: post.id });
     toast.info("Reported. Our moderators will review this post.");
   };
-
-  const trackerRef = useImpressionTracker(post.id, "feed");
 
   return (
     <div ref={trackerRef} className="w-full h-auto">
@@ -340,3 +340,4 @@ export function PostCard({ post }: PostCardProps) {
     </div>
   );
 }
+

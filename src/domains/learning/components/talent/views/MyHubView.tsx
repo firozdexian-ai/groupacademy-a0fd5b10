@@ -1,5 +1,5 @@
-/**
- * Talent Learning Hub — My Hub view.
+﻿/**
+ * Talent Learning Hub â€” My Hub view.
  * Composes next-best-action + upcoming sessions + courses + credentials.
  */
 import { MyCoursesTab } from "../MyCoursesTab";
@@ -51,3 +51,4 @@ export function MyHubView() {
     </div>
   );
 }
+

@@ -1,5 +1,5 @@
-/**
- * UGC domain — edge function contracts (Phase 9h).
+﻿/**
+ * UGC domain â€” edge function contracts (Phase 9h).
  */
 import { z } from "zod";
 
@@ -19,3 +19,4 @@ export const AdminContentAiResponseSchema = z
 export type AdminContentAiResponse = z.infer<
   typeof AdminContentAiResponseSchema
 >;
+

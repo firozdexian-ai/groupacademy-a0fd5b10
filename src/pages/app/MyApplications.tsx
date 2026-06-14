@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentUser } from "@/lib/auth";
 import { listTalentApplicationsWithJob } from "@/domains/jobs/repo/jobsRepo";
@@ -72,7 +72,7 @@ const STATUS_PILL: Record<string, { label: string; className: string; icon: Reac
 /**
  * GroUp Academy: Candidate Application Ledger (MyApplications)
  * Hardened responsive viewer for application lifecycle tracking and assessment management.
- * Version: Launch Candidate · Phase Z1 Production Contract Sealed
+ * Version: Launch Candidate Â· Phase Z1 Production Contract Sealed
  */
 export default function MyApplications() {
  const navigate = useNavigate();
@@ -85,7 +85,7 @@ export default function MyApplications() {
  if (!user) return;
 
  setLoading(true);
- let data: any[] = [];
+ let data: unknown[] = [];
  try {
  data = await listTalentApplicationsWithJob(user.id);
  } catch (err) {
@@ -93,7 +93,7 @@ export default function MyApplications() {
  return;
  }
 
- const normalizedRows: ApplicationRecord[] = (data || []).map((r: any) => ({
+ const normalizedRows: ApplicationRecord[] = (data || []).map((r: unknown) => ({
  ...r,
  job: r.job,
  assessment: r.job_assessments?.[0] || null,
@@ -179,7 +179,7 @@ export default function MyApplications() {
  <div className="flex-1 min-w-0 space-y-1">
  <p className="font-bold text-sm truncate">{app.job?.title}</p>
  <p className="text-[11px] text-muted-foreground truncate italic">
- {app.job?.company_name} •{" "}
+ {app.job?.company_name} â€¢{" "}
  {formatDistanceToNow(new Date(app.last_status_at || app.created_at), { addSuffix: true })}
  </p>
 
@@ -207,3 +207,5 @@ export default function MyApplications() {
  </div>
  );
 }
+
+

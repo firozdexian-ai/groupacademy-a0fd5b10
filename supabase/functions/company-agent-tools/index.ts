@@ -1,4 +1,4 @@
-// Company Agent Tools — single dispatcher for all company-side agent tool calls.
+﻿// Company Agent Tools â€” single dispatcher for all company-side agent tool calls.
 // Verifies caller, resolves their active company (or company_id sent by runtime),
 // runs the requested tool, returns { ok, result, canvas? }.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
@@ -20,7 +20,7 @@ interface ToolReq {
 }
 
 // ---------- Per-tool argument schemas (Phase Z0 hardening, relaxed) ----------
-// We deliberately do NOT enforce uuid() format here — LLMs sometimes pass
+// We deliberately do NOT enforce uuid() format here â€” LLMs sometimes pass
 // short ids or slugs and the underlying tables/RPCs already validate. We
 // only catch obviously bad shapes so the LLM can self-correct on retry.
 const idLike = z.string().min(1);
@@ -143,7 +143,7 @@ Deno.serve(async (req) => {
       default:
         return j({ ok: false, error: `Unknown tool: ${body.tool_key}` }, 400);
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("[company-agent-tools] fault", e);
     return j({ ok: false, error: e?.message ?? "TOOL_FAULT" }, 500);
   }
@@ -155,11 +155,11 @@ function j(payload: unknown, status = 200) {
   });
 }
 
-type Ctx = { admin: any; userId: string; companyId: string };
+type Ctx = { admin: unknown; userId: string; companyId: string };
 
 // ===================== Riya / jobs =====================
 
-async function create_job(ctx: Ctx, a: any) {
+async function create_job(ctx: Ctx, a: unknown) {
   const { data: company } = await ctx.admin.from("companies").select("name, logo_url").eq("id", ctx.companyId).single();
   const { data, error } = await ctx.admin.from("jobs").insert({
     title: a.title,
@@ -190,7 +190,7 @@ async function create_job(ctx: Ctx, a: any) {
   };
 }
 
-async function publish_job(ctx: Ctx, a: any) {
+async function publish_job(ctx: Ctx, a: unknown) {
   const { data: job } = await ctx.admin.from("jobs").select("id, title, company_id, is_active").eq("id", a.job_id).maybeSingle();
   if (!job || job.company_id !== ctx.companyId) return { ok: false, error: "Job not found" };
   if (job.is_active) return { ok: false, error: "Job is already live" };
@@ -206,7 +206,7 @@ async function publish_job(ctx: Ctx, a: any) {
   };
 }
 
-async function list_my_jobs(ctx: Ctx, a: any) {
+async function list_my_jobs(ctx: Ctx, a: unknown) {
   let q = ctx.admin.from("jobs").select("id, title, location, is_active, created_at, deadline").eq("company_id", ctx.companyId).order("created_at", { ascending: false }).limit(20);
   const status = a.status ?? "all";
   if (status === "active") q = q.eq("is_active", true);
@@ -216,19 +216,19 @@ async function list_my_jobs(ctx: Ctx, a: any) {
   return { ok: true, result: { jobs: data ?? [] }, canvas: { type: "job_list", payload: { jobs: data ?? [] } } };
 }
 
-async function pause_job(ctx: Ctx, a: any) {
+async function pause_job(ctx: Ctx, a: unknown) {
   const { error } = await ctx.admin.from("jobs").update({ is_active: false }).eq("id", a.job_id).eq("company_id", ctx.companyId);
   if (error) return { ok: false, error: error.message };
   return { ok: true, result: { job_id: a.job_id, status: "paused" } };
 }
 
-async function close_job(ctx: Ctx, a: any) {
+async function close_job(ctx: Ctx, a: unknown) {
   const { error } = await ctx.admin.from("jobs").update({ is_active: false, deadline: new Date().toISOString() }).eq("id", a.job_id).eq("company_id", ctx.companyId);
   if (error) return { ok: false, error: error.message };
   return { ok: true, result: { job_id: a.job_id, status: "closed" } };
 }
 
-async function get_job_applicants(ctx: Ctx, a: any) {
+async function get_job_applicants(ctx: Ctx, a: unknown) {
   const { data, error } = await ctx.admin
     .from("job_applications")
     .select("id, talent_id, created_at, status, talents(id, full_name, country, headline)")
@@ -241,7 +241,7 @@ async function get_job_applicants(ctx: Ctx, a: any) {
 
 // ===================== Maya / talent =====================
 
-async function search_talent(ctx: Ctx, a: any) {
+async function search_talent(ctx: Ctx, a: unknown) {
   let q = ctx.admin
     .from("talents")
     .select("id, full_name, country, headline, profession, years_experience, skills")
@@ -254,7 +254,7 @@ async function search_talent(ctx: Ctx, a: any) {
   const { data, error } = await q;
   if (error) return { ok: false, error: error.message };
   // Redact: only return first name + initial
-  const redacted = (data ?? []).map((t: any) => ({
+  const redacted = (data ?? []).map((t: unknown) => ({
     id: t.id,
     name_redacted: redactName(t.full_name),
     country: t.country,
@@ -276,7 +276,7 @@ function redactName(name: string | null): string {
   return parts[0] + (parts[1] ? ` ${parts[1][0]}.` : "");
 }
 
-async function reveal_talent(ctx: Ctx, a: any) {
+async function reveal_talent(ctx: Ctx, a: unknown) {
   const { data: existing } = await ctx.admin
     .from("company_talent_reveals")
     .select("id")
@@ -302,11 +302,11 @@ async function reveal_talent(ctx: Ctx, a: any) {
   return {
     ok: true, result: { talent: t, credits_spent: credits },
     canvas: { type: "talent_card", payload: { talent: t } },
-    user_message: credits ? `Revealed. 5 credits deducted.` : `Already revealed earlier — no charge.`,
+    user_message: credits ? `Revealed. 5 credits deducted.` : `Already revealed earlier â€” no charge.`,
   };
 }
 
-async function save_to_shortlist(ctx: Ctx, a: any) {
+async function save_to_shortlist(ctx: Ctx, a: unknown) {
   const { error } = await ctx.admin.from("company_talent_shortlists").insert({
     company_id: ctx.companyId, talent_id: a.talent_id, added_by: ctx.userId, note: a.note ?? null,
   });
@@ -331,7 +331,7 @@ async function get_credit_balance(ctx: Ctx) {
   return { ok: true, result: { balance: Number(data?.balance ?? 0), earned: Number(data?.earned_balance ?? 0) } };
 }
 
-async function get_ledger(ctx: Ctx, a: any) {
+async function get_ledger(ctx: Ctx, a: unknown) {
   const days = Math.min(Math.max(a.days ?? 30, 1), 90);
   const since = new Date(Date.now() - days * 86400000).toISOString();
   const { data, error } = await ctx.admin
@@ -345,7 +345,7 @@ async function get_ledger(ctx: Ctx, a: any) {
   return { ok: true, result: { days, count: data?.length ?? 0, entries: data ?? [] }, canvas: { type: "ledger", payload: { days, entries: data ?? [] } } };
 }
 
-async function start_topup(ctx: Ctx, a: any) {
+async function start_topup(ctx: Ctx, a: unknown) {
   const amount = Number(a.amount);
   if (!Number.isFinite(amount) || amount <= 0) return { ok: false, error: "Invalid amount" };
   // Stripe checkout creation is handled by an existing function; we surface the intent + canvas.
@@ -372,7 +372,7 @@ async function get_company_profile(ctx: Ctx) {
   return { ok: true, result: { profile: data, missing }, canvas: { type: "company_profile", payload: { profile: data, missing } } };
 }
 
-async function update_company_profile(ctx: Ctx, a: any) {
+async function update_company_profile(ctx: Ctx, a: unknown) {
   const allowed = ["website","industry","about","linkedin_url","banner_url","logo_url","address","country","operating_hours"];
   const patch: Record<string, unknown> = {};
   for (const k of allowed) if (a[k] !== undefined) patch[k] = a[k];
@@ -382,7 +382,7 @@ async function update_company_profile(ctx: Ctx, a: any) {
   return { ok: true, result: { profile: data, updated_fields: Object.keys(patch) }, canvas: { type: "company_profile", payload: { profile: data, missing: [] } } };
 }
 
-async function invite_teammate(ctx: Ctx, a: any) {
+async function invite_teammate(ctx: Ctx, a: unknown) {
   const email = String(a.email ?? "").trim().toLowerCase();
   if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) return { ok: false, error: "Invalid email" };
   const role = ["owner","admin","member"].includes(a.role) ? a.role : "member";
@@ -404,7 +404,7 @@ async function list_teammates(ctx: Ctx) {
 
 // ===================== Growth / feed =====================
 
-async function draft_company_post(ctx: Ctx, a: any) {
+async function draft_company_post(ctx: Ctx, a: unknown) {
   const text = String(a.text_content ?? "").trim();
   if (text.length < 20) return { ok: false, error: "Post too short (min 20 chars)" };
   if (text.length > 2000) return { ok: false, error: "Post too long (max 2000 chars)" };
@@ -442,7 +442,7 @@ async function list_pending_drafts(ctx: Ctx) {
   return { ok: true, result: { count: data?.length ?? 0, drafts: data ?? [] } };
 }
 
-async function publish_company_post(ctx: Ctx, a: any) {
+async function publish_company_post(ctx: Ctx, a: unknown) {
   // Owner-only: verify role
   const { data: m } = await ctx.admin
     .from("company_members")
@@ -498,7 +498,7 @@ async function publish_company_post(ctx: Ctx, a: any) {
   };
 }
 
-async function discard_company_draft(ctx: Ctx, a: any) {
+async function discard_company_draft(ctx: Ctx, a: unknown) {
   const { error } = await ctx.admin
     .from("company_post_drafts")
     .update({ status: "discarded" })
@@ -514,7 +514,7 @@ const PIPELINE_STATUSES = new Set([
   "submitted","sent_to_employer","viewed","shortlisted","rejected","withdrawn","hired",
 ]);
 
-async function move_application_stage(ctx: Ctx, a: any) {
+async function move_application_stage(ctx: Ctx, a: unknown) {
   const appId = String(a.application_id ?? "").trim();
   const to = String(a.to_status ?? a.stage ?? "").trim();
   if (!appId) return { ok: false, error: "application_id required" };
@@ -526,10 +526,10 @@ async function move_application_stage(ctx: Ctx, a: any) {
     .select("id, job_id, application_status, jobs!inner(company_id, title)")
     .eq("id", appId)
     .maybeSingle();
-  if (!app || (app as any).jobs?.company_id !== ctx.companyId) {
+  if (!app || (app as unknown).jobs?.company_id !== ctx.companyId) {
     return { ok: false, error: "Application not found in this company" };
   }
-  const from = (app as any).application_status;
+  const from = (app as unknown).application_status;
 
   const { error } = await ctx.admin
     .from("job_applications")
@@ -552,12 +552,12 @@ async function move_application_stage(ctx: Ctx, a: any) {
 
   return {
     ok: true,
-    result: { application_id: appId, from, to, job_title: (app as any).jobs?.title ?? null },
-    user_message: `Moved applicant from "${from}" → "${to}".`,
+    result: { application_id: appId, from, to, job_title: (app as unknown).jobs?.title ?? null },
+    user_message: `Moved applicant from "${from}" â†’ "${to}".`,
   };
 }
 
-async function accept_gig_bid(ctx: Ctx, a: any) {
+async function accept_gig_bid(ctx: Ctx, a: unknown) {
   const bidId = String(a.bid_id ?? "").trim();
   if (!bidId) return { ok: false, error: "bid_id required" };
 
@@ -566,8 +566,8 @@ async function accept_gig_bid(ctx: Ctx, a: any) {
     p_company_id: ctx.companyId,
   });
   if (error) return { ok: false, error: error.message };
-  if (data && typeof data === "object" && (data as any).ok === false) {
-    return { ok: false, error: (data as any).error ?? "ACCEPT_FAILED", balance: (data as any).balance };
+  if (data && typeof data === "object" && (data as unknown).ok === false) {
+    return { ok: false, error: (data as unknown).error ?? "ACCEPT_FAILED", balance: (data as unknown).balance };
   }
   return {
     ok: true,
@@ -575,4 +575,6 @@ async function accept_gig_bid(ctx: Ctx, a: any) {
     user_message: `Bid accepted. Credits escrowed and contract created.`,
   };
 }
+
+
 

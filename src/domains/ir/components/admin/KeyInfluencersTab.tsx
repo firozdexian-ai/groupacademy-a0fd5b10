@@ -1,4 +1,4 @@
-/**
+﻿/**
  * GroUp Academy: Multiplier Network (Key Influencers)
  * CTO Version: May 2026 (Phase IR-Z0 Hardened)
  * Fixes: P2 (Restored CRUD), P3 (Folder Path), P5 (Type Safety)
@@ -64,7 +64,7 @@ export default function KeyInfluencersTab() {
  try {
  const data = await listInfluencers(filter);
  setRows(data || []);
- } catch (err: any) {
+ } catch (err: unknown) {
  toast.error("Failed to save: " + err.message);
  } finally {
  setLoading(false);
@@ -96,13 +96,13 @@ export default function KeyInfluencersTab() {
  if (!form.name.trim()) return toast.error("Identity Fault: Name required.");
  setBusy(true);
  try {
- const payload: any = { ...form };
+ const payload: unknown = { ...form };
  if (editingNode) payload.id = editingNode.id;
  await upsertInfluencer(payload);
  toast.success(editingNode ? "Node Recalibrated" : "Entity Injected Successfully");
  setDialogOpen(false);
  loadRegistry();
- } catch (err: any) {
+ } catch (err: unknown) {
  toast.error("Failed: " + err.message);
  } finally {
  setBusy(false);
@@ -114,7 +114,7 @@ export default function KeyInfluencersTab() {
  await deleteInfluencer(id);
  toast.success("Node Terminated");
  loadRegistry();
- } catch (err: any) {
+ } catch (err: unknown) {
  toast.error("Purge Fault: " + err.message);
  }
  };
@@ -195,7 +195,7 @@ export default function KeyInfluencersTab() {
  <div className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground/60">
  <Briefcase className="h-3 w-3" />
  <span className="truncate">
- {r.role || "STAKEHOLDER"} {r.organization ? `· ${r.organization}` : ""}
+ {r.role || "STAKEHOLDER"} {r.organization ? `Â· ${r.organization}` : ""}
  </span>
  </div>
  </div>
@@ -221,7 +221,7 @@ export default function KeyInfluencersTab() {
 
  <div className="flex items-center justify-between border-t border-border/10 pt-4">
  <div className="flex items-center gap-2 text-[10px] font-mono font-medium text-foreground/70">
- <Mail className="h-3 w-3 opacity-40" /> {r.email || "—"}
+ <Mail className="h-3 w-3 opacity-40" /> {r.email || "â€”"}
  </div>
  <Badge
  className={cn(
@@ -317,3 +317,5 @@ export default function KeyInfluencersTab() {
  </div>
  );
 }
+
+

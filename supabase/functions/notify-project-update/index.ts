@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+﻿import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
 
 Deno.serve(async (req) => {
@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
         .select("talents(user_id)")
         .eq("milestone_id", milestone_id);
       for (const a of assigns || []) {
-        const uid = (a as any).talents?.user_id;
+        const uid = (a as unknown).talents?.user_id;
         if (uid) recipients.add(uid);
       }
     }
@@ -36,3 +36,5 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: corsHeaders });
   }
 });
+
+

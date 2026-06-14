@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   getStudentRecordByUserId,
@@ -349,7 +349,7 @@ function StageContentRouter({
   hasNextModule,
   moduleIndex,
   totalModules,
-}: any) {
+}: unknown) {
   const isComp = completedStages.includes(stage);
   const fallbackVideo = currentModule?.video_url;
 
@@ -416,3 +416,5 @@ function StageContentRouter({
       return null;
   }
 }
+
+

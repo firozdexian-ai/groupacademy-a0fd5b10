@@ -1,5 +1,5 @@
-/**
- * Companies domain — typed edge function wrappers (Phase 9h / 10f).
+﻿/**
+ * Companies domain â€” typed edge function wrappers (Phase 9h / 10f).
  *
  * Safe-guards and centralizes edge runtime contracts for the B2B shell.
  * Includes plain-English error handling to avoid raw system-jargon leaks.
@@ -21,7 +21,7 @@ import {
 const GenericB2BResponseSchema = z.object({
   success: z.boolean(),
   message: z.string().optional(),
-  data: z.any().optional(),
+  data: z.unknown().optional(),
 });
 
 export interface CompanyOutreachRequest {
@@ -34,7 +34,7 @@ export interface CompanyOutreachRequest {
 export interface CompanyAgentToolsRequest {
   companyId: string;
   actionKind: "lead_hunter" | "growth_post" | "crm_sync" | "billing_calc";
-  payload: Record<string, any>;
+  payload: Record<string, unknown>;
 }
 
 /**
@@ -125,3 +125,4 @@ export async function executeCompanyAgentTools(
   }
   return parseEdgeResponse("company-agent-tools", GenericB2BResponseSchema, data ?? {});
 }
+

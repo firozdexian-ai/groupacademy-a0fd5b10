@@ -1,4 +1,4 @@
-// Suggest a team + split for a milestone using gig_matches.
+﻿// Suggest a team + split for a milestone using gig_matches.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -19,7 +19,7 @@ Deno.serve(async (req) => {
     const { milestone_id, gig_id, role_count = 1 } = await req.json();
     const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
-    let matches: any[] = [];
+    let matches: unknown[] = [];
     if (gig_id) {
       const { data } = await admin
         .from("gig_matches")
@@ -45,3 +45,5 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: corsHeaders });
   }
 });
+
+

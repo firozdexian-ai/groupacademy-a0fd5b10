@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import {
   insertContent,
   insertCourseModule,
@@ -78,7 +78,7 @@ export const CourseJSONImporter = () => {
       const generatedSlug = generateSlug(courseData.title);
 
       // 1. Insert the main Course (Content) record
-      let contentRecord: any;
+      let contentRecord: unknown;
       try {
         contentRecord = await insertContent({
           title: courseData.title,
@@ -86,20 +86,20 @@ export const CourseJSONImporter = () => {
           content_type: (courseData.content_type as ContentType) || "recorded_course",
           slug: generatedSlug,
         });
-      } catch (err: any) {
+      } catch (err: unknown) {
         throw new Error(`Course insertion failed: ${err.message}`);
       }
 
       // 2. Iterate and insert Modules
       for (const mod of courseData.modules) {
-        let moduleRecord: any;
+        let moduleRecord: unknown;
         try {
           moduleRecord = await insertCourseModule({
             content_id: contentRecord.id,
             title: mod.title,
             stage_order: mod.stage_order,
           });
-        } catch (moduleError: any) {
+        } catch (moduleError: unknown) {
           console.error("Module error:", moduleError);
           continue; // Skip failed modules but continue pipeline
         }
@@ -124,7 +124,7 @@ export const CourseJSONImporter = () => {
 
       toast.success(`Course "${courseData.title}" successfully ingested.`);
       setJson(""); // Clear on success
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       toast.error(err?.message ?? "Failed to parse and import JSON.");
     } finally {
@@ -169,3 +169,5 @@ export const CourseJSONImporter = () => {
 };
 
 export default CourseJSONImporter;
+
+

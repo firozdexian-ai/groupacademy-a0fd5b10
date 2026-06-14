@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Search, Bot, MessageCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -34,7 +34,7 @@ const FILTER_CONFIG: { id: FilterKey; label: string }[] = [
 /**
  * GroUp Academy: Unified Messenger Inbox
  * Hardened responsive communication center with filtered thread ingestion.
- * Version: Launch Candidate · Phase Z1 Production Contract Sealed
+ * Version: Launch Candidate Â· Phase Z1 Production Contract Sealed
  */
 export default function Messages() {
  const navigateHook = useNavigate();
@@ -81,7 +81,7 @@ export default function Messages() {
 
  return (
  <div className="max-w-2xl mx-auto pb-24 antialiased block transform-gpu w-full">
- {/* HUD LEVEL 1: MESSENGER COMMAND HEADER */}
+ {/* dashboard LEVEL 1: MESSENGER COMMAND HEADER */}
  <header className="sticky top-0 z-30 bg-background/95 border-b border-border/40 px-4 py-3 space-y-3">
  <div className="flex items-center justify-between gap-4">
  <h1 className="text-xl font-black uppercase tracking-tight text-foreground">Messenger</h1>
@@ -123,7 +123,7 @@ export default function Messages() {
  </div>
  </header>
 
- {/* HUD LEVEL 2: THREAD LISTING VIEWPORT */}
+ {/* dashboard LEVEL 2: THREAD LISTING VIEWPORT */}
  <main className="mt-2 block w-full">
  {isRegistryLoading ? (
  <div className="space-y-px">
@@ -169,3 +169,4 @@ export default function Messages() {
  </div>
  );
 }
+

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+﻿import { useMemo } from "react";
 import {
   listModuleResourcesForModule,
   listStudentResourceProgress,
@@ -8,7 +8,7 @@ import { TIMEOUTS } from "@/lib/timeoutConfig";
 import type { Database } from "@/integrations/supabase/types";
 
 /**
- * GroUp Academy: Curriculum Resource Sentinel (V5.6.0)
+ * GroUp Academy: Curriculum Resource guard (V5.6.0)
  * Architecture: Repo-pattern enforced; Supabase calls live in learningRepo.
  * Phase: Z0 Code Freeze Hardened (May 2026).
  */
@@ -82,3 +82,4 @@ export function useStudentResourceProgress(studentId: string | undefined, module
     timeout: TIMEOUTS.DEFAULT,
   });
 }
+

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +16,7 @@ interface Props {
 /**
  * GroUp Academy: Messaging Thread Directory List Item Node (ThreadListItem)
  * An authoritative operational row rendering agent contexts, pin metrics, and unread badge indices.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function ThreadListItem({ thread, onClick }: Props) {
   const queryClient = useQueryClient();
@@ -143,3 +143,4 @@ export function ThreadListItem({ thread, onClick }: Props) {
     </button>
   );
 }
+

@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useJobsGraph } from "./hooks/useJobsGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,7 @@ export function JobsApplicationsTab() {
  } = useJobsGraph();
  const { data, isLoading } = jobsGraphQuery;
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ status: "pending" });
+ const [draft, setDraft] = useState<unknown>({ status: "pending" });
 
  return (
  <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
@@ -179,7 +179,7 @@ export function JobsApplicationsTab() {
         const { data } = await mod.jobsRepo.listJobsByCompanyAndStatus("active", 100);
         return data;
       },
-    }).data?.map((j: any) => (
+    }).data?.map((j: unknown) => (
       <SelectItem key={j.id} value={j.id}>
         {j.title} ({j.id.substring(0, 8)})
       </SelectItem>
@@ -206,7 +206,7 @@ export function JobsApplicationsTab() {
         const { data } = await mod.talentRepo.listTalentsLite(200);
         return data;
       },
-    }).data?.map((t: any) => (
+    }).data?.map((t: unknown) => (
       <SelectItem key={t.id} value={t.id}>
         {t.full_name} ({t.id.substring(0, 8)})
       </SelectItem>
@@ -260,3 +260,5 @@ export function JobsApplicationsTab() {
 }
 
 export default JobsApplicationsTab;
+
+

@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useGigGraph } from "./hooks/useGigGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,7 @@ export function GigsCourseProjectsTab() {
  } = useGigGraph();
  const { data, isLoading } = gigGraphQuery;
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ status: "draft" });
+ const [draft, setDraft] = useState<unknown>({ status: "draft" });
 
  return (
  <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
@@ -219,3 +219,5 @@ export function GigsCourseProjectsTab() {
 }
 
 export default GigsCourseProjectsTab;
+
+

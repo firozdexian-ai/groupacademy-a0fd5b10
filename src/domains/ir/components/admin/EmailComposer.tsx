@@ -1,4 +1,4 @@
-/**
+﻿/**
  * GroUp Academy: Investor Outreach Terminal
  * Phase IR-Z1.1: dual-log to ir_outreach_log (cross-channel telemetry) and
  * ir_email_communications (per-investor email history); render recent
@@ -96,11 +96,11 @@ function CommunicationHistory({ investorId }: { investorId?: string }) {
             </div>
             <div className="flex justify-between items-center text-[9px] font-bold text-muted-foreground/60">
               <span>
-                {row.email_type} · {format(new Date(row.sent_at || row.created_at), "dd MMM yyyy HH:mm")}
+                {row.email_type} Â· {format(new Date(row.sent_at || row.created_at), "dd MMM yyyy HH:mm")}
               </span>
               {(row.open_count || row.click_count) ? (
                 <span className="tabular-nums">
-                  {row.open_count ?? 0} open · {row.click_count ?? 0} clk
+                  {row.open_count ?? 0} open Â· {row.click_count ?? 0} clk
                 </span>
               ) : null}
             </div>
@@ -132,7 +132,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
     if (!investorsQ.data || !localInvestorId) {
       return undefined;
     }
-    return investorsQ.data.find((inv: any) => inv.id === localInvestorId);
+    return investorsQ.data.find((inv: unknown) => inv.id === localInvestorId);
   }, [selectedInvestor, investorsQ.data, localInvestorId]);
 
   const handleLogAndOpenClient = async () => {
@@ -183,10 +183,10 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
 
       qc.invalidateQueries({ queryKey: ["ir-email-communications"] });
 
-      toast.success("Opening mail client…", { id: toastId });
+      toast.success("Opening mail clientâ€¦", { id: toastId });
       setSubject("");
       setBody("");
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error(`System Error: ${error.message || "Transmission fault."}`, { id: toastId });
     } finally {
       setIsDeploying(false);
@@ -202,7 +202,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
               <ShieldCheck className="h-6 w-6 text-primary" /> Investor Pulse
             </h3>
             <p className="text-xs font-medium tracking-[0.3em] text-muted-foreground/60 italic">
-              Phase IR-Z1.1 · dual-logged to outreach & comms history
+              Phase IR-Z1.1 Â· dual-logged to outreach & comms history
             </p>
           </div>
           <Button
@@ -247,7 +247,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
                 ) : investorsQ.data?.length === 0 ? (
                   <SelectItem value="empty" disabled>No investors registered</SelectItem>
                 ) : (
-                  investorsQ.data?.map((inv: any) => (
+                  investorsQ.data?.map((inv: unknown) => (
                     <SelectItem key={inv.id} value={inv.id} className="uppercase font-bold text-[10px]">
                       {inv.full_name ? `${inv.full_name} (${inv.email})` : inv.email}
                     </SelectItem>
@@ -321,7 +321,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
           <div>
             <h4 className="text-sm font-semibold uppercase italic tracking-tight">Communication History</h4>
             <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
-              {resolvedInvestor?.id ? "this investor · last 10" : "global · last 10"}
+              {resolvedInvestor?.id ? "this investor Â· last 10" : "global Â· last 10"}
             </p>
           </div>
         </div>
@@ -330,3 +330,5 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
     </div>
   );
 };
+
+

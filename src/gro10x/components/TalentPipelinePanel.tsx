@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+﻿import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -34,7 +34,7 @@ export function TalentPipelinePanel({ companyId }: Props) {
   const counts = TALENT_REL_STAGES.reduce<Record<TalentRelStage, number>>((acc, s) => {
     acc[s.id] = (data ?? []).filter((r) => r.stage === s.id).length;
     return acc;
-  }, {} as any);
+  }, {} as unknown);
   const filtered = (data ?? []).filter((r) => r.stage === activeStage);
 
   return (
@@ -61,7 +61,7 @@ export function TalentPipelinePanel({ companyId }: Props) {
           <Users className="h-6 w-6 mx-auto text-slate-600" />
           <p>No talents in {activeStage}.</p>
           <Link to="/gro10x/sourcing" className="text-[#33E1E4] underline">
-            Go source talent →
+            Go source talent â†’
           </Link>
         </div>
       )}
@@ -119,3 +119,5 @@ export function TalentPipelinePanel({ companyId }: Props) {
     </div>
   );
 }
+
+

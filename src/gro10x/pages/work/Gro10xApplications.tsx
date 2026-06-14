@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { ApplicationKanban } from "@/components/applications/ApplicationKanban";
 import { useGro10xCompanyId } from "../../hooks/useGro10xCompanyId";
@@ -52,3 +52,4 @@ export default function Gro10xApplications() {
     </div>
   );
 }
+

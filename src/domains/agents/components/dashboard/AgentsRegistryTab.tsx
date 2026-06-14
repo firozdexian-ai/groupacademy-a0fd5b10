@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import {
   toggleAiAgentActive,
   updateAiAgent,
@@ -82,7 +82,7 @@ export function AIAgentsManager() {
         if (session.is_active) statsMap[session.agent_key].active_sessions++;
       });
       setStats(statsMap);
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error("Failed to sync agents registry with the database.");
     } finally {
       setIsLoading(false);
@@ -94,7 +94,7 @@ export function AIAgentsManager() {
       await toggleAiAgentActive(agent.id, !agent.is_active);
       setAgents((prev) => prev.map((a) => (a.id === agent.id ? { ...a, is_active: !a.is_active } : a)));
       toast.success(`Agent "${agent.name}" status updated successfully.`);
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error("Could not update agent activation status. Please try again.");
     }
   };
@@ -120,7 +120,7 @@ export function AIAgentsManager() {
       );
       setEditingAgent(null);
       toast.success("System prompts and agent configurations updated successfully.");
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error("Failed to update system prompts. Check syntax or permissions.");
     } finally {
       setIsSaving(false);
@@ -381,3 +381,5 @@ export function AIAgentsManager() {
     </div>
   );
 }
+
+

@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   rejectGigSubmission,
@@ -28,8 +28,8 @@ export function PendingJobSubmissions() {
     queryFn: () => listPendingJobSubmissions(),
   });
 
-  const handleReview = (sub: any) => {
-    const payload = sub.submission_data as any;
+  const handleReview = (sub: unknown) => {
+    const payload = sub.submission_data as unknown;
     const cd = payload?.curated_data || {};
     const ai = payload?.ai_meta || payload?.parsed_job || {};
 
@@ -38,7 +38,7 @@ export function PendingJobSubmissions() {
       title: cd.title || ai.title || "",
       company_name: cd.company || ai.company_name || ai.company || "",
       location: cd.location || ai.location || "",
-      job_type: (cd.type || ai.job_type || "full_time").toLowerCase().replace(/\s|-/g, "_") as any,
+      job_type: (cd.type || ai.job_type || "full_time").toLowerCase().replace(/\s|-/g, "_") as unknown,
       experience_level: ai.experience_level || "mid",
       description: ai.description || payload?.raw_text || "",
       source_platform: "other",
@@ -56,7 +56,7 @@ export function PendingJobSubmissions() {
       });
       toast.success("Submission removed", { id: toastId });
       qc.invalidateQueries({ queryKey: ["pending-job-submissions"] });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error("Could not remove: " + (error?.message ?? "unknown"), { id: toastId });
     }
   };
@@ -73,7 +73,7 @@ export function PendingJobSubmissions() {
         adminNotes: "Verified and published via admin",
       });
       toast.success("Published & contributor rewarded", { id: toastId });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error(`Published, but reward failed: ${error?.message ?? "unknown"}`, { id: toastId });
     }
 
@@ -108,7 +108,7 @@ export function PendingJobSubmissions() {
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-12 gap-3 opacity-50">
             <InlineSpinner size="lg" />
-            <p className="text-[10px] font-semibold">Loading queue…</p>
+            <p className="text-[10px] font-semibold">Loading queueâ€¦</p>
           </div>
         ) : !data || data.length === 0 ? (
           <div className="py-16 border-2 border-dashed rounded-2xl text-center opacity-30 font-semibold uppercase text-xs tracking-widest">
@@ -116,8 +116,8 @@ export function PendingJobSubmissions() {
           </div>
         ) : (
           <div className="grid gap-3">
-            {data.map((sub: any) => {
-              const payload = sub.submission_data as any;
+            {data.map((sub: unknown) => {
+              const payload = sub.submission_data as unknown;
               const cd = payload?.curated_data || {};
               const ai = payload?.ai_meta || payload?.parsed_job || {};
 
@@ -177,3 +177,5 @@ export function PendingJobSubmissions() {
     </Card>
   );
 }
+
+

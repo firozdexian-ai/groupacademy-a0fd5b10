@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -49,7 +49,7 @@ export function ShareLinkDialog({
  <Dialog open={open} onOpenChange={onOpenChange}>
  <DialogContent className="max-w-2xl">
  <DialogHeader>
- <DialogTitle>Share — {document?.title}</DialogTitle>
+ <DialogTitle>Share â€” {document?.title}</DialogTitle>
  </DialogHeader>
 
  <Card className="p-4 space-y-3 bg-muted/30">
@@ -109,3 +109,4 @@ export function ShareLinkDialog({
  </Dialog>
  );
 }
+

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+﻿import { useEffect, useMemo } from "react";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 import { cn } from "@/lib/utils";
 
@@ -12,7 +12,7 @@ interface Props {
 /**
  * GroUp Academy: Trajectory Progress Ring Controller (TrackProgressRing)
  * An authoritative performance indicator rendering high-velocity spatial metrics matrices inside lightweight SVG ring elements.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function TrackProgressRing({ done, total, size = 56, label }: Props) {
   // Clean dynamic numeric indicators defensively against unexpected runtime parameters
@@ -59,7 +59,7 @@ export function TrackProgressRing({ done, total, size = 56, label }: Props) {
       className="relative inline-flex items-center justify-center select-none antialiased transform-gpu shrink-0"
       style={{ width: calculatedSize, height: calculatedSize }}
     >
-      {/* HUD COMPOSITE LAYER 1: HARDENED INTERACTIVE VECTOR SHIELD */}
+      {/* dashboard COMPOSITE LAYER 1: HARDENED INTERACTIVE VECTOR SHIELD */}
       <svg
         width={calculatedSize}
         height={calculatedSize}
@@ -87,7 +87,7 @@ export function TrackProgressRing({ done, total, size = 56, label }: Props) {
         />
       </svg>
 
-      {/* HUD COMPOSITE LAYER 2: TYPOGRAPHY METADATA DISPLAY STRIP CONTAINER */}
+      {/* dashboard COMPOSITE LAYER 2: TYPOGRAPHY METADATA DISPLAY STRIP CONTAINER */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center leading-none p-1">
         <div className="min-w-0 max-w-full text-center flex flex-col justify-center leading-none">
           <p className="text-xs sm:text-sm font-black tracking-tight tabular-nums text-foreground/90 block leading-none select-text">
@@ -103,3 +103,4 @@ export function TrackProgressRing({ done, total, size = 56, label }: Props) {
     </div>
   );
 }
+

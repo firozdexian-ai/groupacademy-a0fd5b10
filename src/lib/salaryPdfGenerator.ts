@@ -1,4 +1,4 @@
-import html2canvas from "html2canvas";
+﻿import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
 export async function generateSalaryAnalysisPDF(elementId: string, filename: string): Promise<boolean> {

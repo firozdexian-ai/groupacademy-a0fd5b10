@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,15 +33,15 @@ export function JobsUploadTab() {
     const toastId = toast.loading("Initializing neural extraction...");
 
     try {
-      const data: any = await parseJobPost({ text: rawText });
+      const data: unknown = await parseJobPost({ text: rawText });
 
-      const p = (data?.parsed_job || data) as any;
+      const p = (data?.parsed_job || data) as unknown;
       setPrefill({
         title: p.title || "",
         company_name: p.company_name || p.company || "",
         location: p.location || "",
-        job_type: (p.job_type || "full_time") as any,
-        experience_level: (p.experience_level || "mid") as any,
+        job_type: (p.job_type || "full_time") as unknown,
+        experience_level: (p.experience_level || "mid") as unknown,
         description: p.description || rawText,
         application_type: p.application_url ? "link" : "internal",
         application_url: p.application_url || "",
@@ -51,7 +51,7 @@ export function JobsUploadTab() {
 
       setShowForm(true);
       toast.success("Intelligence Extracted: Review node parameters", { id: toastId });
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error("AI Extraction Fault: Manual sync required.", { id: toastId });
       setPrefill({ description: rawText });
       setShowForm(true);
@@ -119,7 +119,7 @@ export function JobsUploadTab() {
                 <Textarea
                   value={rawText}
                   onChange={(e) => setRawText(e.target.value)}
-                  placeholder="Paste a LinkedIn post, company careers page, or any job description..."
+                  placeholder="Paste a LinkedIn post, company careers page, or unknown job description..."
                   rows={10}
                   className="rounded-3xl border-2 font-medium italic text-sm leading-relaxed bg-muted/5 p-8 focus-visible:ring-primary shadow-inner resize-none"
                 />
@@ -221,7 +221,7 @@ export function JobsUploadTab() {
   );
 }
 
-function TabTriggerNode({ value, icon: Icon, label }: any) {
+function TabTriggerNode({ value, icon: Icon, label }: unknown) {
   return (
     <TabsTrigger
       value={value}
@@ -232,3 +232,5 @@ function TabTriggerNode({ value, icon: Icon, label }: any) {
     </TabsTrigger>
   );
 }
+
+

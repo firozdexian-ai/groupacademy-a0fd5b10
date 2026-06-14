@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+﻿import { useState, useEffect, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { listJobsByCompanyAndStatus } from "@/domains/jobs/repo/jobsRepo";
 import { useInviteToApply } from "@/domains/jobs";
@@ -34,7 +34,7 @@ interface ActiveJobNode {
 /**
  * GroUp Academy: Employer Job Invitation Dispatch Gateway Terminal (InviteToApplyDialog)
  * An authoritative operational sandbox managing async invitation routing, telemetry checks, and corporate ledger sync tasks.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }: InviteToApplyDialogProps) {
   const queryClient = useQueryClient();
@@ -76,7 +76,7 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
           trackEvent("job_invitation_active_openings_loaded", { listingsCount: typedJobsList.length });
         }
       })
-      .catch((jobsQueryError: any) => {
+      .catch((jobsQueryError: unknown) => {
         trackError(jobsQueryError, {
           component: "InviteToApplyDialog",
           action: "fetch_company_active_jobs",
@@ -107,7 +107,7 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
     setSaving(true);
     trackEvent("job_invitation_dispatch_initiated", { targetSelectedJobId });
     const dynamicToastTrackerId = toast.loading(
-      "Processing cryptography handshake parameters over secure tracking rows…",
+      "Processing cryptography handshake parameters over secure tracking rowsâ€¦",
     );
 
     try {
@@ -133,7 +133,7 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
         setNote("");
         onOpenChange(false);
       }
-    } catch (caughtPipelineExceptionErr: any) {
+    } catch (caughtPipelineExceptionErr: unknown) {
       const formattedExceptionMsgStr =
         caughtPipelineExceptionErr instanceof Error
           ? caughtPipelineExceptionErr.message
@@ -164,7 +164,7 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
       }}
     >
       <DialogContent className="sm:max-w-md rounded-xl border border-border/40 bg-card/95 backdrop-blur-xl shadow-2xl p-5 sm:p-6 text-left antialiased overflow-hidden transform-gpu select-none sm:select-text flex flex-col justify-center">
-        {/* HUD LEVEL 1: TOP PANEL TRACK HEADING CONTAINER */}
+        {/* dashboard LEVEL 1: TOP PANEL TRACK HEADING CONTAINER */}
         <DialogHeader className="mb-4 text-left select-none shrink-0 leading-none w-full">
           <div className="flex items-center gap-2.5 leading-none w-full">
             <div className="h-7 w-7 rounded-lg bg-primary/10 border border-primary/5 text-primary flex items-center justify-center shrink-0 shadow-inner">
@@ -181,7 +181,7 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
           </div>
         </DialogHeader>
 
-        {/* HUD LEVEL 2: COMPOSITE INPUT ENTRY SCHEMATIC MATRIX FORMS */}
+        {/* dashboard LEVEL 2: COMPOSITE INPUT ENTRY SCHEMATIC MATRIX FORMS */}
         <div className="space-y-4 w-full min-w-0 font-bold text-xs tracking-tight text-foreground/90">
           {/* JOB SPECIFICATION OPENINGS SELECT COMPONENT */}
           <div className="space-y-1.5 text-left w-full min-w-0">
@@ -237,14 +237,14 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
               value={note}
               disabled={saving}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Inject precise conversion messaging notes detailing platform alignment, salary parities, or custom deliverables…"
+              placeholder="Inject precise conversion messaging notes detailing platform alignment, salary parities, or custom deliverablesâ€¦"
               className="w-full rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3.5 leading-relaxed resize-none shadow-inner"
               maxLength={400}
             />
           </div>
         </div>
 
-        {/* HUD LEVEL 3: FOOTER DISPATCH ACTION STRIP CONTROL BUTTON ROW */}
+        {/* dashboard LEVEL 3: FOOTER DISPATCH ACTION STRIP CONTROL BUTTON ROW */}
         <DialogFooter className="mt-5 gap-2.5 sm:gap-0 select-none border-t border-border/10 pt-4 w-full shrink-0 flex items-center justify-end font-bold text-xs">
           <Button
             variant="ghost"
@@ -265,7 +265,7 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
             {saving ? (
               <>
                 <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                <span>Syncing Pipeline Ledger…</span>
+                <span>Syncing Pipeline Ledgerâ€¦</span>
               </>
             ) : (
               <>
@@ -276,7 +276,7 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
           </Button>
         </DialogFooter>
 
-        {/* HUD LEVEL 4: RECTILINEAR OVERLAY BOTTOM METRIC LOG OMNIPRESENCE SHIELD */}
+        {/* dashboard LEVEL 4: RECTILINEAR OVERLAY BOTTOM METRIC LOG OMNIPRESENCE SHIELD */}
         <div className="shrink-0 pt-2 mt-4 border-t border-border/10 select-none shadow-none pointer-events-none tracking-normal font-bold text-[9px] text-muted-foreground/40 font-mono leading-none uppercase w-full flex items-center justify-center gap-1.5 h-6">
           <Zap className="h-3.5 w-3.5 text-amber-500 fill-amber-500/10 stroke-[2.2] shrink-0 animate-pulse" />
           <span>Talent attraction acquisition protocol transmission calibration sync core complete</span>
@@ -285,3 +285,5 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
     </Dialog>
   );
 }
+
+

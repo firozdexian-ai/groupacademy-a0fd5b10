@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,7 @@ import { trackError } from "@/lib/errorTracking";
 import type { LucideIcon } from "lucide-react";
 
 /**
- * Group Academy — Career Guidance System: Agent Categorization Directory List Tab Component
+ * Group Academy â€” Career Guidance System: Agent Categorization Directory List Tab Component
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/command-center?tab=fleet (Fleet Configuration Workspace Node View)
  * Operations Mode: Automated Efficiency listing workspace filtering system agents across permissions boundaries.
@@ -26,7 +26,7 @@ interface Props {
 }
 
 export function AgentListTab({ title, description, icon: Icon, agentTypeFilter, audienceFilter, emptyHint }: Props) {
-  const [rows, setRows] = useState<any[]>([]);
+  const [rows, setRows] = useState<unknown[]>([]);
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
@@ -41,7 +41,7 @@ export function AgentListTab({ title, description, icon: Icon, agentTypeFilter, 
           setIsLoading(false);
         }
       })
-      .catch((err: any) => {
+      .catch((err: unknown) => {
         trackError("agent-list-tab-fetch-failure", {
           error: err?.message || String(err),
           agentTypeFilter,
@@ -181,3 +181,5 @@ export function AgentListTab({ title, description, icon: Icon, agentTypeFilter, 
 }
 
 export default AgentListTab;
+
+

@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Copy, LogIn, Mail } from "lucide-react";
@@ -48,7 +48,7 @@ export function JobApplyCTA({
   const navigate = useNavigate();
   const [externalOpen, setExternalOpen] = React.useState(false);
 
-  // Deadline closed → disabled
+  // Deadline closed â†’ disabled
   if (deadlinePassed) {
     return (
       <Button size={size} disabled className={cn("font-semibold", className)}>
@@ -57,7 +57,7 @@ export function JobApplyCTA({
     );
   }
 
-  // Public viewer → route through auth with safe return
+  // Public viewer â†’ route through auth with safe return
   if (authMode === "public") {
     const returnTo = safeReturnTo(`/app/jobs/${job.id}/apply`) ?? `/app/jobs/${job.id}`;
     return (
@@ -74,7 +74,7 @@ export function JobApplyCTA({
     );
   }
 
-  // Already applied → view application / resume assessment
+  // Already applied â†’ view application / resume assessment
   if (existingApplication) {
     const needsAssessment =
       job.ai_assessment_enabled && existingApplication.assessment_status !== "completed";
@@ -155,3 +155,4 @@ export function JobApplyCTA({
     </Button>
   );
 }
+

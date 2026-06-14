@@ -71,4 +71,10 @@ export default tseslint.config(
       "no-restricted-syntax": ["error", NO_RAW_INVOKE],
     },
   },
+  {
+    files: ["supabase/functions/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-syntax": "off",
+    },
+  },
 );

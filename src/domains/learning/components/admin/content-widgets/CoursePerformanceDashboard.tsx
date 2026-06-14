@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+﻿import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BarChart3, Download, Layers, Activity, Sparkles } from "lucide-react";
@@ -136,3 +136,4 @@ export default function CoursePerformanceDashboard({ contentId, contentTitle }: 
     </div>
   );
 }
+

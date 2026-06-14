@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Marketing domain barrel.
  * Exposes the admin tab surface, leads sub-area, the marketing graph hook,
  * and the typed API manifest. Repo helpers are imported directly via
@@ -33,3 +33,4 @@ export { useMarketingGraph } from "./components/admin/hooks/useMarketingGraph";
 // API
 export { leadHuntMatch } from "./api/manifest";
 export type { LeadHuntMatchRequest, LeadHuntMatchResponse } from "./api/manifest";
+

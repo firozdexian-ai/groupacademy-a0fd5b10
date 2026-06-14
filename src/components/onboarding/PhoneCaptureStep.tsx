@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+﻿import { useEffect, useState, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowRight, Loader2, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,7 @@ export function PhoneCaptureStep({ onContinue }: Props) {
   const { talent, updateTalent, refreshTalent } = useTalent();
 
   const [phone, setPhone] = useState("");
-  // Default to talent's stored country if any; otherwise leave blank so the PhoneInput
+  // Default to talent's stored country if unknown; otherwise leave blank so the PhoneInput
   // shows the user's selection rather than presuming a region.
   const [countryCode, setCountryCode] = useState<string>("");
   const [country, setCountry] = useState<string>("");
@@ -59,7 +59,7 @@ export function PhoneCaptureStep({ onContinue }: Props) {
     const fullPhone = `${countryCode}${phone.replace(/\D/g, "")}`;
     trackEvent("onboarding_phone_save_requested", { countryCode });
 
-    const toastId = toast.loading("Checking your phone number…");
+    const toastId = toast.loading("Checking your phone numberâ€¦");
 
     try {
       const existing = await findTalentByPhoneExceptId(fullPhone, talent.id);
@@ -86,14 +86,14 @@ export function PhoneCaptureStep({ onContinue }: Props) {
 
       toast.success("Phone number saved.", { id: toastId });
       onContinue();
-    } catch (err: any) {
+    } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       trackError(msg, {
         component: "PhoneCaptureStep",
         action: "commit_onboarding_phone",
         talentId: talent?.id,
       });
-      toast.error("Couldn't save your phone — please try again.", { id: toastId });
+      toast.error("Couldn't save your phone â€” please try again.", { id: toastId });
     } finally {
       setIsSaving(false);
     }
@@ -138,7 +138,7 @@ export function PhoneCaptureStep({ onContinue }: Props) {
           {isSaving ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin stroke-[2.5] mr-2" />
-              <span>Saving…</span>
+              <span>Savingâ€¦</span>
             </>
           ) : (
             <>
@@ -151,3 +151,5 @@ export function PhoneCaptureStep({ onContinue }: Props) {
     </div>
   );
 }
+
+

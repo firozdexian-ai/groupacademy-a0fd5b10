@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+﻿import { useState, useEffect, useRef, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -31,7 +31,7 @@ interface ResourceViewerProps {
 /**
  * GroUp Academy: Multi-Modal Instructional Ingestion Engine (ResourceViewer)
  * An authoritative operational pipeline processing visual assets, audio waveforms, and external embedding matrices safely.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function ResourceViewer({ type, url, title, onProgress, onComplete, className }: ResourceViewerProps) {
   const queryClient = useQueryClient();
@@ -454,3 +454,4 @@ export function ResourceViewer({ type, url, title, onProgress, onComplete, class
 
   return null;
 }
+

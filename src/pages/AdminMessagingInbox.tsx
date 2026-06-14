@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { pauseMessagingConversationAutoReply } from "@/domains/messaging/repo/messagingRepo";
 import { Button } from "@/components/ui/button";
@@ -91,7 +91,7 @@ export default function AdminMessagingInbox() {
     const ch = supabase
       .channel("messaging_inbox_realtime")
       .on("postgres_changes", { event: "*", schema: "public", table: "messaging_conversations" }, () => loadConvs())
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messaging_messages" }, (payload: any) => {
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messaging_messages" }, (payload: unknown) => {
         if (payload.new?.conversation_id === activeId) loadMessages(activeId);
         if (payload.new?.direction === "in") toast.info("New message received");
       })
@@ -114,7 +114,7 @@ export default function AdminMessagingInbox() {
       await messagingSend({ conversation_id: activeId, text: composer.trim() });
       setComposer("");
       await loadMessages(activeId);
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(e.message);
     } finally {
       setSending(false);
@@ -307,3 +307,5 @@ export default function AdminMessagingInbox() {
     </div>
   );
 }
+
+

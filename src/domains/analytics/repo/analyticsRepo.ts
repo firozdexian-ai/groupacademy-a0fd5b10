@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Analytics domain repository (Phase 10i.1 - Hardened).
  * Centralizes the platform's financial and operation metrics, optimizes data
  * retrieval via a single-trip aggregated layout, and provides safe-failing telemetry sinks
@@ -54,13 +54,13 @@ export async function getLifetimeOverviewMaster(todayIso: string): Promise<Lifet
       supabase.from("mock_interviews").select("status"),
       supabase.from("portfolio_requests").select("status"),
       supabase.from("agent_chat_sessions").select("*", { count: "exact", head: true }),
-      supabase.from("talent_credits" as any).select("balance"),
+      supabase.from("talent_credits" as unknown).select("balance"),
       supabase.from("company_credits").select("balance"),
       supabase.rpc("get_top_countries"),
       supabase.from("credit_transactions").select("*", { count: "exact", head: true }).gte("created_at", todayIso),
     ]);
 
-    // Handle structural errors across any sub-pipelines
+    // Handle structural errors across unknown sub-pipelines
     if (talentCountRes.error) throw talentCountRes.error;
     if (regCountRes.error) throw regCountRes.error;
     if (enrollCountRes.error) throw enrollCountRes.error;
@@ -73,7 +73,7 @@ export async function getLifetimeOverviewMaster(todayIso: string): Promise<Lifet
       (p) => (p.status as string) === "completed" || (p.status as string) === "delivered",
     ).length;
     const totalTalentCreditsBalance = (talentCredsRes.data ?? []).reduce(
-      (acc, curr: any) => acc + Number(curr.balance || 0),
+      (acc, curr: unknown) => acc + Number(curr.balance || 0),
       0,
     );
     const totalCompanyCreditsBalance = (companyCredsRes.data ?? []).reduce(
@@ -93,10 +93,10 @@ export async function getLifetimeOverviewMaster(todayIso: string): Promise<Lifet
       agentSessionsCount: sessionCountRes.count ?? 0,
       totalTalentCreditsBalance,
       totalCompanyCreditsBalance,
-      countryStats: (countryStatsRes.data ?? []) as any[],
+      countryStats: (countryStatsRes.data ?? []) as unknown[],
       txTodayCount: txTodayRes.count ?? 0,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("[Digital Workforce Anomaly] Analytics pipeline compilation failure:", error);
 
     // Fallback securely into zero-state schema so admin cockpit does not crash blank
@@ -129,7 +129,7 @@ export async function insertPlatformEvent(input: {
   payload: Record<string, unknown>;
 }): Promise<void> {
   try {
-    const { error } = await supabase.from("platform_events").insert(input as any);
+    const { error } = await supabase.from("platform_events").insert(input as unknown);
     if (error) throw error;
   } catch (err) {
     console.error("[Digital Workforce Anomaly] Telemetry engine failed to log platform event:", err);
@@ -163,7 +163,7 @@ export async function trackContentClick(args: { contentId: string; source: strin
 }
 
 export async function trackCourseReferralClick(args: { contentId: string; refCode: string }): Promise<void> {
-  const { error } = await supabase.rpc("track_course_referral_click" as any, {
+  const { error } = await supabase.rpc("track_course_referral_click" as unknown, {
     p_content_id: args.contentId,
     p_ref_code: args.refCode,
   });
@@ -189,12 +189,14 @@ export async function analystMetricsBulk(args: {
   try {
     const { data, error } = await supabase.rpc("analyst_metrics_bulk", {
       metrics: args.metrics,
-      periods: args.periods as any,
+      periods: args.periods as unknown,
     });
     if (error) throw error;
-    return (data ?? []) as any[];
+    return (data ?? []) as unknown[];
   } catch (error) {
     console.error("[Digital Workforce Anomaly] Bulk analytical aggregation failure:", error);
     throw new Error("Bulk metric calculation failed. Please check date period bounds.");
   }
 }
+
+

@@ -1,5 +1,5 @@
-/**
- * GroUp Academy: Institutional Resilience & Recovery Sentinel
+﻿/**
+ * GroUp Academy: Institutional Resilience & Recovery guard
  * CTO Reference: Authoritative fail-safe for cache, chunk, and BFCache restoration.
  * Performance: Implements atomic reloads with search-param cache busting.
  */
@@ -8,7 +8,7 @@ const RECOVERY_FLAG = "__app_recovered_once";
 const RECOVERY_COOLDOWN_MS = 10000; // 10s Cooldown Threshold
 
 /**
- * HUD: RECOVERY_THROTTLE_CHECK
+ * dashboard: RECOVERY_THROTTLE_CHECK
  * Logic: Prevents recursive reload loops within the monotonic window.
  */
 function isInRecoveryCooldown(): boolean {
@@ -29,17 +29,17 @@ function markRecoveryAttempt(): void {
  */
 export function reloadWithCacheBust(reason: string): void {
   if (isInRecoveryCooldown()) {
-    console.warn(`[Sentinel] RECOVERY_THROTTLE: Skipping reload. Reason: ${reason}`);
+    console.warn(`[guard] RECOVERY_THROTTLE: Skipping reload. Reason: ${reason}`);
     return;
   }
 
-  console.error(`[Sentinel] TRIGGER_RELOAD: Fault detected (${reason})`);
+  console.error(`[guard] TRIGGER_RELOAD: Fault detected (${reason})`);
   markRecoveryAttempt();
 
   const url = new URL(window.location.href);
   url.searchParams.set("_cb", Date.now().toString());
 
-  // HUD: Atomic replacement to preserve history integrity
+  // dashboard: Atomic replacement to preserve history integrity
   window.location.replace(url.toString());
 }
 
@@ -48,7 +48,7 @@ export function reloadWithCacheBust(reason: string): void {
  * Clears institutional auth artifacts when session corruption is detected.
  */
 export function resetSessionAndReload(): void {
-  console.error("[Sentinel] SESSION_RESET: Purging auth artifacts...");
+  console.error("[guard] SESSION_RESET: Purging auth artifacts...");
 
   const clearRegistry = (storage: Storage) => {
     const keys = [];
@@ -83,7 +83,7 @@ function isChunkLoadError(message: string): boolean {
 }
 
 /**
- * HUD: Institutional Error Handlers
+ * dashboard: Institutional Error Handlers
  */
 export function installChunkErrorHandlers(): void {
   window.addEventListener("error", (event) => {
@@ -103,12 +103,12 @@ export function installChunkErrorHandlers(): void {
 }
 
 /**
- * HUD: BFCache Restoration Sentinel
+ * dashboard: BFCache Restoration guard
  */
 export function installBFCacheHandler(): void {
   window.addEventListener("pageshow", (event) => {
     if (event.persisted) {
-      console.warn("[Sentinel] BFCACHE_DETECTED: Forcing state refresh...");
+      console.warn("[guard] BFCACHE_DETECTED: Forcing state refresh...");
       reloadWithCacheBust("bfcache_restore");
     }
   });
@@ -121,3 +121,4 @@ export function initializeAppRecovery(): void {
   installChunkErrorHandlers();
   installBFCacheHandler();
 }
+

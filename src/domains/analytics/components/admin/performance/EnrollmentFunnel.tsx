@@ -1,5 +1,5 @@
-/**
- * Enrollment Funnel Analytics Sub-Widget (Phase 10i — Hardened).
+﻿/**
+ * Enrollment Funnel Analytics Sub-Widget (Phase 10i â€” Hardened).
  * Renders horizontal relative conversion indicators for customer acquisition pipelines.
  * Fully optimized to align with 2024 Highly Professional SaaS UI guidelines.
  */
@@ -53,3 +53,4 @@ export default function EnrollmentFunnel({ funnel }: EnrollmentFunnelProps) {
     </div>
   );
 }
+

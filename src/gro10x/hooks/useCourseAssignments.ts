@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Loads B2B-tagged courses + the current user's company assignments.
  * Single source of truth for the Gro10x Learn tab.
  */
@@ -56,3 +56,4 @@ export function useCompanyAssignments(companyId: string | null) {
     queryFn: async () => listCompanyCourseAssignmentsByCompany(companyId!),
   });
 }
+

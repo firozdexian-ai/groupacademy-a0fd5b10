@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -26,7 +26,7 @@ const TYPE_LABEL: Record<string, string> = {
 };
 
 /**
- * CompanyCard — directory card for an employer with active jobs + follow toggle.
+ * CompanyCard â€” directory card for an employer with active jobs + follow toggle.
  */
 export function CompanyCard({ company, isFollowing, onToggleFollow, onClick }: Props) {
   const queryClient = useQueryClient();
@@ -193,3 +193,4 @@ export function CompanyCard({ company, isFollowing, onToggleFollow, onClick }: P
     </Card>
   );
 }
+

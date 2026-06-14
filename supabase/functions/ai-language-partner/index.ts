@@ -1,4 +1,4 @@
-// AI Language Partner — chat at chosen CEFR level with inline corrections
+﻿// AI Language Partner â€” chat at chosen CEFR level with inline corrections
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
     if (!lang) return json({ error: "language not found" }, 404);
 
     // Load or create session
-    let session: any;
+    let session: unknown;
     if (sessionId) {
       const { data } = await admin.from("language_practice_sessions").select("*").eq("id", sessionId).maybeSingle();
       session = data;
@@ -52,8 +52,8 @@ Deno.serve(async (req) => {
       session = data;
     }
 
-    const transcript: any[] = Array.isArray(session.transcript) ? session.transcript : [];
-    const corrections: any[] = Array.isArray(session.corrections) ? session.corrections : [];
+    const transcript: unknown[] = Array.isArray(session.transcript) ? session.transcript : [];
+    const corrections: unknown[] = Array.isArray(session.corrections) ? session.corrections : [];
 
     const sysPrompt = `You are a friendly conversation partner helping a learner practice ${lang.name} at CEFR ${cefr}.
 
@@ -75,7 +75,7 @@ If the user's message is already correct, return corrections: [].`;
 
     const messages = [
       { role: "system", content: sysPrompt },
-      ...transcript.slice(-10).map((t: any) => ({ role: t.role, content: t.content })),
+      ...transcript.slice(-10).map((t: unknown) => ({ role: t.role, content: t.content })),
       { role: "user", content: userMessage },
     ];
 
@@ -94,13 +94,13 @@ If the user's message is already correct, return corrections: [].`;
       return json({ error: `ai_error_${ai.status}` }, 500);
     }
     const aiData = await ai.json();
-    let parsed: any = {};
+    let parsed: unknown = {};
     try { parsed = JSON.parse(aiData.choices?.[0]?.message?.content ?? "{}"); } catch { parsed = { reply: aiData.choices?.[0]?.message?.content }; }
 
     transcript.push({ role: "user", content: userMessage, ts: Date.now() });
     transcript.push({ role: "assistant", content: parsed.reply ?? "", translation_en: parsed.translation_en, ts: Date.now() });
     if (Array.isArray(parsed.corrections) && parsed.corrections.length > 0) {
-      corrections.push(...parsed.corrections.map((c: any) => ({ ...c, ts: Date.now() })));
+      corrections.push(...parsed.corrections.map((c: unknown) => ({ ...c, ts: Date.now() })));
     }
 
     // Charge 1 credit per N turns (1 turn = 1 user message)
@@ -124,11 +124,13 @@ If the user's message is already correct, return corrections: [].`;
       corrections: parsed.corrections ?? [],
       credits_spent: creditAdd,
     });
-  } catch (e: any) {
+  } catch (e: unknown) {
     return json({ error: e?.message ?? "unknown" }, 500);
   }
 });
 
-function json(b: any, status = 200) {
+function json(b: unknown, status = 200) {
   return new Response(JSON.stringify(b), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 }
+
+

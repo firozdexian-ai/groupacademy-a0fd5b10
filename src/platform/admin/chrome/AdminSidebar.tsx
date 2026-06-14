@@ -1,4 +1,4 @@
-import { useNavigate, useLocation } from "react-router-dom";
+﻿import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useMemo, useEffect } from "react";
 import {
   Flag,
@@ -301,7 +301,7 @@ const navGroups: NavGroup[] = [
       { title: "JSON Importer",    icon: Upload,          value: "learning-json-importer" },
     ],
   },
-  // Legacy Gig Economy group removed — unified above.
+  // Legacy Gig Economy group removed â€” unified above.
   {
     title: "Career Abroad",
     icon: Globe,
@@ -428,7 +428,7 @@ export function AdminSidebar({ activeTab, onTabChange, userRole = "admin", admin
       </SidebarHeader>
 
       <SidebarContent className="p-3 gap-2 overflow-y-auto no-scrollbar">
-        {/* Agentic Dashboard (Chat) — Top Level Action */}
+        {/* Agentic Dashboard (Chat) â€” Top Level Action */}
         {(userRole === "admin" || userRole === "super_admin") &&
           (() => {
             const isChat = location.pathname.startsWith("/dashboard/chat");
@@ -580,3 +580,4 @@ export function AdminSidebar({ activeTab, onTabChange, userRole = "admin", admin
     </Sidebar>
   );
 }
+

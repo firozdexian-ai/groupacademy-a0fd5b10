@@ -1,4 +1,4 @@
-// LinkedIn Profile Scraper / Leads-Finder JSON → Talent / Contact / Investor parser
+﻿// LinkedIn Profile Scraper / Leads-Finder JSON â†’ Talent / Contact / Investor parser
 // Supports two formats: camelCase (old scraper) and snake_case (new leads-finder)
 
 export interface LinkedInProfile {
@@ -17,9 +17,9 @@ export interface LinkedInProfile {
   profilePicHighQuality?: string | null;
   profilePic?: string | null;
   about?: string | null;
-  experiences?: any[];
-  educations?: any[];
-  skills?: any[];
+  experiences?: unknown[];
+  educations?: unknown[];
+  skills?: unknown[];
   jobTitle?: string | null;
   companyIndustry?: string | null;
   connections?: number | null;
@@ -54,7 +54,7 @@ export interface LinkedInProfile {
   country?: string | null;
   keywords?: string | null;
 
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface CompanyData {
@@ -68,7 +68,7 @@ export interface CompanyData {
 }
 
 export interface ParsedRecord {
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   warnings: string[];
   raw: LinkedInProfile;
 }
@@ -79,18 +79,18 @@ export interface SkippedRecord {
   raw: LinkedInProfile;
 }
 
-export interface ParseResult<T = Record<string, any>> {
+export interface ParseResult<T = Record<string, unknown>> {
   valid: ParsedRecord[];
   skipped: SkippedRecord[];
 }
 
-// ─── FORMAT DETECTION ───────────────────────────────────────
+// â”€â”€â”€ FORMAT DETECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function isLeadsFinderFormat(p: LinkedInProfile): boolean {
   return 'first_name' in p || 'job_title' in p || ('linkedin' in p && !('linkedinUrl' in p));
 }
 
-// ─── FIELD EXTRACTORS ───────────────────────────────────────
+// â”€â”€â”€ FIELD EXTRACTORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function getName(p: LinkedInProfile): string {
   return (
@@ -161,7 +161,7 @@ function mapKeywordsToSkills(p: LinkedInProfile): string[] | null {
   return mapSkills(p.skills || []);
 }
 
-function mapEducations(educations: any[]): any[] | null {
+function mapEducations(educations: unknown[]): unknown[] | null {
   if (!educations || educations.length === 0) return null;
   return educations.map((e) => ({
     institution: e.schoolName || e.school || e.name || null,
@@ -172,7 +172,7 @@ function mapEducations(educations: any[]): any[] | null {
   }));
 }
 
-function mapExperiences(experiences: any[]): any[] | null {
+function mapExperiences(experiences: unknown[]): unknown[] | null {
   if (!experiences || experiences.length === 0) return null;
   return experiences.map((e) => ({
     company: e.companyName || e.company || null,
@@ -185,12 +185,12 @@ function mapExperiences(experiences: any[]): any[] | null {
   }));
 }
 
-function mapSkills(skills: any[]): any[] | null {
+function mapSkills(skills: unknown[]): unknown[] | null {
   if (!skills || skills.length === 0) return null;
   return skills.map((s) => (typeof s === "string" ? s : s.name || s.skill || String(s)));
 }
 
-// ─── PROFESSION EXTRACTION ─────────────────────────────────
+// â”€â”€â”€ PROFESSION EXTRACTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const SENIORITY_PREFIXES = [
   'sr\\.?', 'senior', 'jr\\.?', 'junior', 'lead', 'principal', 'chief',
@@ -198,24 +198,24 @@ const SENIORITY_PREFIXES = [
   'associate', 'assistant', 'staff', 'executive', 'managing',
 ];
 const SENIORITY_REGEX = new RegExp(`^(${SENIORITY_PREFIXES.join('|')})\\s+`, 'i');
-const COMPANY_SPLIT_REGEX = /\s+(?:at|@|[-–—]|,)\s+/i;
+const COMPANY_SPLIT_REGEX = /\s+(?:at|@|[-â€“â€”]|,)\s+/i;
 
 /**
  * Extracts a clean profession from a raw headline / job_title.
- * "Sr. Software Engineer at Google" → "Software Engineer"
- * "Managing Director - Acme Corp" → "Director"
+ * "Sr. Software Engineer at Google" â†’ "Software Engineer"
+ * "Managing Director - Acme Corp" â†’ "Director"
  */
 export function extractProfession(raw: string | null): string | null {
   if (!raw) return null;
   // Strip company context
   let profession = raw.split(COMPANY_SPLIT_REGEX)[0].trim();
-  // Strip seniority prefixes (up to 2 passes for "Senior Lead …")
+  // Strip seniority prefixes (up to 2 passes for "Senior Lead â€¦")
   profession = profession.replace(SENIORITY_REGEX, '').trim();
   profession = profession.replace(SENIORITY_REGEX, '').trim();
   return profession || raw;
 }
 
-// ─── TALENTS ────────────────────────────────────────────────
+// â”€â”€â”€ TALENTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export function parseLinkedInForTalents(profiles: LinkedInProfile[]): ParseResult {
   const valid: ParsedRecord[] = [];
@@ -238,7 +238,7 @@ export function parseLinkedInForTalents(profiles: LinkedInProfile[]): ParseResul
     const experience = mapExperiences(p.experiences || []);
     const rawHeadline = getHeadline(p);
 
-    const data: Record<string, any> = {
+    const data: Record<string, unknown> = {
       full_name: name,
       email: email || `placeholder-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@linkedin-import.local`,
       phone: getPhone(p),
@@ -270,7 +270,7 @@ export function parseLinkedInForTalents(profiles: LinkedInProfile[]): ParseResul
   return { valid, skipped };
 }
 
-// ─── CONTACTS ───────────────────────────────────────────────
+// â”€â”€â”€ CONTACTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export function parseLinkedInForContacts(profiles: LinkedInProfile[]): ParseResult {
   const valid: ParsedRecord[] = [];
@@ -287,7 +287,7 @@ export function parseLinkedInForContacts(profiles: LinkedInProfile[]): ParseResu
     const email = getEmail(p);
     if (!email) warnings.push("No email");
 
-    const data: Record<string, any> = {
+    const data: Record<string, unknown> = {
       full_name: name,
       email: email || null,
       phone: getPhone(p),
@@ -305,7 +305,7 @@ export function parseLinkedInForContacts(profiles: LinkedInProfile[]): ParseResu
   return { valid, skipped };
 }
 
-// ─── INVESTORS ──────────────────────────────────────────────
+// â”€â”€â”€ INVESTORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export function parseLinkedInForInvestors(profiles: LinkedInProfile[]): ParseResult {
   const valid: ParsedRecord[] = [];
@@ -322,7 +322,7 @@ export function parseLinkedInForInvestors(profiles: LinkedInProfile[]): ParseRes
     const email = getEmail(p);
     if (!email) warnings.push("No email");
 
-    const data: Record<string, any> = {
+    const data: Record<string, unknown> = {
       full_name: name,
       email: email || null,
       phone: getPhone(p),
@@ -339,3 +339,5 @@ export function parseLinkedInForInvestors(profiles: LinkedInProfile[]): ParseRes
 
   return { valid, skipped };
 }
+
+

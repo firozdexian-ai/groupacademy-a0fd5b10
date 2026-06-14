@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -44,7 +44,7 @@ interface PayoutAccount {
 
 const METHOD_LABEL: Record<string, string> = { bkash: "bKash", bank: "Bank transfer", paypal: "PayPal", wise: "Wise" };
 
-const STATUS_META: Record<WithdrawalRequest["status"], { label: string; icon: any; cls: string }> = {
+const STATUS_META: Record<WithdrawalRequest["status"], { label: string; icon: unknown; cls: string }> = {
  pending: { label: "Pending review", icon: Clock, cls: "bg-amber-100 text-amber-700 border-amber-200" },
  approved: { label: "Approved", icon: CheckCircle2, cls: "bg-blue-100 text-blue-700 border-blue-200" },
  paid: { label: "Paid", icon: CheckCircle2, cls: "bg-emerald-100 text-emerald-700 border-emerald-200" },
@@ -60,7 +60,7 @@ export default function Withdrawals() {
  const [submitting, setSubmitting] = useState(false);
 
  // Digital Workforce Anomaly Protocol[cite: 6]
- const reportAnomaly = async (event: string, context: any) => {
+ const reportAnomaly = async (event: string, context: unknown) => {
  console.error(`[Digital Workforce Anomaly] ${event}`, context);
  await adminSupportAssistant({ type: "payout_error", event, context });
  };
@@ -182,7 +182,7 @@ export default function Withdrawals() {
  <SelectContent>
  {accounts.map((a) => (
  <SelectItem key={a.id} value={a.id}>
- {METHOD_LABEL[a.method]} · {a.account_name}
+ {METHOD_LABEL[a.method]} Â· {a.account_name}
  </SelectItem>
  ))}
  </SelectContent>
@@ -207,3 +207,5 @@ export default function Withdrawals() {
  </div>
  );
 }
+
+

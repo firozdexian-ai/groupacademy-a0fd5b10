@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { getCurrentUser } from "@/lib/auth";
 import { insertAssessmentAccessCode } from "@/domains/jobs/repo/jobsRepo";
 import { Button } from "@/components/ui/button";
@@ -62,7 +62,7 @@ export function StandaloneAssessmentCodeGenerator() {
           executeInsertion(),
           TIMEOUTS.DEFAULT,
           "Database latency detected during generation",
-        )) as { error: any };
+        )) as { error: unknown };
 
         if (result.error) {
           // Handle collision (rare) by retrying this iteration
@@ -77,7 +77,7 @@ export function StandaloneAssessmentCodeGenerator() {
 
       setGeneratedCodes(codes);
       toast.success(`${codes.length} key(s) deployed.`);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Access Code Fault:", error);
       toast.error(error.message || "System Error: Code generation failed.");
     } finally {
@@ -160,7 +160,7 @@ export function StandaloneAssessmentCodeGenerator() {
           {isGenerating ? (
             <>
               <InlineSpinner size="md" />
-              Saving…
+              Savingâ€¦
             </>
           ) : (
             <>
@@ -212,3 +212,5 @@ export function StandaloneAssessmentCodeGenerator() {
     </Card>
   );
 }
+
+

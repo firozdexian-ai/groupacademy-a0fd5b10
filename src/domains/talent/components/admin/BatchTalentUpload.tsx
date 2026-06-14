@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+﻿import { useState, useCallback, useRef } from "react";
 import { getCurrentUser } from "@/lib/auth";
 import { uploadTalentCv, createTalentCvSignedUrl } from "@/domains/jobs/repo/jobsRepo";
 import { talentRepo } from "@/domains/talent/repo/talentRepo";
@@ -37,7 +37,7 @@ import { InlineSpinner } from "@/components/common/InlineSpinner";
 /**
  * Platform Logic: Talent Registry Ingestion Node
  * High-fidelity orchestrator for bulk CV parsing and talent artifact synchronization.
- * 2026 Standard: Executive Logic geometry with reinforced storage telemetry.
+ * 2026 Standard:  geometry with reinforced storage telemetry.
  */
 
 interface BatchUpload {
@@ -47,7 +47,7 @@ interface BatchUpload {
  skipped_count: number;
  failed_count: number;
  status: string;
- error_log: any[] | null;
+ error_log: unknown[] | null;
  created_at: string;
  completed_at: string | null;
 }
@@ -143,7 +143,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
  completed_at: null,
  });
 
- Papa.parse<any>(csvFile, {
+ Papa.parse<unknown>(csvFile, {
  header: true,
  skipEmptyLines: true,
  complete: async (results) => {
@@ -264,7 +264,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
  toast.success(`URL Ingestion Initialized: ${urls.length} Artifacts Syncing`);
  setUrlsInput("");
  pollBatchProgress(batch.id);
- } catch (error: any) {
+ } catch (error: unknown) {
  toast.error(error.message || "Transmission Fault");
  setIsUploading(false);
  setShowProgress(false);
@@ -321,7 +321,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
  setSelectedFiles([]);
  if (fileInputRef.current) fileInputRef.current.value = "";
  pollBatchProgress(batch.id);
- } catch (error: any) {
+ } catch (error: unknown) {
  toast.error(error.message || "Transmission Fault");
  setIsUploading(false);
  setUploadingFiles(false);
@@ -454,7 +454,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
  <div>
  <p className="text-xl font-semibold uppercase tracking-tight italic">Inject PDF Payloads</p>
  <p className="text-sm font-medium text-muted-foreground mt-2">
- {singleMode ? "1 Artifact Limit" : `Max ${MAX_FILES} Artifacts`} · {MAX_FILE_SIZE_MB}MB Limit
+ {singleMode ? "1 Artifact Limit" : `Max ${MAX_FILES} Artifacts`} Â· {MAX_FILE_SIZE_MB}MB Limit
  </p>
  </div>
  </div>
@@ -613,7 +613,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
  </DialogHeader>
  <ScrollArea className="h-[400px] rounded-2xl border border-border/60 p-8 bg-card shadow-inner">
  <div className="space-y-4">
- {(currentBatch?.error_log as any[])?.map((err, idx) => (
+ {(currentBatch?.error_log as unknown[])?.map((err, idx) => (
  <div key={idx} className="p-6 rounded-2xl bg-destructive/5 border border-destructive/30 group">
  <p className="font-mono text-[10px] text-destructive/40 mb-2">
  Entry_{idx.toString().padStart(3, "0")}
@@ -642,3 +642,5 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
  </Card>
  );
 }
+
+

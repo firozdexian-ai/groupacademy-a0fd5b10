@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+﻿import { useSyncExternalStore } from "react";
 import { getCurrentUser } from "@/lib/auth";
 import { logMonetizationIntent } from "@/domains/finance/repo/financeRepo";
 
@@ -54,3 +54,4 @@ export function useCreditPurchase() {
     close: closeCreditPurchase,
   };
 }
+

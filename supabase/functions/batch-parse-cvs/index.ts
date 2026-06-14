@@ -71,9 +71,12 @@ serve(async (req) => {
       .update({ status: "processing", file_count: cvUrls.length, uploaded_by: userId })
       .eq("id", batchId);
 
-    // Process CVs using background task - PASS THE AUTH HEADER
-    (globalThis as any).EdgeRuntime?.waitUntil?.(processBatch(supabaseAdmin, cvUrls, batchId, authHeader)) ||
+    const globalObj = globalThis as unknown as { EdgeRuntime?: { waitUntil?: (promise: Promise<unknown>) => void } };
+    if (globalObj.EdgeRuntime?.waitUntil) {
+      globalObj.EdgeRuntime.waitUntil(processBatch(supabaseAdmin, cvUrls, batchId, authHeader));
+    } else {
       processBatch(supabaseAdmin, cvUrls, batchId, authHeader);
+    }
 
     return new Response(
       JSON.stringify({
@@ -83,7 +86,7 @@ serve(async (req) => {
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error in batch-parse-cvs:", error);
     return new Response(JSON.stringify({ error: error?.message || "Internal server error" }), {
       status: 500,
@@ -92,11 +95,11 @@ serve(async (req) => {
   }
 });
 
-async function processBatch(supabase: any, cvUrls: string[], batchId: string, authHeader: string) {
+async function processBatch(supabase: unknown, cvUrls: string[], batchId: string, authHeader: string) {
   let processed = 0;
   let skipped = 0;
   let failed = 0;
-  const errorLog: any[] = [];
+  const errorLog: unknown[] = [];
   const NINETY_DAYS_AGO = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
 
   for (const cvUrl of cvUrls) {
@@ -155,7 +158,7 @@ async function processBatch(supabase: any, cvUrls: string[], batchId: string, au
       // Prepare talent data (flatten structure if needed)
       const data = parsedData.parsed || parsedData;
 
-      const talentData: any = {
+      const talentData: unknown = {
         full_name: data.full_name || email.split("@")[0],
         email: email,
         phone: data.phone || null,
@@ -212,7 +215,7 @@ async function processBatch(supabase: any, cvUrls: string[], batchId: string, au
           })
           .eq("id", batchId);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(`Error processing CV ${cvUrl}:`, err);
       failed++;
       errorLog.push({ url: cvUrl, error: err.message });
@@ -234,3 +237,5 @@ async function processBatch(supabase: any, cvUrls: string[], batchId: string, au
 
   console.log(`Batch ${batchId} completed: ${processed} processed, ${skipped} skipped, ${failed} failed`);
 }
+
+

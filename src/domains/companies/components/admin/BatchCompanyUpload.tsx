@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import {
   listAllCompanyNames,
   listAllContactIdentifiers,
@@ -80,7 +80,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
       const workbook = XLSX.read(data);
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
-      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any[][];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as unknown[][];
 
       const rows: ParsedRow[] = [];
       for (let i = 1; i < jsonData.length; i++) {
@@ -166,7 +166,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                 companyId = newCompany.id;
                 companyCache.set(normalizedName, companyId);
                 stats.companiesCreated++;
-              } catch (companyError: any) {
+              } catch (companyError: unknown) {
                 stats.errors.push(`Row ${row.originalRow}: ${companyError.message}`);
                 continue;
               }
@@ -190,13 +190,13 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                 stats.contactsCreated++;
                 if (row.email) contactEmailSet.add(row.email.toLowerCase());
                 if (row.contactPhone) contactPhoneSet.add(row.contactPhone.replace(/\D/g, ""));
-              } catch (contactError: any) {
+              } catch (contactError: unknown) {
                 stats.errors.push(`Row ${row.originalRow} contact parsing failure: ${contactError.message}`);
               }
             } else if (emailExists || phoneExists) {
               stats.contactsMerged++;
             }
-          } catch (error: any) {
+          } catch (error: unknown) {
             stats.errors.push(`Row ${row.originalRow}: ${error.message}`);
           }
         }
@@ -205,7 +205,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
 
       setImportStats(stats);
       toast.success("Data successfully synchronized.");
-    } catch (criticalErr: any) {
+    } catch (criticalErr: unknown) {
       toast.error("Platform encountered an error processing data maps. Support notified.");
       stats.errors.push(`Critical failure: ${criticalErr.message}`);
       setImportStats(stats);
@@ -307,7 +307,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                 </div>
               )}
 
-              {/* State 2: Preview & Synthesis */}
+              {/* State 2: Preview & summary */}
               {parsedData.length > 0 && !importStats && (
                 <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
                   <div className="flex items-center justify-between bg-muted/20 p-6 rounded-2xl border border-border/40">
@@ -371,7 +371,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                               {row.companyName}
                             </TableCell>
                             <TableCell className="text-[11px] font-medium text-muted-foreground">
-                              {row.contactName || "—"}
+                              {row.contactName || "â€”"}
                             </TableCell>
                             <TableCell>
                               <Badge
@@ -502,3 +502,4 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
     </Dialog>
   );
 }
+

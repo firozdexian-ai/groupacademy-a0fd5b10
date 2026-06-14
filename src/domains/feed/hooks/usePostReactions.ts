@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+﻿import { useCallback, useRef } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { deletePostReaction, insertPostReaction } from "@/domains/feed/repo/feedRepo";
 import { useTalent } from "@/hooks/useTalent";
@@ -79,7 +79,7 @@ export function usePostReactions(postId: string): UsePostReactionsResult {
         return next;
       });
     },
-    onError: (err: any, { type, isToggleOff, prevUserReaction }) => {
+    onError: (err: unknown, { type, isToggleOff, prevUserReaction }) => {
       if (!talent?.id) return;
 
       // Digital Workforce anomaly logging for structural auditing
@@ -141,3 +141,4 @@ export function usePostReactions(postId: string): UsePostReactionsResult {
     isLoading: mutation.isPending,
   };
 }
+

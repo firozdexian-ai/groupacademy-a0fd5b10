@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from "react";
+﻿import { useMemo, useState, useCallback } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -83,12 +83,12 @@ export function ApplicationKanban({ companyId, jobId, showWithdrawn = false }: A
       const targetApplicationId = selected.id;
 
       try {
-        // HUD: ATOMIC_STATE_PRE_CLEARANCE
+        // dashboard: ATOMIC_STATE_PRE_CLEARANCE
         setSelected(null); // Instantly drop references locally to avoid race track cross-contamination
 
-        // HUD: EXECUTING_BACKEND_PIPELINE_MUTATION_TRANSFER
+        // dashboard: EXECUTING_BACKEND_PIPELINE_MUTATION_TRANSFER
         await move(targetApplicationId, targetStatus);
-      } catch (err: any) {
+      } catch (err: unknown) {
         // Digital Workforce Anomaly Trigger: Crucial for trapping backend status validation updates
         console.error("[Digital Workforce] ANOMALY: Kanban layout transition request failed.", {
           applicationId: targetApplicationId,
@@ -176,7 +176,7 @@ export function ApplicationKanban({ companyId, jobId, showWithdrawn = false }: A
                 key={lane.key}
                 className="w-72 shrink-0 flex flex-col bg-card/20 rounded-2xl border border-border/40 p-3 min-h-[450px]"
               >
-                {/* HUD: LANE_TITLE_METRICS_HEADER */}
+                {/* dashboard: LANE_TITLE_METRICS_HEADER */}
                 <div className="flex items-center justify-between mb-3 px-1 border-b pb-2 border-border/10">
                   <span className="text-xs font-black uppercase tracking-wider italic text-foreground/80 flex items-center gap-1.5">
                     <Layers className="h-3 w-3 text-primary/60" /> {lane.label}
@@ -217,3 +217,5 @@ export function ApplicationKanban({ companyId, jobId, showWithdrawn = false }: A
     </div>
   );
 }
+
+

@@ -1,4 +1,4 @@
-// Phase 4.5 — Track event notifier
+﻿//  â€” Track event notifier
 // kinds: assigned, step_completed, track_completed, due_soon, overdue
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
@@ -38,11 +38,11 @@ Deno.serve(async (req) => {
       });
     }
 
-    const trackTitle = (a as any).learning_tracks?.title ?? "Learning track";
+    const trackTitle = (a as unknown).learning_tracks?.title ?? "Learning track";
     const titleMap: Record<string, string> = {
       assigned: `Assigned: ${trackTitle}`,
       step_completed: `Step completed in ${trackTitle}`,
-      track_completed: `🎉 Track completed: ${trackTitle}`,
+      track_completed: `ðŸŽ‰ Track completed: ${trackTitle}`,
       due_soon: `Due soon: ${trackTitle}`,
       overdue: `Overdue: ${trackTitle}`,
     };
@@ -64,3 +64,5 @@ Deno.serve(async (req) => {
     });
   }
 });
+
+

@@ -1,4 +1,4 @@
-// Picks up new escalations + open disputes lacking a panel and offers them to top-N matched reviewers.
+﻿// Picks up new escalations + open disputes lacking a panel and offers them to top-N matched reviewers.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -66,3 +66,4 @@ Deno.serve(async (req) => {
 
   return new Response(JSON.stringify({ offered }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
 });
+

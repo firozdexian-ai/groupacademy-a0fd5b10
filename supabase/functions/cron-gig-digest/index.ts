@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+﻿import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -20,7 +20,7 @@ Deno.serve(async (req) => {
       .eq("status", "offered")
       .gte("offered_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
 
-    const byTalent = new Map<string, any[]>();
+    const byTalent = new Map<string, unknown[]>();
     for (const r of rows || []) {
       const arr = byTalent.get(r.talent_id) || [];
       arr.push(r);
@@ -51,7 +51,7 @@ Deno.serve(async (req) => {
       try {
         const { data: talent } = await supabase.from("talents").select("user_id, full_name, email").eq("id", talent_id).maybeSingle();
         if (talent?.email) {
-          await supabase.from("email_queue" as any).insert({
+          await supabase.from("email_queue" as unknown).insert({
             to_email: talent.email,
             template_key: "gig_match_digest",
             payload: { name: talent.full_name, count: top.length, matches: top },
@@ -73,3 +73,5 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
+
+

@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { listActiveLanguageInstructorsByCode } from "@/domains/abroad/repo/abroadRepo";
@@ -29,7 +29,7 @@ interface InstructorRecord {
 /**
  * GroUp Academy: Language Instructor Directory (LanguageInstructorsPage)
  * Hardened responsive marketplace listing active language instructors with secure booking modals.
- * Version: Launch Candidate · Phase Z1 Transaction Matrix Sealed
+ * Version: Launch Candidate Â· Phase Z1 Transaction Matrix Sealed
  */
 export default function LanguageInstructorsPage() {
  const { code: languageCode = "en" } = useParams<{ code: string }>();
@@ -65,7 +65,7 @@ export default function LanguageInstructorsPage() {
       if (data?.error) throw new Error(data.error);
 
       toast.success("Booking confirmed. Check your calendar for details.");
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(e.message || "Couldn't book the session.");
     } finally {
       setIsBookingPending(false);
@@ -105,7 +105,7 @@ export default function LanguageInstructorsPage() {
  </Badge>
  )}
  </div>
- <p className="text-[11px] text-muted-foreground">Native: {instructor.native_language ?? "—"}</p>
+ <p className="text-[11px] text-muted-foreground">Native: {instructor.native_language ?? "â€”"}</p>
  </div>
 
  <div className="text-right">
@@ -130,3 +130,5 @@ export default function LanguageInstructorsPage() {
  </div>
  );
 }
+
+

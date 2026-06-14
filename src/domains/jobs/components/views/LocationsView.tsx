@@ -1,7 +1,7 @@
-/**
+﻿/**
  * GroUp Academy: Geographical Market CRM Surface (LocationsView)
  * CTO Reference: Authoritative component for context-based geographical filtering.
- * Version: Launch Candidate · Phase Z0 Hardened · Build Fix Patch
+ * Version: Launch Candidate Â· Phase Z0 Hardened Â· Build Fix Patch
  * Enhancements: GPU performance layout, structured tracking metrics, automated data bounds.
  */
 import { useEffect, useMemo } from "react";
@@ -121,3 +121,4 @@ export function LocationsView({ countries, talent }: Props) {
     </div>
   );
 }
+

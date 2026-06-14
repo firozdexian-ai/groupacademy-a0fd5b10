@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useUgcGraph } from "./hooks/useUgcGraph";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,7 @@ export function UgcBlogTab() {
  const { ugcGraphQuery, mutations: { upsertBlog, deleteBlog } } = useUgcGraph();
  const { data, isLoading } = ugcGraphQuery;
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ status: "draft" });
+ const [draft, setDraft] = useState<unknown>({ status: "draft" });
  const [search, setSearch] = useState("");
  const [statusFilter, setStatusFilter] = useState<string>("all");
 
@@ -99,7 +99,7 @@ export function UgcBlogTab() {
  <TableCell className="text-xs text-muted-foreground">
  {row.author_name || (row.author_id ? row.author_id.substring(0, 8) : "System")}
  </TableCell>
- <TableCell className="text-xs text-muted-foreground uppercase">{row.category || "—"}</TableCell>
+ <TableCell className="text-xs text-muted-foreground uppercase">{row.category || "â€”"}</TableCell>
  <TableCell>
  <Badge
  variant="outline"
@@ -217,3 +217,5 @@ export function UgcBlogTab() {
 }
 
 export default UgcBlogTab;
+
+

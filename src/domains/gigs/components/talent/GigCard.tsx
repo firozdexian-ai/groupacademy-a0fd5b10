@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Coins, ChevronRight, CheckCircle2, Clock, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { GigSubmissionForm } from "./GigSubmissionForm";
@@ -186,3 +186,4 @@ export function GigCard({ gig, userSubmissions }: GigCardProps) {
     </>
   );
 }
+

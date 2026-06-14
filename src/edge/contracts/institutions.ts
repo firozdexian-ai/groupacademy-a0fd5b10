@@ -1,1 +1,2 @@
-export type InstitutionsEdgeContracts = Record<string, never>;
+﻿export type InstitutionsEdgeContracts = Record<string, never>;
+

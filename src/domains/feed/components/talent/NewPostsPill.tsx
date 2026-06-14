@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import { ArrowUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTalent } from "@/hooks/useTalent";
@@ -23,7 +23,7 @@ export function NewPostsPill({ onTap }: NewPostsPillProps) {
       .channel("feed_posts_realtime_pill")
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "feed_posts" }, (payload) => {
         try {
-          const row = payload.new as any;
+          const row = payload.new as unknown;
           if (!row) return;
 
           // Do not show the notification pill if the post was authored by the current user
@@ -114,3 +114,4 @@ export function NewPostsPill({ onTap }: NewPostsPillProps) {
     </div>
   );
 }
+

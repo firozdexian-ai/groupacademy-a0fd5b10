@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams, Link } from "react-router-dom";
 import { getPublicProjectDetail, recordDiscoverySignal } from "@/domains/ugc/repo/ugcRepo";
 import { setHead } from "@/lib/setHead";
@@ -50,7 +50,7 @@ interface Detail {
 /**
  * GroUp Academy: Technical Project Specification Ledger (PublicProjectDetail)
  * Hardened responsive dashboard view isolating telemetry handshakes and safeguarding date transformations against hydration drift.
- * Version: Launch Candidate · Phase Z0 Lifecycle & Analytics Sync Hardened
+ * Version: Launch Candidate Â· Phase Z0 Lifecycle & Analytics Sync Hardened
  */
 export default function PublicProjectDetail() {
   const { slug: rawRouteSlugParameterStr } = useParams<{ slug: string }>();
@@ -100,7 +100,7 @@ export default function PublicProjectDetail() {
     const targetProjectRecord = projectSpecificationData.project;
     const associatedCompanyRecord = projectSpecificationData.company;
 
-    const baseTitleString = `${targetProjectRecord.seo_title || targetProjectRecord.title} · ${associatedCompanyRecord.name}`;
+    const baseTitleString = `${targetProjectRecord.seo_title || targetProjectRecord.title} Â· ${associatedCompanyRecord.name}`;
     const baseDescriptionString =
       targetProjectRecord.seo_description || targetProjectRecord.summary || targetProjectRecord.title;
 
@@ -182,7 +182,7 @@ export default function PublicProjectDetail() {
 
   return (
     <div className="min-h-screen bg-background text-foreground antialiased selection:bg-primary/10 block text-left transform-gpu w-full">
-      {/* HUD LEVEL 1: CONTROL GRID TRACK HEADER BAR */}
+      {/* dashboard LEVEL 1: CONTROL GRID TRACK HEADER BAR */}
       <header className="border-b border-border/40 bg-card/10 block w-full select-none">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 h-12 flex items-center justify-between leading-none w-full">
           <Link
@@ -208,7 +208,7 @@ export default function PublicProjectDetail() {
         </div>
       </header>
 
-      {/* HUD LEVEL 2: DETAILED SPECIFICATION VIEWPORT CONTROLLER */}
+      {/* dashboard LEVEL 2: DETAILED SPECIFICATION VIEWPORT CONTROLLER */}
       <main className="mx-auto max-w-4xl px-4 sm:px-6 py-6 sm:py-8 space-y-6 block w-full">
         {/* Dynamic Display Cover Placement */}
         {project.og_image_url && (
@@ -367,3 +367,4 @@ export default function PublicProjectDetail() {
     </div>
   );
 }
+

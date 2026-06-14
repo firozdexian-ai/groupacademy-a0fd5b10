@@ -1,5 +1,5 @@
-/**
- * Companies Domain Hooks — Company Profile Detail Hook
+﻿/**
+ * Companies Domain Hooks â€” Company Profile Detail Hook
  * Version: 2024 Highly Professional SAAS UI
  * Rules: Enforces standard business data structures and maps operational errors to user-friendly messages.
  */
@@ -15,7 +15,7 @@ export interface CompanyDetail {
   };
   locations: { location: string; count: number }[];
   types: { type: string; count: number }[];
-  jobs: any[];
+  jobs: unknown[];
 }
 
 /**
@@ -33,10 +33,10 @@ export function useCompanyDetail(companyName: string | null) {
         throw new Error("Company name is required to load profile data.");
       }
 
-      let data: any;
+      let data: unknown;
       try {
-        data = await getCompanyDetail<any>(companyName);
-      } catch (error: any) {
+        data = await getCompanyDetail<unknown>(companyName);
+      } catch (error: unknown) {
         // Digital Workforce Rule: Log operational failures cleanly to system channels
         console.error("Company profile query encountered an infrastructure delay:", {
           companyName,
@@ -58,3 +58,4 @@ export function useCompanyDetail(companyName: string | null) {
     },
   });
 }
+

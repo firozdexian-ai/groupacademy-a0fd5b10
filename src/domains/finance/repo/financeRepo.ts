@@ -1,4 +1,4 @@
-/**
+﻿/**
  * GroUp Academy: Finance Domain Core Repository Data Store Layer
  * Authoritative system datastore layer tracking fractional balances, transaction histories, and gateway rules.
  */
@@ -135,7 +135,7 @@ export async function updateWithdrawalStatus(input: {
 /**
  * Programmatically provisions or updates property parameters for transactional billing networks.
  */
-export async function upsertPaymentConfig(payload: any): Promise<void> {
+export async function upsertPaymentConfig(payload: unknown): Promise<void> {
   if (payload?.id) {
     const { error } = await supabase.from("fin_payment_configs").update(payload).eq("id", payload.id);
     if (error) {
@@ -143,7 +143,7 @@ export async function upsertPaymentConfig(payload: any): Promise<void> {
       throw error;
     }
   } else {
-    const { error } = await supabase.from("fin_payment_configs").insert(payload as any);
+    const { error } = await supabase.from("fin_payment_configs").insert(payload as unknown);
     if (error) {
       console.error("[Accounting Ledger] Failed to insert new payment configuration parameter:", error);
       throw error;
@@ -160,7 +160,7 @@ export async function getTalentCreditsTotalCirculation(): Promise<number> {
     console.error("[Accounting Ledger] Error calculating circulating credits volume summary:", error);
     throw error;
   }
-  return ((data as any[]) ?? []).reduce((sum, c) => sum + Number(c.balance ?? 0), 0);
+  return ((data as unknown[]) ?? []).reduce((sum, c) => sum + Number(c.balance ?? 0), 0);
 }
 
 export interface ListTalentCreditsOpts {
@@ -204,7 +204,7 @@ export async function getConsumptionTotals(): Promise<Array<{ amount: number; se
     console.error("[Accounting Analytics] Error reading historical debit totals records:", error);
     throw error;
   }
-  return (data ?? []) as any;
+  return (data ?? []) as unknown;
 }
 
 /**
@@ -221,7 +221,7 @@ export async function getMonthlyConsumption(startIso: string, endIso: string): P
     console.error("[Accounting Analytics] Error loading target timeline consumption windows:", error);
     throw error;
   }
-  return (data ?? []) as any;
+  return (data ?? []) as unknown;
 }
 
 /**
@@ -243,7 +243,7 @@ export async function manualAdjustTalentCredit(input: {
     console.error(`[Workforce Safeguard] Manual balance override error on row ${input.creditId}:`, updateError);
     throw updateError;
   }
-  const { error: txError } = await (supabase.from("credit_transactions") as any).insert({
+  const { error: txError } = await (supabase.from("credit_transactions") as unknown).insert({
     talent_id: input.talentId,
     amount: input.delta,
     transaction_type: input.transactionType,
@@ -269,7 +269,7 @@ export async function sumReferralBonusCredits(talentId: string): Promise<number>
     console.error(`[Accounting Analytics] Referral metrics read failure for user ${talentId}:`, error);
     throw error;
   }
-  return (data ?? []).reduce((sum: number, row: any) => sum + Number(row?.amount ?? 0), 0);
+  return (data ?? []).reduce((sum: number, row: unknown) => sum + Number(row?.amount ?? 0), 0);
 }
 
 /**
@@ -284,14 +284,14 @@ export async function listActiveCurrencyRates() {
     console.error("[Accounting Configurations] Currency rates tax lookup failure:", error);
     throw error;
   }
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 /**
  * Submits custom alternative transaction logs when localized manuals require validation checks.
  */
-export async function insertManualPaymentRequest(payload: Record<string, any>): Promise<void> {
-  const { error } = await supabase.from("manual_payment_requests").insert(payload as any);
+export async function insertManualPaymentRequest(payload: Record<string, unknown>): Promise<void> {
+  const { error } = await supabase.from("manual_payment_requests").insert(payload as unknown);
   if (error) {
     console.error("[Accounting Ledger] Error uploading manual payment request item:", error);
     throw error;
@@ -307,7 +307,7 @@ export async function listMyTalentPayoutAccounts(talentId: string) {
     console.error(`[Accounting Ledger] Error loading payout account records for user ${talentId}:`, error);
     throw error;
   }
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
 /**
@@ -323,7 +323,7 @@ export async function listMyWithdrawalRequests(talentId: string) {
     console.error(`[Accounting Ledger] Error loading user historical cash withdrawals for user ${talentId}:`, error);
     throw error;
   }
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
 /**
@@ -334,8 +334,8 @@ export async function insertTalentWithdrawalRequest(payload: {
   amount_credits: number;
   method: string;
   payout_details: Record<string, unknown>;
-}): Promise<{ error: any }> {
-  const { error } = await supabase.from("withdrawal_requests").insert(payload as any);
+}): Promise<{ error: unknown }> {
+  const { error } = await supabase.from("withdrawal_requests").insert(payload as unknown);
   if (error) {
     console.error(`[Accounting Ledger] Failed to transmit cash withdrawal line for user ${payload.talent_id}:`, error);
   }
@@ -355,7 +355,7 @@ export interface DeductCreditsArgs {
  * Secure Server Database RPC Wrapper: Executes an immutable atomic deduction check directly inside PostgreSQL.
  */
 export async function deductCreditsRpc(args: DeductCreditsArgs) {
-  const payload: Record<string, any> = {
+  const payload: Record<string, unknown> = {
     p_amount: args.amount,
     p_service_type: args.serviceType,
     p_reference_id: args.referenceId ?? null,
@@ -363,12 +363,12 @@ export async function deductCreditsRpc(args: DeductCreditsArgs) {
   };
   if (args.talentId) payload.p_talent_id = args.talentId;
   if (args.transactionType) payload.p_transaction_type = args.transactionType;
-  const { data, error } = await supabase.rpc("deduct_credits" as any, payload as any);
+  const { data, error } = await supabase.rpc("deduct_credits" as unknown, payload as unknown);
   if (error) {
     console.error("[Database RPC] Transaction execution error inside deduct_credits script:", error);
     throw error;
   }
-  return data as any;
+  return data as unknown;
 }
 
 export interface AddCreditsArgs {
@@ -382,18 +382,18 @@ export interface AddCreditsArgs {
  * Secure Server Database RPC Wrapper: Executes an atomic balance addition check natively on back-end tables.
  */
 export async function addCreditsRpc(args: AddCreditsArgs) {
-  const payload: Record<string, any> = {
+  const payload: Record<string, unknown> = {
     p_amount: args.amount,
     p_transaction_type: args.transactionType,
     p_description: args.description ?? `${args.transactionType} update`,
   };
   if (args.talentId) payload.p_talent_id = args.talentId;
-  const { data, error } = await supabase.rpc("add_credits" as any, payload as any);
+  const { data, error } = await supabase.rpc("add_credits" as unknown, payload as unknown);
   if (error) {
     console.error("[Database RPC] Transaction execution error inside add_credits script:", error);
     throw error;
   }
-  return data as any;
+  return data as unknown;
 }
 
 export interface ApproveInvoiceArgs {
@@ -541,7 +541,7 @@ export async function listTalentCreditTransactions(talentId: string, limit = 20)
     console.error(`[Accounting Ledger] Error loading account transaction rows for user ${talentId}:`, error);
     throw error;
   }
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 /**
@@ -558,7 +558,7 @@ export async function listMyCreditInvoices(talentId: string, limit = 50) {
     console.error(`[Accounting Ledger] Error loading historical client invoices for user ${talentId}:`, error);
     throw error;
   }
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 /**
@@ -588,9 +588,9 @@ export async function getTalentServiceHistorySnapshot(talentId: string) {
       .limit(3),
   ]);
   return {
-    assessments: (assessmentsRes.data ?? []) as any[],
-    interviews: (interviewsRes.data ?? []) as any[],
-    salaryAnalyses: (salaryAnalysesRes.data ?? []) as any[],
+    assessments: (assessmentsRes.data ?? []) as unknown[],
+    interviews: (interviewsRes.data ?? []) as unknown[],
+    salaryAnalyses: (salaryAnalysesRes.data ?? []) as unknown[],
   };
 }
 
@@ -606,7 +606,7 @@ export async function listAdminWithdrawalRequests() {
     console.error("[Accounting Ledger] Error loading system-wide withdrawal records list queue:", error);
     throw error;
   }
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 /**
@@ -638,5 +638,7 @@ export async function listAdminCreditInvoices(status?: string | null, limit = 50
     console.error("[Accounting Ledger] Error loading comprehensive admin credit invoices list:", error);
     throw error;
   }
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
+
+

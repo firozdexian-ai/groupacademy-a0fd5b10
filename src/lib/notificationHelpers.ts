@@ -1,4 +1,4 @@
-import {
+﻿import {
   Bell, CheckCircle, Briefcase, GraduationCap, Coins, Megaphone, Sparkles,
   Flame, MessageSquare, AtSign, Reply,
   type LucideIcon
@@ -91,7 +91,7 @@ export function formatRelativeTime(dateString: string): string {
   return date.toLocaleDateString();
 }
 
-export function mapNotificationRow(row: any): Notification {
+export function mapNotificationRow(row: unknown): Notification {
   return {
     id: row.id,
     talentId: row.talent_id,
@@ -105,3 +105,5 @@ export function mapNotificationRow(row: any): Notification {
     readAt: row.read_at,
   };
 }
+
+

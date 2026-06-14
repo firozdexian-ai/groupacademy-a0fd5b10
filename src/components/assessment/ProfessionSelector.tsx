@@ -37,7 +37,7 @@ export function ProfessionSelector({ categories = [], onSelect, onBack }: Profes
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 animate-in fade-in slide-in-from-bottom-4 duration-1000 text-left select-none">
-      {/* HUD: NAVIGATION_INGRESS_BAR */}
+      {/* dashboard: NAVIGATION_INGRESS_BAR */}
       <Button
         type="button"
         variant="ghost"
@@ -47,7 +47,7 @@ export function ProfessionSelector({ categories = [], onSelect, onBack }: Profes
         <ArrowLeft className="h-4 w-4" /> ABORT_TRAJECTORY
       </Button>
 
-      {/* HUD: REGISTRY_HEADER_SECTOR */}
+      {/* dashboard: REGISTRY_HEADER_SECTOR */}
       <div className="mb-16 space-y-3">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 shadow-lg">
@@ -72,23 +72,16 @@ export function ProfessionSelector({ categories = [], onSelect, onBack }: Profes
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map((category) => {
-            // --- PHASE: SAFE_STRING_UNDERSCORE_CONVERSION ---
-            // Architecture Fix: Globally replace all space variations to preserve structural cyberpunk aesthetics uniformly
-            const standardizedDisplayTitle = useMemo(() => {
-              return String(category.name || "TRAJECTORY_NODE")
-                .trim()
-                .replace(/\s+/g, "_");
-            }, [category.name]);
+            const standardizedDisplayTitle = String(category.name || "TRAJECTORY_NODE")
+              .trim()
+              .replace(/\s+/g, "_");
 
-            // --- PHASE: ACCREDITED_ICON_LOOKUP ---
-            const ResolvedIconComponent = useMemo(() => {
-              try {
-                return getIcon(category.icon) || Briefcase; // Fallback to stable baseline glyph if database strings resolve null
-              } catch (err) {
-                console.warn("[Digital Workforce] WARNING: Failed to map asset icon token reference.", category.icon);
-                return Briefcase;
-              }
-            }, [category.icon]);
+            let ResolvedIconComponent = Briefcase;
+            try {
+              ResolvedIconComponent = getIcon(category.icon) || Briefcase;
+            } catch (err) {
+              console.warn("[Digital Workforce] WARNING: Failed to map asset icon token reference.", category.icon);
+            }
 
             return (
               <Card
@@ -121,7 +114,7 @@ export function ProfessionSelector({ categories = [], onSelect, onBack }: Profes
                     </CardDescription>
                   </div>
 
-                  {/* METRICS HUD: LEDGER_ALIGNMENT_STATUS */}
+                  {/* METRICS dashboard: LEDGER_ALIGNMENT_STATUS */}
                   <div className="flex items-center justify-between pt-4 border-t border-border/10 font-mono">
                     <div className="flex items-center gap-2">
                       <ShieldCheck className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
@@ -142,3 +135,4 @@ export function ProfessionSelector({ categories = [], onSelect, onBack }: Profes
     </div>
   );
 }
+

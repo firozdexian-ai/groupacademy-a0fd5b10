@@ -1,4 +1,4 @@
-// AI auto-reply for messaging conversations
+﻿// AI auto-reply for messaging conversations
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 Deno.serve(async (req) => {
@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
       .order("created_at", { ascending: false })
       .limit(20);
 
-    const messages = (history ?? []).reverse().map((m: any) => ({
+    const messages = (history ?? []).reverse().map((m: unknown) => ({
       role: m.direction === "in" ? "user" : "assistant",
       content: m.body || "",
     }));
@@ -75,3 +75,5 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: (e as Error).message }), { status: 500 });
   }
 });
+
+

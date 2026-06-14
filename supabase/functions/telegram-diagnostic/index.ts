@@ -1,4 +1,4 @@
-// telegram-diagnostic: Reads recent Telegram bot updates and returns
+﻿// telegram-diagnostic: Reads recent Telegram bot updates and returns
 // the last unique chats that have messaged the bot. Used to discover
 // the correct chat_id when a user is debugging notify-stakeholder.
 
@@ -27,7 +27,7 @@ Deno.serve(async (req) => {
       }, 502);
     }
 
-    const updates: any[] = Array.isArray(payload.result) ? payload.result : [];
+    const updates: unknown[] = Array.isArray(payload.result) ? payload.result : [];
     const seen = new Set<string>();
     const chats: Array<{
       chat_id: string;
@@ -71,3 +71,5 @@ function j(b: unknown, status = 200) {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
+
+

@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+﻿import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -82,7 +82,7 @@ Deno.serve(async (req) => {
     }
 
     // 6. Update Status (Preserve existing status if already advanced)
-    const statusUpdate: any = { delivery_status: "sent" };
+    const statusUpdate: unknown = { delivery_status: "sent" };
 
     // Only set to sent_to_employer if it was just submitted
     if (app.application_status === "submitted" || !app.application_status) {
@@ -100,7 +100,7 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       },
     );
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error(`[Error] send-job-application: ${err.message}`);
     return new Response(JSON.stringify({ error: err.message }), {
       status: 500,
@@ -108,3 +108,5 @@ Deno.serve(async (req) => {
     });
   }
 });
+
+

@@ -1,4 +1,4 @@
-import { getTalentContact } from "@/domains/talent/repo/talentRepo";
+﻿import { getTalentContact } from "@/domains/talent/repo/talentRepo";
 import { sendTransactionalEmail as invokeTransactionalEmail } from "@/domains/messaging/api/messagingApi";
 
 /**
@@ -21,7 +21,7 @@ interface SendEmailParams {
   template: TemplateKey;
   recipientEmail: string;
   idempotencyKey: string;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
 }
 
 /**
@@ -35,7 +35,7 @@ export async function sendTransactionalEmail({
   data,
 }: SendEmailParams): Promise<boolean> {
   try {
-    let result: any = null;
+    let result: unknown = null;
     try {
       result = await invokeTransactionalEmail({
         templateName: template,
@@ -43,32 +43,32 @@ export async function sendTransactionalEmail({
         idempotencyKey,
         templateData: data,
       });
-    } catch (error: any) {
-      console.warn(`[Sentinel] Queue fault for ${template}:`, error?.message);
+    } catch (error: unknown) {
+      console.warn(`[guard] Queue fault for ${template}:`, error?.message);
       return false;
     }
 
     return result?.success === true;
   } catch (err) {
-    console.warn(`[Sentinel] Unexpected error in notification helper:`, err);
+    console.warn(`[guard] Unexpected error in notification helper:`, err);
     return false;
   }
 }
 
 /**
- * HUD: Talent_Identity_Resolver
+ * dashboard: Talent_Identity_Resolver
  * Resolves a talent_id to a verified email artifact before dispatching.
  */
 async function sendToTalent(
   talentId: string,
   template: TemplateKey,
   idempotencyKeySuffix: string,
-  data?: Record<string, any>,
+  data?: Record<string, unknown>,
 ): Promise<boolean> {
   const talent = await getTalentContact(talentId);
 
   if (!talent?.email) {
-    console.warn(`[Sentinel] ID_RESOLUTION_FAULT: Could not find talent ${talentId}`);
+    console.warn(`[guard] ID_RESOLUTION_FAULT: Could not find talent ${talentId}`);
     return false;
   }
 
@@ -126,3 +126,5 @@ export const emailNotifications = {
       data: { subject, content },
     }),
 };
+
+

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Shared sign-in / no-workspace gate used by every Gro10x page that needs
  * an authenticated user with an active company. Replaces ~6 copies of the
  * same JSX scattered across pages.
@@ -43,7 +43,7 @@ export function Gro10xPageGate({
     );
   }
 
-  if (requireCompany && companyLoading) return <Gro10xLoading label="Loading workspace…" />;
+  if (requireCompany && companyLoading) return <Gro10xLoading label="Loading workspaceâ€¦" />;
 
   if (requireCompany && !companyId) {
     return (
@@ -64,3 +64,4 @@ export function Gro10xPageGate({
 
   return <>{children}</>;
 }
+

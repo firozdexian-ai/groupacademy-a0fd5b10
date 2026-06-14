@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { MessageCircle, X, Gift, Loader2 } from "lucide-react";
@@ -47,7 +47,7 @@ export function FloatingWhatsAppButton({ showPrompt = true }: FloatingWhatsAppBu
     }
 
     setIsProcessing(true);
-    const toastId = toast.loading("Processing your onboarding welcome bonus…");
+    const toastId = toast.loading("Processing your onboarding welcome bonusâ€¦");
 
     trackEvent("FloatingWhatsAppButton:bonus_claim_initiated", {
       talentId: talent.id,
@@ -73,7 +73,7 @@ export function FloatingWhatsAppButton({ showPrompt = true }: FloatingWhatsAppBu
       }
 
       window.open(whatsappUrl, "_blank");
-    } catch (err: any) {
+    } catch (err: unknown) {
       const parsedErrorMessage = err instanceof Error ? err.message : String(err);
 
       // Log transaction execution failures to diagnostic tools for support review
@@ -84,7 +84,7 @@ export function FloatingWhatsAppButton({ showPrompt = true }: FloatingWhatsAppBu
         attemptedAmount: bonusAmount,
       });
 
-      toast.error("Couldn't apply the bonus right now — opening WhatsApp so you can reach support.", { id: toastId });
+      toast.error("Couldn't apply the bonus right now â€” opening WhatsApp so you can reach support.", { id: toastId });
       window.open(whatsappUrl, "_blank");
     } finally {
       setIsProcessing(false);
@@ -163,3 +163,4 @@ export function FloatingWhatsAppButton({ showPrompt = true }: FloatingWhatsAppBu
     </div>
   );
 }
+

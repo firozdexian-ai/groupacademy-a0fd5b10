@@ -1,4 +1,4 @@
-// Cron: pick up submissions lacking a verification and run the verifier.
+﻿// Cron: pick up submissions lacking a verification and run the verifier.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -73,3 +73,4 @@ Deno.serve(async (req) => {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 });
+

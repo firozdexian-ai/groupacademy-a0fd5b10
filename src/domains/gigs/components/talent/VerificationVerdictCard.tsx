@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +21,7 @@ interface Verification {
   suggested_revisions: string[];
 }
 
-const verdictMeta: Record<string, { label: string; icon: any; tone: string; className: string }> = {
+const verdictMeta: Record<string, { label: string; icon: unknown; tone: string; className: string }> = {
   pending: {
     label: "Verifying Account...",
     icon: Clock,
@@ -63,7 +63,7 @@ const verdictMeta: Record<string, { label: string; icon: any; tone: string; clas
 /**
  * GroUp Academy: Mission Audit Ledger (VerificationVerdictCard)
  * CTO Reference: Authoritative interface component tracking verification audit logs and appeal actions.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function VerificationVerdictCard({ verification }: { verification: Verification }) {
   const queryClient = useQueryClient();
@@ -128,7 +128,7 @@ export function VerificationVerdictCard({ verification }: { verification: Verifi
 
       setOpen(false);
       setAppealReason("");
-    } catch (err: any) {
+    } catch (err: unknown) {
       const parsedMsg = err instanceof Error ? err.message : String(err);
 
       trackError(parsedMsg, {
@@ -160,7 +160,7 @@ export function VerificationVerdictCard({ verification }: { verification: Verifi
           )}
         />
         <Badge
-          variant={meta.tone as any}
+          variant={meta.tone as unknown}
           className={cn(
             "text-[10px] font-extrabold uppercase tracking-wide px-2.5 py-0.5 rounded-md border h-5.5 shadow-sm select-none",
             meta.className,
@@ -333,3 +333,5 @@ export function VerificationVerdictCard({ verification }: { verification: Verifi
     </Card>
   );
 }
+
+

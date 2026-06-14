@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+﻿import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, BookOpen, CheckCircle2, Lock, Clock, Award } from "lucide-react";
 import { useMemo } from "react";
 import { useMyTrackAssignments, useTrackProgress } from "@/domains/learning";
@@ -22,7 +22,7 @@ export default function AppTrackDetail() {
  <div className="max-w-md md:max-w-3xl mx-auto p-6 text-center">
  <p className="text-sm text-slate-400">No assignment found for this track.</p>
  <Link to={LEARN_HOME} className="text-xs text-[#33E1E4] mt-2 inline-block">
- ← Back to Learn
+ â† Back to Learn
  </Link>
  </div>
  );
@@ -69,7 +69,7 @@ export default function AppTrackDetail() {
  <section className="px-4 mt-4 space-y-2">
  <h2 className="text-sm font-semibold mb-2">Steps</h2>
  {isLoading ? (
- <p className="text-xs text-slate-500">Loading…</p>
+ <p className="text-xs text-slate-500">Loadingâ€¦</p>
  ) : (
  (progress?.items ?? []).map((it, idx) => {
  const prevDone =
@@ -108,3 +108,4 @@ export default function AppTrackDetail() {
  </div>
  );
 }
+

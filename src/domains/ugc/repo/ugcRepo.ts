@@ -1,4 +1,4 @@
-/**
+﻿/**
  * UGC domain repository (Phase 10i.2).
  *
  * Wraps raw supabase.from(...) calls for the UGC admin area:
@@ -59,9 +59,9 @@ export async function getUgcGraphMaster() {
   };
 }
 
-// ─── Videos (content table, content_type=free_video) ───────────────────────
-export async function upsertUgcVideo(payload: any): Promise<void> {
-  const row: any = { ...payload, content_type: "free_video" };
+// â”€â”€â”€ Videos (content table, content_type=free_video) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function upsertUgcVideo(payload: unknown): Promise<void> {
+  const row: unknown = { ...payload, content_type: "free_video" };
   if (!row.slug && row.title) row.slug = slugifyUgc(row.title);
   if (row.id) {
     const { id, ...patch } = row;
@@ -78,9 +78,9 @@ export async function deleteUgcVideo(id: string): Promise<void> {
   if (error) throw error;
 }
 
-// ─── Blogs ─────────────────────────────────────────────────────────────────
-export async function upsertUgcBlog(payload: any): Promise<void> {
-  const row: any = { ...payload };
+// â”€â”€â”€ Blogs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function upsertUgcBlog(payload: unknown): Promise<void> {
+  const row: unknown = { ...payload };
   if (!row.slug && row.title) row.slug = slugifyUgc(row.title);
   if (row.id) {
     const { id, ...patch } = row;
@@ -101,9 +101,9 @@ export async function deleteUgcBlog(id: string): Promise<void> {
   if (error) throw error;
 }
 
-// ─── Feed posts ────────────────────────────────────────────────────────────
-export async function upsertUgcFeedPost(payload: any): Promise<void> {
-  const row: any = { ...payload };
+// â”€â”€â”€ Feed posts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function upsertUgcFeedPost(payload: unknown): Promise<void> {
+  const row: unknown = { ...payload };
   if (row.id) {
     const { id, ...patch } = row;
     const { error } = await supabase.from("feed_posts").update(patch).eq("id", id);
@@ -125,9 +125,9 @@ export async function deleteUgcFeedPost(id: string): Promise<void> {
   if (error) throw error;
 }
 
-// ─── Competitions ──────────────────────────────────────────────────────────
-export async function upsertUgcCompetition(payload: any): Promise<void> {
-  const row: any = { ...payload };
+// â”€â”€â”€ Competitions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function upsertUgcCompetition(payload: unknown): Promise<void> {
+  const row: unknown = { ...payload };
   if (!row.slug && row.title) row.slug = slugifyUgc(row.title);
   if (typeof row.prizes === "string" && row.prizes.trim()) {
     try {
@@ -151,7 +151,7 @@ export async function deleteUgcCompetition(id: string): Promise<void> {
   if (error) throw error;
 }
 
-// ─── Content reports ───────────────────────────────────────────────────────
+// â”€â”€â”€ Content reports â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function resolveUgcReport(input: {
   id: string;
   status: "reviewed" | "dismissed" | "removed";
@@ -173,31 +173,31 @@ export async function resolveUgcReport(input: {
     if (scope === "feed_post") {
       const { error: err } = await supabase
         .from("feed_posts")
-        .update({ is_active: false, status: "removed" } as any)
+        .update({ is_active: false, status: "removed" } as unknown)
         .eq("id", scope_id);
       if (err) throw err;
     } else if (scope === "blog_post") {
       const { error: err } = await supabase
         .from("blog_posts")
-        .update({ status: "archived" } as any)
+        .update({ status: "archived" } as unknown)
         .eq("id", scope_id);
       if (err) throw err;
     } else if (scope === "content" || scope === "video" || scope === "free_video") {
       const { error: err } = await supabase
         .from("content")
-        .update({ is_published: false } as any)
+        .update({ is_published: false } as unknown)
         .eq("id", scope_id);
       if (err) throw err;
     } else if (scope === "post") {
       const { error: err } = await supabase
         .from("discussion_posts")
-        .update({ is_hidden: true } as any)
+        .update({ is_hidden: true } as unknown)
         .eq("id", scope_id);
       if (err) throw err;
     } else if (scope === "discussion_thread") {
       const { error: err } = await supabase
         .from("discussion_threads")
-        .update({ is_hidden: true } as any)
+        .update({ is_hidden: true } as unknown)
         .eq("id", scope_id);
       if (err) throw err;
     }
@@ -210,7 +210,7 @@ export async function resolveUgcReport(input: {
       notes: input.notes ?? null,
       resolved_by: user?.id,
       resolved_at: new Date().toISOString(),
-    } as any)
+    } as unknown)
     .eq("id", input.id);
   if (error) throw error;
 }
@@ -229,7 +229,7 @@ export async function getProjectPublicSettings(projectId: string) {
   return data as { is_public: boolean; slug: string | null; view_count: number | null; share_count: number | null } | null;
 }
 
-// ─── Phase 10j.5d additions ────────────────────────────────────────────────
+// â”€â”€â”€ Phase 10j.5d additions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 
 export async function getCompetitionBySlug(slug: string) {
@@ -239,7 +239,7 @@ export async function getCompetitionBySlug(slug: string) {
     .eq("slug", slug)
     .single();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function getMyCompetitionSubmission(opts: { competitionId: string; talentId: string }) {
@@ -250,7 +250,7 @@ export async function getMyCompetitionSubmission(opts: { competitionId: string; 
     .eq("talent_id", opts.talentId)
     .maybeSingle();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function upsertCompetitionSubmission(payload: {
@@ -259,12 +259,12 @@ export async function upsertCompetitionSubmission(payload: {
   submission_url: string;
   description: string | null;
   status: string;
-}): Promise<{ error: any }> {
-  const { error } = await supabase.from("competition_submissions").upsert(payload as any);
+}): Promise<{ error: unknown }> {
+  const { error } = await supabase.from("competition_submissions").upsert(payload as unknown);
   return { error };
 }
 
-// ─── Phase 10j.5h3: project public toggle RPC wrapper ─────────────────────
+// â”€â”€â”€ Phase 10j.5h3: project public toggle RPC wrapper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function toggleProjectPublic(args: { projectId: string; isPublic: boolean }) {
   const { data, error } = await supabase.rpc("toggle_project_public", {
     _project_id: args.projectId,
@@ -274,21 +274,21 @@ export async function toggleProjectPublic(args: { projectId: string; isPublic: b
   return data as unknown as { is_public: boolean; slug: string | null };
 }
 
-// ─── Phase 10j.5h4: UGC dashboard RPC wrapper ─────────────────────────────
-export async function getUgcDashboard<T = any>(): Promise<T> {
-  const { data, error } = await supabase.rpc("get_ugc_dashboard" as any);
+// â”€â”€â”€ Phase 10j.5h4: UGC dashboard RPC wrapper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function getUgcDashboard<T = unknown>(): Promise<T> {
+  const { data, error } = await supabase.rpc("get_ugc_dashboard" as unknown);
   if (error) throw error;
   return data as unknown as T;
 }
 
-// ─── Phase 10j.5h6: public discovery RPC wrappers ─────────────────────────
-export async function getPublicProjects<T = any>(args: {
+// â”€â”€â”€ Phase 10j.5h6: public discovery RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function getPublicProjects<T = unknown>(args: {
   filters: Record<string, unknown>;
   page: number;
   pageSize: number;
 }): Promise<T> {
   const { data, error } = await supabase.rpc("get_public_projects", {
-    _filters: args.filters as any,
+    _filters: args.filters as unknown,
     _page: args.page,
     _page_size: args.pageSize,
   });
@@ -296,7 +296,7 @@ export async function getPublicProjects<T = any>(args: {
   return (data ?? {}) as T;
 }
 
-export async function getPublicProjectDetail<T = any>(slug: string): Promise<T | null> {
+export async function getPublicProjectDetail<T = unknown>(slug: string): Promise<T | null> {
   const { data, error } = await supabase.rpc("get_public_project_detail", { _slug: slug });
   if (error) throw error;
   return (data ?? null) as T | null;
@@ -314,7 +314,7 @@ export async function recordDiscoverySignal(args: {
   });
 }
 
-export async function getLeaderboard<T = any>(args: {
+export async function getLeaderboard<T = unknown>(args: {
   kind: string;
   period: string;
   category?: string | null;
@@ -328,14 +328,16 @@ export async function getLeaderboard<T = any>(args: {
   return (data ?? []) as T[];
 }
 
-export async function getCompanyPublicProjects<T = any>(slug: string): Promise<T | null> {
+export async function getCompanyPublicProjects<T = unknown>(slug: string): Promise<T | null> {
   const { data, error } = await supabase.rpc("get_company_public_projects", { _slug: slug });
   if (error) throw error;
   return (data ?? null) as T | null;
 }
 
-export async function getCompanyBrandedCatalog<T = any>(slug: string): Promise<T | null> {
+export async function getCompanyBrandedCatalog<T = unknown>(slug: string): Promise<T | null> {
   const { data, error } = await supabase.rpc("get_company_branded_catalog", { p_slug: slug });
   if (error) throw error;
   return (data ?? null) as T | null;
 }
+
+

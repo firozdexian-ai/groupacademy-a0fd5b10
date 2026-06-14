@@ -1,4 +1,4 @@
-import { Card } from "@/components/ui/card";
+﻿import { Card } from "@/components/ui/card";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, ReferenceLine, Legend } from "recharts";
 import { type IRSnapshot } from "@/hooks/useUnitEconomics";
 
@@ -26,3 +26,4 @@ export function RevPerEmployeeCard({ data }: { data: IRSnapshot[] }) {
     </Card>
   );
 }
+

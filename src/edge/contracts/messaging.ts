@@ -1,5 +1,5 @@
-/**
- * Messaging domain — edge function contracts (Phase 9g + 9h).
+﻿/**
+ * Messaging domain â€” edge function contracts (Phase 9g + 9h).
  */
 import { z } from "zod";
 
@@ -120,3 +120,4 @@ export const HandleEmailUnsubscribeResponseSchema = z
 export type HandleEmailUnsubscribeResponse = z.infer<
   typeof HandleEmailUnsubscribeResponseSchema
 >;
+

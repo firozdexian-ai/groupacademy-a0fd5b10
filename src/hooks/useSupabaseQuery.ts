@@ -1,8 +1,8 @@
-import { useMutation } from "@tanstack/react-query";
+﻿import { useMutation } from "@tanstack/react-query";
 import { useCallback, useRef } from "react";
 
 /**
- * GroUp Academy: Neural Database Sentinel (V5.6.0)
+ * GroUp Academy: Neural Database guard (V5.6.0)
  * CTO Reference: Authoritative infrastructure utility managing network cancellation and lazy data ingress.
  * Architecture: Optimized via TanStack Mutation Primitives to completely eradicate state reference thrashing.
  * Phase: Z0 Code Freeze Hardened (May 2026 Launch Edition).
@@ -38,7 +38,7 @@ export function useSupabaseQuery<T>(
 
   const localAbortControllerRef = useRef<AbortController | null>(null);
 
-  // --- HUD: TRANSPARENT_MUTATION_ORCHESTRATOR ---
+  // --- dashboard: TRANSPARENT_MUTATION_ORCHESTRATOR ---
   const mutation = useMutation<T, Error, void>({
     mutationKey: ["supabase-sentinel-query"],
     mutationFn: async (): Promise<T> => {
@@ -55,11 +55,11 @@ export function useSupabaseQuery<T>(
       // Construct an absolute deadline promise matching target configurations
       const timeoutPromise = new Promise<never>((_, reject) => {
         timeoutId = setTimeout(() => {
-          // HUD: SEVERING_LATENT_NETWORK_TRANSMISSION
+          // dashboard: SEVERING_LATENT_NETWORK_TRANSMISSION
           controller.abort();
 
           console.warn(
-            `[Digital Workforce] ANOMALY: Database Sentinel timeout threshold triggered after ${timeout}ms.`,
+            `[Digital Workforce] ANOMALY: Database guard timeout threshold triggered after ${timeout}ms.`,
           );
 
           if (onTimeout) onTimeout();
@@ -84,7 +84,7 @@ export function useSupabaseQuery<T>(
 
   const abort = useCallback(() => {
     if (localAbortControllerRef.current) {
-      // HUD: EXECUTING_MANUAL_TRANSMISSION_SEVERANCE
+      // dashboard: EXECUTING_MANUAL_TRANSMISSION_SEVERANCE
       localAbortControllerRef.current.abort();
       localAbortControllerRef.current = null;
     }
@@ -94,7 +94,7 @@ export function useSupabaseQuery<T>(
   const execute = useCallback(async (): Promise<T | null> => {
     try {
       return await mutation.mutateAsync();
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Return null fallback states if request was cancelled or timed out
       if (err?.name === "AbortError" || err?.message?.includes("THRESHOLD_ERROR")) {
         return null;
@@ -154,3 +154,5 @@ export function isAbortError(error: unknown): boolean {
   }
   return false;
 }
+
+

@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 // Helper function to check if user is an admin
-async function checkIsAdmin(supabase: any, userId: string): Promise<boolean> {
+async function checkIsAdmin(supabase: unknown, userId: string): Promise<boolean> {
   try {
     const { data } = await supabase
       .from("user_roles")
@@ -124,7 +124,7 @@ serve(async (req) => {
       .eq("is_active", true);
 
     // Build context for AI
-    // @ts-ignore - Supabase type join handling
+    // @ts-expect-error - Supabase type join handling
     const professionName = assessment.profession_categories?.name || "General";
     const answersWithContext = Object.entries(assessment.answers || {})
       .map(([questionId, answer]) => {
@@ -133,12 +133,12 @@ serve(async (req) => {
 
         let answerText = answer;
         if (typeof answer === "string" && Array.isArray(question.options)) {
-          const option = question.options.find((o: any) => o.value === answer);
+          const option = question.options.find((o: unknown) => o.value === answer);
           answerText = option?.label || answer;
         } else if (Array.isArray(answer)) {
           answerText = answer
             .map((a) => {
-              const option = question.options?.find((o: any) => o.value === a);
+              const option = question.options?.find((o: unknown) => o.value === a);
               return option?.label || a;
             })
             .join(", ");
@@ -153,7 +153,7 @@ serve(async (req) => {
       .filter(Boolean);
 
     // Group answers by category
-    const groupedAnswers = answersWithContext.reduce((acc: any, item: any) => {
+    const groupedAnswers = answersWithContext.reduce((acc: unknown, item: unknown) => {
       if (!acc[item.category]) acc[item.category] = [];
       acc[item.category].push(item);
       return acc;
@@ -169,9 +169,9 @@ Assessment Results:
 Detailed Responses by Category:
 ${Object.entries(groupedAnswers)
   .map(
-    ([category, items]: [string, any]) => `
+    ([category, items]: [string, unknown]) => `
 ${category.toUpperCase().replace(/_/g, " ")}:
-${items.map((item: any) => `- Q: ${item.question}\n  A: ${item.answer}`).join("\n")}
+${items.map((item: unknown) => `- Q: ${item.question}\n  A: ${item.answer}`).join("\n")}
 `,
   )
   .join("\n")}
@@ -270,7 +270,7 @@ Be specific, actionable, and encouraging. Focus on practical advice for the Bang
     // Fire-and-forget: send service completion email
     const talentId = assessment.talent_id || userTalentId;
     if (talentId) {
-      const summary = `Score: ${assessment.percentage}% — ${assessment.readiness_level}. ${(aiAnalysis.strengths || []).slice(0, 2).join(", ")}`;
+      const summary = `Score: ${assessment.percentage}% â€” ${assessment.readiness_level}. ${(aiAnalysis.strengths || []).slice(0, 2).join(", ")}`;
       fetch(`${SUPABASE_URL}/functions/v1/send-transactional-email`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${supabaseServiceKey}` },
@@ -293,3 +293,5 @@ Be specific, actionable, and encouraging. Focus on practical advice for the Bang
     });
   }
 });
+
+

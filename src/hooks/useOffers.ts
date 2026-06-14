@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCurrentUser } from "@/lib/auth";
 import { toast } from "sonner";
 import { notifyHiringEvent } from "@/domains/jobs/api/jobsApi";
@@ -69,7 +69,7 @@ export function useCreateOffer() {
       qc.invalidateQueries({ queryKey: ["application-hire-state", variables.application_id] });
       toast.success("Offer document draft formalized successfully.");
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       toast.error(err.message ?? "Failed to initialize offer ledger record.");
     },
   });
@@ -83,10 +83,10 @@ export function useSendOffer() {
     mutationFn: async ({ offerId, applicationId }: { offerId: string; applicationId: string }) => {
       await updateOfferStatus(offerId, "sent");
 
-      // HUD: EDGE_NOTIFY_DISPATCH_HANDSHAKE
+      // dashboard: EDGE_NOTIFY_DISPATCH_HANDSHAKE
       try {
         await notifyHiringEvent({ kind: "offer_sent", ref: { offer_id: offerId } });
-      } catch (funcError: any) {
+      } catch (funcError: unknown) {
         console.error("[Digital Workforce] ANOMALY: notify-hiring-event failed for offer_sent.", {
           offerId,
           message: funcError?.message,
@@ -97,7 +97,7 @@ export function useSendOffer() {
       qc.invalidateQueries({ queryKey: ["application-hire-state", variables.applicationId] });
       toast.success("Offer letter systematically dispatched to candidate.");
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       console.error("[Digital Workforce] FAULT: sendOffer dispatch rejected.", err);
       toast.error(err.message ?? "Failed to dispatch contract.");
     },
@@ -120,14 +120,14 @@ export function useAcceptOffer() {
     }) => {
       try {
         await acceptOffer(offerId, signedName);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: accept_offer transaction verification failed.", error);
         throw error;
       }
 
       try {
         await notifyHiringEvent({ kind: "offer_accepted", ref: { offer_id: offerId } });
-      } catch (funcError: any) {
+      } catch (funcError: unknown) {
         console.error("[Digital Workforce] ANOMALY: notify-hiring-event failed for offer_accepted.", {
           offerId,
           message: funcError?.message,
@@ -139,7 +139,7 @@ export function useAcceptOffer() {
       qc.invalidateQueries({ queryKey: ["instructor-summary"] }); // Force synchronization if partner onboarding
       toast.success("Contract signed and executed successfully! Welcome aboard.");
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       toast.error(err.message ?? "Signature mapping handshake failed.");
     },
   });
@@ -153,14 +153,14 @@ export function useDeclineOffer() {
     mutationFn: async ({ offerId, note, applicationId }: { offerId: string; note?: string; applicationId: string }) => {
       try {
         await declineOffer(offerId, note ?? null);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: decline_offer transaction rejected by schema rules.", error);
         throw error;
       }
 
       try {
         await notifyHiringEvent({ kind: "offer_declined", ref: { offer_id: offerId } });
-      } catch (funcError: any) {
+      } catch (funcError: unknown) {
         console.error("[Digital Workforce] ANOMALY: notify-hiring-event failed for offer_declined.", {
           offerId,
           message: funcError?.message,
@@ -171,8 +171,10 @@ export function useDeclineOffer() {
       qc.invalidateQueries({ queryKey: ["application-hire-state", variables.applicationId] });
       toast.error("Offer declined. Pipeline record localized.");
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       toast.error(err.message ?? "Declination registration failed.");
     },
   });
 }
+
+

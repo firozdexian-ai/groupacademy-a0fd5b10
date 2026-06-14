@@ -1,4 +1,4 @@
-import jsPDF from "jspdf";
+﻿import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
 /**
@@ -25,7 +25,7 @@ export async function generateScorecardPDF(assessment: Assessment) {
     throw new Error("REGISTRY_FAULT: Scorecard template node not found.");
   }
 
-  // HUD: Off-Screen Rendering Protocol
+  // dashboard: Off-Screen Rendering Protocol
   // Temporarily reposition element to ensure full-capture without viewport interference.
   const originalPosition = element.style.position;
   const originalLeft = element.style.left;
@@ -36,7 +36,7 @@ export async function generateScorecardPDF(assessment: Assessment) {
   element.style.visibility = "visible";
 
   try {
-    // HUD: High-Intensity Canvas Generation
+    // dashboard: High-Intensity Canvas Generation
     const canvas = await html2canvas(element, {
       scale: 2, // 2x Density for print quality
       logging: false,
@@ -54,7 +54,7 @@ export async function generateScorecardPDF(assessment: Assessment) {
 
     pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight, undefined, "FAST");
 
-    // HUD: Institutional Filename Sanitization
+    // dashboard: Institutional Filename Sanitization
     const sanitizedName = assessment.full_name.replace(/[^a-z0-9]/gi, "_").toLowerCase();
     const date = new Date().toISOString().split("T")[0];
     const filename = `GroUp_Scorecard_${sanitizedName}_${date}.pdf`;
@@ -72,3 +72,4 @@ export async function generateScorecardPDF(assessment: Assessment) {
     element.style.visibility = originalVisibility;
   }
 }
+

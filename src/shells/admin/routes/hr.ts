@@ -1,6 +1,6 @@
-import React from "react";
+﻿import React from "react";
 
-export const ROUTES: Record<string, React.LazyExoticComponent<any>> = {
+export const ROUTES: Record<string, React.LazyExoticComponent<unknown>> = {
   "hr-workforce": React.lazy(() => import("@/domains/workforce/components/admin/WorkforceTab").then((m) => ({ default: m.WorkforceManager }))),
   "hr-overview": React.lazy(() => import("@/domains/workforce/components/admin/HrOverviewTab")),
   "hr-grades": React.lazy(() => import("@/domains/workforce/components/admin/HrSimpleTabs").then((m) => ({ default: m.HrGradesTab }))),
@@ -28,3 +28,5 @@ export const TITLES: Record<string, string> = {
   "hr-payroll": "Rewards & payroll",
   "hr-fleet": "Digital Agent Fleet",
 };
+
+

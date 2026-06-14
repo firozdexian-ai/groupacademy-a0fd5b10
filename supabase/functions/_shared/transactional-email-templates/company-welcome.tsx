@@ -1,4 +1,4 @@
-import * as React from 'npm:react@18.3.1'
+﻿import * as React from 'npm:react@18.3.1'
 import {
   Body, Container, Head, Heading, Html, Preview, Text, Button, Section,
 } from 'npm:@react-email/components@0.0.22'
@@ -16,23 +16,23 @@ interface Props {
 const Email = ({ name, company, credits = 250 }: Props) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Your {company || 'company'} workspace is ready — {credits} free credits inside</Preview>
+    <Preview>Your {company || 'company'} workspace is ready â€” {credits} free credits inside</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Welcome to {SITE_NAME} 🎉</Heading>
+        <Heading style={h1}>Welcome to {SITE_NAME} ðŸŽ‰</Heading>
         <Text style={text}>{name ? `Hi ${name},` : 'Hi there,'}</Text>
         <Text style={text}>
           Your <strong>{company || 'company'}</strong> workspace is live. You'll find two AI agents
-          ready to help you post jobs, search talent, and run growth campaigns — no setup required.
+          ready to help you post jobs, search talent, and run growth campaigns â€” no setup required.
         </Text>
         {credits > 0 && (
           <Section style={creditBox}>
             <Text style={creditAmount}>{credits} free credits</Text>
-            <Text style={creditCaption}>To get you started — use them on any AI agent.</Text>
+            <Text style={creditCaption}>To get you started â€” use them on unknown AI agent.</Text>
           </Section>
         )}
         <Button href={APP_URL} style={button}>Open your workspace</Button>
-        <Text style={footer}>— The {SITE_NAME} team</Text>
+        <Text style={footer}>â€” The {SITE_NAME} team</Text>
       </Container>
     </Body>
   </Html>
@@ -54,3 +54,5 @@ const creditAmount = { fontSize: '24px', fontWeight: 'bold' as const, color: '#2
 const creditCaption = { fontSize: '12px', color: '#64748b', margin: 0 }
 const button = { background: '#2A7DDE', color: '#ffffff', padding: '12px 24px', borderRadius: '6px', textDecoration: 'none', fontWeight: 'bold' as const, display: 'inline-block', margin: '16px 0' }
 const footer = { fontSize: '12px', color: '#94a3b8', margin: '32px 0 0' }
+
+

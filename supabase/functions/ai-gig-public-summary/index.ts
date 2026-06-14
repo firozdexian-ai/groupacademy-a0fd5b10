@@ -1,4 +1,4 @@
-// 2-paragraph SEO description for a public gig listing.
+﻿// 2-paragraph SEO description for a public gig listing.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
 const LOVABLE_KEY = Deno.env.get("LOVABLE_API_KEY")!;
@@ -30,3 +30,4 @@ Deno.serve(async (req) => {
   await admin.from("project_public_settings").update({ seo_description: text.slice(0, 300) }).eq("project_id", project_id);
   return new Response(JSON.stringify({ summary: text }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
 });
+

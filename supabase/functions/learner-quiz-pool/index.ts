@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+﻿import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -100,7 +100,7 @@ Deno.serve(async (req) => {
           const { data: mod } = await sbAdmin.from("course_modules").select("title,description").eq("id", moduleId).single();
           try {
             const qs = await generateQuestions(mod?.title ?? "", mod?.description ?? "", GENERATE_BATCH);
-            await sbAdmin.from("module_quiz_pool").insert(qs.map((q: any) => ({
+            await sbAdmin.from("module_quiz_pool").insert(qs.map((q: unknown) => ({
               module_id: moduleId, question: q.question, options: q.options, correct_index: q.correct_index,
               explanation: q.explanation, difficulty: q.difficulty, generated_by: "ai", created_by_talent_id: talent.id,
             })));
@@ -167,3 +167,5 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
+
+

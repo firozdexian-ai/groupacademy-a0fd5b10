@@ -1,7 +1,7 @@
-/**
- * Host detection — switches the same React build between two PWAs:
- *  • GroUp Academy (talent-facing) on groupacademy.online + lovable previews
- *  • Gro10x (B2B professional super-app) on gro10x.* hosts
+﻿/**
+ * Host detection â€” switches the same React build between two PWAs:
+ *  â€¢ GroUp Academy (talent-facing) on groupacademy.online + lovable previews
+ *  â€¢ Gro10x (B2B professional super-app) on gro10x.* hosts
  *
  * Override locally with ?gro10x=1 (sticky via localStorage) for testing.
  */
@@ -38,3 +38,4 @@ export const APP_NAME = IS_GRO10X ? "Gro10x" : "GroUp Academy";
 export const APP_TAGLINE = IS_GRO10X
   ? "Professional AI agents, in one inbox."
   : "Decode your career potential with AI.";
+

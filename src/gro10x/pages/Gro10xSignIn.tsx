@@ -1,4 +1,4 @@
-import { useState, FormEvent, useEffect } from "react";
+﻿import { useState, FormEvent, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,7 +9,7 @@ import { checkCompanyAccount } from "@/domains/companies/api/companiesApi";
 
 /**
  * Dedicated Gro10x sign-in page. Always lands company members in
- * /gro10x/inbox — never bounces them to the talent app.
+ * /gro10x/inbox â€” never bounces them to the talent app.
  */
 export default function Gro10xSignIn() {
   const navigate = useNavigate();
@@ -46,8 +46,8 @@ export default function Gro10xSignIn() {
 
       // Verify membership via service-role edge function (RLS-immune),
       // mirroring the same lookup Riya uses in the auth chat.
-      let lookup: any = null;
-      let lookupErr: any = null;
+      let lookup: unknown = null;
+      let lookupErr: unknown = null;
       try {
         lookup = await checkCompanyAccount({ email: userEmail });
       } catch (e) { lookupErr = e; }
@@ -66,7 +66,7 @@ export default function Gro10xSignIn() {
       }
 
       navigate("/gro10x/inbox", { replace: true });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("[Gro10xSignIn] error:", err);
       setError(err.message || "Invalid email or password.");
       toast.error(err.message || "Sign-in failed");
@@ -85,7 +85,7 @@ export default function Gro10xSignIn() {
         redirectTo: `${window.location.origin}/reset-password`,
       });
       toast.success("Check your inbox for a reset link.");
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err.message || "Could not send reset email.");
     }
   };
@@ -196,3 +196,5 @@ export default function Gro10xSignIn() {
     </div>
   );
 }
+
+

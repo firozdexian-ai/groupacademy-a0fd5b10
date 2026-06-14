@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 import { useTalent } from "@/hooks/useTalent";
@@ -41,7 +41,7 @@ interface AgentRecord {
 /**
  * GroUp Academy: Unified Thread Viewport (MessageThread)
  * Hardened responsive chat orchestrator managing dual-stream (System/Agent) communication pipelines.
- * Version: Launch Candidate · Phase Z1 Production Contract Sealed
+ * Version: Launch Candidate Â· Phase Z1 Production Contract Sealed
  */
 export default function MessageThread() {
  const { threadKey } = useParams<{ threadKey: string }>();
@@ -186,7 +186,7 @@ export default function MessageThread() {
 
  return (
  <div className={cn(PAGE_SHELL, "flex flex-col h-[100dvh] max-w-2xl mx-auto bg-background")}>
- {/* HUD LEVEL 1: CONTEXT HEADER */}
+ {/* dashboard LEVEL 1: CONTEXT HEADER */}
  <header className="sticky top-0 z-20 bg-background/95 border-b border-border/40 flex items-center gap-3 px-4 py-3">
  <Button variant="ghost" size="icon" aria-label="Go back" className="h-9 w-9 shrink-0" onClick={() => navigateHook("/app/messages")}>
  <ArrowLeft className="h-5 w-5" />
@@ -207,7 +207,7 @@ export default function MessageThread() {
  </div>
  </header>
 
- {/* HUD LEVEL 2: MESSAGING VIEWPORT */}
+ {/* dashboard LEVEL 2: MESSAGING VIEWPORT */}
  <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-4 py-6 bg-muted/10 space-y-4">
  {isBootstrapping ? (
  <InlineSpinner size="lg" />
@@ -253,7 +253,7 @@ export default function MessageThread() {
  )}
  </div>
 
- {/* HUD LEVEL 3: INPUT COMPOSER */}
+ {/* dashboard LEVEL 3: INPUT COMPOSER */}
  {!isSystemThread && (
   <div className="border-t border-border/40 bg-background p-4 flex gap-2">
   <Input
@@ -277,3 +277,4 @@ export default function MessageThread() {
  </div>
  );
 }
+

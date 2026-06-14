@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   getCompanyPublicProfileBySlug,
@@ -71,7 +71,7 @@ function setJsonLd(id: string, data: unknown) {
 /**
  * GroUp Academy: Authoritative Public Workspace Mirror Node (PublicCompanyPage)
  * Hardened responsive showcase page resolving parallel relational handshakes and isolating SEO injections.
- * Version: Launch Candidate · Phase Z0 Lifecycle Insulation Locked
+ * Version: Launch Candidate Â· Phase Z0 Lifecycle Insulation Locked
  */
 export default function PublicCompanyPage() {
   const { slug: unverifiedRouteSlugStr } = useParams<{ slug: string }>();
@@ -151,7 +151,7 @@ export default function PublicCompanyPage() {
 
     const targetCompanyNodeItem = companyRecordState;
     const stableTitleString =
-      `${targetCompanyNodeItem.name} — ${targetCompanyNodeItem.tagline ?? "Corporate Profile"}`.slice(0, 60);
+      `${targetCompanyNodeItem.name} â€” ${targetCompanyNodeItem.tagline ?? "Corporate Profile"}`.slice(0, 60);
     const stableDescriptionString = (
       targetCompanyNodeItem.about ??
       targetCompanyNodeItem.tagline ??
@@ -223,7 +223,7 @@ export default function PublicCompanyPage() {
             to="/"
             className="h-8 px-4 rounded-lg inline-flex items-center justify-center text-sm font-medium tracking-wider bg-accent text-accent-foreground border border-border/40 transition-colors hover:bg-muted"
           >
-            ← Back to Home
+            â† Back to Home
           </Link>
         </div>
       </div>
@@ -233,7 +233,7 @@ export default function PublicCompanyPage() {
   return (
     <div className="min-h-screen bg-background text-foreground antialiased selection:bg-primary/10 block text-left transform-gpu w-full">
       <main className="max-w-3xl mx-auto pb-12 w-full block">
-        {/* HUD LEVEL 1: PROFILE COVER MATRICES */}
+        {/* dashboard LEVEL 1: PROFILE COVER MATRICES */}
         <div
           role="img"
           aria-label={`${companyRecordState.name} cover image`}
@@ -243,7 +243,7 @@ export default function PublicCompanyPage() {
           }
         />
 
-        {/* HUD LEVEL 2: COMPOSITE HEAD DESCRIPTION PROFILE IDENTIFIER CARD */}
+        {/* dashboard LEVEL 2: COMPOSITE HEAD DESCRIPTION PROFILE IDENTIFIER CARD */}
         <div className="-mt-10 px-4 select-none block w-full">
           <div className="bg-card/95 border border-border/60 rounded-xl p-4 sm:p-5 shadow-xs block w-full">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full">
@@ -287,7 +287,7 @@ export default function PublicCompanyPage() {
           </div>
         </div>
 
-        {/* HUD LEVEL 3: DETAILED ABSTRACT DOCUMENT SECTION */}
+        {/* dashboard LEVEL 3: DETAILED ABSTRACT DOCUMENT SECTION */}
         {companyRecordState.about && (
           <section className="px-4 mt-6 block w-full">
             <h2 className="text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 select-none block leading-none pb-2 border-b border-border/5">
@@ -299,7 +299,7 @@ export default function PublicCompanyPage() {
           </section>
         )}
 
-        {/* HUD LEVEL 4: SQUAD MEMBER MATRIX GRAPH GRID */}
+        {/* dashboard LEVEL 4: SQUAD MEMBER MATRIX GRAPH GRID */}
         {activeMembersState.length > 0 && (
           <section className="px-4 mt-8 block w-full">
             <h2 className="text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 select-none block leading-none pb-3 border-b border-border/5">
@@ -334,7 +334,7 @@ export default function PublicCompanyPage() {
           </section>
         )}
 
-        {/* HUD LEVEL 5: COMPOSITE VACANT TASK ASSIGNMENTS ROLES SECTOR */}
+        {/* dashboard LEVEL 5: COMPOSITE VACANT TASK ASSIGNMENTS ROLES SECTOR */}
         {associatedJobsState.length > 0 && (
           <section className="px-4 mt-8 block w-full">
             <h2 className="text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 select-none block leading-none pb-3 border-b border-border/5 flex items-center gap-2">
@@ -352,12 +352,12 @@ export default function PublicCompanyPage() {
                       {jobCapsuleItem.title}
                     </p>
                     <p className="text-[11px] font-mono font-bold text-muted-foreground/50 truncate block leading-none">
-                      {jobCapsuleItem.location ?? "Remote"} ·{" "}
+                      {jobCapsuleItem.location ?? "Remote"} Â·{" "}
                       {jobCapsuleItem.job_type.replace(/_/g, " ").toUpperCase()}
                     </p>
                   </div>
                   <span className="text-[10px] font-bold text-primary group-hover:translate-x-0.5 transition-transform shrink-0 uppercase tracking-wider hidden sm:inline-block">
-                    View Job →
+                    View Job â†’
                   </span>
                 </Link>
               ))}
@@ -365,7 +365,7 @@ export default function PublicCompanyPage() {
           </section>
         )}
 
-        {/* HUD LEVEL 6: GLOBAL FOOTER DISCLOSURE MARKERS */}
+        {/* dashboard LEVEL 6: GLOBAL FOOTER DISCLOSURE MARKERS */}
         <p className="text-center font-mono text-[9px] font-bold uppercase tracking-widest text-muted-foreground/30 mt-12 select-none pointer-events-none leading-none">
           Powered by{" "}
           <Link
@@ -379,3 +379,4 @@ export default function PublicCompanyPage() {
     </div>
   );
 }
+

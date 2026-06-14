@@ -1,7 +1,7 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+﻿import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 /**
- * GroUp Academy: Vision-Enabled Support Sentinel
+ * GroUp Academy: Vision-Enabled Support guard
  * CTO Reference: Authoritative Edge Function for multimodal conversation analysis.
  * Logic: Decodes chat screenshots into structured institutional responses.
  */
@@ -28,7 +28,7 @@ serve(async (req) => {
     
     Return JSON ONLY: { "reply": "string", "suggestions": [], "tone": "string", "actions": [] }`;
 
-    // HUD: Prepare Multimodal Payload
+    // dashboard: Prepare Multimodal Payload
     const imageData = image.startsWith("data:") ? image : `data:image/png;base64,${image}`;
     const userContent = [
       { type: "image_url", image_url: { url: imageData } },
@@ -73,11 +73,13 @@ serve(async (req) => {
     return new Response(JSON.stringify(parsed), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-  } catch (err: any) {
-    console.error("[Sentinel] SUPPORT_SENTINEL_FAULT:", err.message);
+  } catch (err: unknown) {
+    console.error("[guard] SUPPORT_SENTINEL_FAULT:", err.message);
     return new Response(JSON.stringify({ error: err.message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 });
+
+

@@ -1,5 +1,5 @@
-// Auto-generated lightweight admin agent. Self-validates auth + admin role,
-// then forwards to Lovable AI gateway. No tool calls — pure drafting/analyst.
+﻿// Auto-generated lightweight admin agent. Self-validates auth + admin role,
+// then forwards to Lovable AI gateway. No tool calls â€” pure drafting/analyst.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -30,7 +30,7 @@ Deno.serve(async (req) => {
     const admin = createClient(SUPA_URL, SERVICE_KEY);
     const { data: roleRows } = await admin
       .from("user_roles").select("role").eq("user_id", userData.user.id);
-    const roles = (roleRows ?? []).map((r: any) => r.role);
+    const roles = (roleRows ?? []).map((r: unknown) => r.role);
     if (!roles.includes("super_admin") && !roles.includes("admin")) {
       return json({ error: "forbidden" }, 403);
     }
@@ -52,13 +52,15 @@ Deno.serve(async (req) => {
     }
     const ai = await aiRes.json();
     return json({ message: ai.choices?.[0]?.message?.content ?? "" });
-  } catch (e: any) {
+  } catch (e: unknown) {
     return json({ error: e?.message ?? "unknown" }, 500);
   }
 });
 
-function json(body: any, status = 200) {
+function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status, headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
+
+

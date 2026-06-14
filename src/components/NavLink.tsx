@@ -1,4 +1,4 @@
-import { forwardRef, useEffect } from "react";
+﻿import { forwardRef, useEffect } from "react";
 import { NavLink as RouterNavLink, NavLinkProps, useLocation } from "react-router-dom";
 import { trackEvent } from "@/lib/errorTracking";
 import { cn } from "@/lib/utils";
@@ -12,7 +12,7 @@ interface NavLinkCompatProps extends Omit<NavLinkProps, "className"> {
 /**
  * GroUp Academy: State-Aware Link Navigation Compatibility Wrapper (NavLink)
  * Restores historical 'activeClassName' parameters with high-performance string memoization.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export const NavLink = forwardRef<HTMLAnchorElement, NavLinkCompatProps>(
   ({ className, activeClassName, pendingClassName, to, onClick, ...props }, ref) => {
@@ -49,3 +49,4 @@ export const NavLink = forwardRef<HTMLAnchorElement, NavLinkCompatProps>(
 );
 
 NavLink.displayName = "NavLink_Identity_Node";
+

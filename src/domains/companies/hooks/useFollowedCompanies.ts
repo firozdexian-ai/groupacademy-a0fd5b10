@@ -1,5 +1,5 @@
-/**
- * Companies Domain Hooks — Followed Companies Subsystem
+﻿/**
+ * Companies Domain Hooks â€” Followed Companies Subsystem
  * Version: 2024 Highly Professional SAAS UI
  * Rules: Enforces Automated Efficiency for Talent operations with silent anomaly routing.
  */
@@ -118,7 +118,7 @@ export function useToggleFollowCompany() {
       qc.setQueryData(key, next);
       return { prev };
     },
-    onError: (err: any, _v, ctx) => {
+    onError: (err: unknown, _v, ctx) => {
       if (err?.message === "auth-required") return;
       if (user?.id && ctx?.prev) {
         qc.setQueryData(["followed-companies", user.id], ctx.prev);
@@ -133,3 +133,4 @@ export function useToggleFollowCompany() {
     },
   });
 }
+

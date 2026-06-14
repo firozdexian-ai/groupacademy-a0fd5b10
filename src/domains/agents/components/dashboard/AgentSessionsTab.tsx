@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { listRecentAgentChatSessions } from "@/domains/agents/repo/agentsRepo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,7 +29,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy — Career Guidance System: Intelligence Audit Terminal (Agent Sessions)
+ * Group Academy â€” Career Guidance System: Intelligence Audit Terminal (Agent Sessions)
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/command-center?tab=sessions (Operator Conversation Audit Workspace)
  * Operations Mode: Automated Efficiency layout rendering tracking historical student assistant interactions.
@@ -88,7 +88,7 @@ export function AgentSessionsManager() {
     try {
       const data = await listRecentAgentChatSessions(200);
       setSessions(data);
-    } catch (error: any) {
+    } catch (error: unknown) {
       trackError("agent-sessions-manager-fetch-failure", { error: error.message });
       toast.error("Failed to synchronize student conversation registry indexes.");
     } finally {
@@ -114,7 +114,7 @@ export function AgentSessionsManager() {
     totalCredits: sessions.reduce((sum, s) => sum + (s.credits_charged || 0), 0),
     avgMessages:
       sessions.length > 0
-        ? Math.round(sessions.reduce((sum, s) => sum + ((s.messages as any[])?.length || 0), 0) / sessions.length)
+        ? Math.round(sessions.reduce((sum, s) => sum + ((s.messages as unknown[])?.length || 0), 0) / sessions.length)
         : 0,
   };
 
@@ -302,7 +302,7 @@ export function AgentSessionsManager() {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-center font-mono text-xs font-semibold text-foreground/90 tabular-nums">
-                          {(session.messages as any[])?.length || 0}
+                          {(session.messages as unknown[])?.length || 0}
                         </TableCell>
                         <TableCell className="text-center">
                           <div className="inline-flex items-center gap-1 font-mono text-xs font-bold text-amber-700 bg-amber-500/10 px-2 rounded-full border border-transparent">
@@ -445,7 +445,7 @@ export function AgentSessionsManager() {
                     </div>
                   </div>
                 ))}
-                {(!viewSession?.messages || (viewSession.messages as any[]).length === 0) && (
+                {(!viewSession?.messages || (viewSession.messages as unknown[]).length === 0) && (
                   <div className="py-16 text-center space-y-2 opacity-50">
                     <Database className="h-8 w-8 mx-auto text-muted-foreground/40" />
                     <p className="text-xs font-medium text-muted-foreground">
@@ -503,3 +503,5 @@ function KpiNode({ icon: Icon, label, val, color, bg }: KpiCardProps) {
 }
 
 export default AgentSessionsManager;
+
+

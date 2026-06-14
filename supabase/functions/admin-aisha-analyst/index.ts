@@ -1,4 +1,4 @@
-// Admin Aisha Analyst — chat with the onboarding agent's data.
+﻿// Admin Aisha Analyst â€” chat with the onboarding agent's data.
 // Super-admin only. Tools resolve against aisha_conversations + talents.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { augmentLastUserMessage } from "../_shared/attachments.ts";
@@ -15,7 +15,7 @@ const TOOLS = [
     function: {
       name: "aisha_count",
       description:
-        "Count Aisha onboarding conversations. status ∈ {all, completed, abandoned, in_progress}. since is an ISO date (optional).",
+        "Count Aisha onboarding conversations. status âˆˆ {all, completed, abandoned, in_progress}. since is an ISO date (optional).",
       parameters: {
         type: "object",
         properties: {
@@ -46,7 +46,7 @@ const TOOLS = [
     function: {
       name: "aisha_drop_off",
       description:
-        "Distribution of last_step values for ABANDONED conversations — shows where leads drop off.",
+        "Distribution of last_step values for ABANDONED conversations â€” shows where leads drop off.",
       parameters: { type: "object", properties: {} },
     },
   },
@@ -66,7 +66,7 @@ const TOOLS = [
 
 const SYSTEM = `You are Aisha's operator console for the GroUp Academy super admin.
 Aisha is the onboarding gatekeeper agent that talks to every new visitor.
-You answer the operator's questions about onboarding by CALLING TOOLS — never invent numbers.
+You answer the operator's questions about onboarding by CALLING TOOLS â€” never invent numbers.
 Be concise. Use markdown. Bold the key numbers.
 Today: ${new Date().toISOString().slice(0, 10)}.`;
 
@@ -92,7 +92,7 @@ Deno.serve(async (req) => {
       .from("user_roles")
       .select("role")
       .eq("user_id", userData.user.id);
-    const roles = (roleRows ?? []).map((r: any) => r.role);
+    const roles = (roleRows ?? []).map((r: unknown) => r.role);
     if (!roles.includes("super_admin") && !roles.includes("admin")) {
       return json({ error: "forbidden" }, 403);
     }
@@ -101,7 +101,7 @@ Deno.serve(async (req) => {
     const messages = body.messages ?? [];
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
 
-    const convo: any[] = [{ role: "system", content: SYSTEM }, ...messages];
+    const convo: unknown[] = [{ role: "system", content: SYSTEM }, ...messages];
     await augmentLastUserMessage(admin, convo, body.attachments);
 
     for (let step = 0; step < 5; step++) {
@@ -129,7 +129,7 @@ Deno.serve(async (req) => {
         convo.push(msg);
         for (const tc of msg.tool_calls) {
           const args = safeParse(tc.function?.arguments);
-          let toolResult: any = { error: "unknown tool" };
+          let toolResult: unknown = { error: "unknown tool" };
           try {
             toolResult = await runTool(admin, tc.function.name, args);
           } catch (e) {
@@ -164,7 +164,7 @@ Deno.serve(async (req) => {
   }
 });
 
-async function runTool(admin: any, name: string, args: any) {
+async function runTool(admin: unknown, name: string, args: unknown) {
   switch (name) {
     case "aisha_count": {
       let q = admin.from("aisha_conversations").select("id", { head: true, count: "exact" });
@@ -211,3 +211,5 @@ async function runTool(admin: any, name: string, args: any) {
       return { error: `unknown tool: ${name}` };
   }
 }
+
+

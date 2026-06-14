@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
@@ -33,3 +33,4 @@ export function ChatAgentShortcut({ agentKey }: { agentKey: string }) {
 }
 
 export default ChatAgentShortcut;
+

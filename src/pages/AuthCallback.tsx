@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -28,7 +28,7 @@ const AuthCallback = () => {
     }
 
     // Brand-new OAuth users: the talents row is created by a trigger and
-    // may not be visible yet. Poll up to 3× (≈1.8s total) before falling
+    // may not be visible yet. Poll up to 3Ã— (â‰ˆ1.8s total) before falling
     // back to the talent default.
     if (accountType === "unknown" && retryCountRef.current < MAX_ACCOUNT_TYPE_RETRIES) {
       retryCountRef.current += 1;
@@ -39,7 +39,7 @@ const AuthCallback = () => {
     // Fire-and-forget welcome email (idempotent, once per user).
     const welcomeKey = `${WELCOME_KEY_PREFIX}${user.id}`;
     if (!localStorage.getItem(welcomeKey)) {
-      const fullName = (user.user_metadata as any)?.full_name || "Learner";
+      const fullName = (user.user_metadata as unknown)?.full_name || "Learner";
       void sendTransactionalEmail({
         templateName: "welcome",
         recipientEmail: user.email,
@@ -52,8 +52,8 @@ const AuthCallback = () => {
       localStorage.removeItem("ga_referral");
     }
 
-    // Apply any pre-auth onboarding selections stashed at /start before
-    // routing. Fire-and-forget — failure shouldn't block sign-in.
+    // Apply unknown pre-auth onboarding selections stashed at /start before
+    // routing. Fire-and-forget â€” failure shouldn't block sign-in.
     void finalizePendingOnboarding();
 
     const dest =
@@ -64,9 +64,11 @@ const AuthCallback = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-3">
       <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      <p className="text-sm font-medium text-muted-foreground">Signing you in…</p>
+      <p className="text-sm font-medium text-muted-foreground">Signing you inâ€¦</p>
     </div>
   );
 };
 
 export default AuthCallback;
+
+

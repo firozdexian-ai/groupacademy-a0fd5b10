@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ interface Props {
 /**
  * GroUp Academy: Core Conversational Dialog Interface Node (ChatBubble)
  * An authoritative component displaying messaging states, time markers, and generative action linkages.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function ChatBubble({ role, content, timestamp, ctaLabel, ctaLink }: Props) {
   const navigate = useNavigate();
@@ -111,3 +111,4 @@ export function ChatBubble({ role, content, timestamp, ctaLabel, ctaLink }: Prop
     </div>
   );
 }
+

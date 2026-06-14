@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+﻿import { useMemo } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -57,7 +57,7 @@ export function EventDateTimeField({
     }
 
     try {
-      // HUD: COMPILING_LOCAL_WALL_CLOCK_TO_UNIVERSAL_UTC_ISO
+      // dashboard: COMPILING_LOCAL_WALL_CLOCK_TO_UNIVERSAL_UTC_ISO
       const calculatedUtcIso = zonedInputToUtcIso(inputDateTimeString, targetTz);
       onChange({ utcValue: calculatedUtcIso, timezone: targetTz });
     } catch (err) {
@@ -71,7 +71,7 @@ export function EventDateTimeField({
 
     const validatedNextTz = nextSelectedTz?.trim() || DEFAULT_EVENT_TZ;
 
-    // HUD: ADJUSTING_TIMEZONE_CONTEXT_BOUNDARIES
+    // dashboard: ADJUSTING_TIMEZONE_CONTEXT_BOUNDARIES
     // Architecture: Keeps the universal point-in-time anchor (utcValue) perfectly stable.
     // Changing the zone updates the local picker display text, rather than shifting global calendar slots.
     onChange({
@@ -109,17 +109,17 @@ export function EventDateTimeField({
         </Select>
       </div>
 
-      {/* METRICS HUD: LIVE_DATA_INTEGRITY_SUMMARY_FEED */}
+      {/* METRICS dashboard: LIVE_DATA_INTEGRITY_SUMMARY_FEED */}
       {utcValue && (
         <div className="text-[11px] font-mono text-muted-foreground/80 space-y-1 p-2 rounded-xl bg-muted/20 border border-dashed border-border/60 mt-1">
           <div className="flex justify-between items-center px-0.5">
-            <span className="font-semibold uppercase tracking-wide">📅 Scheduled Target:</span>
+            <span className="font-semibold uppercase tracking-wide">ðŸ“… Scheduled Target:</span>
             <span className="font-bold text-foreground bg-background px-2 py-0.5 rounded border">
               {formatEventTime(utcValue, targetTz)}
             </span>
           </div>
           <div className="flex justify-between items-center px-0.5 border-t pt-1 border-border/10">
-            <span className="font-semibold uppercase tracking-wide">🌐 Stored time (UTC):</span>
+            <span className="font-semibold uppercase tracking-wide">ðŸŒ Stored time (UTC):</span>
             <span className="font-bold text-primary">{formatEventTime(utcValue, "UTC")}</span>
           </div>
         </div>
@@ -134,3 +134,4 @@ export function EventDateTimeField({
 function SelectTriggerValueWrapper({ placeholder }: { placeholder: string }) {
   return <SelectValue placeholder={placeholder} />;
 }
+

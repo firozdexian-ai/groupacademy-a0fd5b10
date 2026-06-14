@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { getRemoteFriendlySummary } from "@/domains/jobs/repo/jobsRepo";
 
 /**
@@ -29,10 +29,10 @@ export function useRemoteFriendly() {
     // Performance Baseline: 5-minute stability caching for macro marketplace trends
     staleTime: 5 * 60 * 1000,
     queryFn: async (): Promise<RemoteFriendlySummary> => {
-      let data: any;
+      let data: unknown;
       try {
         data = await getRemoteFriendlySummary();
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] ANOMALY: get_remote_friendly_summary RPC handshake failed.", {
           message: error?.message,
           timestamp: new Date().toISOString(),
@@ -41,10 +41,10 @@ export function useRemoteFriendly() {
       }
 
       // Hardened Data Normalization: Safeguards layout elements against null fields
-      const rawData = (data as any) || {};
+      const rawData = (data as unknown) || {};
 
       const topCompanies: RemoteFriendlyCompany[] = Array.isArray(rawData.top_companies)
-        ? rawData.top_companies.map((c: any) => ({
+        ? rawData.top_companies.map((c: unknown) => ({
             name: String(c?.name ?? "Confidential Organization"),
             logo_url: c?.logo_url ? String(c.logo_url) : null,
           }))
@@ -58,3 +58,5 @@ export function useRemoteFriendly() {
     },
   });
 }
+
+

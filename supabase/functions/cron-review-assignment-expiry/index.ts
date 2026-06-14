@@ -1,4 +1,4 @@
-// Expires stale offered/claimed gig review assignments + applies reputation hit.
+﻿// Expires stale offered/claimed gig review assignments + applies reputation hit.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -45,3 +45,4 @@ Deno.serve(async (req) => {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 });
+

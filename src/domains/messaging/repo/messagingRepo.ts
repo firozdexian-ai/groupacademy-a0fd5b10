@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Messaging domain repository (Phase 10i.1).
  * All raw `supabase.from(...)` access for messaging surfaces flows through here.
  */
@@ -19,7 +19,7 @@ export async function insertDirectMessage(input: {
   if (error) throw error;
 }
 
-export async function resetThreadUnread(threadId: string): Promise<{ error: any }> {
+export async function resetThreadUnread(threadId: string): Promise<{ error: unknown }> {
   const { error } = await supabase
     .from("message_threads")
     .update({ unread_count: 0 })
@@ -38,7 +38,7 @@ export async function markThreadNotificationsRead(threadId: string): Promise<voi
 export async function updateChannelAutoReply(
   id: string,
   autoReplyEnabled: boolean,
-): Promise<{ error: any }> {
+): Promise<{ error: unknown }> {
   const { error } = await supabase
     .from("messaging_channels")
     .update({ auto_reply_enabled: autoReplyEnabled })
@@ -54,7 +54,7 @@ export async function listMessagingChannelsByKeys(keys: string[]) {
     .select("id, agent_key, status, phone_e164")
     .in("agent_key", keys);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function listCompanyGroupConversations(companyId: string) {
@@ -65,7 +65,7 @@ export async function listCompanyGroupConversations(companyId: string) {
     .eq("is_group", true)
     .order("last_message_at", { ascending: false, nullsFirst: false });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function deleteMessagingConversation(id: string): Promise<void> {
@@ -73,13 +73,13 @@ export async function deleteMessagingConversation(id: string): Promise<void> {
   if (error) throw error;
 }
 
-// ─── Phase 10j.5e: pause auto-reply on a single conversation ──────────────
+// â”€â”€â”€ Phase 10j.5e: pause auto-reply on a single conversation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function pauseMessagingConversationAutoReply(id: string, paused: boolean): Promise<void> {
   await supabase.from("messaging_conversations").update({ auto_reply_paused: paused }).eq("id", id);
 }
 
-// ─── Phase 10j.5g: gro10x agent threads ───────────────────────────────────
-export async function listGro10xThreads(userId: string, companyId: string): Promise<any[]> {
+// â”€â”€â”€ Phase 10j.5g: gro10x agent threads â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function listGro10xThreads(userId: string, companyId: string): Promise<unknown[]> {
   const { data } = await supabase
     .from("gro10x_agent_threads")
     .select("*")
@@ -87,27 +87,27 @@ export async function listGro10xThreads(userId: string, companyId: string): Prom
     .eq("company_id", companyId)
     .order("pinned", { ascending: false })
     .order("last_message_at", { ascending: false });
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-export async function insertGro10xThreads(rows: Array<Record<string, any>>): Promise<any[]> {
-  const { data } = await supabase.from("gro10x_agent_threads").insert(rows as any).select("*");
-  return (data ?? []) as any[];
+export async function insertGro10xThreads(rows: Array<Record<string, unknown>>): Promise<unknown[]> {
+  const { data } = await supabase.from("gro10x_agent_threads").insert(rows as unknown).select("*");
+  return (data ?? []) as unknown[];
 }
 
-export async function upsertGro10xThread(payload: Record<string, any>): Promise<{ data: any; error: any }> {
+export async function upsertGro10xThread(payload: Record<string, unknown>): Promise<{ data: unknown; error: unknown }> {
   const { data, error } = await supabase
     .from("gro10x_agent_threads")
-    .upsert(payload as any, { onConflict: "user_id,company_id,agent_key" })
+    .upsert(payload as unknown, { onConflict: "user_id,company_id,agent_key" })
     .select("*")
     .single();
   return { data, error };
 }
 
-export async function bumpGro10xThread(payload: Record<string, any>): Promise<void> {
+export async function bumpGro10xThread(payload: Record<string, unknown>): Promise<void> {
   await supabase
     .from("gro10x_agent_threads")
-    .upsert(payload as any, { onConflict: "user_id,company_id,agent_key" });
+    .upsert(payload as unknown, { onConflict: "user_id,company_id,agent_key" });
 }
 
 export async function markGro10xThreadRead(
@@ -123,7 +123,7 @@ export async function markGro10xThreadRead(
     .eq("agent_key", agentKey);
 }
 
-// ─── Phase 10j.5g3 ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Phase 10j.5g3 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getMessageThreadIdByTalentAndAgent(
   talentId: string,
   agentKey: string,
@@ -138,16 +138,16 @@ export async function getMessageThreadIdByTalentAndAgent(
   return (data?.id as string | undefined) ?? null;
 }
 
-// ─── Phase 10j.5h1: RPC wrappers ──────────────────────────────────────────
+// â”€â”€â”€ Phase 10j.5h1: RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function ensureSystemThread(talentId: string): Promise<string | null> {
   const { data, error } = await supabase.rpc("ensure_system_thread", { _talent_id: talentId });
   if (error) throw error;
   return data ? String(data) : null;
 }
 
-// ─── Phase 10j.5h3: direct-thread upsert ──────────────────────────────────
+// â”€â”€â”€ Phase 10j.5h3: direct-thread upsert â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function upsertDirectThread(args: { companyId: string; talentId: string }): Promise<string | null> {
-  const { data, error } = await supabase.rpc("upsert_direct_thread" as any, {
+  const { data, error } = await supabase.rpc("upsert_direct_thread" as unknown, {
     p_company_id: args.companyId,
     p_talent_id: args.talentId,
   });
@@ -155,8 +155,8 @@ export async function upsertDirectThread(args: { companyId: string; talentId: st
   return data ? String(data) : null;
 }
 
-// ─── Phase 10j.5k7 — threads / messages / channels ──────────────────────
-export async function listMessageThreadsByTalent(talentId: string): Promise<any[]> {
+// â”€â”€â”€ Phase 10j.5k7 â€” threads / messages / channels â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function listMessageThreadsByTalent(talentId: string): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("message_threads")
     .select("*")
@@ -165,40 +165,40 @@ export async function listMessageThreadsByTalent(talentId: string): Promise<any[
     .order("is_pinned", { ascending: false })
     .order("last_message_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-export async function listAiAgentsByKeys(agentKeys: string[]): Promise<any[]> {
+export async function listAiAgentsByKeys(agentKeys: string[]): Promise<unknown[]> {
   if (!agentKeys.length) return [];
   const { data, error } = await supabase
     .from("ai_agents")
     .select("agent_key, name, avatar_url, color")
     .in("agent_key", agentKeys);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-export async function listDirectMessages(threadId: string): Promise<any[]> {
+export async function listDirectMessages(threadId: string): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("direct_messages")
     .select("*")
     .eq("thread_id", threadId)
     .order("created_at", { ascending: true });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-export async function listMessagingChannelsByAgentKey(agentKey: string): Promise<any[]> {
+export async function listMessagingChannelsByAgentKey(agentKey: string): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("messaging_channels")
     .select("*")
     .eq("agent_key", agentKey)
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-// ─── Phase 10i.4: realtime subscription helper ────────────────────────────
+// â”€â”€â”€ Phase 10i.4: realtime subscription helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 /**
  * Subscribe to messaging_channels postgres changes scoped to a single agent.
  * Returns an unsubscribe function; consumers should call it from useEffect
@@ -220,3 +220,5 @@ export function subscribeToMessagingChannelsByAgent(
     supabase.removeChannel(ch);
   };
 }
+
+

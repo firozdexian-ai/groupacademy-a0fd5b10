@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bot, LucideIcon } from "lucide-react";
@@ -49,7 +49,7 @@ export function QuickActionsSheet({ open, onClose }: QuickActionsSheetProps) {
       try {
         const data = await listActiveQuickActionAgents();
         return data as AgentRow[];
-      } catch (queryErr: any) {
+      } catch (queryErr: unknown) {
         // Log background fetching failures safely to diagnostic channels
         trackError(queryErr instanceof Error ? queryErr : String(queryErr), {
           component: "QuickActionsSheet",
@@ -152,3 +152,4 @@ export function QuickActionsSheet({ open, onClose }: QuickActionsSheetProps) {
     </Sheet>
   );
 }
+

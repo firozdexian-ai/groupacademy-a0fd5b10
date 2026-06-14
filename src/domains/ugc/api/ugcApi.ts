@@ -1,5 +1,5 @@
-/**
- * UGC domain — typed edge function wrappers (Phase 9h).
+﻿/**
+ * UGC domain â€” typed edge function wrappers (Phase 9h).
  */
 import { supabase } from "@/integrations/supabase/client";
 import { EdgeFunctionError } from "@/edge/EdgeFunctionError";
@@ -23,3 +23,4 @@ export async function adminContentAi(
     data ?? {},
   );
 }
+

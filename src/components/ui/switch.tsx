@@ -1,11 +1,11 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as SwitchPrimitives from "@radix-ui/react-switch";
 import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Authoritative Binary Logic Gate Interface Node (Switch)
  * Hardened WAI-ARIA compliant boolean switch ensuring zero visual layout shift and absolute token symmetry.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const Switch = React.forwardRef<
   React.ElementRef<typeof SwitchPrimitives.Root>,
@@ -20,7 +20,7 @@ const Switch = React.forwardRef<
     )}
     {...props}
   >
-    {/* HUD LEVEL 1: ISOLATED KINETIC THUMB STATE VECTOR INDICATOR */}
+    {/* dashboard LEVEL 1: ISOLATED KINETIC THUMB STATE VECTOR INDICATOR */}
     <SwitchPrimitives.Thumb
       className={cn(
         "pointer-events-none block h-4 w-4 rounded-full bg-background shadow-xs transition-transform duration-150 ease-out transform-gpu shrink-0 p-0 m-0",
@@ -33,3 +33,4 @@ const Switch = React.forwardRef<
 Switch.displayName = "Switch_Core_Binary_Gate_Node";
 
 export { Switch };
+

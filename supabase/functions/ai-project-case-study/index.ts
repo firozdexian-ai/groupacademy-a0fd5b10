@@ -1,4 +1,4 @@
-// Drafts a 4-section markdown case study for a public project listing.
+﻿// Drafts a 4-section markdown case study for a public project listing.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
 const LOVABLE_KEY = Deno.env.get("LOVABLE_API_KEY")!;
@@ -37,3 +37,4 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: corsHeaders });
   }
 });
+

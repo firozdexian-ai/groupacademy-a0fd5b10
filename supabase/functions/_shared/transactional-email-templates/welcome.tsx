@@ -1,4 +1,4 @@
-import * as React from 'npm:react@18.3.1'
+﻿import * as React from 'npm:react@18.3.1'
 import {
   Body, Button, Container, Head, Heading, Html, Preview, Text,
 } from 'npm:@react-email/components@0.0.22'
@@ -14,10 +14,10 @@ interface WelcomeProps {
 const WelcomeEmail = ({ name }: WelcomeProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Welcome to {SITE_NAME} — your career journey starts now!</Preview>
+    <Preview>Welcome to {SITE_NAME} â€” your career journey starts now!</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Welcome to {SITE_NAME}! 🎉</Heading>
+        <Heading style={h1}>Welcome to {SITE_NAME}! ðŸŽ‰</Heading>
         <Text style={text}>
           {name ? `Hi ${name},` : 'Hi there,'}
         </Text>
@@ -28,15 +28,15 @@ const WelcomeEmail = ({ name }: WelcomeProps) => (
         <Text style={text}>
           Here's what you can do right away:
         </Text>
-        <Text style={listItem}>🎯 Take a Career Readiness Assessment</Text>
-        <Text style={listItem}>📄 Get your CV professionally reviewed by AI</Text>
-        <Text style={listItem}>💼 Browse curated job opportunities</Text>
-        <Text style={listItem}>📚 Enroll in industry-aligned courses</Text>
+        <Text style={listItem}>ðŸŽ¯ Take a Career Readiness Assessment</Text>
+        <Text style={listItem}>ðŸ“„ Get your CV professionally reviewed by AI</Text>
+        <Text style={listItem}>ðŸ’¼ Browse curated job opportunities</Text>
+        <Text style={listItem}>ðŸ“š Enroll in industry-aligned courses</Text>
         <Button style={button} href={SITE_URL + "/app/feed"}>
           Explore Your Dashboard
         </Button>
         <Text style={footer}>
-          Welcome aboard — The {SITE_NAME} Team
+          Welcome aboard â€” The {SITE_NAME} Team
         </Text>
       </Container>
     </Body>
@@ -45,7 +45,7 @@ const WelcomeEmail = ({ name }: WelcomeProps) => (
 
 export const template = {
   component: WelcomeEmail,
-  subject: `Welcome to ${SITE_NAME}! 🎉`,
+  subject: `Welcome to ${SITE_NAME}! ðŸŽ‰`,
   displayName: 'Welcome email',
   previewData: { name: 'Sarah' },
 } satisfies TemplateEntry
@@ -57,3 +57,4 @@ const text = { fontSize: '14px', color: '#677280', lineHeight: '1.6', margin: '0
 const listItem = { fontSize: '14px', color: '#677280', lineHeight: '1.6', margin: '0 0 8px', paddingLeft: '8px' }
 const button = { backgroundColor: '#2A7DDE', color: '#ffffff', fontSize: '14px', borderRadius: '8px', padding: '12px 24px', textDecoration: 'none', fontWeight: '600' as const }
 const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+

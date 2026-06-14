@@ -1,5 +1,5 @@
-/**
- * Recent Activity Feed Widget (Phase 10i — Hardened).
+﻿/**
+ * Recent Activity Feed Widget (Phase 10i â€” Hardened).
  * Tracks real-time pedagogical interactions for administrative oversight.
  * Conforms fully to 2024 Professional SaaS UI/UX specifications.
  */
@@ -53,3 +53,4 @@ export default function RecentActivityList({ recent }: Props) {
     </ul>
   );
 }
+

@@ -1,8 +1,8 @@
-/**
+﻿/**
  * Typed wrappers around jobs-domain edge functions (Phase 9d).
  *
  * Convention (locked in Phase 9b):
- *   - One async function per edge function — import by name.
+ *   - One async function per edge function â€” import by name.
  *   - No `*Api` const, no `<DOMAIN>_EDGE_FUNCTIONS` array.
  *   - Responses validated at runtime via `parseEdgeResponse`.
  *   - Failures throw `EdgeFunctionError`.
@@ -316,3 +316,4 @@ export async function enhanceCoverLetter(
     data ?? {},
   );
 }
+

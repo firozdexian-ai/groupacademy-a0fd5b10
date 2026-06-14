@@ -1,5 +1,5 @@
-/**
- * Creator Economy Telemetry — Refactored for Phase Z0
+﻿/**
+ * Creator Economy Telemetry â€” Refactored for Phase Z0
  * CTO Version: May 2026
  * Fixes: A3 (Full Table Scan Aggregation), P2 (RPC Adoption)
  * Restored: Dual Leaderboard UI & Full Boost Profiles
@@ -29,9 +29,9 @@ interface Stats {
 export function CreatorEconomyTab() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<Stats | null>(null);
-  const [topHype, setTopHype] = useState<any[]>([]);
-  const [topConn, setTopConn] = useState<any[]>([]);
-  const [boosts, setBoosts] = useState<any[]>([]);
+  const [topHype, setTopHype] = useState<unknown[]>([]);
+  const [topConn, setTopConn] = useState<unknown[]>([]);
+  const [boosts, setBoosts] = useState<unknown[]>([]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -58,7 +58,7 @@ export function CreatorEconomyTab() {
 
       // Restore: Top Connection Earners mapping
       setTopConn(
-        (connectionsRes.data || []).map((c: any) => ({
+        (connectionsRes.data || []).map((c: unknown) => ({
           talent_id: c.recipient_talent_id,
           full_name: c.talents?.full_name || "Unknown",
           total_hype: c.recipient_share,
@@ -84,7 +84,7 @@ export function CreatorEconomyTab() {
       const count = await sweepExpiredConnections();
       toast.success(`${count ?? 0} expired requests refunded.`);
       load();
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err?.message ?? "Sweep failed");
     }
   };
@@ -208,7 +208,7 @@ export function CreatorEconomyTab() {
 
         <TabsContent value="boosts" className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {boosts.map((b: any) => (
+            {boosts.map((b: unknown) => (
               <Card
                 key={b.talent_id}
                 className="rounded-3xl border-2 p-4 flex items-center gap-4 text-left group hover:border-primary/40 transition-all"
@@ -240,7 +240,7 @@ export function CreatorEconomyTab() {
   );
 }
 
-function StatCard({ icon, label, value, suffix, loading }: any) {
+function StatCard({ icon, label, value, suffix, loading }: unknown) {
   return (
     <Card className="rounded-2xl border-2 bg-card/40 p-6 flex items-center gap-4 group hover:shadow-lg transition-all text-left">
       <div className="h-12 w-12 rounded-xl bg-primary/5 flex items-center justify-center border-2 border-primary/10 transition-transform group-hover:scale-110">
@@ -257,7 +257,7 @@ function StatCard({ icon, label, value, suffix, loading }: any) {
   );
 }
 
-function LeaderRow({ rank, name, val, sub }: any) {
+function LeaderRow({ rank, name, val, sub }: unknown) {
   return (
     <div className="flex items-center gap-4 p-3 rounded-2xl hover:bg-muted/30 transition-colors">
       <span className="text-[10px] font-semibold text-muted-foreground/40 w-6 italic">#{rank}</span>
@@ -271,3 +271,5 @@ function LeaderRow({ rank, name, val, sub }: any) {
     </div>
   );
 }
+
+

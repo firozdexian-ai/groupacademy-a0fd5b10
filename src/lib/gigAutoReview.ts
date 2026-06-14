@@ -1,4 +1,4 @@
-import { aiGigVerifier } from "@/domains/gigs/api/gigsApi";
+﻿import { aiGigVerifier } from "@/domains/gigs/api/gigsApi";
 
 /**
  * Fire-and-forget invocation of the AI gig verifier.
@@ -15,3 +15,4 @@ export async function triggerAutoReview(
     console.warn("[ai-gig-verifier] invocation failed", err);
   }
 }
+

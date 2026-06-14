@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+﻿import { useEffect, useRef } from "react";
 
 /**
  * GroUp Academy: Player Hotkeys & UX Fluidity Sensor (V5.6.0)
@@ -46,7 +46,7 @@ export function usePlayerHotkeys({
   onShowShortcuts,
   enabled = true,
 }: PlayerHotkeys) {
-  // HUD: CONSOLIDATING_MUTABLE_CALLBACK_MATRIX
+  // dashboard: CONSOLIDATING_MUTABLE_CALLBACK_MATRIX
   // Caches fresh callbacks in refs to decouple the browser listener from render lifecycles
   const actionsRef = useRef({
     onPrevStage,
@@ -126,8 +126,9 @@ export function usePlayerHotkeys({
       }
     };
 
-    // HUD: BINDING_SYSTEM_WINDOW_LISTENER
+    // dashboard: BINDING_SYSTEM_WINDOW_LISTENER
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [enabled]);
 }
+

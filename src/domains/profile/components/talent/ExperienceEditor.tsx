@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+﻿import { useEffect, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,7 +27,7 @@ interface ExperienceEditorProps {
 /**
  * GroUp Academy: Professional Career History Ledger Editor (ExperienceEditor)
  * An authoritative operational sandbox enforcing reverse-chronological data modeling rules over profile configurations.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function ExperienceEditor({ experience = [], onChange }: ExperienceEditorProps) {
   const queryClient = useQueryClient();
@@ -132,7 +132,7 @@ export function ExperienceEditor({ experience = [], onChange }: ExperienceEditor
 
   return (
     <div className="space-y-4 text-left max-w-full w-full transform-gpu antialiased">
-      {/* HUD LEVEL 1: TOP PANEL TRACK HEADING CONTROLS BLOCK */}
+      {/* dashboard LEVEL 1: TOP PANEL TRACK HEADING CONTROLS BLOCK */}
       <div className="flex items-center justify-between gap-4 px-0.5 select-none w-full leading-none">
         <div className="space-y-1.5 text-left flex flex-col justify-center min-w-0 flex-1 leading-none">
           <Label className="text-sm sm:text-base font-bold text-foreground uppercase tracking-wide flex items-center gap-2 leading-none block truncate">
@@ -156,7 +156,7 @@ export function ExperienceEditor({ experience = [], onChange }: ExperienceEditor
         </Button>
       </div>
 
-      {/* HUD LEVEL 2: DIRECTORY CORE SELECTION RENDER MATRIX */}
+      {/* dashboard LEVEL 2: DIRECTORY CORE SELECTION RENDER MATRIX */}
       {safeExperienceEntriesList.length === 0 ? (
         /* COLD START COLD INVITATION ACTION FRAME */
         <div
@@ -320,7 +320,7 @@ export function ExperienceEditor({ experience = [], onChange }: ExperienceEditor
                         id={`exp-description-node-id-${index}`}
                         value={entryItem.description}
                         onChange={(e) => updateExperienceNodeField(index, "description", e.target.value)}
-                        placeholder="• Describe your responsibilities and achievements...&#10;• Keep it clear and action-oriented..."
+                        placeholder="â€¢ Describe your responsibilities and achievements...&#10;â€¢ Keep it clear and action-oriented..."
                         rows={3}
                         className="w-full rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3.5 leading-relaxed resize-none shadow-inner"
                       />
@@ -333,7 +333,7 @@ export function ExperienceEditor({ experience = [], onChange }: ExperienceEditor
         </div>
       )}
 
-      {/* HUD LEVEL 3: RECTILINEAR OVERLAY BOTTOM METRIC LOG OMNIPRESENCE SHIELD */}
+      {/* dashboard LEVEL 3: RECTILINEAR OVERLAY BOTTOM METRIC LOG OMNIPRESENCE SHIELD */}
       <div className="mt-6 flex items-center justify-center gap-1.5 py-2.5 border-t border-border/10 select-none shadow-none pointer-events-none tracking-normal font-bold text-[9px] text-muted-foreground/40 font-mono leading-none shrink-0 uppercase w-full">
         <Zap className="h-3.5 w-3.5 text-warning fill-warning/10 stroke-[2.2] shrink-0 animate-pulse" />
         <span>Your experience helps us find relevant job matches</span>
@@ -341,3 +341,4 @@ export function ExperienceEditor({ experience = [], onChange }: ExperienceEditor
     </div>
   );
 }
+

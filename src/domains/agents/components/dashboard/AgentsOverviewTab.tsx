@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAgentsOverview } from "@/domains/agents/repo/agentsRepo";
 import { trackError } from "@/lib/errorTracking";
@@ -7,14 +7,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy — Career Guidance System: Platform Assistants Summary Telemetry Panel Component
+ * Group Academy â€” Career Guidance System: Platform Assistants Summary Telemetry Panel Component
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/command-center?tab=overview (System Telemetry Hub View)
  * Operations Mode: Automated Efficiency engine aggregating metrics across communication and tools pipelines.
  */
 
 export function AgentsOverviewTab() {
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<unknown>(null);
 
   useEffect(() => {
     let activeQuery = true;
@@ -27,7 +27,7 @@ export function AgentsOverviewTab() {
         let activeCount = 0;
         let convsCount = 0;
 
-        for (const r of (agents || []) as any[]) {
+        for (const r of (agents || []) as unknown[]) {
           const k = r.agent_type ?? "unknown";
           byType[k] = (byType[k] ?? 0) + 1;
           if (r.is_active) activeCount++;
@@ -35,7 +35,7 @@ export function AgentsOverviewTab() {
         }
 
         const toolsByKind: Record<string, number> = {};
-        for (const t of (tools ?? []) as any[]) {
+        for (const t of (tools ?? []) as unknown[]) {
           toolsByKind[t.handler_kind] = (toolsByKind[t.handler_kind] ?? 0) + 1;
         }
 
@@ -50,7 +50,7 @@ export function AgentsOverviewTab() {
           convs: convsCount,
         });
       })
-      .catch((err: any) => {
+      .catch((err: unknown) => {
         trackError("agents-overview-tab-aggregation-failure", { error: err?.message || String(err) });
       });
 
@@ -72,7 +72,7 @@ export function AgentsOverviewTab() {
     );
   }
 
-  const Tile = ({ icon: Icon, label, value, sub, color, bg }: any) => (
+  const Tile = ({ icon: Icon, label, value, sub, color, bg }: unknown) => (
     <Card className="rounded-xl border border-border bg-card shadow-sm overflow-hidden group hover:border-primary/20 transition-all duration-300">
       <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <div
@@ -188,7 +188,7 @@ export function AgentsOverviewTab() {
           </CardHeader>
           <div className="p-5 flex-1 overflow-y-auto bg-background/50">
             <div className="flex flex-wrap gap-2">
-              {Object.entries(stats.toolsByKind).map(([k, v]: any) => (
+              {Object.entries(stats.toolsByKind).map(([k, v]: unknown) => (
                 <div
                   key={k}
                   className="rounded-lg bg-background border border-border px-2.5 py-1 flex items-center gap-2.5 shadow-sm hover:border-emerald-500/30 transition-colors"
@@ -212,3 +212,5 @@ export function AgentsOverviewTab() {
 }
 
 export default AgentsOverviewTab;
+
+

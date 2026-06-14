@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { AlertCircle, RefreshCw, Wifi, Clock, ServerCrash, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -51,7 +51,7 @@ const ERROR_CONFIG: Record<
 /**
  * GroUp Academy: Technical Fault Recovery Terminal Core (RetryErrorCard)
  * Hardened responsive error module protecting layout elements from text truncation jumps and inline scaling jitters.
- * Version: Launch Candidate · Phase Z0 Space & State Stability Locked
+ * Version: Launch Candidate Â· Phase Z0 Space & State Stability Locked
  */
 export function RetryErrorCard({
   type = "generic",
@@ -70,7 +70,7 @@ export function RetryErrorCard({
   const displayDescriptionTextStr = description || activeConfigurationMap.description;
 
   // =========================================================================
-  // INTERFACE PROTOCOL RENDER A: INLINE COMPACT HUD RECOVERY ROW GRID
+  // INTERFACE PROTOCOL RENDER A: INLINE COMPACT dashboard RECOVERY ROW GRID
   // =========================================================================
   if (compact) {
     return (
@@ -127,7 +127,7 @@ export function RetryErrorCard({
       )}
     >
       <CardHeader className="text-center p-5 sm:p-6 pb-2 sm:pb-3 border-none flex flex-col items-center justify-center space-y-4 w-full select-none leading-none shrink-0">
-        {/* HUD LEVEL 1: ICON GLOW AND STACK INDEX CONTAINER */}
+        {/* dashboard LEVEL 1: ICON GLOW AND STACK INDEX CONTAINER */}
         <div className="relative h-11 w-11 shrink-0 pointer-events-none select-none">
           <div className="absolute inset-0 bg-destructive/10 rounded-xl rotate-6 animate-pulse" />
           <div className="absolute inset-0 bg-background border border-destructive/15 rounded-xl flex items-center justify-center shadow-xs">
@@ -135,7 +135,7 @@ export function RetryErrorCard({
           </div>
         </div>
 
-        {/* HUD LEVEL 2: COMPOSITE HEADINGS TEXT BOUNDS */}
+        {/* dashboard LEVEL 2: COMPOSITE HEADINGS TEXT BOUNDS */}
         <div className="space-y-1.5 w-full block leading-none">
           <CardTitle className="text-sm sm:text-base font-bold text-foreground uppercase tracking-wide leading-none pt-0.5">
             {displayTitleTextStr}
@@ -146,7 +146,7 @@ export function RetryErrorCard({
         </div>
       </CardHeader>
 
-      {/* HUD LEVEL 3: BUTTON ACTION RE-SYNC INGRESS SECTOR SLOT */}
+      {/* dashboard LEVEL 3: BUTTON ACTION RE-SYNC INGRESS SECTOR SLOT */}
       {onRetry && (
         <CardContent className="text-center p-5 sm:p-6 pt-2 sm:pt-3 border-none w-full flex justify-center items-center shrink-0">
           <Button
@@ -208,3 +208,4 @@ export function getErrorType(error: unknown): ErrorType {
 
   return "generic";
 }
+

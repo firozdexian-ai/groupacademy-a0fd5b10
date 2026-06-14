@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Reports Builder Canvas Dashboard View (Phase 10j.3 - Hardened).
  * Interfaces with the admin-report-builder edge infrastructure to compile dynamic
  * visual indicators and business analytical charts based on conversational inputs.
@@ -73,7 +73,7 @@ export function ReportsBuilderTab() {
   const [brief, setBrief] = useState("");
   const [loading, setLoading] = useState(false);
   const [spec, setSpec] = useState<Spec | null>(null);
-  const [data, setData] = useState<Record<string, any>>({});
+  const [data, setData] = useState<Record<string, unknown>>({});
   const [error, setError] = useState<string | null>(null);
 
   const generateReport = async (text: string) => {
@@ -86,18 +86,18 @@ export function ReportsBuilderTab() {
     try {
       // Invoke our unified, authorization-forwarding domain handler
       const result = await adminReportBuilder({ brief: text });
-      const payload = result.data as any;
+      const payload = result.data as unknown;
 
       if (payload?.error) {
         const detail = payload.detail
-          ? ` — ${typeof payload.detail === "string" ? payload.detail : JSON.stringify(payload.detail)}`
+          ? ` â€” ${typeof payload.detail === "string" ? payload.detail : JSON.stringify(payload.detail)}`
           : "";
         throw new Error(`${payload.error}${detail}`);
       }
 
       setSpec(payload.spec);
       setData(payload.data ?? {});
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("[Digital Workforce Anomaly] Report configuration compilation failure:", e);
       setError(e?.message || "The platform was unable to compile the metrics layout for this request.");
       toast({
@@ -170,7 +170,7 @@ export function ReportsBuilderTab() {
                 <CardTitle className="text-xl font-bold tracking-tight text-foreground">{spec.title}</CardTitle>
                 {spec.period?.from && (
                   <CardDescription className="text-xs text-muted-foreground font-medium">
-                    Reporting window: {new Date(spec.period.from).toLocaleDateString("en-US")} —{" "}
+                    Reporting window: {new Date(spec.period.from).toLocaleDateString("en-US")} â€”{" "}
                     {new Date(spec.period.to ?? "").toLocaleDateString("en-US")}
                   </CardDescription>
                 )}
@@ -190,7 +190,7 @@ export function ReportsBuilderTab() {
   );
 }
 
-function SectionRender({ section, payload }: { section: Section; payload: any }) {
+function SectionRender({ section, payload }: { section: Section; payload: unknown }) {
   if (section.kind === "note") {
     return (
       <div className="p-5 rounded-xl bg-muted/40 border border-border space-y-1">
@@ -215,7 +215,7 @@ function SectionRender({ section, payload }: { section: Section; payload: any })
     );
   }
 
-  const rows = (payload?.rows ?? []).map((row: any) => ({
+  const rows = (payload?.rows ?? []).map((row: unknown) => ({
     label: row.label ?? (row.bucket ? new Date(row.bucket).toLocaleDateString("en-US") : ""),
     value: Number(row.value ?? 0),
   }));
@@ -264,7 +264,7 @@ function SectionRender({ section, payload }: { section: Section; payload: any })
           ) : (
             <PieChart>
               <Pie data={rows} dataKey="value" nameKey="label" innerRadius={60} outerRadius={90} paddingAngle={4}>
-                {rows.map((_: any, idx: number) => (
+                {rows.map((_: unknown, idx: number) => (
                   <Cell
                     key={idx}
                     fill={CHART_COLORS[idx % CHART_COLORS.length]}
@@ -282,3 +282,5 @@ function SectionRender({ section, payload }: { section: Section; payload: any })
     </div>
   );
 }
+
+

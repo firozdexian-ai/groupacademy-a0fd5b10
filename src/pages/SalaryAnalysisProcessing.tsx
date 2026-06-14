@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -50,7 +50,7 @@ const SalaryAnalysisProcessing = () => {
       setProgress(50);
       setStatus("Synthesizing Neural Logic Analysis...");
 
-      const { data, error: fnError } = (await Promise.race([analysisPromise, timeoutPromise])) as any;
+      const { data, error: fnError } = (await Promise.race([analysisPromise, timeoutPromise])) as unknown;
 
       if (fnError) throw fnError;
       if (data?.error) throw new Error(data.error);
@@ -77,7 +77,7 @@ const SalaryAnalysisProcessing = () => {
       setStatus("Artifact Optimized.");
 
       navigate(`/salary-analysis/results/${id}`, { replace: true });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Pipeline Failure:", err);
       setError(err.message || "Sequence Interrupted.");
       toast({
@@ -138,7 +138,7 @@ const SalaryAnalysisProcessing = () => {
               </div>
             ) : (
               <div className="space-y-10">
-                {/* Visual Processing HUD */}
+                {/* Visual Processing dashboard */}
                 <div className="relative h-32 w-32 mx-auto">
                   <div className="absolute inset-0 rounded-full border-2 border-primary/10 animate-pulse" />
                   <div className="absolute inset-0 rounded-full border-t-2 border-primary animate-spin" />
@@ -194,3 +194,5 @@ const SalaryAnalysisProcessing = () => {
 };
 
 export default SalaryAnalysisProcessing;
+
+

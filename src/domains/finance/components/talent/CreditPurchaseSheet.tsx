@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+﻿import { useState, useMemo } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getAccessToken } from "@/lib/auth";
 import { createCreditInvoice } from "@/domains/finance/repo/financeRepo";
@@ -39,9 +39,9 @@ export function CreditPurchaseSheet({ isOpen, onClose, currentBalance = 0 }: Cre
 
   const queryKeyBalanceContext = useMemo(() => ["user-credits-balance"], []);
 
-  // Programmatic regional scale rules: Evaluate if currency base uses BDT (৳) with a standard 1 cr = 2 BDT conversion peg
+  // Programmatic regional scale rules: Evaluate if currency base uses BDT (à§³) with a standard 1 cr = 2 BDT conversion peg
   const isBdtCurrency = currency === "BDT";
-  const currencySymbol = isBdtCurrency ? "৳" : "$";
+  const currencySymbol = isBdtCurrency ? "à§³" : "$";
 
   // --- ACTION: WHATSAPP/LOCAL RECONCILIATION INVOICE MUTATION ---
   const whatsappSyncMutation = useMutation({
@@ -71,7 +71,7 @@ export function CreditPurchaseSheet({ isOpen, onClose, currentBalance = 0 }: Cre
 
       window.open(secureWhatsAppLink, "_blank", "noopener,noreferrer");
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       console.error("[Wallet Operations] Local voucher invoice tracking exception:", error);
       toast.error("Invoice generation delayed. Connecting you directly with billing support.");
 
@@ -315,3 +315,5 @@ export function CreditPurchaseSheet({ isOpen, onClose, currentBalance = 0 }: Cre
     </Sheet>
   );
 }
+
+

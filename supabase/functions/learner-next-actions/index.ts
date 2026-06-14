@@ -1,5 +1,5 @@
-// Next-Best-Action recommender — returns 3-5 ranked actions for the authenticated talent.
-// Phase 3.1.a — read-only over talent_skill_profile, enrollments, course_modules, module_scenario_pool.
+﻿// Next-Best-Action recommender â€” returns 3-5 ranked actions for the authenticated talent.
+// Phase 3.1.a â€” read-only over talent_skill_profile, enrollments, course_modules, module_scenario_pool.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -72,20 +72,20 @@ Deno.serve(async (req) => {
   const moduleIds = Array.from(new Set((profiles ?? []).map(p => p.module_id)));
   const contentIds = Array.from(new Set([
     ...((profiles ?? []).map(p => p.content_id)),
-    ...((enrolls ?? []).map((e: any) => e.content_id)),
+    ...((enrolls ?? []).map((e: unknown) => e.content_id)),
   ]));
   const [{ data: modules = [] }, { data: contents = [] }] = await Promise.all([
     moduleIds.length
       ? admin.from("course_modules").select("id,title,content_id").in("id", moduleIds)
-      : Promise.resolve({ data: [] as any[] }),
+      : Promise.resolve({ data: [] as unknown[] }),
     contentIds.length
       ? admin.from("content").select("id,title,slug").in("id", contentIds)
-      : Promise.resolve({ data: [] as any[] }),
+      : Promise.resolve({ data: [] as unknown[] }),
   ]);
-  const moduleById = new Map((modules ?? []).map((m: any) => [m.id, m]));
-  const contentById = new Map((contents ?? []).map((c: any) => [c.id, c]));
+  const moduleById = new Map((modules ?? []).map((m: unknown) => [m.id, m]));
+  const contentById = new Map((contents ?? []).map((c: unknown) => [c.id, c]));
 
-  // 1. Review due — single bundled action
+  // 1. Review due â€” single bundled action
   const dueProfiles = (profiles ?? []).filter(p => p.due_at && new Date(p.due_at).getTime() <= now);
   if (dueProfiles.length > 0) {
     const overdueDays = Math.max(
@@ -103,7 +103,7 @@ Deno.serve(async (req) => {
     });
   }
 
-  // 2. Practice weakness — pick weakest topic per course (cap to 2 across courses)
+  // 2. Practice weakness â€” pick weakest topic per course (cap to 2 across courses)
   const weakByCourse = new Map<string, typeof profiles[number]>();
   for (const p of profiles ?? []) {
     if (Number(p.mastery) >= 0.4) continue;
@@ -127,10 +127,10 @@ Deno.serve(async (req) => {
     });
   }
 
-  // 3. Finish module — for active enrollments with progress in (0, 1)
-  const inProgress = (enrolls ?? []).filter((e: any) =>
+  // 3. Finish module â€” for active enrollments with progress in (0, 1)
+  const inProgress = (enrolls ?? []).filter((e: unknown) =>
     typeof e.progress === "number" && e.progress > 0 && e.progress < 1,
-  ).sort((a: any, b: any) => b.progress - a.progress).slice(0, 1);
+  ).sort((a: unknown, b: unknown) => b.progress - a.progress).slice(0, 1);
   for (const e of inProgress) {
     const c = contentById.get(e.content_id);
     if (!c) continue;
@@ -138,14 +138,14 @@ Deno.serve(async (req) => {
       type: "finish_module",
       score: TYPE_WEIGHT.finish_module + Number(e.progress) * 0.3,
       title: `Continue ${c.title}`,
-      reason: `${Math.round(Number(e.progress) * 100)}% complete — keep the streak`,
+      reason: `${Math.round(Number(e.progress) * 100)}% complete â€” keep the streak`,
       cta: `/content/${c.slug ?? c.id}`,
       cta_label: "Continue",
       course_id: e.content_id,
     });
   }
 
-  // 4. Take scenario — find a scenario in a module where mastery is in 0.6–0.85 (close to mastery)
+  // 4. Take scenario â€” find a scenario in a module where mastery is in 0.6â€“0.85 (close to mastery)
   const midMastery = (profiles ?? []).filter(p => {
     const m = Number(p.mastery);
     return m >= 0.55 && m < 0.85;
@@ -167,7 +167,7 @@ Deno.serve(async (req) => {
         type: "take_scenario",
         score: TYPE_WEIGHT.take_scenario + (profile ? (0.85 - Number(profile.mastery)) * 0.5 : 0.1),
         title: `Try the "${s.title}" scenario`,
-        reason: `You're close to mastery in ${m?.title ?? "this module"} — practice under pressure`,
+        reason: `You're close to mastery in ${m?.title ?? "this module"} â€” practice under pressure`,
         cta: m ? `/learn/${m.id}/scenario` : "/app/learning?tab=my-courses",
         cta_label: "Run scenario",
         module_id: s.module_id,
@@ -198,3 +198,5 @@ Deno.serve(async (req) => {
     },
   });
 });
+
+

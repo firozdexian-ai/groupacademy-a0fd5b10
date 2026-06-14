@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+﻿import { useCallback, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getEnrollmentProgressBundle,
@@ -53,7 +53,7 @@ export function useProgress({ enrollmentId, contentId }: UseProgressOptions) {
     enabled: !!enrollmentId && !!contentId,
     staleTime: 15000, // 15-second cache consistency boundary
     queryFn: async (): Promise<ProgressQueryPayload> => {
-      // HUD: ATOMIC_ACADEMIC_PROGRESS_BUNDLE_SELECT
+      // dashboard: ATOMIC_ACADEMIC_PROGRESS_BUNDLE_SELECT
       const bundle = await getEnrollmentProgressBundle(enrollmentId!, contentId!);
       const mpByModule = new Map(bundle.moduleProgress.map((r) => [r.module_id, r]));
 
@@ -92,7 +92,7 @@ export function useProgress({ enrollmentId, contentId }: UseProgressOptions) {
     },
   });
 
-  // --- HUD: REALTIME_CDC_THROTTLED_SYNCHRONIZER ---
+  // --- dashboard: REALTIME_CDC_THROTTLED_SYNCHRONIZER ---
   useMemo(() => {
     if (!enrollmentId) return;
     const unsubscribe = subscribeToModuleProgress(enrollmentId, () => {
@@ -153,7 +153,7 @@ export function useProgress({ enrollmentId, contentId }: UseProgressOptions) {
       }
       return { previous };
     },
-    onError: (err: any, _, context) => {
+    onError: (err: unknown, _, context) => {
       if (context?.previous) qc.setQueryData(queryKey, context.previous);
     },
     onSettled: () => {
@@ -173,7 +173,7 @@ export function useProgress({ enrollmentId, contentId }: UseProgressOptions) {
       const targetNextStage = Math.min(TOTAL_STAGES, stage + 1);
       const currentRvs = data.resourceViewStates[moduleId] ?? {};
 
-      // HUD: EXECUTE_OPTIMISTIC_STAGE_PROGRESS_MUTATION
+      // dashboard: EXECUTE_OPTIMISTIC_STAGE_PROGRESS_MUTATION
       qc.setQueryData<ProgressQueryPayload>(queryKey, (old) => {
         if (!old) return old;
         return {
@@ -215,7 +215,7 @@ export function useProgress({ enrollmentId, contentId }: UseProgressOptions) {
       const completed = m?.stagesCompleted ?? [];
       const currentStage = Math.min(TOTAL_STAGES, Math.max(...completed, 0) + 1);
 
-      // HUD: EXECUTE_OPTIMISTIC_RESOURCE_VIEW_MUTATION
+      // dashboard: EXECUTE_OPTIMISTIC_RESOURCE_VIEW_MUTATION
       qc.setQueryData<ProgressQueryPayload>(queryKey, (old) => {
         if (!old) return old;
         return {
@@ -290,3 +290,5 @@ export function useProgress({ enrollmentId, contentId }: UseProgressOptions) {
     reload: refetch,
   };
 }
+
+

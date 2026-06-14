@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useAccountType } from "@/hooks/useAccountType";
@@ -56,20 +56,20 @@ const ResetPassword = () => {
     const verify = async () => {
       const hash = window.location.hash || "";
       const isRecoveryLink = hash.includes("type=recovery");
-      const { data } = await supabase.auth.getSession();
+      const { data } = await getCurrentSession();
 
       if (isRecoveryLink && data.session) {
         setSessionValid(true);
       } else if (isRecoveryLink) {
         // Wait briefly for PASSWORD_RECOVERY event before failing
         setTimeout(async () => {
-          const { data: again } = await supabase.auth.getSession();
+          const { data: again } = await getCurrentSession();
           if (again.session) setSessionValid(true);
           setIsVerifying(false);
         }, 800);
         return;
       } else {
-        // No recovery indicator at all → reject (do NOT silently log in)
+        // No recovery indicator at all â†’ reject (do NOT silently log in)
         setSessionValid(false);
       }
       setIsVerifying(false);
@@ -101,7 +101,7 @@ const ResetPassword = () => {
       toast.success("Password updated. You're all set.");
       const dest = resolvePostAuthRoute(accountType) ?? "/app/feed";
       navigate(dest, { replace: true });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error(error.message || "Couldn't update password. Please try again.");
     } finally {
       setIsLoading(false);
@@ -116,7 +116,7 @@ const ResetPassword = () => {
       await resetPassword(resendEmail);
       toast.success("Reset link sent. Check your inbox.");
       setTimeout(() => navigate("/auth"), 1500);
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err.message || "Couldn't send reset link.");
     } finally {
       setIsResending(false);
@@ -127,7 +127,7 @@ const ResetPassword = () => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background p-6" role="main">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-sm text-muted-foreground mt-4">Verifying your reset link…</p>
+        <p className="text-sm text-muted-foreground mt-4">Verifying your reset linkâ€¦</p>
       </div>
     );
 
@@ -252,7 +252,7 @@ const ResetPassword = () => {
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Updating…
+                    Updatingâ€¦
                   </>
                 ) : (
                   <>
@@ -270,3 +270,6 @@ const ResetPassword = () => {
 };
 
 export default ResetPassword;
+
+
+

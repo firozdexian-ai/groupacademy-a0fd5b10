@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+﻿import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -20,20 +20,20 @@ Deno.serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
     const auth = req.headers.get("authorization") ?? "";
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { headers: { Authorization: auth } } });
-    const { data: u } = await supabase.auth.getUser();
+    const { data: u } = await getCurrentUser();
     if (!u?.user) return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: corsHeaders });
 
     const { gig_id, gig_kind, draft_text } = await req.json();
 
     const { data: gig } = await supabase.from("gigs_unified_view").select("*").eq("id", gig_id).eq("kind", gig_kind || "marketplace").maybeSingle();
     const { data: talent } = await supabase.from("talents").select("id, full_name, headline").eq("user_id", u.user.id).maybeSingle();
-    let skills: any[] = [];
-    let credentials: any[] = [];
+    let skills: unknown[] = [];
+    let credentials: unknown[] = [];
     if (talent) {
       const { data: tsp } = await supabase.from("talent_skill_profile").select("topic_tag, mastery").eq("talent_id", talent.id).gte("mastery", 0.7).limit(10);
       skills = tsp || [];
       try {
-        const { data: creds } = await supabase.from("skill_credentials" as any).select("topic_tag, level").eq("talent_id", talent.id).limit(10);
+        const { data: creds } = await supabase.from("skill_credentials" as unknown).select("topic_tag, level").eq("talent_id", talent.id).limit(10);
         credentials = creds || [];
       } catch { /* table may not exist */ }
     }
@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: SYSTEM },
-          { role: "user", content: `Gig:\n${JSON.stringify(gig)}\n\nTalent:\n${JSON.stringify({ talent, skills, credentials })}\n\nDraft bid:\n${draft_text || "(empty — write from scratch)"}` },
+          { role: "user", content: `Gig:\n${JSON.stringify(gig)}\n\nTalent:\n${JSON.stringify({ talent, skills, credentials })}\n\nDraft bid:\n${draft_text || "(empty â€” write from scratch)"}` },
         ],
         tools: [{
           type: "function",
@@ -79,3 +79,6 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
+
+
+

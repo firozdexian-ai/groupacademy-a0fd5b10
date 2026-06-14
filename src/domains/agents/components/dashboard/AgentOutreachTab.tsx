@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+﻿import React, { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   listRecentAgentOutreachAdmin,
@@ -16,7 +16,7 @@ import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy — Career Guidance System: Proactive Outreach Swarm Dispatch Monitor Dashboard
+ * Group Academy â€” Career Guidance System: Proactive Outreach Swarm Dispatch Monitor Dashboard
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/command-center?tab=outreach (Autonomous Dispatch Management Workspace)
  * Operations Mode: Automated Efficiency engine reporting rolling telemetry logs with automated 15s cache invalidation.
@@ -68,7 +68,7 @@ export function AgentOutreachManager() {
       try {
         const result = await listRecentAgentOutreachAdmin(200);
         return result as unknown as OutreachRow[];
-      } catch (err: any) {
+      } catch (err: unknown) {
         trackError("agent-outreach-manager-fetch-rows-failure", { error: err.message });
         throw err;
       }
@@ -83,7 +83,7 @@ export function AgentOutreachManager() {
       try {
         const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
         return await countAgentOutreachDedupeSince(since);
-      } catch (err: any) {
+      } catch (err: unknown) {
         trackError("agent-outreach-manager-fetch-dedupe-failure", { error: err.message });
         return 0;
       }
@@ -98,7 +98,7 @@ export function AgentOutreachManager() {
         const since = new Date(Date.now() - 5 * 60 * 1000).toISOString();
         const count = await countPlatformEventsSince(since);
         return Math.round((count / 5) * 10) / 10;
-      } catch (err: any) {
+      } catch (err: unknown) {
         trackError("agent-outreach-manager-fetch-events-failure", { error: err.message });
         return 0;
       }
@@ -238,14 +238,14 @@ export function AgentOutreachManager() {
                         className="hover:bg-primary/[0.01] border-b border-border/40 last:border-none group"
                       >
                         <TableCell className="px-5 py-3 whitespace-nowrap text-xs font-semibold font-mono text-muted-foreground/80 tabular-nums">
-                          {r.created_at ? formatDistanceToNow(new Date(r.created_at), { addSuffix: true }) : "—"}
+                          {r.created_at ? formatDistanceToNow(new Date(r.created_at), { addSuffix: true }) : "â€”"}
                         </TableCell>
                         <TableCell className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
-                          {r.agent_name ?? r.agent_key ?? "—"}
+                          {r.agent_name ?? r.agent_key ?? "â€”"}
                         </TableCell>
                         <TableCell>
                           <span className="font-mono text-[10px] font-semibold bg-muted border border-border/50 px-2 py-0.5 rounded text-muted-foreground uppercase tracking-tight">
-                            {r.event_kind ?? "—"}
+                            {r.event_kind ?? "â€”"}
                           </span>
                         </TableCell>
                         <TableCell>
@@ -253,25 +253,25 @@ export function AgentOutreachManager() {
                             variant="outline"
                             className={cn("text-[10px] font-bold px-2 py-0 rounded", CHANNEL_TONE[channelKey])}
                           >
-                            {r.channel ?? "—"}
+                            {r.channel ?? "â€”"}
                           </Badge>
                         </TableCell>
                         <TableCell>
                           <div className="text-xs font-semibold text-foreground/90 capitalize leading-none">
-                            {r.recipient_kind ?? "—"}
+                            {r.recipient_kind ?? "â€”"}
                           </div>
                           {r.recipient_id && (
                             <div
                               className="font-mono text-[10px] text-muted-foreground/60 mt-1 truncate max-w-[120px]"
                               title={r.recipient_id}
                             >
-                              {r.recipient_id.slice(0, 10)}…
+                              {r.recipient_id.slice(0, 10)}â€¦
                             </div>
                           )}
                         </TableCell>
                         <TableCell className="max-w-xs">
                           <p className="text-xs text-muted-foreground/80 font-medium leading-normal line-clamp-2">
-                            {r.body ?? "—"}
+                            {r.body ?? "â€”"}
                           </p>
                           {r.error_message && (
                             <div className="text-[10px] font-bold text-rose-700 bg-rose-500/10 px-2 py-0.5 rounded border-none mt-1 line-clamp-1 inline-block">
@@ -284,7 +284,7 @@ export function AgentOutreachManager() {
                             variant="outline"
                             className={cn("text-[10px] font-bold px-2 py-0 rounded-full", STATUS_TONE[statusKey])}
                           >
-                            {r.status ?? "—"}
+                            {r.status ?? "â€”"}
                           </Badge>
                           {r.credits_charged ? (
                             <div className="text-[10px] font-bold text-muted-foreground/80 font-mono mt-1 tracking-tight">
@@ -340,3 +340,5 @@ function KpiCard({ icon, label, value, hint, color, bg }: KpiCardProps) {
 }
 
 export default AgentOutreachManager;
+
+

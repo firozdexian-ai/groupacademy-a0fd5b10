@@ -1,4 +1,4 @@
-// Lightweight in-app notification for review assignment lifecycle events.
+﻿// Lightweight in-app notification for review assignment lifecycle events.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -24,3 +24,4 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: corsHeaders });
   }
 });
+

@@ -1,4 +1,4 @@
-import { useLocation, Link, useNavigate } from "react-router-dom";
+﻿import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Home, ShieldAlert } from "lucide-react";
@@ -55,7 +55,7 @@ const NotFound = () => {
         </div>
 
         <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 pt-12">
-          GroUp Academy Terminal • System Integrity Verified
+          GroUp Academy Terminal â€¢ System Integrity Verified
         </p>
       </div>
     </div>
@@ -63,3 +63,4 @@ const NotFound = () => {
 };
 
 export default NotFound;
+

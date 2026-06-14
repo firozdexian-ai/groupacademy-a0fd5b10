@@ -1,5 +1,5 @@
-/**
- * Group Academy — Agents Domain API Layer
+﻿/**
+ * Group Academy â€” Agents Domain API Layer
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Integration Map: Typed wrappers enforcing contract validation for Deno Edge Runtimes.
  */
@@ -39,14 +39,14 @@ import {
 
 async function invokeAgentEdge<TRequest, TResponse>(
   functionName: string,
-  schema: any,
+  schema: unknown,
   req: TRequest,
 ): Promise<TResponse> {
   try {
     const { data, error } = await supabase.functions.invoke(functionName, { body: req });
     if (error) throw new EdgeFunctionError(functionName, error);
     return parseEdgeResponse(functionName, schema, data ?? {});
-  } catch (err: any) {
+  } catch (err: unknown) {
     trackError(`agents-api-${functionName}-failure`, { error: err.message, payload: req });
     throw err;
   }
@@ -89,3 +89,5 @@ export async function companyAgentTools(req: CompanyAgentToolsRequest): Promise<
 export async function triggerAgentPitch(req: TriggerAgentPitchRequest): Promise<TriggerAgentPitchResponse> {
   return invokeAgentEdge("trigger-agent-pitch", TriggerAgentPitchResponseSchema, req);
 }
+
+

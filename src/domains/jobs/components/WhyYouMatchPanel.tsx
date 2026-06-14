@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ShieldCheck, TrendingDown, ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -169,3 +169,4 @@ export function WhyYouMatchPanel({ verifiedMatch }: WhyYouMatchPanelProps) {
     </Card>
   );
 }
+

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+﻿import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { BookOpen, Calendar, FileText, ChevronRight, Sparkles, Zap, Clock, Coins } from "lucide-react";
@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Omni-Channel Discovery Node (UnifiedDiscovery)
  * An authoritative hub managing multi-origin content aggregation, filter segmentation, and predictive catalog routing.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 
 type ContentType = "batch_class" | "free_video" | "live_webinar" | "offline_seminar" | "recorded_course";
@@ -68,7 +68,7 @@ export function UnifiedDiscovery() {
     refetchOnWindowFocus: false,
     queryFn: async () => {
       const data = await listPublishedDiscoveryContent(12);
-      return (data || []).map((item: any) => ({
+      return (data || []).map((item: unknown) => ({
         id: item.id,
         title: item.title,
         slug: item.slug,
@@ -92,7 +92,7 @@ export function UnifiedDiscovery() {
     refetchOnWindowFocus: false,
     queryFn: async () => {
       const data = await listPublishedBlogPostsLite(6);
-      return (data || []).map((item: any) => ({
+      return (data || []).map((item: unknown) => ({
         id: item.id,
         title: item.title,
         slug: item.slug,
@@ -190,7 +190,7 @@ export function UnifiedDiscovery() {
 
   return (
     <section className="space-y-5 antialiased text-left select-none sm:select-text max-w-full w-full">
-      {/* HUD HEADER COVER BANNER CONTROL BAR STRIP */}
+      {/* dashboard HEADER COVER BANNER CONTROL BAR STRIP */}
       <div className="flex items-center justify-between px-0.5 select-none w-full leading-none">
         <div className="space-y-1.5 text-left flex flex-col justify-center min-w-0 flex-1">
           <h2 className="text-sm sm:text-base font-bold tracking-tight text-foreground uppercase tracking-wide flex items-center gap-2">
@@ -338,3 +338,5 @@ export function UnifiedDiscovery() {
     </section>
   );
 }
+
+

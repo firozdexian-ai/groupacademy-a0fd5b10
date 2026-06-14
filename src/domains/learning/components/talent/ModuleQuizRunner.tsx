@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+﻿import { useEffect, useState, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -57,24 +57,24 @@ export function ModuleQuizRunner({ moduleId, onComplete }: { moduleId: string; o
     setAnswers({});
     setAdaptiveMix(null);
 
-    let isRequestAlive = true;
+    const isRequestAlive = true;
     trackEvent("psychometric_quiz_draw_requested", { moduleId });
 
     try {
       // 1) Try adaptive sampler first (personalized skill-aware cognitive engine)
       try {
         const payloadData = await learnerAdaptiveSample({ module_id: moduleId, count: 10 });
-        if ((payloadData as any)?.items?.length) {
+        if ((payloadData as unknown)?.items?.length) {
           if (isRequestAlive) {
             setItems(
-              (payloadData as any).items.map((it: any) => ({
+              (payloadData as unknown).items.map((it: unknown) => ({
                 id: it.id,
                 question: it.question,
                 options: normalizeOptions(it.options),
                 difficulty: it.difficulty ?? undefined,
               })),
             );
-            setAdaptiveMix({ avg_mastery: (payloadData as any).avg_mastery, mix: (payloadData as any).mix });
+            setAdaptiveMix({ avg_mastery: (payloadData as unknown).avg_mastery, mix: (payloadData as unknown).mix });
             setLoading(false);
             trackEvent("psychometric_quiz_adaptive_sampled_success", { moduleId });
           }
@@ -94,12 +94,12 @@ export function ModuleQuizRunner({ moduleId, onComplete }: { moduleId: string; o
 
       if (isRequestAlive) {
         setLoading(false);
-        if ((poolData as any)?.error) {
-          throw new Error((poolData as any).error);
+        if ((poolData as unknown)?.error) {
+          throw new Error((poolData as unknown).error);
         }
-        setItems((poolData as any).items);
+        setItems((poolData as unknown).items);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       const parsedExceptionMsg = err instanceof Error ? err.message : String(err);
 
       trackError(parsedExceptionMsg, {
@@ -139,7 +139,7 @@ export function ModuleQuizRunner({ moduleId, onComplete }: { moduleId: string; o
         throw new Error(data.error);
       }
 
-      setResults({ score: (data as any).score, results: (data as any).results });
+      setResults({ score: (data as unknown).score, results: (data as unknown).results });
 
       // Synchronize data cache metrics across workspace modules completely
       queryClient.invalidateQueries({ queryKey: ["module-analytics", moduleId] });
@@ -147,10 +147,10 @@ export function ModuleQuizRunner({ moduleId, onComplete }: { moduleId: string; o
       queryClient.invalidateQueries({ queryKey: ["talent-stats"] });
 
       toast.success("Quiz completed successfully.", { id: toastId });
-      trackEvent("psychometric_quiz_submission_success", { moduleId, finalScore: (data as any).score });
+      trackEvent("psychometric_quiz_submission_success", { moduleId, finalScore: (data as unknown).score });
 
-      if (onComplete) onComplete((data as any).score);
-    } catch (err: any) {
+      if (onComplete) onComplete((data as unknown).score);
+    } catch (err: unknown) {
       const parsedExceptionMsg = err instanceof Error ? err.message : String(err);
 
       trackError(parsedExceptionMsg, {
@@ -238,22 +238,22 @@ export function ModuleQuizRunner({ moduleId, onComplete }: { moduleId: string; o
                       </p>
 
                       {!isCorrectNode &&
-                        (r as any).correct_index !== undefined &&
-                        it.options[(r as any).correct_index] && (
+                        (r as unknown).correct_index !== undefined &&
+                        it.options[(r as unknown).correct_index] && (
                           <p className="p-2 rounded-lg border border-success/10 bg-success/5 text-success font-bold leading-tight select-text">
                             <span className="font-extrabold uppercase tracking-wide text-[9px] block mb-0.5 opacity-60">
                               Correct Answer
                             </span>
-                            <span>{it.options[(r as any).correct_index]}</span>
+                            <span>{it.options[(r as unknown).correct_index]}</span>
                           </p>
                         )}
 
-                      {(r as any).explanation && (
+                      {(r as unknown).explanation && (
                         <div className="p-3 rounded-lg border border-border/20 bg-muted/20 select-text font-medium text-muted-foreground/90 italic leading-relaxed break-words shadow-inner">
                           <span className="font-bold uppercase tracking-wider text-[9px] text-primary not-italic block mb-1 select-none leading-none pl-0.5">
                             Explanation
                           </span>
-                          <p className="pl-0.5">&ldquo;{String((r as any).explanation).trim()}&rdquo;</p>
+                          <p className="pl-0.5">&ldquo;{String((r as unknown).explanation).trim()}&rdquo;</p>
                         </div>
                       )}
                     </div>
@@ -366,3 +366,5 @@ export function ModuleQuizRunner({ moduleId, onComplete }: { moduleId: string; o
     </div>
   );
 }
+
+

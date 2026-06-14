@@ -1,8 +1,8 @@
-/**
+﻿/**
  * Centralized error tracking utility
  * Provides consistent error logging and real-time platform event reporting.
  *
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 
 import { insertPlatformEvent } from "@/domains/analytics/repo/analyticsRepo";
@@ -27,7 +27,7 @@ function logPlatformEvent(
     subject_kind: context?.component || "unknown",
     subject_id: (context?.userId as string | undefined) || null,
     payload: { severity, action: context?.action || "unknown", ...payload, ...context },
-  }).catch((dbErr: any) => {
+  }).catch((dbErr: unknown) => {
     console.warn("[ErrorTracking] Failed to write platform event:", dbErr?.message ?? dbErr);
   });
 }
@@ -73,3 +73,5 @@ export function createTracker(component: string) {
     event: (event: string, data?: Record<string, unknown>) => trackEvent(`${component}:${event}`, data),
   };
 }
+
+

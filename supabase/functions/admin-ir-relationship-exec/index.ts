@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+﻿import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { augmentLastUserMessage } from "../_shared/attachments.ts";
 
 const corsHeaders = {
@@ -9,7 +9,7 @@ const corsHeaders = {
 const SYSTEM = `You are the Investor Relations Relationship Executive for Group Academy / Gro10x.
 You help the founder maintain warm relationships with VCs, investors, and key influencers.
 You draft personalized outreach emails (returned as mailto links so the founder sends from their own inbox), suggest follow-ups, and log all interactions.
-Tone: warm, sharp, founder-to-investor. Always cite a real reason for reaching out. Never auto-send — produce drafts and mailto links only.`;
+Tone: warm, sharp, founder-to-investor. Always cite a real reason for reaching out. Never auto-send â€” produce drafts and mailto links only.`;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -36,7 +36,7 @@ Deno.serve(async (req) => {
       { type: "function", function: { name: "log_interaction", description: "Log an outreach interaction", parameters: { type: "object", properties: { target_type: { type: "string", enum: ["vc","investor","influencer"] }, target_id: { type: "string" }, target_label: { type: "string" }, channel: { type: "string" }, subject: { type: "string" }, body: { type: "string" }, sentiment: { type: "string" } }, required: ["target_type","channel"] } } },
     ];
 
-    let convo = [{ role: "system", content: SYSTEM }, ...messages];
+    const convo = [{ role: "system", content: SYSTEM }, ...messages];
     await augmentLastUserMessage(admin, convo, attachments);
     let final = "";
     for (let i = 0; i < 5; i++) {
@@ -66,7 +66,7 @@ Deno.serve(async (req) => {
   }
 });
 
-async function runTool(admin: any, userId: string, name: string, args: any) {
+async function runTool(admin: unknown, userId: string, name: string, args: unknown) {
   if (name === "vc_list") {
     const { data } = await admin.from("vc_firms").select("id, name, status, focus_areas, contact_email").limit(args?.limit || 25);
     return { rows: data || [] };
@@ -103,6 +103,8 @@ async function runTool(admin: any, userId: string, name: string, args: any) {
   return { error: "unknown tool" };
 }
 
-function json(body: any, status = 200) {
+function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 }
+
+

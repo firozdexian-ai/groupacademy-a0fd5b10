@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, BookOpen, Sparkles } from "lucide-react";
@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Knowledge Indexing Directory Node (AppCourses)
  * Hardened course catalog platform wrapper delivering fluid scannability and absolute geometric alignment parity.
- * Version: Launch Candidate · Phase Z1 Production Tokens Locked
+ * Version: Launch Candidate Â· Phase Z1 Production Tokens Locked
  */
 export default function AppCourses() {
  const executeNavigationHook = useNavigate();
@@ -20,7 +20,7 @@ export default function AppCourses() {
 
  return (
  <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 pb-32 text-left antialiased block transform-gpu w-full animate-in fade-in duration-300">
- {/* HUD LEVEL 1: ARCHITECTURAL CATALOG SUMMARY RUNWAY HEADER */}
+ {/* dashboard LEVEL 1: ARCHITECTURAL CATALOG SUMMARY RUNWAY HEADER */}
  <header className="flex flex-col gap-6 mb-8 select-none w-full shrink-0">
  <div className="flex items-center justify-between gap-4 leading-none w-full block">
  <Button
@@ -62,12 +62,12 @@ export default function AppCourses() {
  </div>
  </header>
 
- {/* HUD LEVEL 2: COMPREHENSIVE CURRICULUM DIRECTORY LIST VIEWPORT */}
+ {/* dashboard LEVEL 2: COMPREHENSIVE CURRICULUM DIRECTORY LIST VIEWPORT */}
  <main className="min-h-[60vh] block w-full">
  <CoursesTab />
  </main>
 
- {/* HUD LEVEL 3: COMPLIANCE TELEMETRY TERMINAL FOOTER */}
+ {/* dashboard LEVEL 3: COMPLIANCE TELEMETRY TERMINAL FOOTER */}
  <footer className="mt-16 pt-6 border-t border-border/40 flex items-center justify-between opacity-25 select-none pointer-events-none leading-none w-full shrink-0 uppercase tracking-widest font-mono text-[9px] font-bold text-muted-foreground/50">
  <p className="italic">End of catalog</p>
  <div className="flex gap-2 shrink-0 items-center">
@@ -79,3 +79,4 @@ export default function AppCourses() {
  </div>
  );
 }
+

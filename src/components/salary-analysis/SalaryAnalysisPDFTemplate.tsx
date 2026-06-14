@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+﻿import { useMemo } from "react";
 import { format } from "date-fns";
 
 interface SalaryRange {
@@ -73,7 +73,7 @@ const POSITION_REGISTRY: Record<string, { label: string; color: string; bgColor:
 /**
  * GroUp Academy: Fiscal Telemetry Salary Parity Analysis Template (SalaryAnalysisPDFTemplate)
  * Authoritative document configuration layout locked to target A4 metric resolutions for high-fidelity PDF serialization.
- * Version: Launch Candidate · Phase Z0 Hardened Print Lock Candidate
+ * Version: Launch Candidate Â· Phase Z0 Hardened Print Lock Candidate
  */
 export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
   // Safe Ingress Normalization Map: Absorb properties defensively to drop render-breaking hazards
@@ -143,7 +143,7 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
         MozOsxFontSmoothing: "grayscale",
       }}
     >
-      {/* HUD LEVEL 1: DOCUMENT METRIC TRACK HEADER */}
+      {/* dashboard LEVEL 1: DOCUMENT METRIC TRACK HEADER */}
       <div
         style={{
           display: "flex",
@@ -196,7 +196,7 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
         </div>
       </div>
 
-      {/* HUD LEVEL 2: COMPOSITE METADATA IDENTIFICATION CARDS STRIP */}
+      {/* dashboard LEVEL 2: COMPOSITE METADATA IDENTIFICATION CARDS STRIP */}
       <div
         style={{
           display: "flex",
@@ -342,7 +342,7 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
         </div>
       </div>
 
-      {/* HUD LEVEL 3: READINESS TARGET GAIN SUMMARY BOX */}
+      {/* dashboard LEVEL 3: READINESS TARGET GAIN SUMMARY BOX */}
       <div
         style={{
           textAlign: "center",
@@ -400,7 +400,7 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
         </div>
       </div>
 
-      {/* HUD LEVEL 4: CORE PROFILE NARRATIVE ABSTRACT CONTAINER */}
+      {/* dashboard LEVEL 4: CORE PROFILE NARRATIVE ABSTRACT CONTAINER */}
       <div
         style={{
           marginBottom: "35px",
@@ -425,7 +425,7 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
         </p>
       </div>
 
-      {/* HUD LEVEL 5: FISCAL VALUE DISTRIBUTION TRIPLE MATRICES */}
+      {/* dashboard LEVEL 5: FISCAL VALUE DISTRIBUTION TRIPLE MATRICES */}
       <div style={{ marginBottom: "35px", pageBreakInside: "avoid" }}>
         <h3
           style={{
@@ -518,7 +518,7 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
         </p>
       </div>
 
-      {/* HUD LEVEL 6: FLEX DUAL COLUMN COMPETENCY CAPABILITIES SHEETS */}
+      {/* dashboard LEVEL 6: FLEX DUAL COLUMN COMPETENCY CAPABILITIES SHEETS */}
       <div
         style={{
           display: "flex",
@@ -601,7 +601,7 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
               fontFamily: "monospace",
             }}
           >
-            [△] Targeted Infrastructure Optimization Gaps
+            [â–³] Targeted Infrastructure Optimization Gaps
           </span>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", paddingTop: "2px" }}>
             {secureAnalyticsModel.missingSkillsArray.length === 0 ? (
@@ -632,7 +632,7 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
         </div>
       </div>
 
-      {/* HUD LEVEL 7: TWIN BLOCK STRATEGY ACTIONS EXECUTION TRACK */}
+      {/* dashboard LEVEL 7: TWIN BLOCK STRATEGY ACTIONS EXECUTION TRACK */}
       <div
         style={{
           display: "flex",
@@ -730,7 +730,7 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
         </div>
       </div>
 
-      {/* HUD LEVEL 8: SYSTEM REGISTRY CORE ARCHIVE FOOTER BLOCK */}
+      {/* dashboard LEVEL 8: SYSTEM REGISTRY CORE ARCHIVE FOOTER BLOCK */}
       <div
         style={{
           borderTop: "1px solid #e4e4e7",
@@ -768,3 +768,4 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
     </div>
   );
 }
+

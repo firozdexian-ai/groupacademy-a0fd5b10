@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { ChevronRight, LucideIcon, Zap } from "lucide-react";
@@ -105,3 +105,4 @@ export function QuickActionCard({ icon: Icon, label, count, path, description, c
     </Card>
   );
 }
+

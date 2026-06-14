@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { useTalent } from "@/hooks/useTalent";
 import { useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Gig Submission Orchestrator
  * CTO Reference: Authoritative factory for polymorphic gig payload ingestion.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 
 interface Gig {
@@ -165,3 +165,4 @@ export function GigSubmissionForm({ gig, open, onOpenChange }: GigSubmissionForm
     </Dialog>
   );
 }
+

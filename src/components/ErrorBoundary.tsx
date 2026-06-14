@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from "react";
+﻿import React, { Component, ErrorInfo, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { trackError, trackEvent } from "@/lib/errorTracking";
@@ -20,7 +20,7 @@ interface State {
 /**
  * GroUp Academy: Neural Containment Perimeter Error Boundary (ErrorBoundary)
  * Authoritative fail-safe isolation layer capturing unhandled framework crashes and reporting tracing exceptions.
- * Version: Launch Candidate · Phase Z0 Hardened Containment System
+ * Version: Launch Candidate Â· Phase Z0 Hardened Containment System
  */
 export class ErrorBoundary extends Component<Props, State> {
   public state: State = {
@@ -80,7 +80,7 @@ export class ErrorBoundary extends Component<Props, State> {
           )}
         >
           <Card className="max-w-md w-full rounded-xl border border-destructive/20 bg-destructive/[0.015] shadow-sm overflow-hidden">
-            {/* HUD LEVEL 1: FAULT ROW PANEL HEADER CONTAINER */}
+            {/* dashboard LEVEL 1: FAULT ROW PANEL HEADER CONTAINER */}
             <CardHeader className="text-center p-5 sm:p-6 pb-2 border-b border-border/5 bg-muted/5">
               <div className="relative mx-auto mb-4 select-none pointer-events-none w-fit">
                 <div className="h-12 w-12 rounded-xl bg-destructive/10 border border-destructive/5 flex items-center justify-center shrink-0 shadow-inner">
@@ -97,7 +97,7 @@ export class ErrorBoundary extends Component<Props, State> {
               </CardDescription>
             </CardHeader>
 
-            {/* HUD LEVEL 2: CONTEXT DETAILED ANALYTIC ERROR HOVER DATA */}
+            {/* dashboard LEVEL 2: CONTEXT DETAILED ANALYTIC ERROR HOVER DATA */}
             <CardContent className="p-5 sm:p-6 flex flex-col justify-center gap-4 font-bold text-xs text-foreground/90">
               <div className="p-3.5 rounded-xl border border-border/40 bg-background/50 select-none leading-none shadow-inner w-full block text-left">
                 <p className="text-[10px] font-semibold text-muted-foreground/60 leading-normal block italic pr-0.5 uppercase tracking-normal">
@@ -106,7 +106,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 </p>
               </div>
 
-              {/* HUD LEVEL 3: INTERFACE COMMAND TRIGGER SECTOR SYSTEM OPTIONS */}
+              {/* dashboard LEVEL 3: INTERFACE COMMAND TRIGGER SECTOR SYSTEM OPTIONS */}
               <div className="space-y-2.5 w-full font-bold text-xs select-none pt-1">
                 <Button
                   type="button"
@@ -142,3 +142,4 @@ export class ErrorBoundary extends Component<Props, State> {
 }
 
 export default ErrorBoundary;
+

@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { listVisibleGigDisputes } from "@/domains/gigs/repo/gigsRepo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -23,7 +23,7 @@ const SKELETON_ROWS_ROSTER = [1, 2, 3];
 /**
  * GroUp Academy: Gig Dispute Mitigation & Settlement Interface (GigDisputes)
  * Hardened responsive arbitration ledger monitoring ongoing contract disputes and safeguarding state updates on unmount.
- * Version: Launch Candidate · Phase Z1 Production Type Contract Sealed
+ * Version: Launch Candidate Â· Phase Z1 Production Type Contract Sealed
  */
 export default function GigDisputes() {
  const [disputesRegistryItems, setDisputesRegistryItems] = React.useState<DisputeRecord[]>([]);
@@ -75,7 +75,7 @@ export default function GigDisputes() {
 
  return (
  <div className="max-w-2xl mx-auto px-4 py-4 space-y-4 text-left antialiased block transform-gpu w-full">
- {/* HUD LEVEL 1: APPLICATION HEADER MODULE DESCRIPTION PANELS */}
+ {/* dashboard LEVEL 1: APPLICATION HEADER MODULE DESCRIPTION PANELS */}
  <header className="space-y-1 block select-none pointer-events-none border-b border-border/10 pb-3 w-full shrink-0 leading-none">
  <div className="flex items-center gap-2 leading-none w-full block">
  <Scale className="h-4.5 w-4.5 text-primary stroke-[2.2] shrink-0" />
@@ -88,7 +88,7 @@ export default function GigDisputes() {
  </p>
  </header>
 
- {/* HUD LEVEL 2: DIRECTORY GRID ITERATOR LAYOUT MODULES */}
+ {/* dashboard LEVEL 2: DIRECTORY GRID ITERATOR LAYOUT MODULES */}
  {disputesRegistryItems.length === 0 ? (
  <Card className="rounded-lg border border-dashed border-border/80 bg-muted/5 p-8 text-center select-none block w-full shadow-none pointer-events-none">
  <CardContent className="p-0 space-y-2 block w-full leading-none">
@@ -96,7 +96,7 @@ export default function GigDisputes() {
  <Scale className="h-4 w-4 stroke-[2.2]" />
  </div>
  <p className="text-xs font-semibold text-muted-foreground/40 leading-normal max-w-xs mx-auto block pt-1">
- You haven't opened any disputes.
+ You haven't opened unknown disputes.
  </p>
  </CardContent>
  </Card>
@@ -178,3 +178,5 @@ export default function GigDisputes() {
  </div>
  );
 }
+
+

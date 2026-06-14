@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getFeedEngagement } from "@/domains/feed/repo/feedRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { useMemo } from "react";
@@ -45,13 +45,13 @@ export function useFeedEngagement(postIds: string[]) {
     queryFn: async (): Promise<Record<string, PostEngagement>> => {
       if (postIds.length === 0) return {};
 
-      let data: any[] = [];
+      let data: unknown[] = [];
       try {
         data = (await getFeedEngagement({
           _post_ids: postIds,
           _talent_id: talent?.id || null,
-        })) as any[];
-      } catch (error: any) {
+        })) as unknown[];
+      } catch (error: unknown) {
         console.error("Error fetching feed engagement statistics:", {
           postIdCount: postIds.length,
           talentId: talent?.id || "anonymous",
@@ -64,7 +64,7 @@ export function useFeedEngagement(postIds: string[]) {
       const map: Record<string, PostEngagement> = {};
 
       // Map raw backend schema keys cleanly to local component property interfaces
-      (data || []).forEach((row: any) => {
+      (data || []).forEach((row: unknown) => {
         const rc = row.reaction_counts || {};
         map[row.post_id] = {
           reactionCounts: {
@@ -110,3 +110,4 @@ export function patchEngagementCache(
 }
 
 export { EMPTY_REACTIONS };
+

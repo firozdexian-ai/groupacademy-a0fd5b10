@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+﻿import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useLocation } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -156,7 +156,7 @@ export function GlobalAIBubble() {
 
       const contextualPayload = await deriveContext(location.pathname);
 
-      // HUD: COMMITTING_STREAM_CHAT_FETCH_HANDSHAKE
+      // dashboard: COMMITTING_STREAM_CHAT_FETCH_HANDSHAKE
       const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-agent-chat`, {
         method: "POST",
         headers: {
@@ -188,7 +188,7 @@ export function GlobalAIBubble() {
 
       setMessages((prev) => [...prev, { id: assistantMessageId, role: "assistant", content: "" }]);
 
-      // HUD: EXECUTING_REACTIVE_CHUNK_ITERATION_LOOP
+      // dashboard: EXECUTING_REACTIVE_CHUNK_ITERATION_LOOP
       while (activeReaderRef.current) {
         const { done, value } = await activeReaderRef.current.read();
         if (done) break;
@@ -230,13 +230,13 @@ export function GlobalAIBubble() {
 
       activeReaderRef.current = null;
 
-      // HUD: COORD_PROGRAMMATIC_CACHE_INVALIDATIONS
+      // dashboard: COORD_PROGRAMMATIC_CACHE_INVALIDATIONS
       if (invalidationKeys.size > 0) {
         for (const key of invalidationKeys) {
           void queryClient.invalidateQueries({ queryKey: [key] });
         }
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Digital Workforce Anomaly Trigger: Essential for monitoring streaming agent dropouts
       console.error("[Digital Workforce] ANOMALY: GlobalAIBubble real-time chat pipeline drop.", {
         agentKey,
@@ -287,7 +287,7 @@ export function GlobalAIBubble() {
               <div className="min-w-0">
                 <div className="text-sm font-bold truncate">{agentName}</div>
                 <div className="text-[10px] font-mono opacity-80 tracking-wide uppercase">
-                  AI-powered • context-aware
+                  AI-powered â€¢ context-aware
                 </div>
               </div>
             </div>
@@ -331,7 +331,7 @@ export function GlobalAIBubble() {
                       <div className="whitespace-pre-wrap">{msg.content}</div>
                     ) : (
                       <div className="prose prose-sm dark:prose-invert max-w-none [&>*]:my-1 break-words italic">
-                        <ReactMarkdown>{msg.content || "…"}</ReactMarkdown>
+                        <ReactMarkdown>{msg.content || "â€¦"}</ReactMarkdown>
                       </div>
                     )}
                   </div>
@@ -362,7 +362,7 @@ export function GlobalAIBubble() {
                   }
                 }}
                 rows={1}
-                placeholder="Ask anything…"
+                placeholder="Ask anythingâ€¦"
                 className="resize-none min-h-[40px] max-h-[120px] text-sm rounded-xl focus-visible:ring-1 border-2 disabled:opacity-50"
               />
               <Button
@@ -382,3 +382,5 @@ export function GlobalAIBubble() {
     document.body,
   );
 }
+
+

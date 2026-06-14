@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -67,7 +67,7 @@ const SalaryAnalysisSetupContent = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [cvUrl, setCvUrl] = useState("");
 
-  const [professionCategories, setProfessionCategories] = useState<any[]>([]);
+  const [professionCategories, setProfessionCategories] = useState<unknown[]>([]);
   const [selectedProfession, setSelectedProfession] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCreditGate, setShowCreditGate] = useState(false);
@@ -195,7 +195,7 @@ const SalaryAnalysisSetupContent = () => {
 
     setIsSubmitting(true);
     try {
-      const isValidUUID = (s: any) => /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(s);
+      const isValidUUID = (s: unknown) => /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(s);
       const tempId = crypto.randomUUID();
 
       const { error } = await insertSalaryAnalysis({
@@ -412,7 +412,7 @@ const SalaryAnalysisSetupContent = () => {
                 <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
                   Source Artifact (CV)
                 </Label>
-                <Tabs value={cvInputMode} onValueChange={(v) => setCvInputMode(v as any)} className="w-full">
+                <Tabs value={cvInputMode} onValueChange={(v) => setCvInputMode(v as unknown)} className="w-full">
                   <TabsList className="grid grid-cols-3 h-12 rounded-xl bg-muted/30 p-1">
                     <TabsTrigger
                       value="existing"
@@ -564,3 +564,5 @@ const SalaryAnalysisSetup = () => {
 };
 
 export default SalaryAnalysisSetup;
+
+

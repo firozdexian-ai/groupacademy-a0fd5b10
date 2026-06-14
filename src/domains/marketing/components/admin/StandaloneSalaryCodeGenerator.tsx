@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { getCurrentUser } from "@/lib/auth";
 import { insertSalaryAnalysisAccessCode } from "@/domains/marketing/repo/marketingRepo";
 import { Button } from "@/components/ui/button";
@@ -62,7 +62,7 @@ export function StandaloneSalaryCodeGenerator() {
           executeInsertion(),
           TIMEOUTS.DEFAULT,
           "Database latency detected during key deployment",
-        )) as { error: any };
+        )) as { error: unknown };
 
         if (result.error) {
           // Primary key collision fallback
@@ -77,7 +77,7 @@ export function StandaloneSalaryCodeGenerator() {
 
       setGeneratedCodes(codes);
       toast.success(`${codes.length} access node(s) deployed.`);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Access Code Fault:", error);
       toast.error(error.message || "System Error: Key generation failed.");
     } finally {
@@ -163,7 +163,7 @@ export function StandaloneSalaryCodeGenerator() {
           {isGenerating ? (
             <>
               <InlineSpinner size="md" />
-              Saving…
+              Savingâ€¦
             </>
           ) : (
             <>
@@ -215,3 +215,5 @@ export function StandaloneSalaryCodeGenerator() {
     </Card>
   );
 }
+
+

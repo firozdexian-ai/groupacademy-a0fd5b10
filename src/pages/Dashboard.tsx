@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, useMemo } from "react";
+﻿import React, { useState, useEffect, Suspense, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar, ImpersonationBanner, DashboardTableSkeleton } from "@/platform/admin";
@@ -11,7 +11,7 @@ import { TAB_COMPONENTS, TAB_TITLES } from "@/shells/admin/routes";
 import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
 
 /**
- * Phase 7 — Dashboard Thin Shell Frame
+ * Phase 7 â€” Dashboard Thin Shell Frame
  * Refactored for clean 2024 professional SaaS styling.
  * Manages central RBAC, query token routing synchronization, and agent error captures.
  */
@@ -92,7 +92,7 @@ const Dashboard = () => {
             >
               {TabComponent ? (
                 (() => {
-                  const props: Record<string, any> = {};
+                  const props: Record<string, unknown> = {};
                   
                   // Connect domain navigation routing properties across core dashboard views
                   if (activeTab === "jobs-kpis") props.onNavigateToTab = handleTabChange;
@@ -158,3 +158,4 @@ const Terminal = ({ className }: { className?: string }) => (
 );
 
 export default Dashboard;
+

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Companies domain API manifest (Phase 9h / 10f).
  *
  * Re-export barrel for the typed edge function wrappers and Postgres repository layer.

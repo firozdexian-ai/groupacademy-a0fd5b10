@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   listCourseModulesByContent,
   listStudentResourceProgressFull,
@@ -54,8 +54,8 @@ export function useCourseProgress({ enrollmentId, contentId, talentId }: UseCour
     enabled: !!enrollmentId && !!contentId && !!talentId,
     staleTime: 2 * 60 * 1000, // 2-minute performance consistency baseline
     queryFn: async (): Promise<CourseProgress | null> => {
-      // HUD: Fetch_Module_Architecture
-      let modules: any[] = [];
+      // dashboard: Fetch_Module_Architecture
+      let modules: unknown[] = [];
       try {
         modules = await listCourseModulesByContent(contentId!);
       } catch (modulesError) {
@@ -63,18 +63,18 @@ export function useCourseProgress({ enrollmentId, contentId, talentId }: UseCour
         throw modulesError;
       }
 
-      // HUD: Fetch_Interaction_Telemetry
-      let resourceProgress: any[] = [];
+      // dashboard: Fetch_Interaction_Telemetry
+      let resourceProgress: unknown[] = [];
       try {
         resourceProgress = await listStudentResourceProgressFull(talentId!);
-      } catch (progressError: any) {
+      } catch (progressError: unknown) {
         console.error("[Digital Workforce] FAULT: student_resource_progress telemetry query failure.", progressError);
         throw progressError;
       }
 
       const moduleProgressMap = new Map<string, { completedStages: Set<number>; startedAt: string | null }>();
 
-      (resourceProgress || []).forEach((rp: any) => {
+      (resourceProgress || []).forEach((rp: unknown) => {
         const moduleId = rp.module_resources?.module_id;
         const stageNumber = rp.module_resources?.stage_number;
 
@@ -90,7 +90,7 @@ export function useCourseProgress({ enrollmentId, contentId, talentId }: UseCour
         }
       });
 
-      // HUD: Trajectory_Calculation
+      // dashboard: Trajectory_Calculation
       const moduleProgresses: ModuleProgress[] = (modules || []).map((m) => {
         const mp = moduleProgressMap.get(m.id);
         const completedStages = mp ? Array.from(mp.completedStages).sort((a, b) => a - b) : [];
@@ -175,7 +175,7 @@ export function useCourseProgress({ enrollmentId, contentId, talentId }: UseCour
 
       return { previousProgress };
     },
-    onError: (err: any, variables, context) => {
+    onError: (err: unknown, variables, context) => {
       if (context?.previousProgress) {
         queryClient.setQueryData(["course-progress", enrollmentId, contentId, talentId], context.previousProgress);
       }
@@ -245,3 +245,5 @@ export function useCourseProgress({ enrollmentId, contentId, talentId }: UseCour
     reload,
   };
 }
+
+

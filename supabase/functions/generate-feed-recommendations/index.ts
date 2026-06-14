@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+﻿import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -11,7 +11,7 @@ interface TalentProfile {
   fullName: string;
   profession?: string;
   skills: string[];
-  experience: any[];
+  experience: unknown[];
   cvText?: string;
 }
 
@@ -191,14 +191,14 @@ serve(async (req) => {
     });
 
     // Helper to extract skills from job requirements
-    const extractSkillsFromJob = (job: any): string[] => {
+    const extractSkillsFromJob = (job: unknown): string[] => {
       const skills: string[] = [];
       if (job.requirements) {
         try {
           const reqs = typeof job.requirements === "string" ? JSON.parse(job.requirements) : job.requirements;
           if (Array.isArray(reqs)) {
             // Take first 5 items that look like skills (short strings)
-            reqs.slice(0, 5).forEach((req: any) => {
+            reqs.slice(0, 5).forEach((req: unknown) => {
               if (typeof req === "string" && req.length < 30) {
                 skills.push(req);
               }
@@ -502,3 +502,5 @@ Example format:
     });
   }
 });
+
+

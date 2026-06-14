@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Career Path view inside Learning Hub.
  * Composes the existing tracks browser + recommended-tracks preview.
  */
@@ -32,3 +32,4 @@ export function TracksView() {
     </div>
   );
 }
+

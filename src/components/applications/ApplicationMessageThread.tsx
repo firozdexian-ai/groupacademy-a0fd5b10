@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+﻿import { useState, useMemo, useEffect, useRef } from "react";
 import { useApplicationMessages } from "@/domains/jobs";
 import { getCurrentUser } from "@/lib/auth";
 import { toast } from "sonner";
@@ -56,7 +56,7 @@ export function ApplicationMessageThread({ applicationId, actorRole }: Applicati
   // --- PHASE: CALCULATIONS_COMPILATION_PIPELINE ---
   // Memoize conversation records arrays to completely bypass inline runtime parser lookups
   const processedMessagesList = useMemo(() => {
-    return messages.map((msg: any) => {
+    return messages.map((msg: unknown) => {
       const messageDateInstance = new Date(msg.created_at);
 
       const relativeTimeLabel = isValid(messageDateInstance)
@@ -85,10 +85,10 @@ export function ApplicationMessageThread({ applicationId, actorRole }: Applicati
 
     setIsSending(true);
     try {
-      // HUD: RE-ROUTING_TRANSACTION_PAYLOAD_UPSTREAM
+      // dashboard: RE-ROUTING_TRANSACTION_PAYLOAD_UPSTREAM
       await send(cleanMessageText, actorRole);
       setInputText(""); // Clear state text parameters strictly *after* successful write confirmation
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Digital Workforce Anomaly Trigger: Essential for monitoring communication channel interruptions
       console.error("[Digital Workforce] ANOMALY: Application correspondence dispatch failed.", {
         applicationId,
@@ -103,7 +103,7 @@ export function ApplicationMessageThread({ applicationId, actorRole }: Applicati
 
   return (
     <div className="flex flex-col h-full min-h-[350px] bg-card/10 rounded-2xl border-2 overflow-hidden select-none text-left">
-      {/* HUD: THREAD_MATRIX_VIEWPORT */}
+      {/* dashboard: THREAD_MATRIX_VIEWPORT */}
       <div
         ref={scrollContainerRef}
         className="flex-1 overflow-y-auto space-y-4 p-4 bg-muted/5 scrollbar-thin scroll-smooth"
@@ -157,7 +157,7 @@ export function ApplicationMessageThread({ applicationId, actorRole }: Applicati
         )}
       </div>
 
-      {/* HUD: COMPOSER_COMMAND_INGRESS_BAR */}
+      {/* dashboard: COMPOSER_COMMAND_INGRESS_BAR */}
       <form
         onSubmit={handleSendMessagePipeline}
         className="p-3 border-t border-border/10 bg-card/60 backdrop-blur-md flex items-center gap-2 flex-shrink-0"
@@ -187,3 +187,5 @@ export function ApplicationMessageThread({ applicationId, actorRole }: Applicati
     </div>
   );
 }
+
+

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Zap } from "lucide-react";
 import { trackError, trackEvent } from "@/lib/errorTracking";

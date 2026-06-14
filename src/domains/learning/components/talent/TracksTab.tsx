@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+﻿import { useEffect, useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { getCurrentUser } from "@/lib/auth";
@@ -28,7 +28,7 @@ import { Progress } from "@/components/ui/progress";
 import { getIcon } from "@/lib/iconMap";
 import { cn } from "@/lib/utils";
 
-const iconMap: Record<string, any> = {
+const iconMap: Record<string, unknown> = {
   executive: Building2,
   freelancing: Laptop,
   entrepreneurship: Rocket,
@@ -46,7 +46,7 @@ interface SchoolReadiness {
 /**
  * GroUp Academy: Academy Track Specialization Matrix (TracksTab)
  * An authoritative dashboard node separating enterprise tracks, start-up streams, and personal learning pipelines.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function TracksTab() {
   const navigate = useNavigate();
@@ -95,9 +95,9 @@ export function TracksTab() {
     });
     return [...base, ...dynamic];
   }, [academies]);
-  const [academies, setAcademies] = useState<any[]>([]);
-  const [schools, setSchools] = useState<any[]>([]);
-  const [enrollments, setEnrollments] = useState<any[]>([]);
+  const [academies, setAcademies] = useState<unknown[]>([]);
+  const [schools, setSchools] = useState<unknown[]>([]);
+  const [enrollments, setEnrollments] = useState<unknown[]>([]);
   const [readiness, setReadiness] = useState<Record<string, SchoolReadiness>>({});
   const [isLoading, setIsLoading] = useState(true);
 
@@ -121,12 +121,12 @@ export function TracksTab() {
           await listAcademiesSchoolsReadiness();
 
         const mappedReadinessBuffer: Record<string, SchoolReadiness> = {};
-        readinessData.forEach((rowItem: any) => {
+        readinessData.forEach((rowItem: unknown) => {
           if (rowItem?.school_id) mappedReadinessBuffer[rowItem.school_id] = rowItem;
         });
 
 
-        let synchronizedEnrollments: any[] = [];
+        let synchronizedEnrollments: unknown[] = [];
 
         if (authenticatedUserId) {
           const talentId = await getTalentIdByUserId(authenticatedUserId);
@@ -147,7 +147,7 @@ export function TracksTab() {
 
           trackEvent("academy_tracks_tab_data_hydrated_success");
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         const exceptionMsg = err instanceof Error ? err.message : String(err);
 
         trackError(exceptionMsg, {
@@ -299,7 +299,7 @@ export function TracksTab() {
               No active tracks yet
             </h3>
             <p className="text-[11px] font-semibold text-muted-foreground/70 max-w-xs mx-auto leading-normal mt-1.5 mb-4 italic">
-              You haven't enrolled in any career tracks yet. Browse the catalog to get started.
+              You haven't enrolled in unknown career tracks yet. Browse the catalog to get started.
             </p>
             <Button
               size="sm"
@@ -326,7 +326,7 @@ export function TracksTab() {
         <div className="py-12 text-center border border-dashed border-border/40 bg-card/40 backdrop-blur-md rounded-2xl p-4 select-none w-full max-w-sm mx-auto flex flex-col justify-center items-center animate-in fade-in duration-300">
           <Loader2 className="h-5 w-5 text-primary/30 animate-spin mb-2 stroke-[2.5]" />
           <p className="text-xs font-bold text-muted-foreground/80 uppercase tracking-wider leading-none pl-0.5">
-            Specialized Academy Core Hardening…
+            Specialized Academy Core Hardeningâ€¦
           </p>
           <p className="text-[10px] font-semibold text-muted-foreground/50 leading-normal italic mt-1.5">
             Horizon parameter allocation running bounds lock.
@@ -465,3 +465,5 @@ export function TracksTab() {
     </div>
   );
 }
+
+

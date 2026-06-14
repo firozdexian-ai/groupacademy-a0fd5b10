@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -9,7 +9,7 @@ import { InlineSpinner } from "@/components/common/InlineSpinner";
 interface Props {
   mode: AIMode;
   context: AIContext;
-  onResult: (result: any) => void;
+  onResult: (result: unknown) => void;
   label?: string;
   className?: string;
   size?: "sm" | "default";
@@ -23,7 +23,7 @@ export function AIActionButton({ mode, context, onResult, label = "AI", classNam
       const result = await callContentAI(mode, context);
       onResult(result);
       toast.success(`AI ${mode} ready`);
-    } catch (e: any) {
+    } catch (e: unknown) {
       const msg = e?.message || "AI request failed";
       if (msg.includes("credits") || msg.includes("402")) toast.error("AI credits exhausted. Please top up.");
       else if (msg.includes("Rate") || msg.includes("429")) toast.error("Rate limited, try again shortly.");
@@ -40,3 +40,5 @@ export function AIActionButton({ mode, context, onResult, label = "AI", classNam
     </Button>
   );
 }
+
+

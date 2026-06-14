@@ -44,7 +44,7 @@ export function parseAIQuiz(text: string): ParsedQuestion[] {
   return parseTextFormat(text);
 }
 
-function parseJsonQuestion(q: any): ParsedQuestion | null {
+function parseJsonQuestion(q: unknown): ParsedQuestion | null {
   try {
     const question = q.question || q.question_text || q.text || '';
     if (!question) return null;
@@ -92,7 +92,7 @@ function parseTextFormat(text: string): ParsedQuestion[] {
   const questions: ParsedQuestion[] = [];
   
   // Split by question numbers (1., 2., etc.) or "Question X"
-  const questionBlocks = text.split(/(?=(?:^|\n)(?:\d+[\.\)]\s|Question\s+\d+))/i).filter(Boolean);
+  const questionBlocks = text.split(/(?=(?:^|\n)(?:\d+[.)]\s|Question\s+\d+))/i).filter(Boolean);
 
   for (const block of questionBlocks) {
     const parsed = parseQuestionBlock(block);
@@ -109,7 +109,7 @@ function parseQuestionBlock(block: string): ParsedQuestion | null {
   if (lines.length < 5) return null;
 
   // Extract question text (first line, remove number prefix)
-  const questionLine = lines[0].replace(/^(?:\d+[\.\)]\s*|Question\s+\d+[:\.\)]*\s*)/i, '').trim();
+  const questionLine = lines[0].replace(/^(?:\d+[.)]\s*|Question\s+\d+[:.)]*\s*)/i, '').trim();
   if (!questionLine) return null;
 
   let optionA = '', optionB = '', optionC = '', optionD = '';
@@ -118,7 +118,7 @@ function parseQuestionBlock(block: string): ParsedQuestion | null {
 
   for (const line of lines.slice(1)) {
     // Match options: A), A., (A), A:
-    const optionMatch = line.match(/^(?:\(?([ABCD])\)|\s*([ABCD])[\.\):])\s*(.+)/i);
+    const optionMatch = line.match(/^(?:\(?([ABCD])\)|\s*([ABCD])[.):])\s*(.+)/i);
     if (optionMatch) {
       const letter = (optionMatch[1] || optionMatch[2]).toUpperCase();
       const text = optionMatch[3].trim();
@@ -183,3 +183,5 @@ export function validateParsedQuestions(questions: ParsedQuestion[]): { valid: b
 
   return { valid: errors.length === 0, errors };
 }
+
+

@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+﻿import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getCertificateByEnrollment,
   getCertificateMinimalByEnrollment,
@@ -50,13 +50,13 @@ export function useCertificate() {
    */
   const issueMutation = useMutation({
     mutationFn: async (params: IssueCertificateParams) => {
-      // HUD: REGISTRY_AUDIT — prevent redundant artifact creation
+      // dashboard: REGISTRY_AUDIT â€” prevent redundant artifact creation
       const existing = await getCertificateMinimalByEnrollment(params.enrollment_id);
       if (existing) {
         return existing;
       }
 
-      // HUD: ATOMIC_INGRESS
+      // dashboard: ATOMIC_INGRESS
       const data = await insertCertificate({
         enrollment_id: params.enrollment_id,
         talent_id: params.talent_id,
@@ -76,9 +76,9 @@ export function useCertificate() {
       queryClient.invalidateQueries({
         queryKey: ["certificate", variables.enrollment_id],
       });
-      toast.success("CREDENTIAL_SYNC_COMPLETE: Certificate issued! 🎓");
+      toast.success("CREDENTIAL_SYNC_COMPLETE: Certificate issued! ðŸŽ“");
     },
-    onError: (err: any, variables) => {
+    onError: (err: unknown, variables) => {
       // Digital Workforce Architecture: Stream explicitly signed operational errors
       // intended for high-priority monitoring by Admin Chat console layers.
       console.error("[Digital Workforce] ANOMALY: CREDENTIAL_ISSUANCE_FAULT detected.", {
@@ -122,3 +122,5 @@ export function useCertificate() {
     issuing: issueMutation.isPending,
   };
 }
+
+

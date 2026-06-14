@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+﻿import { useCallback, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getAccessToken } from "@/lib/auth";
@@ -114,8 +114,8 @@ export function useAgentRuntime(
 
           setMessages(
             (history ?? [])
-              .filter((m: any) => m.role === "user" || m.role === "assistant")
-              .map((m: any) => ({ role: m.role as "user" | "assistant", content: m.content || "" })),
+              .filter((m: unknown) => m.role === "user" || m.role === "assistant")
+              .map((m: unknown) => ({ role: m.role as "user" | "assistant", content: m.content || "" })),
           );
           return existing as AgentThread;
         }
@@ -283,3 +283,5 @@ export function useAgentRuntime(
     connectionFee,
   };
 }
+
+

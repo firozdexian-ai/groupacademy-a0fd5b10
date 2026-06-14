@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -8,12 +8,12 @@ export interface GtmCity { id: string; region_id: string; name: string; is_activ
 export interface GtmCluster { id: string; name: string; description: string | null; countries: string[]; cities: string[]; }
 export interface KnowledgePack { id: string; country_code: string; title: string; kind: string; is_published: boolean; body_markdown: string; source_url: string | null; display_order: number; valid_through: string | null; }
 
-const client = supabase as any;
+const client = supabase as unknown;
 
 function useUpsert(table: string, entityName: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (payload: any) => {
+    mutationFn: async (payload: unknown) => {
       const { created_at, updated_at, ...cleanPayload } = payload;
       if (cleanPayload.id) {
         const { error } = await client.from(table).update(cleanPayload).eq("id", cleanPayload.id);
@@ -119,3 +119,5 @@ export function useGtmDashboard() {
     },
   });
 }
+
+

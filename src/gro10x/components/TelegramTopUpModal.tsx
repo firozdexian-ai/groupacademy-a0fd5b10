@@ -1,5 +1,5 @@
-/**
- * ChatOps Top-Up — manual bKash → Telegram review flow.
+﻿/**
+ * ChatOps Top-Up â€” manual bKash â†’ Telegram review flow.
  * Inserts a `manual_payment_requests` row scoped to the active company.
  * Admins are notified via the existing Telegram pipeline.
  */
@@ -49,7 +49,7 @@ export function TelegramTopUpModal({ open, onOpenChange, companyId, defaultCredi
         trx_id: trxId.trim(),
         notes: notes.trim() || null,
       });
-      toast.success("Top-up request submitted — admin will confirm shortly.");
+      toast.success("Top-up request submitted â€” admin will confirm shortly.");
       setTrxId("");
       setNotes("");
       onOpenChange(false);
@@ -131,3 +131,4 @@ export function TelegramTopUpModal({ open, onOpenChange, companyId, defaultCredi
     </Dialog>
   );
 }
+

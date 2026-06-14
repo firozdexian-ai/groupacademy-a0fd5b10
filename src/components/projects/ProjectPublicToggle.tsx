@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+﻿import { useEffect, useState, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getProjectPublicSettings, toggleProjectPublic } from "@/domains/ugc/repo/ugcRepo";
 import { Switch } from "@/components/ui/switch";
@@ -18,7 +18,7 @@ interface ProjectPublicToggleProps {
 /**
  * GroUp Academy: Project Public Visibility Synchronization Node (ProjectPublicToggle)
  * An authoritative operational sandbox managing public route claiming, metrics ledger tracking, and OG metadata generation hooks.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function ProjectPublicToggle({ projectId }: ProjectPublicToggleProps) {
   const queryClient = useQueryClient();
@@ -109,7 +109,7 @@ export function ProjectPublicToggle({ projectId }: ProjectPublicToggleProps) {
         );
         trackEvent("project_public_toggle_success", { projectId, nextState: nextVisibilityStateBool });
       }
-    } catch (caughtPipelineExceptionErr: any) {
+    } catch (caughtPipelineExceptionErr: unknown) {
       const formattedExceptionMsgStr =
         caughtPipelineExceptionErr instanceof Error
           ? caughtPipelineExceptionErr.message
@@ -134,7 +134,7 @@ export function ProjectPublicToggle({ projectId }: ProjectPublicToggleProps) {
   return (
     <Card className="w-full text-left rounded-xl border border-border/40 bg-card/40 backdrop-blur-md shadow-sm antialiased transform-gpu overflow-hidden select-none sm:select-text">
       <CardContent className="p-4 sm:p-5 space-y-4 w-full min-w-0 flex flex-col justify-center font-semibold text-xs text-foreground/90">
-        {/* HUD LEVEL 1: VISIBILITY CONTROL STATUS TOGGLE ROW */}
+        {/* dashboard LEVEL 1: VISIBILITY CONTROL STATUS TOGGLE ROW */}
         <div className="flex items-center justify-between gap-4 p-3 rounded-xl border border-border/40 bg-background/30 w-full min-w-0 select-none leading-none shadow-xs">
           <div className="min-w-0 flex-1 space-y-1.5 flex flex-col justify-center text-left leading-none">
             <p className="text-xs sm:text-sm font-bold text-foreground/90 uppercase tracking-wide leading-none">
@@ -156,7 +156,7 @@ export function ProjectPublicToggle({ projectId }: ProjectPublicToggleProps) {
           </div>
         </div>
 
-        {/* HUD LEVEL 2: DYNAMIC ANALYTICAL PLOT TRACK BADGES AND ACTION ROW */}
+        {/* dashboard LEVEL 2: DYNAMIC ANALYTICAL PLOT TRACK BADGES AND ACTION ROW */}
         {pub && slug && (
           <div className="flex items-center justify-between gap-3 flex-wrap w-full font-bold text-xs tracking-tight select-none border-t border-border/10 pt-3 mt-1 leading-none animate-in slide-in-from-top-1 duration-200">
             <div className="flex items-center gap-3 font-mono text-[10px] text-muted-foreground/60 tracking-wider font-extrabold uppercase tabular-nums">
@@ -192,7 +192,7 @@ export function ProjectPublicToggle({ projectId }: ProjectPublicToggleProps) {
           </div>
         )}
 
-        {/* HUD LEVEL 3: RECTILINEAR OVERLAY BOTTOM METRIC LOG SHIELD */}
+        {/* dashboard LEVEL 3: RECTILINEAR OVERLAY BOTTOM METRIC LOG SHIELD */}
         <div className="flex items-center justify-center gap-1.5 py-2 border-t border-border/10 select-none shadow-none pointer-events-none tracking-normal font-bold text-[9px] text-muted-foreground/40 font-mono leading-none shrink-0 uppercase w-full pt-3 mt-1">
           <Zap className="h-3 w-3 text-amber-500 fill-amber-500/10 stroke-[2.2] shrink-0 animate-pulse" />
           <span>Public visibility metadata indexing synchronization core complete</span>
@@ -201,3 +201,5 @@ export function ProjectPublicToggle({ projectId }: ProjectPublicToggleProps) {
     </Card>
   );
 }
+
+

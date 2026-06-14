@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { learnerMasterySummary } from "@/domains/learning/api/learningApi";
 
 /**
@@ -46,7 +46,7 @@ export function useMasterySummary(opts?: { moduleId?: string; contentId?: string
     // Performance Baseline: 5-minute stability for cognitive metrics
     staleTime: 5 * 60 * 1000,
     queryFn: async (): Promise<MasterySummary> => {
-      // HUD: INVOKING_COGNITIVE_ANALYTICS_ENGINE
+      // dashboard: INVOKING_COGNITIVE_ANALYTICS_ENGINE
       const res = await learnerMasterySummary({
         module_id: opts?.moduleId,
         content_id: opts?.contentId,
@@ -61,3 +61,4 @@ export function useMasterySummary(opts?: { moduleId?: string; contentId?: string
     },
   });
 }
+

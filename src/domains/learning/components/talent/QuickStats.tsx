@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { BookOpen, Award, Clock, Zap } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { trackEvent } from "@/lib/errorTracking";
@@ -128,3 +128,4 @@ export function QuickStats({ coursesCompleted, hoursLearned, modulesCompleted, c
     </section>
   );
 }
+

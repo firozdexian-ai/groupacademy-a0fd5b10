@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+﻿import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
  ArrowLeft,
@@ -94,13 +94,13 @@ export default function ProfileEdit() {
  });
  setSkills(
  Array.isArray(talent.skills)
- ? talent.skills.map((s: any) => (typeof s === "string" ? s : s?.name ?? "")).filter(Boolean)
+ ? talent.skills.map((s: unknown) => (typeof s === "string" ? s : s?.name ?? "")).filter(Boolean)
  : [],
  );
- setExperience(Array.isArray(talent.experience) ? (talent.experience as any) : []);
- setEducation(Array.isArray(talent.education) ? (talent.education as any) : []);
- setLanguages(Array.isArray(talent.languages) ? (talent.languages as any) : []);
- setAchievements(Array.isArray(talent.achievements) ? (talent.achievements as any) : []);
+ setExperience(Array.isArray(talent.experience) ? (talent.experience as unknown) : []);
+ setEducation(Array.isArray(talent.education) ? (talent.education as unknown) : []);
+ setLanguages(Array.isArray(talent.languages) ? (talent.languages as unknown) : []);
+ setAchievements(Array.isArray(talent.achievements) ? (talent.achievements as unknown) : []);
  setIsDirty(false);
  }, [talent]);
 
@@ -126,7 +126,7 @@ export default function ProfileEdit() {
       setIsDirty(true);
       setParsingCV(true);
 
-      const parseResult: any = await parseCv({ cvUrl: publicUrl });
+      const parseResult: unknown = await parseCv({ cvUrl: publicUrl });
 
       if (parseResult?.success) {
         const parsed = parseResult.parsed ?? {};
@@ -144,7 +144,7 @@ export default function ProfileEdit() {
         // Normalize and set Experience
         let normalizedExperience: ExperienceEntry[] = experience;
         if (Array.isArray(parsed.experience) && parsed.experience.length) {
-          normalizedExperience = parsed.experience.map((exp: any) => ({
+          normalizedExperience = parsed.experience.map((exp: unknown) => ({
             company: exp.company || "",
             position: exp.position || exp.title || "",
             startDate: exp.startDate || exp.duration || "",
@@ -157,7 +157,7 @@ export default function ProfileEdit() {
         // Normalize and set Education
         let normalizedEducation: EducationEntry[] = education;
         if (Array.isArray(parsed.education) && parsed.education.length) {
-          normalizedEducation = parsed.education.map((edu: any) => ({
+          normalizedEducation = parsed.education.map((edu: unknown) => ({
             institution: edu.institution || "",
             degree: edu.degree || "",
             fieldOfStudy: edu.fieldOfStudy || edu.field || "",
@@ -171,7 +171,7 @@ export default function ProfileEdit() {
         let normalizedSkills: string[] = skills;
         if (Array.isArray(parsed.skills) && parsed.skills.length) {
           normalizedSkills = parsed.skills
-            .map((s: any) => {
+            .map((s: unknown) => {
               const nameVal = typeof s === "string" ? s : s?.name || "";
               return nameVal.trim();
             })
@@ -179,7 +179,7 @@ export default function ProfileEdit() {
           setSkills(normalizedSkills);
         }
 
-        const updatePayload: Record<string, any> = {
+        const updatePayload: Record<string, unknown> = {
           ...updatedForm,
           experience: normalizedExperience,
           education: normalizedEducation,
@@ -193,18 +193,18 @@ export default function ProfileEdit() {
           updatePayload.professionCategoryId = categoryId;
         }
 
-        await updateTalent(updatePayload as any);
+        await updateTalent(updatePayload as unknown);
         await refreshTalent();
         setIsDirty(false);
         toast.success("We pulled your info from the CV.");
       } else {
-        await updateTalent({ cvUrl: publicUrl, cvParsedAt: new Date().toISOString() } as any);
+        await updateTalent({ cvUrl: publicUrl, cvParsedAt: new Date().toISOString() } as unknown);
         await refreshTalent();
         toast.success("CV uploaded.");
       }
     } catch (error) {
       trackError(error, { area: "ProfileEdit.handleCVUpload" });
-      toast.error("Couldn't read that CV — try a different file.");
+      toast.error("Couldn't read that CV â€” try a different file.");
     } finally {
       setUploadingCV(false);
       setParsingCV(false);
@@ -220,11 +220,11 @@ export default function ProfileEdit() {
  profilePhotoUrl,
  coverImageUrl,
  cvUrl,
- skills: skills.map((name) => ({ name })) as any,
- experience: experience as any,
- education: education as any,
+ skills: skills.map((name) => ({ name })) as unknown,
+ experience: experience as unknown,
+ education: education as unknown,
  languages,
- achievements: achievements as any,
+ achievements: achievements as unknown,
  });
  await refreshTalent();
  setIsDirty(false);
@@ -232,7 +232,7 @@ export default function ProfileEdit() {
  navigate("/app/profile");
  } catch (error) {
  trackError(error, { area: "ProfileEdit.handleSubmit" });
- toast.error("Couldn't save — please try again.");
+ toast.error("Couldn't save â€” please try again.");
  } finally {
  setSaving(false);
  }
@@ -303,7 +303,7 @@ export default function ProfileEdit() {
  <div>
  <p className="font-medium text-sm">CV uploaded</p>
  <p className="text-xs text-muted-foreground">
- {parsingCV ? "Reading your CV…" : "We'll use this for applications."}
+ {parsingCV ? "Reading your CVâ€¦" : "We'll use this for applications."}
  </p>
  </div>
  </div>
@@ -340,7 +340,7 @@ export default function ProfileEdit() {
  <Upload className="h-6 w-6 mx-auto text-muted-foreground mb-2" />
  )}
  <p className="text-sm font-medium">Upload your CV</p>
- <p className="text-xs text-muted-foreground mt-1">PDF or Word — we'll auto-fill your profile</p>
+ <p className="text-xs text-muted-foreground mt-1">PDF or Word â€” we'll auto-fill your profile</p>
  <p className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 mt-1">Cost: 0 credits (Free)</p>
  </label>
  )}
@@ -432,7 +432,7 @@ export default function ProfileEdit() {
  <Label htmlFor="linkedinUrl">LinkedIn URL</Label>
  <Input
  id="linkedinUrl"
- placeholder="https://linkedin.com/in/…"
+ placeholder="https://linkedin.com/in/â€¦"
  value={formData.linkedinUrl}
  onChange={(e) => handleChange("linkedinUrl", e.target.value)}
  />
@@ -441,7 +441,7 @@ export default function ProfileEdit() {
  <Label htmlFor="portfolioUrl">Portfolio / website</Label>
  <Input
  id="portfolioUrl"
- placeholder="https://…"
+ placeholder="https://â€¦"
  value={formData.portfolioUrl}
  onChange={(e) => handleChange("portfolioUrl", e.target.value)}
  />
@@ -622,7 +622,7 @@ export default function ProfileEdit() {
  <Button type="submit" className="flex-1" disabled={saving}>
  {saving ? (
  <>
- <InlineSpinner size="sm" className="mr-2" /> Saving…
+ <InlineSpinner size="sm" className="mr-2" /> Savingâ€¦
  </>
  ) : (
  <>
@@ -636,3 +636,5 @@ export default function ProfileEdit() {
  </div>
  );
 }
+
+

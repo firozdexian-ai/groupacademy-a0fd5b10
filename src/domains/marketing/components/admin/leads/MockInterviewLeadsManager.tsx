@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { listMockInterviewLeads } from "@/domains/marketing/repo/marketingRepo";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
@@ -86,16 +86,16 @@ export function MockInterviewLeadsManager() {
     setError(null);
     try {
       // Wrap repo call so withTimeout receives a native Promise
-      const fetchLeads = async () => ({ data: await listMockInterviewLeads(), error: null as any });
+      const fetchLeads = async () => ({ data: await listMockInterviewLeads(), error: null as unknown });
 
       const result = (await withTimeout(fetchLeads(), TIMEOUTS.DEFAULT, "Loading mock interview leads timed out")) as {
         data: MockInterviewLead[] | null;
-        error: any;
+        error: unknown;
       };
 
       if (result.error) throw result.error;
       setLeads(result.data || []);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Telemetry Fault:", err);
       setError(err.message || "Failed to load mock interview leads");
       toast.error("System Error: Failed to synchronize lead data.");
@@ -371,3 +371,5 @@ export function MockInterviewLeadsManager() {
     </div>
   );
 }
+
+

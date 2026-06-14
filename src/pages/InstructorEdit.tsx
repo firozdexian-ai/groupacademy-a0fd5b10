@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getInstructorById, updateInstructor } from "@/domains/learning/repo/learningRepo";
 import { Button } from "@/components/ui/button";
@@ -50,7 +50,7 @@ const InstructorEdit = () => {
         status: data.status,
         hourly_rate: data.hourly_rate ? data.hourly_rate.toString() : "",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error("Handshake Failed: Unable to retrieve instructor node.");
       navigate("/instructors");
     } finally {
@@ -83,7 +83,7 @@ const InstructorEdit = () => {
 
       toast.success("Profile Synchronized: Instructor record updated.");
       navigate("/instructors");
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error(error.message || "Blueprint Update Failed");
     } finally {
       setIsSaving(false);
@@ -310,3 +310,5 @@ const InstructorEdit = () => {
 };
 
 export default InstructorEdit;
+
+

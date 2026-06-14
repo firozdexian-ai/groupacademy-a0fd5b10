@@ -33,7 +33,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Job Distribution & Attribution Node
  * CTO Reference: Authoritative interface for viral recruitment and referral tracking.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 
 const COUNTRY_ALIASES: Record<string, string[]> = {
@@ -77,20 +77,12 @@ export function JobSharingGigForm({ gig, talentId, onSubmitted }: JobSharingGigF
     }
   }, [gig, talentId]);
 
-  if (!gig || !gig.id || !talentId) {
-    trackError("JobSharingGigForm mounted without valid structural properties.", {
-      component: "JobSharingGigForm",
-      action: "null_pointer_assertion",
-    });
-    return null;
-  }
-
   // 1. Referral Parameters Synchronization Node
   const { data: talentRefCode } = useQuery({
     queryKey: ["talent-ref-code", talentId],
     enabled: !!talentId,
     refetchOnWindowFocus: false,
-    queryFn: () => getTalentRefCode(talentId),
+    queryFn: () => getTalentRefCode(talentId || ""),
   });
 
   // 2. Active Employment Tracking Query Pipeline
@@ -121,6 +113,14 @@ export function JobSharingGigForm({ gig, talentId, onSubmitted }: JobSharingGigF
     });
   }, [jobs, searchTerm, countryFilter]);
 
+  if (!gig || !gig.id || !talentId) {
+    trackError("JobSharingGigForm mounted without valid structural properties.", {
+      component: "JobSharingGigForm",
+      action: "null_pointer_assertion",
+    });
+    return null;
+  }
+
   const handleSelectJob = (jobId: string) => {
     if (!jobId) return;
     setSelectedJobId(jobId);
@@ -146,10 +146,10 @@ export function JobSharingGigForm({ gig, talentId, onSubmitted }: JobSharingGigF
     trackEvent("job_sharing_caption_synthesis_started", { jobId, channel });
 
     try {
-      const data = await generateJobShareCaption({ ...job, apply_link: shareUrl, channel } as any);
-      setCaptions((prev) => ({ ...prev, [channel]: (data as any)?.caption || "" }));
+      const data = await generateJobShareCaption({ ...job, apply_link: shareUrl, channel } as unknown);
+      setCaptions((prev) => ({ ...prev, [channel]: (data as unknown)?.caption || "" }));
       trackEvent("job_sharing_caption_synthesis_success", { jobId, channel });
-    } catch (err: any) {
+    } catch (err: unknown) {
       trackError(err, {
         component: "JobSharingGigForm",
         action: "execute_caption_synthesis",
@@ -230,7 +230,7 @@ export function JobSharingGigForm({ gig, talentId, onSubmitted }: JobSharingGigF
 
       toast.success("Referral submitted successfully!", { id: toastId });
       onSubmitted();
-    } catch (err: any) {
+    } catch (err: unknown) {
       const parsedMsg = err instanceof Error ? err.message : String(err);
 
       trackError(parsedMsg, {
@@ -339,7 +339,7 @@ export function JobSharingGigForm({ gig, talentId, onSubmitted }: JobSharingGigF
         </div>
       </div>
 
-      {/* SECTION 2: Dynamic Copywriting Synthesis Panel */}
+      {/* SECTION 2: Dynamic Copywriting summary Panel */}
       {selectedJobId && (
         <div className="space-y-4 pt-1 border-t border-border/20 animate-in slide-in-from-bottom-3 duration-500 w-full min-w-0">
           <div className="space-y-2 select-none w-full">
@@ -459,3 +459,5 @@ export function JobSharingGigForm({ gig, talentId, onSubmitted }: JobSharingGigF
     </div>
   );
 }
+
+

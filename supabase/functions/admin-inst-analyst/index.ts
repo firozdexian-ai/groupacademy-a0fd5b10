@@ -1,4 +1,4 @@
-// Admin Organizations Analyst — read-only insights across institutions, partner
+﻿// Admin Organizations Analyst â€” read-only insights across institutions, partner
 // orgs, clubs, representatives, and events.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
@@ -51,7 +51,7 @@ const TOOLS = [
 
 const SYSTEM = `You are the Organizations Analyst for GroUp Academy super admin.
 Your job is to answer questions about institutions, partner organizations, clubs,
-representatives, and events. Always CALL TOOLS for any number; never invent stats.
+representatives, and events. Always CALL TOOLS for unknown number; never invent stats.
 Be concise. Use markdown. Today: ${new Date().toISOString().slice(0, 10)}.`;
 
 Deno.serve(async (req) => {
@@ -75,7 +75,7 @@ Deno.serve(async (req) => {
     const admin = createClient(SUPA_URL, SERVICE_KEY);
     const { data: roleRows } = await admin
       .from("user_roles").select("role").eq("user_id", userData.user.id);
-    const roles = (roleRows ?? []).map((r: any) => r.role);
+    const roles = (roleRows ?? []).map((r: unknown) => r.role);
     if (!roles.includes("super_admin") && !roles.includes("admin")) {
       return json({ error: "forbidden" }, 403);
     }
@@ -121,12 +121,12 @@ Deno.serve(async (req) => {
       }
     }
     return json({ message: "Sorry, I could not complete that request." });
-  } catch (e: any) {
+  } catch (e: unknown) {
     return json({ error: e?.message ?? "unknown" }, 500);
   }
 });
 
-async function runTool(admin: any, name: string, args: any) {
+async function runTool(admin: unknown, name: string, args: unknown) {
   if (name === "stakeholder_counts") {
     const [insts, partners, clubs, reps, events] = await Promise.all([
       admin.from("institutions").select("id", { count: "exact", head: true }),
@@ -146,7 +146,7 @@ async function runTool(admin: any, name: string, args: any) {
   if (name === "institutions_by_type") {
     const { data } = await admin.from("institutions").select("type");
     const counts: Record<string, number> = {};
-    (data ?? []).forEach((r: any) => {
+    (data ?? []).forEach((r: unknown) => {
       counts[r.type ?? "unknown"] = (counts[r.type ?? "unknown"] ?? 0) + 1;
     });
     return counts;
@@ -166,20 +166,22 @@ async function runTool(admin: any, name: string, args: any) {
     const limit = args.limit ?? 5;
     const { data } = await admin.from("institution_representatives").select("institution_id");
     const counts: Record<string, number> = {};
-    (data ?? []).forEach((r: any) => { counts[r.institution_id] = (counts[r.institution_id] ?? 0) + 1; });
+    (data ?? []).forEach((r: unknown) => { counts[r.institution_id] = (counts[r.institution_id] ?? 0) + 1; });
     const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, limit);
     const ids = top.map(([id]) => id);
     if (!ids.length) return [];
     const { data: insts } = await admin.from("institutions").select("id,name").in("id", ids);
-    const byId = Object.fromEntries((insts ?? []).map((i: any) => [i.id, i.name]));
+    const byId = Object.fromEntries((insts ?? []).map((i: unknown) => [i.id, i.name]));
     return top.map(([id, count]) => ({ institution: byId[id] ?? id, representatives: count }));
   }
   return { error: "unknown_tool" };
 }
 
-function json(body: any, status = 200) {
+function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
+
+

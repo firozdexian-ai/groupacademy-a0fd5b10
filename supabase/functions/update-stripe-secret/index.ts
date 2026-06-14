@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+﻿import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -29,7 +29,7 @@ Deno.serve(async (req) => {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const { data: { user }, error: userError } = await supabase.auth.getUser(
+    const { data: { user }, error: userError } = await getCurrentUser(
       authHeader.replace("Bearer ", "")
     );
     if (userError || !user) {
@@ -69,7 +69,7 @@ Deno.serve(async (req) => {
           .select("key, value")
           .in("key", ["stripe_secret_key", "stripe_webhook_secret"]);
 
-        const map = new Map(dbKeys?.map((r: any) => [r.key, r.value]) || []);
+        const map = new Map(dbKeys?.map((r: unknown) => [r.key, r.value]) || []);
         if (!hasSecretKey) hasSecretKey = !!map.get("stripe_secret_key");
         if (!hasWebhookSecret) hasWebhookSecret = !!map.get("stripe_webhook_secret");
       }
@@ -95,7 +95,7 @@ Deno.serve(async (req) => {
 
       if (!testRes.ok) {
         return new Response(
-          JSON.stringify({ error: "Invalid Stripe key — could not authenticate with Stripe" }),
+          JSON.stringify({ error: "Invalid Stripe key â€” could not authenticate with Stripe" }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -149,7 +149,7 @@ Deno.serve(async (req) => {
 
       if (!testRes.ok) {
         return new Response(
-          JSON.stringify({ error: "Invalid Stripe key — could not authenticate" }),
+          JSON.stringify({ error: "Invalid Stripe key â€” could not authenticate" }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -172,3 +172,6 @@ Deno.serve(async (req) => {
     );
   }
 });
+
+
+

@@ -21,7 +21,7 @@ export function useMarketingGraph() {
     queryKey: ["marketing_graph_master"],
     queryFn: async () => {
       const master = await getMarketingGraphMaster();
-      const banners: Banner[] = (master.banners ?? []).map((b: any) => ({
+      const banners: Banner[] = (master.banners ?? []).map((b: unknown) => ({
         id: b.id, placement: b.placement, media_url: b.image_url, link_url: b.link_url,
         is_active: !!b.is_active, created_at: b.created_at,
       }));
@@ -37,9 +37,9 @@ export function useMarketingGraph() {
     },
   });
 
-  const createUpsertMutation = (table: string, entityName: string) =>
+  const useCreateUpsertMutation = (table: string, entityName: string) =>
     useMutation({
-      mutationFn: (payload: any) => upsertGraphRow(table, payload),
+      mutationFn: (payload: unknown) => upsertGraphRow(table, payload),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["marketing_graph_master"] });
         toast.success(`${entityName} synchronized successfully.`);
@@ -47,7 +47,7 @@ export function useMarketingGraph() {
       onError: (e: Error) => toast.error(`Sync Failed: ${e.message}`),
     });
 
-  const createDeleteMutation = (table: string, entityName: string) =>
+  const useCreateDeleteMutation = (table: string, entityName: string) =>
     useMutation({
       mutationFn: (id: string) => deleteGraphRow(table, id),
       onSuccess: () => {
@@ -60,16 +60,18 @@ export function useMarketingGraph() {
   return {
     marketingGraphQuery,
     mutations: {
-      upsertChannel: createUpsertMutation("mkt_channels", "Marketing Channel"),
-      deleteChannel: createDeleteMutation("mkt_channels", "Marketing Channel"),
-      upsertGroup: createUpsertMutation("mkt_community_groups", "Community Group"),
-      deleteGroup: createDeleteMutation("mkt_community_groups", "Community Group"),
-      upsertBanner: createUpsertMutation("banners", "Display Banner"),
-      deleteBanner: createDeleteMutation("banners", "Display Banner"),
-      upsertTheme: createUpsertMutation("profile_card_themes", "Profile Theme"),
-      deleteTheme: createDeleteMutation("profile_card_themes", "Profile Theme"),
-      upsertAccessCode: createUpsertMutation("access_codes", "Access Code"),
-      deleteAccessCode: createDeleteMutation("access_codes", "Access Code"),
+      upsertChannel: useCreateUpsertMutation("mkt_channels", "Marketing Channel"),
+      deleteChannel: useCreateDeleteMutation("mkt_channels", "Marketing Channel"),
+      upsertGroup: useCreateUpsertMutation("mkt_community_groups", "Community Group"),
+      deleteGroup: useCreateDeleteMutation("mkt_community_groups", "Community Group"),
+      upsertBanner: useCreateUpsertMutation("banners", "Display Banner"),
+      deleteBanner: useCreateDeleteMutation("banners", "Display Banner"),
+      upsertTheme: useCreateUpsertMutation("profile_card_themes", "Profile Theme"),
+      deleteTheme: useCreateDeleteMutation("profile_card_themes", "Profile Theme"),
+      upsertAccessCode: useCreateUpsertMutation("access_codes", "Access Code"),
+      deleteAccessCode: useCreateDeleteMutation("access_codes", "Access Code"),
     },
   };
 }
+
+

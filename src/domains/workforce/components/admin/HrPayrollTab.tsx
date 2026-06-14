@@ -1,5 +1,5 @@
-/**
- * HR Payroll Ledger — Phase HR-Z1 Hardened
+﻿/**
+ * HR Payroll Ledger â€” Phase HR-Z1 Hardened
  * CTO Version: May 2026
  * Fixes: W11 (Temporal Grouping & CSV Export), W4 (Relation Mapping)
  * Features: Financial KPI Tracking, Institutional Ledger Export
@@ -46,12 +46,12 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { format, parseISO } from "date-fns";
 
-const currencySymbol = (c: string) => (c === "USD" ? "$" : c === "EUR" ? "€" : c === "GBP" ? "£" : c);
+const currencySymbol = (c: string) => (c === "USD" ? "$" : c === "EUR" ? "â‚¬" : c === "GBP" ? "Â£" : c);
 
 export function HrPayrollTab() {
  const qc = useQueryClient();
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({
+ const [draft, setDraft] = useState<unknown>({
  status: "draft",
  currency: "USD",
  base_amount: 0,
@@ -66,9 +66,9 @@ export function HrPayrollTab() {
  const { runs: runsData, workforce } = await getHrPayrollMaster();
 
  const talentMap = new Map<string, string>();
- workforce.forEach((w: any) => {
+ workforce.forEach((w: unknown) => {
  // Primary key: talent_id; fallback: user_id for backwards compat
- const name = (w.talents as any)?.full_name || "Unknown Agent";
+ const name = (w.talents as unknown)?.full_name || "Unknown Agent";
  if (w.talent_id) talentMap.set(w.talent_id, name);
  if (w.user_id) talentMap.set(w.user_id, name);
  });
@@ -76,7 +76,7 @@ export function HrPayrollTab() {
  const runs = runsData;
 
  // W11: Group by Month
- const groupedRuns = runs.reduce((acc: any, run) => {
+ const groupedRuns = runs.reduce((acc: unknown, run) => {
  const month = run.period_end ? format(parseISO(run.period_end), "MMMM yyyy") : "Unscheduled";
  if (!acc[month]) acc[month] = [];
  acc[month].push(run);
@@ -99,7 +99,7 @@ export function HrPayrollTab() {
  });
 
  const upsertPayroll = useMutation({
- mutationFn: async (payload: any) => {
+ mutationFn: async (payload: unknown) => {
  // W-11: Validate date range before committing
  if (!payload.period_start || !payload.period_end) {
  throw new Error("Pay period start and end dates are required.");
@@ -194,7 +194,7 @@ export function HrPayrollTab() {
  <Skeleton className="h-96 w-full rounded-2xl" />
  ) : (
  <div className="space-y-8">
- {Object.entries(data?.groupedRuns || {}).map(([month, runs]: [string, any]) => (
+ {Object.entries(data?.groupedRuns || {}).map(([month, runs]: [string, unknown]) => (
  <div key={month} className="space-y-4">
  <div className="flex items-center gap-4 px-2">
  <h3 className="font-medium italic text-sm tracking-widest text-muted-foreground/60">
@@ -215,7 +215,7 @@ export function HrPayrollTab() {
  </TableRow>
  </TableHeader>
  <TableBody className="divide-y divide-border/5">
- {runs.map((r: any) => {
+ {runs.map((r: unknown) => {
  const sc = getStatusConfig(r.status);
  return (
  <TableRow key={r.id} className="group hover:bg-success/[0.03] transition-colors">
@@ -228,8 +228,8 @@ export function HrPayrollTab() {
  </div>
  </TableCell>
  <TableCell className="font-mono text-[10px] text-muted-foreground uppercase">
- {r.period_start ? format(parseISO(r.period_start), "MMM dd") : "—"} to{" "}
- {r.period_end ? format(parseISO(r.period_end), "MMM dd") : "—"}
+ {r.period_start ? format(parseISO(r.period_start), "MMM dd") : "â€”"} to{" "}
+ {r.period_end ? format(parseISO(r.period_end), "MMM dd") : "â€”"}
  </TableCell>
  <TableCell>
  <div className="flex flex-col">
@@ -383,7 +383,7 @@ export function HrPayrollTab() {
  );
 }
 
-function KpiTile({ icon: Icon, label, value, accent }: any) {
+function KpiTile({ icon: Icon, label, value, accent }: unknown) {
  const accentText = accent === "emerald" ? "text-success" : "text-warning";
  return (
  <Card className="rounded-2xl border border-border/60 bg-card p-6 flex items-center gap-5">
@@ -397,7 +397,7 @@ function KpiTile({ icon: Icon, label, value, accent }: any) {
  <div>
  <p className="text-[10px] font-black text-muted-foreground/60 italic">{label}</p>
  <p className={cn("text-3xl font-black tracking-tighter italic", accentText)}>
- ₵{value?.toLocaleString() || "0"}
+ â‚µ{value?.toLocaleString() || "0"}
  </p>
  </div>
  </Card>
@@ -405,3 +405,5 @@ function KpiTile({ icon: Icon, label, value, accent }: any) {
 }
 
 export default HrPayrollTab;
+
+

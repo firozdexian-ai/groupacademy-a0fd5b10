@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Resolves the currently-active Gro10x company for the signed-in user.
  * Returns the first active membership (owner / admin / member).
  */
@@ -20,3 +20,4 @@ export function useActiveCompany() {
     isLoading: q.isLoading,
   };
 }
+

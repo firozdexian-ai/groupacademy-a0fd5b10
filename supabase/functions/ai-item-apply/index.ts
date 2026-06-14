@@ -1,4 +1,4 @@
-// Apply an AI item rewrite — phase 3.7
+﻿// Apply an AI item rewrite â€” phase 3.7
 // Validates patch, updates the pool row, resets serve counters, logs revision.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
@@ -10,7 +10,7 @@ const corsHeaders = {
 const json = (b: unknown, s = 200) =>
   new Response(JSON.stringify(b), { status: s, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
-const clamp = (s: any, max: number) =>
+const clamp = (s: unknown, max: number) =>
   typeof s === "string" ? s.trim().slice(0, max) : "";
 
 Deno.serve(async (req) => {
@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
   const { data: role } = await admin.from("user_roles").select("role").eq("user_id", uid).eq("role", "admin").maybeSingle();
   if (!role) return json({ error: "forbidden" }, 403);
 
-  let body: any = {};
+  let body: unknown = {};
   try { body = await req.json(); } catch { /* */ }
   const kind: "quiz" | "scenario" = body?.kind;
   const itemId: string = body?.item_id;
@@ -45,16 +45,16 @@ Deno.serve(async (req) => {
 
     const question = clamp(patch.question, 600);
     const explanation = clamp(patch.explanation, 600);
-    const options = Array.isArray(patch.options) ? patch.options.slice(0, 4).map((o: any) => clamp(o, 200)) : [];
+    const options = Array.isArray(patch.options) ? patch.options.slice(0, 4).map((o: unknown) => clamp(o, 200)) : [];
     const correct_index = Number.isInteger(patch.correct_index) ? patch.correct_index : -1;
-    const difficulty = ["easy", "medium", "hard"].includes(patch.difficulty) ? patch.difficulty : (before as any).difficulty;
+    const difficulty = ["easy", "medium", "hard"].includes(patch.difficulty) ? patch.difficulty : (before as unknown).difficulty;
     if (!question) return json({ error: "invalid_question" }, 400);
     if (options.length !== 4 || options.some((o: string) => !o)) return json({ error: "invalid_options" }, 400);
     if (correct_index < 0 || correct_index > 3) return json({ error: "invalid_correct_index" }, 400);
 
     const after = {
       question, options, correct_index,
-      explanation: explanation || (before as any).explanation,
+      explanation: explanation || (before as unknown).explanation,
       difficulty,
       times_served: 0, times_correct: 0, quality_score: 0,
     };
@@ -62,11 +62,11 @@ Deno.serve(async (req) => {
     if (upErr) return json({ error: upErr.message }, 500);
 
     const { data: rev } = await admin.from("module_item_revision_log").insert({
-      item_id: itemId, kind: "quiz", module_id: (before as any).module_id,
+      item_id: itemId, kind: "quiz", module_id: (before as unknown).module_id,
       before, after: { ...before, ...after },
       flags_addressed: flagsAddressed, applied_by: uid,
     }).select("id").maybeSingle();
-    return json({ ok: true, item_id: itemId, revision_id: (rev as any)?.id ?? null });
+    return json({ ok: true, item_id: itemId, revision_id: (rev as unknown)?.id ?? null });
   }
 
   // scenario
@@ -75,16 +75,16 @@ Deno.serve(async (req) => {
 
   const title = clamp(patch.title, 200);
   const scenario_prompt = clamp(patch.scenario_prompt, 2000);
-  const difficulty = ["easy", "medium", "hard"].includes(patch.difficulty) ? patch.difficulty : (before as any).difficulty;
+  const difficulty = ["easy", "medium", "hard"].includes(patch.difficulty) ? patch.difficulty : (before as unknown).difficulty;
   const rubricRaw = Array.isArray(patch.rubric) ? patch.rubric : [];
-  const rubric = rubricRaw.slice(0, 6).map((r: any) => ({
+  const rubric = rubricRaw.slice(0, 6).map((r: unknown) => ({
     criterion: clamp(r?.criterion, 120),
     weight: Math.max(0, Math.min(1, Number(r?.weight) || 0)),
     description: clamp(r?.description, 400),
-  })).filter((r: any) => r.criterion);
+  })).filter((r: unknown) => r.criterion);
   if (!title || !scenario_prompt) return json({ error: "invalid_scenario" }, 400);
   if (rubric.length < 2) return json({ error: "rubric_min_2" }, 400);
-  const weightSum = rubric.reduce((a: number, r: any) => a + r.weight, 0);
+  const weightSum = rubric.reduce((a: number, r: unknown) => a + r.weight, 0);
   if (weightSum <= 0) return json({ error: "rubric_zero_weight" }, 400);
 
   const after = {
@@ -95,9 +95,11 @@ Deno.serve(async (req) => {
   if (upErr) return json({ error: upErr.message }, 500);
 
   const { data: rev } = await admin.from("module_item_revision_log").insert({
-    item_id: itemId, kind: "scenario", module_id: (before as any).module_id,
+    item_id: itemId, kind: "scenario", module_id: (before as unknown).module_id,
     before, after: { ...before, ...after },
     flags_addressed: flagsAddressed, applied_by: uid,
   }).select("id").maybeSingle();
-  return json({ ok: true, item_id: itemId, revision_id: (rev as any)?.id ?? null });
+  return json({ ok: true, item_id: itemId, revision_id: (rev as unknown)?.id ?? null });
 });
+
+

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+﻿import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getTalentServiceHistorySnapshot } from "@/domains/finance/repo/financeRepo";
@@ -62,7 +62,7 @@ export function ServiceHistoryCard() {
       const compiledBuffer: ServiceHistoryItem[] = [];
 
       // Safe fallback formatting preserves rows from breaking if records arrive empty
-      assessments.forEach((a: any) => {
+      assessments.forEach((a: unknown) => {
         compiledBuffer.push({
           id: String(a.id),
           type: "career_assessment",
@@ -74,7 +74,7 @@ export function ServiceHistoryCard() {
         });
       });
 
-      interviews.forEach((i: any) => {
+      interviews.forEach((i: unknown) => {
         compiledBuffer.push({
           id: String(i.id),
           type: "mock_interview",
@@ -86,7 +86,7 @@ export function ServiceHistoryCard() {
         });
       });
 
-      salaryAnalyses.forEach((s: any) => {
+      salaryAnalyses.forEach((s: unknown) => {
         compiledBuffer.push({
           id: String(s.id),
           type: "salary_analysis",
@@ -213,3 +213,4 @@ export function ServiceHistoryCard() {
     </Card>
   );
 }
+

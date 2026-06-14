@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+﻿import { useState, useEffect, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,7 @@ interface FlashcardPlayerProps {
 /**
  * GroUp Academy: Cognitive Active Recall Terminal Module (FlashcardPlayer)
  * An authoritative operational utility node driving spaced repetition drills and active recall optimization pipelines.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function FlashcardPlayer({ cards = [], title, onComplete, className }: FlashcardPlayerProps) {
   const queryClient = useQueryClient();
@@ -169,7 +169,7 @@ export function FlashcardPlayer({ cards = [], title, onComplete, className }: Fl
 
   return (
     <div className={cn("space-y-4 text-left w-full transform-gpu antialiased", className)}>
-      {/* HUD LEVEL 1: TRACK WORKSPACE SUB-CONTROL PANEL BAR */}
+      {/* dashboard LEVEL 1: TRACK WORKSPACE SUB-CONTROL PANEL BAR */}
       <div className="flex items-center justify-between gap-4 px-0.5 select-none w-full leading-none">
         <div className="space-y-1 flex flex-col justify-center min-w-0 flex-1 leading-none">
           <h3 className="text-xs sm:text-sm font-bold text-foreground/90 uppercase tracking-wider flex items-center gap-2 leading-none truncate">
@@ -205,7 +205,7 @@ export function FlashcardPlayer({ cards = [], title, onComplete, className }: Fl
         </div>
       </div>
 
-      {/* HUD LEVEL 2: CALIBRATION METRIC PLOTS PROGRESS TRACK */}
+      {/* dashboard LEVEL 2: CALIBRATION METRIC PLOTS PROGRESS TRACK */}
       <div className="space-y-2 p-3.5 rounded-xl border border-border/40 bg-muted/10 w-full select-none shadow-sm leading-none shrink-0 font-bold text-[10px] tracking-tight text-muted-foreground/70 tabular-nums">
         <div className="flex justify-between items-center w-full leading-none uppercase tracking-wider font-mono">
           <span>
@@ -219,7 +219,7 @@ export function FlashcardPlayer({ cards = [], title, onComplete, className }: Fl
         />
       </div>
 
-      {/* HUD LEVEL 3: 3D SPACE INTERACTIVE FLIP MEMORY CARD LAYER */}
+      {/* dashboard LEVEL 3: 3D SPACE INTERACTIVE FLIP MEMORY CARD LAYER */}
       <div
         className="w-full h-64 [perspective:1000px] cursor-pointer block outline-none select-none rounded-xl"
         onClick={() => {
@@ -268,7 +268,7 @@ export function FlashcardPlayer({ cards = [], title, onComplete, className }: Fl
         </div>
       </div>
 
-      {/* HUD LEVEL 4: OPTIONAL HINT DROPOUT INGRESS ASSISTANCE FRAME */}
+      {/* dashboard LEVEL 4: OPTIONAL HINT DROPOUT INGRESS ASSISTANCE FRAME */}
       {currentCard.hint && (
         <div className="w-full flex flex-col items-center gap-2 select-none shrink-0 leading-none">
           <Button
@@ -299,7 +299,7 @@ export function FlashcardPlayer({ cards = [], title, onComplete, className }: Fl
         </div>
       )}
 
-      {/* HUD LEVEL 5: TRANSACTION OPERATIONS CONTROLS BUTTON BAR */}
+      {/* dashboard LEVEL 5: TRANSACTION OPERATIONS CONTROLS BUTTON BAR */}
       <div className="flex items-center justify-between gap-3 pt-1 select-none font-bold text-xs w-full shrink-0">
         <Button
           variant="outline"
@@ -346,7 +346,7 @@ export function FlashcardPlayer({ cards = [], title, onComplete, className }: Fl
         </Button>
       </div>
 
-      {/* HUD LEVEL 6: METRIC MILESTONE COMPLETE VERIFIED COMPONENT SHIELD BANNER */}
+      {/* dashboard LEVEL 6: METRIC MILESTONE COMPLETE VERIFIED COMPONENT SHIELD BANNER */}
       {isComplete && (
         <Card className="rounded-xl border border-emerald-500/15 bg-emerald-500/[0.02] dark:bg-emerald-500/[0.005] backdrop-blur-sm shadow-sm select-none animate-in zoom-in-99 duration-200 text-center w-full shrink-0">
           <CardContent className="p-3.5 flex items-center justify-center gap-2 text-center w-full leading-none font-bold text-[10px] text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
@@ -361,3 +361,4 @@ export function FlashcardPlayer({ cards = [], title, onComplete, className }: Fl
     </div>
   );
 }
+

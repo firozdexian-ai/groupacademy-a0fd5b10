@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.95.0";
+﻿import { createClient } from "https://esm.sh/@supabase/supabase-js@2.95.0";
 import { corsHeaders } from "https://esm.sh/@supabase/supabase-js@2.95.0/cors";
 
 const PAYOUT_BY_RANK: Record<number, number> = {
@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
     if (error) throw error;
 
     const winners = (rows as Array<{ talent_id: string; credits_earned: number }> ?? []).slice(0, 10);
-    const payouts: any[] = [];
+    const payouts: unknown[] = [];
 
     for (let i = 0; i < winners.length; i++) {
       const rank = i + 1;
@@ -64,3 +64,5 @@ Deno.serve(async (req) => {
     });
   }
 });
+
+

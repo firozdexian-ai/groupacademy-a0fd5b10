@@ -1,5 +1,5 @@
-/**
- * Pool Health Dashboard Component (Phase 10i — Hardened).
+﻿/**
+ * Pool Health Dashboard Component (Phase 10i â€” Hardened).
  * Monitors pedagogical item pool density and quality alerts for Academies & Schools Dean.
  * Aligns strictly with 2024 SaaS Professional design tokens.
  */
@@ -72,3 +72,4 @@ export default function PoolHealthCard({ modules }: Props) {
     </div>
   );
 }
+

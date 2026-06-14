@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useGro10xCompanyId } from "../../hooks/useGro10xCompanyId";
@@ -34,7 +34,7 @@ export default function Gro10xJobsList() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: employerJobsQueryKey(companyId) });
     },
-    onError: (err: any) => toast.error(err?.message ?? "Failed"),
+    onError: (err: unknown) => toast.error(err?.message ?? "Failed"),
   });
 
   const toggleActive = (job: EmployerJobRow) => {
@@ -95,7 +95,7 @@ export default function Gro10xJobsList() {
 
       {showLoading && (
         <div className="px-4 py-6 text-center text-sm text-slate-400 inline-flex items-center gap-2 w-full justify-center">
-          <Loader2 className="h-4 w-4 animate-spin" /> Loading jobs…
+          <Loader2 className="h-4 w-4 animate-spin" /> Loading jobsâ€¦
         </div>
       )}
 
@@ -133,7 +133,7 @@ export default function Gro10xJobsList() {
                   </span>
                 </div>
                 <p className={`text-[11px] ${GRO10X_MUTED} truncate mt-0.5`}>
-                  {j.location ?? "Remote"} ·{" "}
+                  {j.location ?? "Remote"} Â·{" "}
                   {new Date(j.created_at).toLocaleDateString(undefined, {
                     month: "short",
                     day: "numeric",
@@ -209,3 +209,5 @@ function FilterChip({
     </button>
   );
 }
+
+

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getInstitutionsOverviewStats } from "@/domains/institutions/repo/institutionsRepo";
@@ -93,7 +93,7 @@ export default function InstitutionsOverviewTab() {
   );
 }
 
-function MetricTile({ title, value, icon: Icon, hint, color, bg }: any) {
+function MetricTile({ title, value, icon: Icon, hint, color, bg }: unknown) {
   return (
     <Card className="rounded-2xl border border-border/60 bg-card backdrop-blur-sm shadow-xl overflow-hidden hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 group">
       <CardHeader className="flex flex-row items-center justify-between pb-2 p-6">
@@ -118,3 +118,5 @@ function MetricTile({ title, value, icon: Icon, hint, color, bg }: any) {
     </Card>
   );
 }
+
+

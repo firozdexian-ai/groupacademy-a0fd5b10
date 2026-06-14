@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,18 +19,18 @@ export function MetricEntrySheet({ open, onOpenChange }: { open: boolean; onOpen
  snapshot_date: form.snapshot_date,
  mrr_usd: num(form.mrr_usd ?? ""),
  arr_usd: num(form.arr_usd ?? ""),
- paying_users: num(form.paying_users ?? "") as any,
- total_users: num(form.total_users ?? "") as any,
- active_users_dau: num(form.active_users_dau ?? "") as any,
- active_users_wau: num(form.active_users_wau ?? "") as any,
- active_users_mau: num(form.active_users_mau ?? "") as any,
+ paying_users: num(form.paying_users ?? "") as unknown,
+ total_users: num(form.total_users ?? "") as unknown,
+ active_users_dau: num(form.active_users_dau ?? "") as unknown,
+ active_users_wau: num(form.active_users_wau ?? "") as unknown,
+ active_users_mau: num(form.active_users_mau ?? "") as unknown,
  gross_revenue_retention_pct: num(form.gross_revenue_retention_pct ?? ""),
  net_revenue_retention_pct: num(form.net_revenue_retention_pct ?? ""),
  usage_retention_pct: num(form.usage_retention_pct ?? ""),
  ai_inference_cogs_usd: num(form.ai_inference_cogs_usd ?? ""),
  hitl_labor_cogs_usd: num(form.hitl_labor_cogs_usd ?? ""),
- automated_actions_count: num(form.automated_actions_count ?? "") as any,
- hitl_actions_count: num(form.hitl_actions_count ?? "") as any,
+ automated_actions_count: num(form.automated_actions_count ?? "") as unknown,
+ hitl_actions_count: num(form.hitl_actions_count ?? "") as unknown,
  headcount_fte: num(form.headcount_fte ?? ""),
  contractor_fte: num(form.contractor_fte ?? ""),
  revenue_per_employee_usd: num(form.revenue_per_employee_usd ?? ""),
@@ -50,7 +50,7 @@ export function MetricEntrySheet({ open, onOpenChange }: { open: boolean; onOpen
  <SheetContent className="sm:max-w-xl overflow-y-auto">
  <SheetHeader>
  <SheetTitle>Log Metrics Snapshot</SheetTitle>
- <SheetDescription>One row per snapshot date · upserts existing</SheetDescription>
+ <SheetDescription>One row per snapshot date Â· upserts existing</SheetDescription>
  </SheetHeader>
 
  <div className="space-y-4 my-6">
@@ -93,10 +93,12 @@ export function MetricEntrySheet({ open, onOpenChange }: { open: boolean; onOpen
  </div>
 
  <Button className="w-full" onClick={submit} disabled={upsertSnapshot.isPending}>
- {upsertSnapshot.isPending ? "Saving…" : "Save snapshot"}
+ {upsertSnapshot.isPending ? "Savingâ€¦" : "Save snapshot"}
  </Button>
  </div>
  </SheetContent>
  </Sheet>
  );
 }
+
+

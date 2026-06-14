@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { getLearningHubDashboard } from "@/domains/learning/repo/learningRepo";
 
 /**
@@ -53,11 +53,11 @@ export function useLearningHubDashboard() {
     staleTime: 60 * 1000,
     refetchOnWindowFocus: false,
     queryFn: async (): Promise<LearningHubDashboard> => {
-      // HUD: EXECUTING_LEARNING_HUB_AGGREGATION_SYNC
-      let data: any;
+      // dashboard: EXECUTING_LEARNING_HUB_AGGREGATION_SYNC
+      let data: unknown;
       try {
         data = await getLearningHubDashboard();
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] ANOMALY: get_learning_hub_dashboard RPC failure.", {
           error: error?.message,
           code: error?.code,
@@ -68,7 +68,7 @@ export function useLearningHubDashboard() {
 
       // Hardened Data Normalization:
       // Ensures UI consistency even if specific arrays are null on backend.
-      const d = (data as any) || {};
+      const d = (data as unknown) || {};
 
       return {
         authenticated: !!d.authenticated,
@@ -82,3 +82,5 @@ export function useLearningHubDashboard() {
     },
   });
 }
+
+

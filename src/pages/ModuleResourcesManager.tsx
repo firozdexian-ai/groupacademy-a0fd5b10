@@ -54,7 +54,7 @@ interface ModuleResource {
   description: string;
   resource_type: ResourceType;
   resource_url: string | null;
-  resource_data: any;
+  resource_data: unknown;
   stage_number: number;
   display_order: number;
   is_required: boolean;
@@ -97,7 +97,7 @@ const acceptByType: Partial<Record<ResourceType, string>> = {
 
 const isJsonType = (t: ResourceType) => t === "flashcards" || t === "ai_scenario" || t === "quiz";
 
-function JsonDataEditor({ value, onChange, label }: any) {
+function JsonDataEditor({ value, onChange, label }: unknown) {
   const [rawText, setRawText] = useState(() => JSON.stringify(value || {}, null, 2));
   const [parseError, setParseError] = useState<string | null>(null);
 
@@ -137,8 +137,8 @@ export default function ModuleResourcesManager() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [course, setCourse] = useState<any>(null);
-  const [module, setModule] = useState<any>(null);
+  const [course, setCourse] = useState<unknown>(null);
+  const [module, setModule] = useState<unknown>(null);
   const [resources, setResources] = useState<ModuleResource[]>([]);
   const [activeStage, setActiveStage] = useState("1");
   const [saveStates, setSaveStates] = useState<Record<string, ResourceSaveState>>({});
@@ -154,12 +154,12 @@ export default function ModuleResourcesManager() {
       ]);
       if (courseRow) setCourse(courseRow);
       if (moduleRow) setModule(moduleRow);
-      const rows = (resRows || []).map((r: any) => ({ ...r, _key: r.id }));
+      const rows = (resRows || []).map((r: unknown) => ({ ...r, _key: r.id }));
       setResources(rows);
       const states: Record<string, ResourceSaveState> = {};
-      rows.forEach((r: any) => (states[r._key] = { status: "saved" }));
+      rows.forEach((r: unknown) => (states[r._key] = { status: "saved" }));
       setSaveStates(states);
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(`Load failed: ${e.message ?? "unknown error"}`);
     } finally {
       setLoading(false);
@@ -216,7 +216,7 @@ export default function ModuleResourcesManager() {
 
     setSaveStates((prev) => ({ ...prev, [key]: { status: "saving" } }));
     try {
-      const payload: any = {
+      const payload: unknown = {
         module_id: moduleId,
         title: resource.title,
         description: resource.description || null,
@@ -228,15 +228,11 @@ export default function ModuleResourcesManager() {
         is_required: !!resource.is_required,
       };
 
-      let resultData: any;
-      try {
-        if (resource.id) {
-          resultData = await updateModuleResourceReturning(resource.id, payload);
-        } else {
-          resultData = await insertModuleResourceReturning(payload);
-        }
-      } catch (err: any) {
-        throw err;
+      let resultData: { id: string } & Record<string, unknown>;
+      if (resource.id) {
+        resultData = await updateModuleResourceReturning(resource.id, payload) as { id: string } & Record<string, unknown>;
+      } else {
+        resultData = await insertModuleResourceReturning(payload) as { id: string } & Record<string, unknown>;
       }
 
       setResources((prev) =>
@@ -249,7 +245,7 @@ export default function ModuleResourcesManager() {
         return next;
       });
       toast.success("Resource saved.");
-    } catch (err: any) {
+    } catch (err: unknown) {
       setSaveStates((prev) => ({ ...prev, [key]: { status: "error", error: err.message } }));
       toast.error(`Save failed: ${err.message}`);
     }
@@ -272,7 +268,7 @@ export default function ModuleResourcesManager() {
       await deleteModuleResourceById(resource.id);
       setResources((prev) => prev.filter((r) => r._key !== key));
       toast.success("Resource deleted.");
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(`Delete failed: ${err.message}`);
     }
   };
@@ -294,7 +290,7 @@ export default function ModuleResourcesManager() {
       await bulkUpdateModuleResourceOrder(
         updates.map((r) => ({ id: r.id!, display_order: r.display_order })),
       );
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error("Reorder failed; reloading.");
       loadData();
     }
@@ -303,7 +299,7 @@ export default function ModuleResourcesManager() {
   if (loading)
     return (
       <div className="h-screen flex items-center justify-center text-muted-foreground">
-        <Loader2 className="h-5 w-5 mr-2 animate-spin" /> Loading resources…
+        <Loader2 className="h-5 w-5 mr-2 animate-spin" /> Loading resourcesâ€¦
       </div>
     );
 
@@ -417,7 +413,7 @@ export default function ModuleResourcesManager() {
                       <div className="py-12 text-center border-2 border-dashed border-border/40 rounded-2xl bg-muted/10">
                         <Zap className="h-10 w-10 mx-auto mb-3 text-muted-foreground/30" />
                         <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">
-                          No resources yet — bulk-upload above or add one type at a time.
+                          No resources yet â€” bulk-upload above or add one type at a time.
                         </p>
                       </div>
                     ) : (
@@ -533,7 +529,7 @@ export default function ModuleResourcesManager() {
                                       initialCards={(() => {
                                         const raw = resource.resource_data;
                                         if (Array.isArray(raw)) {
-                                          return raw.map((d: any) => ({
+                                          return raw.map((d: unknown) => ({
                                             id: d.id || crypto.randomUUID(),
                                             front: d.front || "",
                                             back: d.back || "",
@@ -546,7 +542,7 @@ export default function ModuleResourcesManager() {
                                           const parsed = JSON.parse(jsonString);
                                           patchResource(key, { resource_data: parsed });
                                           toast.success("Flashcard changes staged. Click 'Save Resource' below to persist.");
-                                        } catch (e: any) {
+                                        } catch (e: unknown) {
                                           toast.error("Invalid format: " + e.message);
                                         }
                                       }}
@@ -560,7 +556,7 @@ export default function ModuleResourcesManager() {
                                         ? "Scenario JSON"
                                         : "Quiz JSON"
                                     }
-                                    onChange={(data: any) => patchResource(key, { resource_data: data })}
+                                    onChange={(data: unknown) => patchResource(key, { resource_data: data })}
                                   />
                                 ) : (
                                   <div className="space-y-3">
@@ -572,13 +568,13 @@ export default function ModuleResourcesManager() {
                                     />
                                     <div className="space-y-1.5">
                                       <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                                        …or paste an external URL (YouTube, Drive, etc.)
+                                        â€¦or paste an external URL (YouTube, Drive, etc.)
                                       </Label>
                                       <Input
                                         value={resource.resource_url || ""}
                                         onChange={(e) => patchResource(key, { resource_url: e.target.value })}
                                         className="h-10 rounded-xl font-mono text-xs"
-                                        placeholder="https://…"
+                                        placeholder="https://â€¦"
                                       />
                                     </div>
                                   </div>
@@ -615,3 +611,5 @@ export default function ModuleResourcesManager() {
     </div>
   );
 }
+
+

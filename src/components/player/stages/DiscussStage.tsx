@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from "react";
+﻿import { useEffect, useState, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,9 +22,9 @@ interface DiscussStageProps {
 }
 
 /**
- * GroUp Academy: Knowledge Synthesis Bimodal Discussion Controller (DiscussStage)
+ * GroUp Academy: Knowledge summary Bimodal Discussion Controller (DiscussStage)
  * An authoritative operational hub managing auditory processing artifacts and AI instruction dialogue.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function DiscussStage({
   resources = [],
@@ -90,12 +90,12 @@ export function DiscussStage({
 
   return (
     <div className="space-y-5 text-left max-w-full w-full transform-gpu antialiased">
-      {/* HUD LEVEL 1: STAGE HEADER METADATA PANEL */}
+      {/* dashboard LEVEL 1: STAGE HEADER METADATA PANEL */}
       <div className="flex items-center justify-between gap-4 px-0.5 select-none w-full leading-none">
         <div className="space-y-1.5 text-left flex flex-col justify-center min-w-0 flex-1 leading-none">
           <h2 className="text-sm sm:text-base font-bold tracking-tight text-foreground uppercase tracking-wide flex items-center gap-2">
             <MessageSquare className="h-4 w-4 text-primary stroke-[2.2] shrink-0 animate-pulse" />
-            <span>Stage 03: Knowledge Synthesis Matrix</span>
+            <span>Stage 03: Knowledge summary Matrix</span>
           </h2>
           <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 mt-1 leading-none">
             Deepen core discipline comprehension via Auditory Artifact processing OR Neural Dialogue execution
@@ -112,12 +112,12 @@ export function DiscussStage({
         )}
       </div>
 
-      {/* HUD LEVEL 2: CONDITIONAL FALLBACK GRID OR CONTENT GRID DISPLAY */}
+      {/* dashboard LEVEL 2: CONDITIONAL FALLBACK GRID OR CONTENT GRID DISPLAY */}
       {!resources.length && !professionLineId ? (
         <Card className="border border-dashed border-border/60 bg-card/40 backdrop-blur-md rounded-2xl p-6 text-center select-none w-full max-w-full flex flex-col justify-center items-center py-12 animate-in fade-in duration-300">
           <Zap className="h-6 w-6 text-primary/30 mb-3 animate-pulse stroke-[2.2]" />
           <h3 className="text-xs font-bold text-foreground/90 uppercase tracking-wide leading-none">
-            Synthesis Ledger Empty
+            summary Ledger Empty
           </h3>
           <p className="text-[11px] font-semibold text-muted-foreground/70 max-w-xs mx-auto leading-normal mt-1.5 italic mb-4">
             No bimodal verification parameters are registered for this learning node timeline.
@@ -127,7 +127,7 @@ export function DiscussStage({
             onClick={handleExecutiveCompletionSubmit}
             className="h-8 rounded-xl text-[10px] font-extrabold uppercase tracking-wide px-4 shadow-sm active:scale-[0.99] transition-transform cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-1.5"
           >
-            <span>Bypass Synthesis Vector</span>
+            <span>Bypass summary Vector</span>
             <ArrowRight className="h-3.5 w-3.5 stroke-[2.5]" />
           </Button>
         </Card>
@@ -201,7 +201,7 @@ export function DiscussStage({
                           : "bg-muted border-border/40 text-muted-foreground",
                       )}
                     >
-                      {audioListened ? "✓" : ""}
+                      {audioListened ? "âœ“" : ""}
                     </div>
                     <span>Auditory Track Logged</span>
                   </div>
@@ -219,7 +219,7 @@ export function DiscussStage({
                           : "bg-muted border-border/40 text-muted-foreground",
                       )}
                     >
-                      {aiMessageCount >= 3 ? "✓" : ""}
+                      {aiMessageCount >= 3 ? "âœ“" : ""}
                     </div>
                     <span>Neural Burst Balance: {aiMessageCount} / 3</span>
                   </div>
@@ -262,7 +262,7 @@ export function DiscussStage({
         </div>
       )}
 
-      {/* HUD LEVEL 3: TIMELINE TRANSACTION COMPLETION COMMAND ACTIONS BAR */}
+      {/* dashboard LEVEL 3: TIMELINE TRANSACTION COMPLETION COMMAND ACTIONS BAR */}
       {!isCompleted && (
         <div className="flex justify-end pt-3 border-t border-border/10 select-none w-full shrink-0">
           <Button
@@ -285,3 +285,4 @@ export function DiscussStage({
     </div>
   );
 }
+

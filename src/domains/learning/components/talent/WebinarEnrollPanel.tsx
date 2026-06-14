@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+﻿import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -33,7 +33,7 @@ interface Props {
 /**
  * GroUp Academy: Cohort Stream Ingress Reservation Controller (WebinarEnrollPanel)
  * An authoritative inline panel handling user registrations, capacity validations, and real-time ledger debit confirmations.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function WebinarEnrollPanel({ course }: Props) {
   const navigate = useNavigate();
@@ -80,7 +80,7 @@ export function WebinarEnrollPanel({ course }: Props) {
 
     trackEvent("webinar_enroll_mutation_requested", { courseId: course.id, talentId: talent.id });
     const toastId = toast.loading("Reserving your seat...");
-    let isMounted = true;
+    const isMounted = true;
 
     try {
       await enroll();
@@ -94,7 +94,7 @@ export function WebinarEnrollPanel({ course }: Props) {
         toast.success("Seat reserved. See you at the session!", { id: toastId });
         trackEvent("webinar_enroll_mutation_success", { courseId: course.id });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       const exceptionMsg = err instanceof Error ? err.message : String(err);
 
       trackError(exceptionMsg, {
@@ -114,7 +114,7 @@ export function WebinarEnrollPanel({ course }: Props) {
   return (
     <Card className="w-full text-left rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/[0.03] to-success/[0.02] shadow-sm antialiased select-none sm:select-text transform-gpu overflow-hidden">
       <CardContent className="p-4 space-y-3.5 w-full min-w-0 flex flex-col font-bold text-xs tracking-tight">
-        {/* HUD LEVEL 1: LIVE BROADCAST STATE CHANNELS TAG */}
+        {/* dashboard LEVEL 1: LIVE BROADCAST STATE CHANNELS TAG */}
         <Badge
           variant="outline"
           className="text-[9px] font-extrabold px-2 h-5 rounded uppercase tracking-wide bg-destructive/10 text-destructive dark:text-destructive border border-destructive/15 w-fit select-none leading-none shadow-sm gap-1 flex items-center"
@@ -123,7 +123,7 @@ export function WebinarEnrollPanel({ course }: Props) {
           <span>Live Synchronous Track</span>
         </Badge>
 
-        {/* HUD LEVEL 2: CALENDAR TIMING CHRONO CONFIG MATRIX */}
+        {/* dashboard LEVEL 2: CALENDAR TIMING CHRONO CONFIG MATRIX */}
         {course.event_date && (
           <div className="space-y-1 text-left select-none tabular-nums font-bold text-foreground/90 tracking-tight leading-none">
             <div className="flex items-center gap-2 text-xs sm:text-sm">
@@ -136,7 +136,7 @@ export function WebinarEnrollPanel({ course }: Props) {
           </div>
         )}
 
-        {/* HUD LEVEL 3: CAPACITY RATIO & TRANSACTION COST ATTRIBUTES GRID */}
+        {/* dashboard LEVEL 3: CAPACITY RATIO & TRANSACTION COST ATTRIBUTES GRID */}
         <div className="flex flex-wrap items-center gap-3.5 pt-0.5 select-none font-bold text-[11px] text-muted-foreground/80 leading-none tabular-nums border-y border-border/5 py-2">
           {course.event_duration_minutes ? (
             <span className="flex items-center gap-1.5 shrink-0 bg-muted/40 border border-border/20 px-1.5 py-0.5 rounded">
@@ -163,7 +163,7 @@ export function WebinarEnrollPanel({ course }: Props) {
           </span>
         </div>
 
-        {/* HUD LEVEL 4: INTERACTIVE OPERATION ROUTE MODAL ACTIONS BUTTON */}
+        {/* dashboard LEVEL 4: INTERACTIVE OPERATION ROUTE MODAL ACTIONS BUTTON */}
         {enrollment ? (
           <div className="space-y-2 pt-0.5 w-full select-none animate-in fade-in duration-200">
             <div className="flex items-center gap-1.5 text-xs font-extrabold text-success dark:text-success pl-0.5 leading-none">
@@ -200,7 +200,7 @@ export function WebinarEnrollPanel({ course }: Props) {
             {isEnrolling ? (
               <>
                 <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                <span>Processing Verification Framework…</span>
+                <span>Processing Verification Frameworkâ€¦</span>
               </>
             ) : (
               <>
@@ -214,3 +214,5 @@ export function WebinarEnrollPanel({ course }: Props) {
     </Card>
   );
 }
+
+

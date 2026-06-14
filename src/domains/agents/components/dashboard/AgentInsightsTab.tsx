@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import { listAgentsForInsights, listAgentCreditEvents } from "@/domains/agents/repo/agentsRepo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -33,7 +33,7 @@ import {
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy — Career Guidance System: Agent Telemetry & Financial Insights Panel
+ * Group Academy â€” Career Guidance System: Agent Telemetry & Financial Insights Panel
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/command-center?tab=insights (Operator Metrics Workspace)
  * Operations Mode: Automated Efficiency analytical canvas managing margins, split testing, and LLM costs.
@@ -90,7 +90,7 @@ export function AgentInsights() {
           setLoading(false);
         }
       })
-      .catch((err: any) => {
+      .catch((err: unknown) => {
         trackError("agent-insights-telemetry-sync-failure", { error: err?.message || String(err), days });
         if (active) {
           setLoading(false);
@@ -688,3 +688,5 @@ function EmptyState({
 }
 
 export default AgentInsights;
+
+

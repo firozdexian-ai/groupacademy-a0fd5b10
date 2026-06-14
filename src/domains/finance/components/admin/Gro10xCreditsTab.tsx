@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -204,7 +204,7 @@ export function Gro10xCreditsTab() {
                       <p className="font-semibold text-xs text-foreground truncate">{tx.detail}</p>
                       <div className="flex items-center gap-2 mt-0.5 text-[10px] text-muted-foreground font-medium">
                         <span className="uppercase">{tx.type}</span>
-                        <span>•</span>
+                        <span>â€¢</span>
                         <span>{tx.date}</span>
                       </div>
                     </div>
@@ -237,3 +237,4 @@ export function Gro10xCreditsTab() {
 }
 
 export default Gro10xCreditsTab;
+

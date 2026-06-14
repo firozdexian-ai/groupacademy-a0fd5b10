@@ -7,7 +7,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-function extractKeywords(talent: any): string[] {
+function extractKeywords(talent: unknown): string[] {
   const keywords: Set<string> = new Set();
   if (Array.isArray(talent.skills)) {
     for (const s of talent.skills) {
@@ -58,7 +58,7 @@ serve(async (req) => {
 
     const {
       data: { user },
-    } = await supabase.auth.getUser(token);
+    } = await getCurrentUser(token);
     if (!user) throw new Error("Unauthorized");
 
     const { data: talent } = await supabase.from("talents").select("*").eq("user_id", user.id).single();
@@ -70,10 +70,10 @@ serve(async (req) => {
 
     const jobFields =
       "id, title, company_name, description, location, job_type, experience_level, company_logo_url, created_at";
-    let candidateJobs: any[] = [];
+    const candidateJobs: unknown[] = [];
     const seenIds = new Set<string>();
 
-    const addJobs = (jobs: any[]) => {
+    const addJobs = (jobs: unknown[]) => {
       for (const j of jobs || []) {
         if (!seenIds.has(j.id) && candidateJobs.length < 120) {
           seenIds.add(j.id);
@@ -122,7 +122,7 @@ serve(async (req) => {
     }
 
     // Compute mastery snapshot per candidate (cap to top 60 to control RPC load)
-    const masteryById = new Map<string, any>();
+    const masteryById = new Map<string, unknown>();
     const toScore = candidateJobs.slice(0, 60);
     await Promise.all(
       toScore.map(async (j) => {
@@ -132,7 +132,9 @@ serve(async (req) => {
             _job_id: j.id,
           });
           if (data && !data.error) masteryById.set(j.id, data);
-        } catch (_) {}
+        } catch (_) {
+          // Intentionally empty
+        }
       })
     );
 
@@ -170,7 +172,7 @@ serve(async (req) => {
             content: `You are a career matcher for GroUp Academy. 
             CRITICAL RULES (in order):
             1. The candidate is in ${talentCountry}. Jobs where "is_geographically_relevant" is true MUST rank higher than non-relevant jobs.
-            2. Jobs with "verified_mastery_score" >= 60 OR "verified_credentials" >= 1 are STRONG matches — boost them and surface first.
+            2. Jobs with "verified_mastery_score" >= 60 OR "verified_credentials" >= 1 are STRONG matches â€” boost them and surface first.
             3. Non-relevant jobs (different country, not remote) MUST NOT exceed 55%, even with perfect skill match.
             Rank the top 12 jobs.`,
           },
@@ -212,8 +214,8 @@ serve(async (req) => {
     const jobMap = new Map(candidateJobs.map((j) => [j.id, j]));
 
     const suggestions = (parsed.matches || [])
-      .filter((m: any) => jobMap.has(m.job_id))
-      .map((m: any) => {
+      .filter((m: unknown) => jobMap.has(m.job_id))
+      .map((m: unknown) => {
         const mastery = masteryById.get(m.job_id);
         const credentialCount = (mastery?.verified_credentials || []).length;
         const masteryScore = mastery?.mastery_score || 0;
@@ -237,13 +239,13 @@ serve(async (req) => {
           job: jobMap.get(m.job_id),
         };
       })
-      .sort((a: any, b: any) => b.match_score - a.match_score);
+      .sort((a: unknown, b: unknown) => b.match_score - a.match_score);
 
     // Persist top suggestions for the Jobs Hub rail (replace previous batch)
     try {
       await supabase.from("ai_job_recommendations").delete().eq("talent_id", talent.id);
       if (suggestions.length > 0) {
-        const rows = suggestions.slice(0, 12).map((s: any) => ({
+        const rows = suggestions.slice(0, 12).map((s: unknown) => ({
           talent_id: talent.id,
           job_id: s.job_id,
           match_score: s.match_score,
@@ -267,3 +269,6 @@ serve(async (req) => {
     });
   }
 });
+
+
+

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * IR domain repository (Phase 10i.3).
  *
  * Wraps raw supabase.from(...) calls for the IR admin area:
@@ -10,25 +10,25 @@
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/lib/auth";
 
-// ─── Generic helpers ───────────────────────────────────────────────────────
-export async function upsertGraphRow(table: string, payload: any): Promise<void> {
+// â”€â”€â”€ Generic helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function upsertGraphRow(table: string, payload: unknown): Promise<void> {
   const { created_at, updated_at, ...cleanPayload } = payload;
   if (cleanPayload?.id) {
     const { id, ...patch } = cleanPayload;
-    const { error } = await supabase.from(table as any).update(patch).eq("id", id);
+    const { error } = await supabase.from(table as unknown).update(patch).eq("id", id);
     if (error) throw error;
   } else {
-    const { error } = await supabase.from(table as any).insert([cleanPayload]);
+    const { error } = await supabase.from(table as unknown).insert([cleanPayload]);
     if (error) throw error;
   }
 }
 
 export async function deleteGraphRow(table: string, id: string): Promise<void> {
-  const { error } = await supabase.from(table as any).delete().eq("id", id);
+  const { error } = await supabase.from(table as unknown).delete().eq("id", id);
   if (error) throw error;
 }
 
-// ─── Dashboard telemetry ───────────────────────────────────────────────────
+// â”€â”€â”€ Dashboard telemetry â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getIRDashboardTelemetry(currentMonth: string, startOfMonthIso: string) {
   const last30d = new Date(Date.now() - 30 * 86400000).toISOString();
   const [targetRes, usageRes, vcRes, invRes, talentRes, outreachRes] = await Promise.all([
@@ -44,18 +44,18 @@ export async function getIRDashboardTelemetry(currentMonth: string, startOfMonth
     supabase.from("ir_outreach_log").select("id", { count: "exact", head: true }).gt("created_at", last30d),
   ]);
 
-  const totalCredits = usageRes.data?.reduce((sum, t: any) => sum + Math.abs(t.amount), 0) || 0;
+  const totalCredits = usageRes.data?.reduce((sum, t: unknown) => sum + Math.abs(t.amount), 0) || 0;
   const byService: Record<string, number> = {};
-  usageRes.data?.forEach((t: any) => {
+  usageRes.data?.forEach((t: unknown) => {
     if (t.service_type) byService[t.service_type] = (byService[t.service_type] || 0) + Math.abs(t.amount);
   });
 
   return {
-    target: (targetRes.data as any) || null,
+    target: (targetRes.data as unknown) || null,
     usage: {
       totalCredits,
       byService,
-      activeTalents: new Set(usageRes.data?.map((d: any) => d.talent_id).filter(Boolean)).size,
+      activeTalents: new Set(usageRes.data?.map((d: unknown) => d.talent_id).filter(Boolean)).size,
     },
     registry: {
       vcs: vcRes.count || 0,
@@ -66,8 +66,8 @@ export async function getIRDashboardTelemetry(currentMonth: string, startOfMonth
   };
 }
 
-// ─── VC firms ──────────────────────────────────────────────────────────────
-export async function listVCFirms(): Promise<any[]> {
+// â”€â”€â”€ VC firms â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function listVCFirms(): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("ir_vc_firms")
     .select("*")
@@ -79,11 +79,11 @@ export async function listVCFirms(): Promise<any[]> {
 export async function listVCFirmsMin(): Promise<Array<{ id: string; name: string }>> {
   const { data, error } = await supabase.from("ir_vc_firms").select("id, name").order("name");
   if (error) throw error;
-  return (data ?? []) as any;
+  return (data ?? []) as unknown;
 }
 
-// ─── Investors ─────────────────────────────────────────────────────────────
-export async function listInvestors(filterFirmId?: string | null): Promise<any[]> {
+// â”€â”€â”€ Investors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function listInvestors(filterFirmId?: string | null): Promise<unknown[]> {
   let query = supabase
     .from("ir_investors")
     .select("*, vc_firm:ir_vc_firms(id, name)")
@@ -94,23 +94,23 @@ export async function listInvestors(filterFirmId?: string | null): Promise<any[]
   return data ?? [];
 }
 
-export async function upsertInvestor(payload: any): Promise<void> {
+export async function upsertInvestor(payload: unknown): Promise<void> {
   return upsertGraphRow("ir_investors", payload);
 }
 export async function deleteInvestor(id: string): Promise<void> {
   return deleteGraphRow("ir_investors", id);
 }
 
-// ─── Investor interactions ─────────────────────────────────────────────────
+// â”€â”€â”€ Investor interactions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function logInvestorInteraction(input: {
   investorId: string;
-  payload: Record<string, any>;
-  updatePayload: Record<string, any>;
+  payload: Record<string, unknown>;
+  updatePayload: Record<string, unknown>;
 }): Promise<void> {
   const { created_at: c1, updated_at: u1, ...cleanPayload } = input.payload;
   const { created_at: c2, updated_at: u2, ...cleanUpdatePayload } = input.updatePayload;
 
-  const { error: insertError } = await (supabase.from("ir_investor_interactions") as any)
+  const { error: insertError } = await (supabase.from("ir_investor_interactions") as unknown)
     .insert({ investor_id: input.investorId, ...cleanPayload });
   if (insertError) throw insertError;
   const { error: updateError } = await supabase
@@ -120,34 +120,34 @@ export async function logInvestorInteraction(input: {
   if (updateError) throw updateError;
 }
 
-// ─── Monthly targets ───────────────────────────────────────────────────────
-export async function getMonthlyTarget(currentMonth: string): Promise<any | null> {
+// â”€â”€â”€ Monthly targets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function getMonthlyTarget(currentMonth: string): Promise<unknown | null> {
   const { data, error } = await supabase
     .from("ir_monthly_targets")
     .select("*")
     .eq("month", currentMonth)
     .maybeSingle();
-  if (error && (error as any).code !== "PGRST116") throw error;
+  if (error && (error as unknown).code !== "PGRST116") throw error;
   return data || null;
 }
 
-export async function upsertMonthlyTarget(payload: any & { id?: string }): Promise<void> {
+export async function upsertMonthlyTarget(payload: unknown & { id?: string }): Promise<void> {
   return upsertGraphRow("ir_monthly_targets", payload);
 }
 
-// ─── Outreach + email communications ───────────────────────────────────────
+// â”€â”€â”€ Outreach + email communications â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function logOutreachAndEmail(input: {
-  outreach: Record<string, any>;
-  email: Record<string, any>;
+  outreach: Record<string, unknown>;
+  email: Record<string, unknown>;
 }): Promise<void> {
-  const { error: logError } = await (supabase.from("ir_outreach_log") as any).insert([input.outreach]);
+  const { error: logError } = await (supabase.from("ir_outreach_log") as unknown).insert([input.outreach]);
   if (logError) throw logError;
-  const { error: commError } = await (supabase.from("ir_email_communications") as any).insert([input.email]);
+  const { error: commError } = await (supabase.from("ir_email_communications") as unknown).insert([input.email]);
   if (commError) throw commError;
 }
 
-// ─── Influencers ───────────────────────────────────────────────────────────
-export async function listInfluencers(tier?: string): Promise<any[]> {
+// â”€â”€â”€ Influencers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function listInfluencers(tier?: string): Promise<unknown[]> {
   let query = supabase
     .from("ir_influencers")
     .select("*")
@@ -158,15 +158,15 @@ export async function listInfluencers(tier?: string): Promise<any[]> {
   return data ?? [];
 }
 
-export async function upsertInfluencer(payload: any): Promise<void> {
+export async function upsertInfluencer(payload: unknown): Promise<void> {
   return upsertGraphRow("ir_influencers", payload);
 }
 export async function deleteInfluencer(id: string): Promise<void> {
   return deleteGraphRow("ir_influencers", id);
 }
 
-// ─── Data room ─────────────────────────────────────────────────────────────
-export async function listDataRoomDocuments(): Promise<any[]> {
+// â”€â”€â”€ Data room â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function listDataRoomDocuments(): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("ir_data_room_documents")
     .select("*")
@@ -200,7 +200,7 @@ export async function createDataRoomShareLink(input: {
   investor_id?: string | null;
   expires_in_days?: number | null;
   require_email?: boolean;
-}): Promise<any> {
+}): Promise<unknown> {
   const user = await getCurrentUser();
   const expires_at =
     input.expires_in_days && input.expires_in_days > 0
@@ -229,7 +229,7 @@ export async function revokeDataRoomShareLink(id: string): Promise<void> {
   if (error) throw error;
 }
 
-export async function listShareLinksByDocument(documentId: string): Promise<any[]> {
+export async function listShareLinksByDocument(documentId: string): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("ir_data_room_share_links")
     .select("*")
@@ -239,7 +239,7 @@ export async function listShareLinksByDocument(documentId: string): Promise<any[
   return data ?? [];
 }
 
-export async function listDocumentViews(documentId: string): Promise<any[]> {
+export async function listDocumentViews(documentId: string): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("ir_document_views")
     .select("*")
@@ -250,17 +250,17 @@ export async function listDocumentViews(documentId: string): Promise<any[]> {
   return data ?? [];
 }
 
-export async function listDocumentHotSlides(documentId: string): Promise<any[]> {
+export async function listDocumentHotSlides(documentId: string): Promise<unknown[]> {
   const { data, error } = await supabase
-    .from("ir_document_hot_slides" as any)
+    .from("ir_document_hot_slides" as unknown)
     .select("*")
     .eq("document_id", documentId)
     .order("total_dwell", { ascending: false });
   if (error) throw error;
-  return ((data as unknown) ?? []) as any[];
+  return ((data as unknown) ?? []) as unknown[];
 }
 
-// ─── Phase 10j.2 — IR metrics snapshots ──────────────────────────────────
+// â”€â”€â”€ Phase 10j.2 â€” IR metrics snapshots â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function listIrMetricsSnapshots(limit = 12) {
   const { data, error } = await supabase
     .from("ir_metrics_snapshots")
@@ -271,13 +271,13 @@ export async function listIrMetricsSnapshots(limit = 12) {
   return data ?? [];
 }
 
-export async function upsertIrMetricsSnapshot(input: Record<string, any> & { snapshot_date: string }): Promise<void> {
+export async function upsertIrMetricsSnapshot(input: Record<string, unknown> & { snapshot_date: string }): Promise<void> {
   const { created_at, updated_at, ...cleanInput } = input;
   const { error } = await supabase.from("ir_metrics_snapshots").upsert(cleanInput, { onConflict: "snapshot_date" });
   if (error) throw error;
 }
 
-// ─── Phase 10j.5k7 — IR composer / pipeline / detail / cohorts ──────────
+// â”€â”€â”€ Phase 10j.5k7 â€” IR composer / pipeline / detail / cohorts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function listIrEmailCommunications(investorId?: string, limit = 10) {
   let query = supabase
     .from("ir_email_communications")
@@ -287,11 +287,11 @@ export async function listIrEmailCommunications(investorId?: string, limit = 10)
   if (investorId) query = query.eq("investor_id", investorId);
   const { data, error } = await query;
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-export async function listIrPipelineInvestors(): Promise<any[]> {
-  const { data, error } = await (supabase as any)
+export async function listIrPipelineInvestors(): Promise<unknown[]> {
+  const { data, error } = await (supabase as unknown)
     .from("ir_investors")
     .select(
       `id, full_name, title, email, vc_firm_id, pipeline_stage, pipeline_position,
@@ -302,7 +302,7 @@ export async function listIrPipelineInvestors(): Promise<any[]> {
     .order("pipeline_position", { ascending: true })
     .order("stage_changed_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function updateIrInvestorStage(
@@ -310,7 +310,7 @@ export async function updateIrInvestorStage(
   toStage: string,
   toPosition: number,
 ): Promise<void> {
-  const { error } = await (supabase as any)
+  const { error } = await (supabase as unknown)
     .from("ir_investors")
     .update({ pipeline_stage: toStage, pipeline_position: toPosition })
     .eq("id", investorId);
@@ -323,7 +323,7 @@ export async function insertIrPipelineEvent(input: {
   to_stage: string;
   changed_by: string | null;
 }): Promise<void> {
-  const { error } = await (supabase as any).from("ir_pipeline_events").insert(input);
+  const { error } = await (supabase as unknown).from("ir_pipeline_events").insert(input);
   if (error) throw error;
 }
 
@@ -332,14 +332,14 @@ export async function updateIrInvestor(
   patch: Record<string, unknown>,
 ): Promise<void> {
   const { created_at, updated_at, ...cleanPatch } = patch;
-  const { error } = await (supabase as any)
+  const { error } = await (supabase as unknown)
     .from("ir_investors")
     .update(cleanPatch)
     .eq("id", investorId);
   if (error) throw error;
 }
 
-export async function getIrInvestorDetail(investorId: string): Promise<any | null> {
+export async function getIrInvestorDetail(investorId: string): Promise<unknown | null> {
   const { data, error } = await supabase
     .from("ir_investors")
     .select("*, vc_firm:ir_vc_firms(id, name, status)")
@@ -349,7 +349,7 @@ export async function getIrInvestorDetail(investorId: string): Promise<any | nul
   return data;
 }
 
-export async function listIrInvestorInteractions(investorId: string, limit = 20): Promise<any[]> {
+export async function listIrInvestorInteractions(investorId: string, limit = 20): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("ir_investor_interactions")
     .select("*")
@@ -357,15 +357,17 @@ export async function listIrInvestorInteractions(investorId: string, limit = 20)
     .order("created_at", { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-export async function listIrRetentionCohorts(): Promise<any[]> {
+export async function listIrRetentionCohorts(): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("ir_retention_cohorts")
     .select("cohort_month, period_index, cohort_size, active_users, retained_revenue_usd, expansion_revenue_usd")
     .order("cohort_month", { ascending: true })
     .order("period_index", { ascending: true });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
+
+

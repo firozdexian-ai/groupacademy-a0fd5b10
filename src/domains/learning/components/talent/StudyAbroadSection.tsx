@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+﻿import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,7 +17,7 @@ const POPULAR_DESTINATIONS = COUNTRIES.filter((c) =>
 /**
  * GroUp Academy: Study Abroad Trajectory Portal (StudyAbroadSection)
  * An authoritative sub-view integrated into Arena channels filtering global university access and IELTS calibration lines.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function StudyAbroadSection() {
   const navigate = useNavigate();
@@ -51,7 +51,7 @@ export function StudyAbroadSection() {
 
   return (
     <div className="space-y-4 text-left antialiased max-w-full w-full select-none sm:select-text transform-gpu">
-      {/* HUD HEADER: PORTAL SECTION INDEX INDICATOR */}
+      {/* dashboard HEADER: PORTAL SECTION INDEX INDICATOR */}
       <div className="flex items-center gap-2.5 px-0.5 select-none w-full leading-none">
         <div className="h-9 w-9 rounded-xl bg-primary/10 border border-primary/5 flex items-center justify-center shrink-0 shadow-sm">
           <Globe className="h-4.5 w-4.5 text-primary stroke-[2.2]" />
@@ -231,3 +231,4 @@ export function StudyAbroadSection() {
     </div>
   );
 }
+

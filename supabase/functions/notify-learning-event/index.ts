@@ -1,4 +1,4 @@
-// notify-learning-event — fanout in-app + email for cohort/session events.
+﻿// notify-learning-event â€” fanout in-app + email for cohort/session events.
 // Kinds: session_reminder_t24 | session_reminder_t1 | session_reminder_t5 | session_live | recording_ready | cohort_started | cohort_completed
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
@@ -25,8 +25,8 @@ Deno.serve(async (req) => {
 
     // Resolve recipients
     let recipients: string[] = [];
-    let session: any = null;
-    let course: any = null;
+    let session: unknown = null;
+    let course: unknown = null;
 
     if (session_id) {
       const { data: s } = await sb.from("course_sessions")
@@ -35,18 +35,18 @@ Deno.serve(async (req) => {
       session = s;
       if (s) {
         const { data: ce } = await sb.from("cohort_enrollments").select("user_id").eq("cohort_id", s.cohort_id ?? "00000000-0000-0000-0000-000000000000");
-        recipients = (ce ?? []).map((r: any) => r.user_id);
+        recipients = (ce ?? []).map((r: unknown) => r.user_id);
         if (recipients.length === 0) {
-          // fallback: enrollments → students.user_id
+          // fallback: enrollments â†’ students.user_id
           const { data: en } = await sb.from("enrollments").select("student_id, students(user_id)").eq("content_id", s.content_id);
-          recipients = (en ?? []).map((r: any) => r.students?.user_id).filter(Boolean);
+          recipients = (en ?? []).map((r: unknown) => r.students?.user_id).filter(Boolean);
         }
         const { data: c } = await sb.from("content").select("id,title").eq("id", s.content_id).maybeSingle();
         course = c;
       }
     } else if (cohort_id) {
       const { data: ce } = await sb.from("cohort_enrollments").select("user_id").eq("cohort_id", cohort_id);
-      recipients = (ce ?? []).map((r: any) => r.user_id);
+      recipients = (ce ?? []).map((r: unknown) => r.user_id);
     }
 
     recipients = Array.from(new Set(recipients));
@@ -55,10 +55,10 @@ Deno.serve(async (req) => {
       session_reminder_t24: `Session tomorrow: ${session?.title ?? "your live class"}`,
       session_reminder_t1: `Starts in 1 hour: ${session?.title ?? "your live class"}`,
       session_reminder_t5: `Live in 5 minutes: ${session?.title ?? "your live class"}`,
-      session_live: `🔴 Live now: ${session?.title ?? "your live class"}`,
+      session_live: `ðŸ”´ Live now: ${session?.title ?? "your live class"}`,
       recording_ready: `Recording ready: ${session?.title ?? "your session"}`,
       cohort_started: `Your cohort just started`,
-      cohort_completed: `Cohort completed — see you on the next one`,
+      cohort_completed: `Cohort completed â€” see you on the next one`,
     };
 
     const bodyText = course?.title ? `Course: ${course.title}` : "";
@@ -88,9 +88,11 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ ok: true, recipients: recipients.length }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-  } catch (e: any) {
+  } catch (e: unknown) {
     return new Response(JSON.stringify({ error: e?.message ?? "unknown" }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 });
+
+

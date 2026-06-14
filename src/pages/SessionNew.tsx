@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   listPublishedContentBasic,
@@ -107,7 +107,7 @@ export default function SessionNew() {
       toast.success("New session node established.");
       navigate("/sessions");
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       console.error("Logic Error:", error);
       toast.error(`Committal Failed: ${error.message}`);
     },
@@ -116,7 +116,7 @@ export default function SessionNew() {
   return (
     <div className="min-h-screen bg-muted/20 pb-20 selection:bg-primary/10">
       <main className="container max-w-3xl mx-auto py-12 px-6 space-y-10 animate-in fade-in duration-700">
-        {/* Navigation HUD */}
+        {/* Navigation dashboard */}
         <header className="space-y-4">
           <Button
             variant="ghost"
@@ -215,7 +215,7 @@ export default function SessionNew() {
                   />
                 </div>
 
-                {/* Temporal HUD */}
+                {/* Temporal dashboard */}
                 <div className="grid md:grid-cols-2 gap-6 p-6 rounded-2xl bg-muted/30 border border-border/10">
                   <FormField
                     control={form.control}
@@ -434,3 +434,5 @@ export default function SessionNew() {
     </div>
   );
 }
+
+

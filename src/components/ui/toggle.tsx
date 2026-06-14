@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as TogglePrimitive from "@radix-ui/react-toggle";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Authoritative Binary State Intercept Protocol (Toggle)
  * Hardened WAI-ARIA compliant binary toggle instrument protecting inline data layouts from layout shifting and border distortions.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const toggleVariants = cva(
   "inline-flex items-center justify-center transition-colors duration-150 outline-none select-none antialiased transform-gpu focus:outline-none focus-visible:outline-none focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-20 disabled:pointer-events-none cursor-pointer font-bold leading-none pt-0.5 shrink-0 block",
@@ -41,3 +41,4 @@ const Toggle = React.forwardRef<
 Toggle.displayName = "Toggle_Core_Intercept_Node";
 
 export { Toggle, toggleVariants };
+

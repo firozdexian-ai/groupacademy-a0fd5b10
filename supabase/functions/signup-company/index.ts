@@ -1,4 +1,4 @@
-// Self-serve company signup: creates auth user, finds-or-creates company,
+﻿// Self-serve company signup: creates auth user, finds-or-creates company,
 // links membership, grants 250 welcome credits. No approval needed.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
@@ -78,7 +78,7 @@ Deno.serve(async (req) => {
     // 2) Find or create the company (dedups against the 6,076 seeded rows)
     let companyId: string;
     if (data.company_id) {
-      // User explicitly picked from the live-search dropdown — enrich + verify
+      // User explicitly picked from the live-search dropdown â€” enrich + verify
       const { data: existing } = await admin
         .from("companies")
         .select("id")
@@ -126,7 +126,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    // 4) Grant 250 welcome credits (idempotent — only first signup per company)
+    // 4) Grant 250 welcome credits (idempotent â€” only first signup per company)
     const { data: granted } = await admin.rpc("grant_company_welcome_credits", {
       p_company_id: companyId,
       p_amount: 250,
@@ -159,7 +159,7 @@ Deno.serve(async (req) => {
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("signup-company error:", e, e?.stack);
     return new Response(
       JSON.stringify({
@@ -171,3 +171,5 @@ Deno.serve(async (req) => {
     );
   }
 });
+
+

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+﻿import { useMemo } from "react";
 import { GraduationCap, Calendar, Award, CheckCircle, XCircle, Zap, ShieldCheck } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -32,7 +32,7 @@ interface ReportCardTemplateProps {
 /**
  * GroUp Academy: Institutional Assessment Telemetry Report Card (ReportCardTemplate)
  * Authoritative report card module designed for pixel-perfect PDF serialization and hardcopy generation.
- * Version: Launch Candidate · Phase Z0 Hardened Print Candidate
+ * Version: Launch Candidate Â· Phase Z0 Hardened Print Candidate
  */
 export function ReportCardTemplate({ data }: ReportCardTemplateProps) {
   // High-Performance Data Extraction Pass: Fallback guards to defend against incomplete schema models
@@ -83,7 +83,7 @@ export function ReportCardTemplate({ data }: ReportCardTemplateProps) {
       id="report-card-content"
       className="w-[794px] min-h-[1123px] mx-auto p-12 bg-white text-zinc-950 space-y-8 border-[16px] border-zinc-100 shadow-xl box-border antialiased print:p-8 print:border-none print:shadow-none select-none text-left"
     >
-      {/* HUD LEVEL 1: DOCUMENT CONTROL HEADER STAMP CONTAINER */}
+      {/* dashboard LEVEL 1: DOCUMENT CONTROL HEADER STAMP CONTAINER */}
       <div className="text-center border-b-2 border-zinc-200 pb-6 relative w-full block">
         <Zap className="absolute top-0 right-0 h-6 w-6 text-zinc-300 pointer-events-none stroke-[2.2]" />
         <div className="flex items-center justify-center mb-3">
@@ -99,7 +99,7 @@ export function ReportCardTemplate({ data }: ReportCardTemplateProps) {
         </h2>
       </div>
 
-      {/* HUD LEVEL 2: COMPOSITE METADATA TALENT IDENTITY REGISTRY MATRIX */}
+      {/* dashboard LEVEL 2: COMPOSITE METADATA TALENT IDENTITY REGISTRY MATRIX */}
       <div className="grid grid-cols-2 gap-y-4 gap-x-8 bg-zinc-50/70 p-5 rounded-xl border border-zinc-200 w-full min-w-0 font-semibold text-xs text-zinc-800 leading-none select-text">
         <div className="space-y-1.5 text-left min-w-0">
           <span className="text-[9px] font-mono font-extrabold uppercase tracking-wider text-zinc-400 block leading-none">
@@ -136,7 +136,7 @@ export function ReportCardTemplate({ data }: ReportCardTemplateProps) {
         </div>
       </div>
 
-      {/* HUD LEVEL 3: PEDAGOGICAL COURSE TRACK SUB-NODE CALLOUT STRIP */}
+      {/* dashboard LEVEL 3: PEDAGOGICAL COURSE TRACK SUB-NODE CALLOUT STRIP */}
       <div className="border-l-4 border-zinc-900 pl-4 py-1.5 select-text leading-none w-full min-w-0 text-left">
         <span className="text-[9px] font-mono font-extrabold uppercase tracking-wider text-zinc-400 block leading-none mb-1.5">
           Pedagogical Syllabus Course Node
@@ -146,7 +146,7 @@ export function ReportCardTemplate({ data }: ReportCardTemplateProps) {
         </p>
       </div>
 
-      {/* HUD LEVEL 4: CORE QUANTITATIVE COMPLIANCE PERFORMANCE METRICS SHEET */}
+      {/* dashboard LEVEL 4: CORE QUANTITATIVE COMPLIANCE PERFORMANCE METRICS SHEET */}
       <div className="bg-white border border-zinc-200 rounded-xl p-8 shadow-xs overflow-hidden relative w-full flex flex-col justify-center items-center">
         {reportFidelityModel.isPassed && (
           <ShieldCheck className="absolute -bottom-6 -right-6 h-28 w-28 text-emerald-600 opacity-[0.03] -rotate-12 pointer-events-none select-none" />
@@ -203,7 +203,7 @@ export function ReportCardTemplate({ data }: ReportCardTemplateProps) {
         </div>
       </div>
 
-      {/* HUD LEVEL 5: FOOTER SYSTEM SIGNATURE VALIDATION LOG STRIP */}
+      {/* dashboard LEVEL 5: FOOTER SYSTEM SIGNATURE VALIDATION LOG STRIP */}
       <div className="pt-6 border-t border-zinc-200 space-y-5 select-none font-bold text-[9px] text-zinc-400 font-mono leading-none w-full shrink-0">
         <div className="flex items-center justify-between gap-4 uppercase tracking-wider h-4 leading-none w-full">
           <div className="flex items-center gap-1.5 text-left min-w-0 flex-1">
@@ -228,3 +228,4 @@ export function ReportCardTemplate({ data }: ReportCardTemplateProps) {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as ResizablePrimitive from "react-resizable-panels";
 import { GripVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Authoritative Workspace Spatial Orchestration Suite (Resizable)
  * Hardened grid splitting matrix unifiying structural layout parameters across vertical and horizontal configurations.
- * Version: Launch Candidate · Phase Z0 Multi-Direction Sync Hardened
+ * Version: Launch Candidate Â· Phase Z0 Multi-Direction Sync Hardened
  */
 const ResizablePanelGroup = ({ className, ...props }: React.ComponentProps<typeof ResizablePrimitive.PanelGroup>) => (
   <ResizablePrimitive.PanelGroup
@@ -37,7 +37,7 @@ const ResizableHandle = ({
     )}
     {...props}
   >
-    {/* HUD LEVEL 1: ACCESSIBLE ORIENTATION SYNCED INNER DIVIDER LINE */}
+    {/* dashboard LEVEL 1: ACCESSIBLE ORIENTATION SYNCED INNER DIVIDER LINE */}
     <div
       className={cn(
         "bg-border/60 transition-colors duration-150 h-full w-px pointer-events-none select-none shrink-0 block",
@@ -46,7 +46,7 @@ const ResizableHandle = ({
       )}
     />
 
-    {/* HUD LEVEL 2: STRUCTURAL GRAB TACTILE DRAG FEEDBACK CONTROLLER TABS */}
+    {/* dashboard LEVEL 2: STRUCTURAL GRAB TACTILE DRAG FEEDBACK CONTROLLER TABS */}
     {withHandle && (
       <div
         className={cn(
@@ -62,3 +62,4 @@ const ResizableHandle = ({
 ResizableHandle.displayName = "Resizable_Core_Resize_Handle_Node";
 
 export { ResizablePanelGroup, ResizablePanel, ResizableHandle };
+

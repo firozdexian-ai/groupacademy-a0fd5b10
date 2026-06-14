@@ -21,7 +21,7 @@ export function useJobsGraph() {
     queryFn: async () => {
       const { jobsRaw, applications, crmRecords, assessments, invitations } = await getJobsGraphMaster();
       return {
-        jobs: (jobsRaw as any[]).map((j) => ({
+        jobs: (jobsRaw as unknown[]).map((j) => ({
           id: j.id,
           title: j.title,
           company_id: j.company_id,
@@ -38,9 +38,9 @@ export function useJobsGraph() {
   });
 
   // 2. Generic Mutation Generator
-  const createUpsertMutation = (table: string, entityName: string) => {
+  const useCreateUpsertMutation = (table: string, entityName: string) => {
     return useMutation({
-      mutationFn: async (payload: any) => upsertGraphRow(table, payload),
+      mutationFn: async (payload: unknown) => upsertGraphRow(table, payload),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["jobs_graph_master"] });
         toast.success(`${entityName} synchronized successfully.`);
@@ -49,7 +49,7 @@ export function useJobsGraph() {
     });
   };
 
-  const createDeleteMutation = (table: string, entityName: string) => {
+  const useCreateDeleteMutation = (table: string, entityName: string) => {
     return useMutation({
       mutationFn: async (id: string) => deleteGraphRow(table, id),
       onSuccess: () => {
@@ -63,16 +63,18 @@ export function useJobsGraph() {
   return {
     jobsGraphQuery,
     mutations: {
-      upsertJob: createUpsertMutation("jobs", "Job Posting"),
-      deleteJob: createDeleteMutation("jobs", "Job Posting"),
-      upsertApplication: createUpsertMutation("job_applications", "Application Node"),
-      deleteApplication: createDeleteMutation("job_applications", "Application Node"),
-      upsertCrmRecord: createUpsertMutation("talent_relationships", "CRM Record"),
-      deleteCrmRecord: createDeleteMutation("talent_relationships", "CRM Record"),
-      upsertAssessment: createUpsertMutation("job_assessments", "Assessment Instance"),
-      deleteAssessment: createDeleteMutation("job_assessments", "Assessment Instance"),
-      upsertInvitation: createUpsertMutation("job_invitations", "Sourcing Invitation"),
-      deleteInvitation: createDeleteMutation("job_invitations", "Sourcing Invitation"),
+      upsertJob: useCreateUpsertMutation("jobs", "Job Posting"),
+      deleteJob: useCreateDeleteMutation("jobs", "Job Posting"),
+      upsertApplication: useCreateUpsertMutation("job_applications", "Application Node"),
+      deleteApplication: useCreateDeleteMutation("job_applications", "Application Node"),
+      upsertCrmRecord: useCreateUpsertMutation("talent_relationships", "CRM Record"),
+      deleteCrmRecord: useCreateDeleteMutation("talent_relationships", "CRM Record"),
+      upsertAssessment: useCreateUpsertMutation("job_assessments", "Assessment Instance"),
+      deleteAssessment: useCreateDeleteMutation("job_assessments", "Assessment Instance"),
+      upsertInvitation: useCreateUpsertMutation("job_invitations", "Sourcing Invitation"),
+      deleteInvitation: useCreateDeleteMutation("job_invitations", "Sourcing Invitation"),
     }
   };
 }
+
+

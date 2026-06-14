@@ -1,13 +1,13 @@
-import { Construction } from "lucide-react";
+﻿import { Construction } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 /**
- * AdminTabPlaceholder — internal-only stub for admin tabs that are
+ * AdminTabPlaceholder â€” internal-only stub for admin tabs that are
  * registered in the navigation matrix but not yet wired to real UI.
  *
  * Renders a calm, branded panel so the admin shell never shows a blank screen
- * or a broken loader. Unlike `ComingSoonGate`, this is not a public waitlist —
+ * or a broken loader. Unlike `ComingSoonGate`, this is not a public waitlist â€”
  * admins don't sign up to use their own tooling.
  */
 export function AdminTabPlaceholder({
@@ -46,3 +46,4 @@ export function AdminTabPlaceholder({
 }
 
 export default AdminTabPlaceholder;
+

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+﻿import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTalentMirror, type TalentMirrorCourse, type TalentMirrorTopic } from "@/domains/profile/hooks/useTalentMirror";
@@ -10,7 +10,7 @@ import { trackError, trackEvent } from "@/lib/errorTracking";
 import { ArrowRight, Sparkles, AlertTriangle, RefreshCw, Layers, Brain, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const pct = (v: number | null | undefined) => (v === null || v === undefined ? "—" : `${Math.round(v * 100)}%`);
+const pct = (v: number | null | undefined) => (v === null || v === undefined ? "â€”" : `${Math.round(v * 100)}%`);
 
 const tone = (v: number | null) => {
   if (v === null) return "text-muted-foreground/60";
@@ -22,7 +22,7 @@ const tone = (v: number | null) => {
 /**
  * GroUp Academy: Core Competency Map & Trajectory Telemetry Panel (TalentMirrorPanel)
  * An authoritative engine calculating macro-level average mastery matrices across multi-tenant course tracks.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function TalentMirrorPanel() {
   const navigate = useNavigate();
@@ -133,7 +133,7 @@ export function TalentMirrorPanel() {
           No skills tracked yet
         </h3>
         <p className="text-[11px] font-semibold text-muted-foreground/70 max-w-xs mx-auto leading-normal mt-1.5 italic mb-4">
-          Take a quiz or run a scenario in any of your modules to start building your skill profile.
+          Take a quiz or run a scenario in unknown of your modules to start building your skill profile.
         </p>
         <Button
           size="sm"
@@ -151,7 +151,7 @@ export function TalentMirrorPanel() {
 
   return (
     <div className="space-y-4 text-left antialiased max-w-full w-full select-none sm:select-text transform-gpu">
-      {/* HUD SECTION 1: SYSTEM CALIBRATION PLOTS GRID NODES */}
+      {/* dashboard SECTION 1: SYSTEM CALIBRATION PLOTS GRID NODES */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full select-none">
         <Stat label="Active Tracks" value={summaryValuesModel.courses || 0} />
         <Stat label="Topics tracked" value={summaryValuesModel.topics || 0} />
@@ -189,7 +189,7 @@ export function TalentMirrorPanel() {
         )}
       </div>
 
-      {/* HUD SECTION 2: REVISION ANOMALY GAP MARKERS MATRIX LISTING */}
+      {/* dashboard SECTION 2: REVISION ANOMALY GAP MARKERS MATRIX LISTING */}
       {Array.isArray(data.weakest_topics) && data.weakest_topics.length > 0 && (
         <Card className="border border-border/40 bg-card/60 backdrop-blur-md rounded-2xl shadow-sm overflow-hidden animate-in fade-in duration-200">
           <CardHeader className="p-3 px-4 border-b border-border/10 select-none bg-muted/20">
@@ -207,7 +207,7 @@ export function TalentMirrorPanel() {
         </Card>
       )}
 
-      {/* HUD SECTION 3: REPOSITORY COURSE COMPETENCY MATRIX SEGMENTS */}
+      {/* dashboard SECTION 3: REPOSITORY COURSE COMPETENCY MATRIX SEGMENTS */}
       <Card className="border border-border/40 bg-card/60 backdrop-blur-md rounded-2xl shadow-sm overflow-hidden animate-in fade-in duration-300">
         <CardHeader className="p-3 px-4 border-b border-border/10 select-none bg-muted/20">
           <CardTitle className="text-xs font-bold text-foreground/80 uppercase tracking-wider flex items-center gap-2">
@@ -235,7 +235,7 @@ export function TalentMirrorPanel() {
         </CardContent>
       </Card>
 
-      {/* HUD SECTION 4: DEMONSTRATED KNOWLEDGE STRENGTH BLOCKS MATRIX */}
+      {/* dashboard SECTION 4: DEMONSTRATED KNOWLEDGE STRENGTH BLOCKS MATRIX */}
       {Array.isArray(data.strongest_topics) && data.strongest_topics.length > 0 && (
         <Card className="border border-border/40 bg-card/60 backdrop-blur-md rounded-2xl shadow-sm overflow-hidden animate-in fade-in duration-200">
           <CardHeader className="p-3 px-4 border-b border-border/10 select-none bg-muted/20">
@@ -396,3 +396,5 @@ function CourseRow({ c, onOpen }: { c: TalentMirrorCourse; onOpen: () => void })
     </div>
   );
 }
+
+

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { listNotificationPreferences, upsertNotificationPreference } from "@/domains/talent/repo/talentRepo";
 import { useTalent } from "@/hooks/useTalent";
@@ -19,7 +19,7 @@ const CHANNELS = [
 /**
  * GroUp Academy: Agentic Alert Delivery Preferences Node (NotificationChannels)
  * An authoritative operational settings hub routing algorithmic communication preference filters.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function NotificationChannels() {
   const queryClient = useQueryClient();
@@ -46,7 +46,7 @@ export function NotificationChannels() {
 
         const temporaryPreferenceMap: Record<string, boolean> = {};
         CHANNELS.forEach((channelItem) => (temporaryPreferenceMap[channelItem.key] = true));
-        (data ?? []).forEach((rowItem: any) => {
+        (data ?? []).forEach((rowItem: unknown) => {
           if (rowItem?.channel) temporaryPreferenceMap[rowItem.channel] = !!rowItem.enabled;
         });
 
@@ -55,7 +55,7 @@ export function NotificationChannels() {
           setLoading(false);
           trackEvent("notification_channels_hydration_success");
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         const parsedExceptionMsg = err instanceof Error ? err.message : String(err);
 
         trackError(parsedExceptionMsg, {
@@ -90,7 +90,7 @@ export function NotificationChannels() {
       // Automated Efficiency: Invalidate global alert counts dynamically across adjacent page views
       queryClient.invalidateQueries({ queryKey: ["notifications-count"] });
       trackEvent("notification_channel_toggle_success", { channel });
-    } catch (err: any) {
+    } catch (err: unknown) {
       const parsedExceptionMsg = err instanceof Error ? err.message : String(err);
 
       // Rollback Strategy: Revert component toggle switch visually if database write declines transaction
@@ -113,7 +113,7 @@ export function NotificationChannels() {
         <CardContent className="p-4 flex items-center justify-center gap-2.5 text-center py-8 w-full">
           <Loader2 className="h-4 w-4 animate-spin text-primary stroke-[2.5]" />
           <p className="text-xs font-bold text-muted-foreground/80 uppercase tracking-wider pl-0.5">
-            Assembling Delivery Filter Maps…
+            Assembling Delivery Filter Mapsâ€¦
           </p>
         </CardContent>
       </Card>
@@ -123,7 +123,7 @@ export function NotificationChannels() {
   return (
     <Card className="w-full text-left rounded-2xl border border-border/40 bg-card/40 backdrop-blur-md shadow-sm antialiased transform-gpu overflow-hidden">
       <CardContent className="p-4 sm:p-5 space-y-4 w-full min-w-0 flex flex-col font-bold text-xs tracking-tight">
-        {/* HUD LEVEL 1: HEADER CONTROLS INFORMATION TITLE BLOCK */}
+        {/* dashboard LEVEL 1: HEADER CONTROLS INFORMATION TITLE BLOCK */}
         <div className="space-y-1 w-full text-left select-none border-b border-border/10 pb-3">
           <h3 className="text-xs sm:text-sm font-bold text-foreground/90 uppercase tracking-wider leading-none">
             Agentic Communication Filtering Layout
@@ -133,7 +133,7 @@ export function NotificationChannels() {
           </p>
         </div>
 
-        {/* HUD LEVEL 2: TOGGLES LAYER ACTION LOOP MATRIX AREA */}
+        {/* dashboard LEVEL 2: TOGGLES LAYER ACTION LOOP MATRIX AREA */}
         <div className="space-y-3.5 w-full min-w-0 pt-1">
           {CHANNELS.map((channelConfig) => {
             if (!channelConfig || !channelConfig.key) return null;
@@ -176,3 +176,5 @@ export function NotificationChannels() {
     </Card>
   );
 }
+
+

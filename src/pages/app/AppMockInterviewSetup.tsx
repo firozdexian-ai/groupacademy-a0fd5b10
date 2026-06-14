@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { insertMockInterview } from "@/domains/marketing/repo/marketingRepo";
@@ -68,7 +68,7 @@ const DRAFT_STORAGE_KEY = "mock_interview_draft";
 /**
  * GroUp Academy: AI Mock Interview Pre-Flight Orchestrator (AppMockInterviewSetup)
  * Hardened setup cockpit mapping candidate telemetry profile contexts and protecting credit transactions from generation drops.
- * Version: Launch Candidate · Phase Z1 Transaction Matrix Sealed
+ * Version: Launch Candidate Â· Phase Z1 Transaction Matrix Sealed
  */
 export default function AppMockInterviewSetup() {
  const navigateHook = useNavigate();
@@ -166,7 +166,7 @@ export default function AppMockInterviewSetup() {
  if (dbCategoriesPayload) {
  setProfessionCategoriesArray(dbCategoriesPayload as unknown as ProfessionCategory[]);
  }
- } catch (pipelineException: any) {
+ } catch (pipelineException: unknown) {
  clearTimeout(networkSchedulingTimerToken);
  if (pipelineException?.name !== "AbortError") {
  console.error("[mock-interview] Failed to load categories:", pipelineException);
@@ -267,7 +267,7 @@ export default function AppMockInterviewSetup() {
  aiInferenceTimeoutPromise,
  ]);
 
- const functionResponseData = edgeFunctionInvokeResponse as { data: any; error: any };
+ const functionResponseData = edgeFunctionInvokeResponse as { data: unknown; error: unknown };
  if (functionResponseData.error)
  throw new Error(functionResponseData.error.message || "Generation core exception.");
 
@@ -307,7 +307,7 @@ export default function AppMockInterviewSetup() {
  payload: { interview_id: targetInterviewIdUUID, job_title: generatedPayloadNode.jobTitle },
  });
  navigateHook(`/mock-interview/questions/${targetInterviewIdUUID}`);
- } catch (fatalMutationException: any) {
+ } catch (fatalMutationException: unknown) {
  await handleTransactionRefundSequence();
  setGenerationExceptionError(
  fatalMutationException instanceof Error ? fatalMutationException : new Error(String(fatalMutationException)),
@@ -336,7 +336,7 @@ export default function AppMockInterviewSetup() {
 
  return (
  <div className={cn(PAGE_SHELL, "text-left antialiased block transform-gpu w-full space-y-4")}>
- {/* HUD LEVEL 1: APPLICATION SHELL DIRECTORY INGRESS CONTROLLER BAR */}
+ {/* dashboard LEVEL 1: APPLICATION SHELL DIRECTORY INGRESS CONTROLLER BAR */}
  <header className="flex items-center gap-3.5 leading-none w-full shrink-0 select-none pb-2 border-b border-border/10">
  <Button
  type="button"
@@ -372,7 +372,7 @@ export default function AppMockInterviewSetup() {
  className="rounded-xl border border-dashed border-primary/20 bg-card/10 block w-full shadow-none"
  />
 
- {/* HUD LEVEL 2: COMPOSITE JOB DESCRIPTIONS STEP OVERVIEW PANEL */}
+ {/* dashboard LEVEL 2: COMPOSITE JOB DESCRIPTIONS STEP OVERVIEW PANEL */}
  {wizardStepState === "job-description" && (
  <Card
  className={cn(CARD, "rounded-lg border border-border/60 bg-card/40 shadow-none block w-full overflow-hidden")}
@@ -436,7 +436,7 @@ export default function AppMockInterviewSetup() {
  </Card>
  )}
 
- {/* HUD LEVEL 3: SYLLABUS ALIGNMENT TUNE SETTINGS PANEL */}
+ {/* dashboard LEVEL 3: SYLLABUS ALIGNMENT TUNE SETTINGS PANEL */}
  {wizardStepState === "configuration" && (
  <Card
  className={cn(CARD, "rounded-lg border border-border/60 bg-card/40 shadow-none block w-full overflow-hidden")}
@@ -503,7 +503,7 @@ export default function AppMockInterviewSetup() {
  <RadioGroup
  value={interviewConfigState.difficulty}
  onValueChange={(extractedLevel) =>
- setInterviewConfigState((prev) => ({ ...prev, difficulty: extractedLevel as any }))
+ setInterviewConfigState((prev) => ({ ...prev, difficulty: extractedLevel as unknown }))
  }
  className="flex gap-4 flex-wrap select-none leading-none pt-0.5"
  >
@@ -627,7 +627,7 @@ export default function AppMockInterviewSetup() {
  </Card>
  )}
 
- {/* HUD LEVEL 4: PROCESSING STREAM TIMELINE INFERENCE OVERLAY */}
+ {/* dashboard LEVEL 4: PROCESSING STREAM TIMELINE INFERENCE OVERLAY */}
  {wizardStepState === "generating" && (
  <Card
  className={cn(
@@ -651,7 +651,7 @@ export default function AppMockInterviewSetup() {
  </p>
  <p className="font-mono text-[9px] font-bold text-muted-foreground/30 uppercase tracking-widest pt-2 flex items-center justify-center gap-1 leading-none tabular-nums">
  <Sparkles className="h-3 w-3 stroke-[2]" />{" "}
- <span>Estimated time: 20–30s</span>
+ <span>Estimated time: 20â€“30s</span>
  </p>
  </div>
  </CardContent>
@@ -660,3 +660,5 @@ export default function AppMockInterviewSetup() {
  </div>
  );
 }
+
+

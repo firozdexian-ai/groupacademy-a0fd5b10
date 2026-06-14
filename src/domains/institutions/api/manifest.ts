@@ -1,1 +1,2 @@
-export const institutionsApi = {} as const;
+﻿export const institutionsApi = {} as const;
+

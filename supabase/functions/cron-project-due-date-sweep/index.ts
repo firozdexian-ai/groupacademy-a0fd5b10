@@ -1,4 +1,4 @@
-// Daily: detect at-risk + overdue milestones and notify parties.
+﻿// Daily: detect at-risk + overdue milestones and notify parties.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
 
@@ -24,7 +24,7 @@ Deno.serve(async (req) => {
       .eq("milestone_id", m.id)
       .eq("status", "accepted");
     for (const a of assigns || []) {
-      const uid = (a as any).talents?.user_id;
+      const uid = (a as unknown).talents?.user_id;
       if (uid) {
         await admin.from("notifications").insert({
           user_id: uid,
@@ -40,3 +40,5 @@ Deno.serve(async (req) => {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 });
+
+

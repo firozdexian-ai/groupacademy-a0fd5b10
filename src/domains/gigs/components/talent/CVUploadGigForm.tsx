@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { uploadPortfolioFile } from "@/domains/profile/repo/profileRepo";
 import { insertGigSubmission } from "@/domains/gigs/repo/gigsRepo";
@@ -34,14 +34,14 @@ interface CVUploadGigFormProps {
 /**
  * GroUp Academy: CV Intelligence & Outreach Node
  * CTO Reference: Authoritative interface for document parsing and automated lead engagement.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function CVUploadGigForm({ gig, talentId, onSubmitted }: CVUploadGigFormProps) {
   const queryClient = useQueryClient();
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [parsedData, setParsedData] = useState<any>(null);
+  const [parsedData, setParsedData] = useState<unknown>(null);
   const [outreachMessage, setOutreachMessage] = useState("");
   const [cvUrl, setCvUrl] = useState("");
 
@@ -88,10 +88,10 @@ export function CVUploadGigForm({ gig, talentId, onSubmitted }: CVUploadGigFormP
       setCvUrl(publicUrl);
 
       // PHASE 2: AI Synapse Parsing Analysis
-      let parseRes: any;
+      let parseRes: unknown;
       try {
-        parseRes = await parseCv({ cvUrl: publicUrl, serviceType: "cv_outreach" } as any);
-      } catch (parseErr: any) {
+        parseRes = await parseCv({ cvUrl: publicUrl, serviceType: "cv_outreach" } as unknown);
+      } catch (parseErr: unknown) {
         throw new Error(parseErr?.message || "Couldn't read your CV. Please try a different file.");
       }
       if (!parseRes?.success) {
@@ -100,8 +100,8 @@ export function CVUploadGigForm({ gig, talentId, onSubmitted }: CVUploadGigFormP
 
       setParsedData(parseRes.parsed);
 
-      // PHASE 3: Outreach Strategy Synthesis
-      let msgRes: any;
+      // PHASE 3: Outreach Strategy summary
+      let msgRes: unknown;
       try {
         msgRes = await generateOutreachMessage({
           parsedCV: parseRes.parsed,
@@ -109,8 +109,8 @@ export function CVUploadGigForm({ gig, talentId, onSubmitted }: CVUploadGigFormP
           professionCategory: parseRes.parsed?.profession_category || "Executive",
           senderName: "Academy_Systems",
           language: "auto",
-        } as any);
-      } catch (msgErr: any) {
+        } as unknown);
+      } catch (msgErr: unknown) {
         throw new Error(msgErr?.message || "Couldn't generate your message. Please try again.");
       }
 
@@ -122,7 +122,7 @@ export function CVUploadGigForm({ gig, talentId, onSubmitted }: CVUploadGigFormP
 
       toast.success("CV analyzed successfully", { id: toastId });
       trackEvent("cv_intelligence_chain_success", { talentId });
-    } catch (err: any) {
+    } catch (err: unknown) {
       const parsedMsg = err instanceof Error ? err.message : String(err);
 
       trackError(parsedMsg, {
@@ -175,7 +175,7 @@ export function CVUploadGigForm({ gig, talentId, onSubmitted }: CVUploadGigFormP
 
       toast.success("CV submitted successfully for review", { id: toastId });
       onSubmitted();
-    } catch (err: any) {
+    } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
 
       trackError(msg, {
@@ -261,7 +261,7 @@ export function CVUploadGigForm({ gig, talentId, onSubmitted }: CVUploadGigFormP
         </Button>
       ) : (
         <div className="space-y-5 animate-in slide-in-from-bottom-3 duration-500 w-full min-w-0">
-          {/* HUD: IDENTITY_MAPPING Status Box */}
+          {/* dashboard: IDENTITY_MAPPING Status Box */}
           <div className="bg-card/50 border border-border/40 backdrop-blur-md rounded-2xl p-4 space-y-4 shadow-sm relative overflow-hidden text-left w-full min-w-0">
             <div className="absolute -top-12 -right-12 w-24 h-24 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
 
@@ -307,7 +307,7 @@ export function CVUploadGigForm({ gig, talentId, onSubmitted }: CVUploadGigFormP
             </div>
           </div>
 
-          {/* HUD: OUTREACH_SYNTHESIS Messaging Block */}
+          {/* dashboard: OUTREACH_SYNTHESIS Messaging Block */}
           <div className="space-y-3 w-full min-w-0">
             <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-4 shadow-inner relative overflow-hidden text-left w-full min-w-0">
               <div className="absolute top-0 right-0 p-3 opacity-5 pointer-events-none select-none">
@@ -356,3 +356,5 @@ export function CVUploadGigForm({ gig, talentId, onSubmitted }: CVUploadGigFormP
     </div>
   );
 }
+
+

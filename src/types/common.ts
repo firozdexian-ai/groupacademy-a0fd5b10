@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Common type definitions shared across the application.
  * These types standardize data structures used in multiple components.
  */
@@ -201,3 +201,4 @@ export interface CreditTransaction {
   reference_id: string | null;
   created_at: string;
 }
+

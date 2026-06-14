@@ -1,4 +1,4 @@
-// SOP drafting + critique for study abroad applications
+﻿// SOP drafting + critique for study abroad applications
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -46,15 +46,17 @@ Deno.serve(async (req) => {
     });
     if (!ai.ok) return json({ error: `ai_error_${ai.status}` }, ai.status);
     const aiData = await ai.json();
-    let parsed: any = {};
+    let parsed: unknown = {};
     try { parsed = JSON.parse(aiData.choices?.[0]?.message?.content ?? "{}"); } catch { parsed = { raw: aiData.choices?.[0]?.message?.content }; }
 
     return json({ ok: true, ...parsed, credits_spent: 1 });
-  } catch (e: any) {
+  } catch (e: unknown) {
     return json({ error: e?.message ?? "unknown" }, 500);
   }
 });
 
-function json(b: any, status = 200) {
+function json(b: unknown, status = 200) {
   return new Response(JSON.stringify(b), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 }
+
+

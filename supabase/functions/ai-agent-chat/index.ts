@@ -1,8 +1,8 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+﻿import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 /**
- * GroUp Academy: Neural Agent Orchestrator (V3.0 — Toolified)
+ * GroUp Academy: Neural Agent Orchestrator (V3.0 â€” Toolified)
  * Phase T1: Dynamic tool resolution + max-4-hop tool loop + context injection.
  * Streams final assistant reply (SSE) after all tool hops resolve.
  */
@@ -90,15 +90,15 @@ CRITICAL RULE: Use this context to personalize advice. Do not re-ask known facts
     }
 
     // PHASE 4: Resolve bound tools
-    let tools: any[] = [];
-    let toolMap: Record<string, { tool_key: string; handler_kind: string }> = {};
+    const tools: unknown[] = [];
+    const toolMap: Record<string, { tool_key: string; handler_kind: string }> = {};
     if (agentConfig?.id) {
       const { data: bindings } = await admin
         .from("agent_tool_bindings")
         .select("tool_id, agent_tools!inner(id, tool_key, description, input_schema, is_active, status)")
         .eq("agent_id", agentConfig.id);
 
-      for (const row of (bindings ?? []) as any[]) {
+      for (const row of (bindings ?? []) as unknown[]) {
         const t = row.agent_tools;
         if (!t || !t.is_active || t.status !== "available") continue;
         // OpenAI function schema. Names must match `^[a-zA-Z0-9_-]+$`
@@ -115,8 +115,8 @@ CRITICAL RULE: Use this context to personalize advice. Do not re-ask known facts
       }
     }
 
-    // PHASE 5: Tool-calling loop (max 4 hops, non-stream) → final stream
-    const convo: any[] = [{ role: "system", content: systemPrompt }, ...incomingMessages];
+    // PHASE 5: Tool-calling loop (max 4 hops, non-stream) â†’ final stream
+    const convo: unknown[] = [{ role: "system", content: systemPrompt }, ...incomingMessages];
     let hops = 0;
     const invalidations = new Set<string>();
     // Maps a tool_key to React Query keys the client should invalidate.
@@ -128,7 +128,7 @@ CRITICAL RULE: Use this context to personalize advice. Do not re-ask known facts
       enroll_course: ["learning-hub", "my-courses", "courses"],
       follow_company: ["companies-with-signal", "followed-companies"],
       submit_pitch: ["talent-pitches"],
-      // Phase C2 — Instructor (Maestro) tools
+      // Phase C2 â€” Instructor (Maestro) tools
       request_payout: ["instructor-dashboard", "instructor-summary", "instructor-earnings"],
       submit_course_for_review: ["instructor-dashboard", "instructor-review-queue", "instructor-summary"],
       draft_module_outline: ["instructor-dashboard", "course-modules"],
@@ -157,7 +157,7 @@ CRITICAL RULE: Use this context to personalize advice. Do not re-ask known facts
       const toolCalls = msg?.tool_calls;
 
       if (!toolCalls || toolCalls.length === 0) {
-        // No tool calls — break and stream final response (replay convo)
+        // No tool calls â€” break and stream final response (replay convo)
         break;
       }
 
@@ -168,10 +168,10 @@ CRITICAL RULE: Use this context to personalize advice. Do not re-ask known facts
       for (const call of toolCalls) {
         const fnName = call.function?.name;
         const argsRaw = call.function?.arguments ?? "{}";
-        let args: any = {};
+        let args: unknown = {};
         try { args = JSON.parse(argsRaw); } catch { args = {}; }
         const meta = toolMap[fnName];
-        let toolResult: any;
+        let toolResult: unknown;
         if (!meta) {
           toolResult = { ok: false, error: "tool_not_bound" };
         } else {
@@ -187,7 +187,7 @@ CRITICAL RULE: Use this context to personalize advice. Do not re-ask known facts
             });
             const txt = await r.text();
             try { toolResult = JSON.parse(txt); } catch { toolResult = { ok: r.ok, raw: txt }; }
-          } catch (e: any) {
+          } catch (e: unknown) {
             toolResult = { ok: false, error: String(e?.message || e) };
           }
         }
@@ -247,8 +247,10 @@ CRITICAL RULE: Use this context to personalize advice. Do not re-ask known facts
     return new Response(transformed, {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[ai-agent-chat] AGENT_ORCHESTRATION_FAULT:", err);
     return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: corsHeaders });
   }
 });
+
+

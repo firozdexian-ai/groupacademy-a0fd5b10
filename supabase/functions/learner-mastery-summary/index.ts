@@ -1,4 +1,4 @@
-// learner-mastery-summary (2.6.a)
+﻿// learner-mastery-summary (2.6.a)
 // Read-only aggregation over talent_skill_profile, talent_quiz_attempt,
 // and talent_scenario_run for the Adaptive Snapshot dashboard widget.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
@@ -107,10 +107,10 @@ Deno.serve(async (req) => {
     const [{ data: quizRows }, { data: scenarioRows }] = await Promise.all([qq, sq]);
 
     const quizAll = quizRows ?? [];
-    const scenarioAll = (scenarioRows ?? []).filter((r: any) => r.evaluation);
+    const scenarioAll = (scenarioRows ?? []).filter((r: unknown) => r.evaluation);
     const signalSplit30d = { quiz: quizAll.length, scenario: scenarioAll.length };
 
-    // 4. Sparkline (last `days` days, oldest → newest)
+    // 4. Sparkline (last `days` days, oldest â†’ newest)
     const buckets = new Map<string, { quiz: number; scenario: number }>();
     for (let i = days - 1; i >= 0; i--) {
       const d = new Date(Date.now() - i * 86_400_000).toISOString().slice(0, 10);
@@ -144,3 +144,5 @@ Deno.serve(async (req) => {
     return json(500, { error: e instanceof Error ? e.message : "Unknown" });
   }
 });
+
+

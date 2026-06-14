@@ -91,7 +91,7 @@ export function ContentOutreachTab() {
  const loadContents = useCallback(async () => {
  try {
  const data = await listPromotableContent();
- setContents(data as any);
+ setContents(data as unknown);
  } catch (err) {
  console.error("Registry Fault:", err);
  } finally {
@@ -110,9 +110,9 @@ export function ContentOutreachTab() {
  const talentData = await listOutreachableTalents();
  const outreachData = await listCourseOutreachRecords(selectedContent.id);
  setOutreachRecords(outreachData || []);
- let filteredTalents = (talentData as any[]) || [];
+ let filteredTalents = (talentData as unknown[]) || [];
  if (filterType === "not_pitched") {
- const pitchedTalentIds = new Set((outreachData || []).map((r: any) => r.talent_id));
+ const pitchedTalentIds = new Set((outreachData || []).map((r: unknown) => r.talent_id));
  filteredTalents = filteredTalents.filter((t) => !pitchedTalentIds.has(t.id));
  }
  setTalents(filteredTalents);
@@ -126,7 +126,7 @@ export function ContentOutreachTab() {
  const loadShareLogs = async () => {
  if (!selectedContent) return;
  const data = await listContentShareLogs(selectedContent.id);
- setShareLogs((data as any) || []);
+ setShareLogs((data as unknown) || []);
  };
 
  useEffect(() => {
@@ -187,14 +187,14 @@ export function ContentOutreachTab() {
  try {
  await navigator.clipboard.writeText(link);
  toast.success("Artifact Link Synced to Clipboard");
- } catch {}
+ } catch { /* ignore */ }
  };
 
  const copyTemplate = async (text: string) => {
  try {
  await navigator.clipboard.writeText(text);
  toast.success("Payload Caption Synced");
- } catch {}
+ } catch { /* ignore */ }
  };
 
  const contentTypeLabel = (type: string) =>
@@ -202,8 +202,8 @@ export function ContentOutreachTab() {
 
  const templates = selectedContent
  ? {
- english: `🚀 Career Uplink: ${selectedContent.title}\n📚 Logic: ${contentTypeLabel(selectedContent.content_type)}\n🔥 Sync here: ${getShareLink(activeTab)}\n\n#intel #growth`,
- bangla: `📢 নতুন সুযোগ: ${selectedContent.title}\n📚 ধরণ: ${contentTypeLabel(selectedContent.content_type)}\n🔗 লিংক: ${getShareLink(activeTab)}\n\n#bdjobs #learning`,
+ english: `ðŸš€ Career Uplink: ${selectedContent.title}\nðŸ“š Logic: ${contentTypeLabel(selectedContent.content_type)}\nðŸ”¥ Sync here: ${getShareLink(activeTab)}\n\n#intel #growth`,
+ bangla: `ðŸ“¢ à¦¨à¦¤à§à¦¨ à¦¸à§à¦¯à§‹à¦—: ${selectedContent.title}\nðŸ“š à¦§à¦°à¦£: ${contentTypeLabel(selectedContent.content_type)}\nðŸ”— à¦²à¦¿à¦‚à¦•: ${getShareLink(activeTab)}\n\n#bdjobs #learning`,
  }
  : { english: "", bangla: "" };
 
@@ -292,7 +292,7 @@ export function ContentOutreachTab() {
  <Label className="text-[10px] font-semibold text-primary ml-1">
  Audience filter
  </Label>
- <Select value={filterType} onValueChange={(v: any) => setFilterType(v)}>
+ <Select value={filterType} onValueChange={(v: unknown) => setFilterType(v)}>
  <SelectTrigger className="h-10 rounded-xl border font-bold bg-muted/20">
  <SelectValue />
  </SelectTrigger>
@@ -387,7 +387,7 @@ export function ContentOutreachTab() {
  <div className="space-y-6">
  <div className="space-y-3">
  <Label className="text-[10px] font-semibold text-primary ml-1 text-left block">
- Synthesis Payload ({activeTab})
+ summary Payload ({activeTab})
  </Label>
  <div className="relative">
  <Textarea
@@ -408,7 +408,7 @@ export function ContentOutreachTab() {
  </div>
  <Button
  className="w-full h-16 rounded-[20px] font-semibold text-[11px] shadow-sm group"
- onClick={() => handleSocialShare(activeTab as any)}
+ onClick={() => handleSocialShare(activeTab as unknown)}
  >
  <ExternalLink className="w-5 h-5 mr-3" /> Authorize Channel Sync
  </Button>
@@ -546,3 +546,5 @@ export function ContentOutreachTab() {
 }
 
 export default ContentOutreachTab;
+
+

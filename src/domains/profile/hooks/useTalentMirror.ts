@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { learnerTalentMirror } from "@/domains/learning/api/learningApi";
 
 /**
@@ -46,14 +46,14 @@ export function useTalentMirror() {
     // Performance Baseline: 2-minute stability caching for heavy psychometric analytics aggregates
     staleTime: 2 * 60 * 1000,
     queryFn: async (): Promise<TalentMirror> => {
-      // HUD: INVOKING_LEARNER_TALENT_MIRROR_EDGE_ENGINE
+      // dashboard: INVOKING_LEARNER_TALENT_MIRROR_EDGE_ENGINE
       const data = await learnerTalentMirror({});
 
-      const raw = (data as any) || {};
+      const raw = (data as unknown) || {};
 
       // Defensive Parsing: Map and normalize courses array to secure UI layout stability
       const normalizedCourses: TalentMirrorCourse[] = Array.isArray(raw.courses)
-        ? raw.courses.map((c: any) => ({
+        ? raw.courses.map((c: unknown) => ({
             content_id: String(c?.content_id ?? ""),
             title: String(c?.title ?? "Curriculum Track"),
             slug: c?.slug ? String(c.slug) : null,
@@ -63,7 +63,7 @@ export function useTalentMirror() {
             avg_mastery: Number(c?.avg_mastery ?? 0),
             due_now: Number(c?.due_now ?? 0),
             weakest: Array.isArray(c?.weakest)
-              ? c.weakest.map((w: any) => ({
+              ? c.weakest.map((w: unknown) => ({
                   topic_tag: String(w?.topic_tag ?? "General Tag"),
                   module_title: w?.module_title ? String(w.module_title) : null,
                   mastery: Number(w?.mastery ?? 0),
@@ -73,9 +73,9 @@ export function useTalentMirror() {
         : [];
 
       // Helper function for mapping nested topic capability arrays uniformly
-      const mapTopicList = (list: any[]): TalentMirrorTopic[] =>
+      const mapTopicList = (list: unknown[]): TalentMirrorTopic[] =>
         Array.isArray(list)
-          ? list.map((t: any) => ({
+          ? list.map((t: unknown) => ({
               topic_tag: String(t?.topic_tag ?? "General Skill"),
               module_title: t?.module_title ? String(t.module_title) : null,
               course_title: t?.course_title ? String(t.course_title) : null,
@@ -84,7 +84,7 @@ export function useTalentMirror() {
             }))
           : [];
 
-      // HUD: STRUCTURAL_PAYLOAD_VALIDATION_COMPLETE
+      // dashboard: STRUCTURAL_PAYLOAD_VALIDATION_COMPLETE
       return {
         talent_id: String(raw.talent_id ?? ""),
         summary: {
@@ -115,3 +115,5 @@ export function useTalentMirror() {
     refresh: queryResult.refetch,
   };
 }
+
+

@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as ToastPrimitives from "@radix-ui/react-toast";
 import { cva, type VariantProps } from "class-variance-authority";
 import { X } from "lucide-react";
@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Authoritative Protocol Signal Suite (Toast)
  * Hardened WAI-ARIA compliant system signal emitter protecting stacked alert overlays from text truncation jumps.
- * Version: Launch Candidate · Phase Z0 Lifecycle & Stack Bounds Locked
+ * Version: Launch Candidate Â· Phase Z0 Lifecycle & Stack Bounds Locked
  */
 
 const ToastProvider = ToastPrimitives.Provider;
@@ -128,3 +128,4 @@ export {
   ToastClose,
   ToastAction,
 };
+

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo } from "react";
+﻿import { useEffect, useRef, useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getEnrollmentResourceState,
@@ -6,7 +6,7 @@ import {
 } from "@/domains/learning/repo/learningRepo";
 
 /**
- * GroUp Academy: Video Playback & Progress Sentinel (V5.6.0)
+ * GroUp Academy: Video Playback & Progress guard (V5.6.0)
  * CTO Reference: High-frequency buffer syncing tracking watch positions with zero race conditions.
  * Architecture: Snapshot-isolated flushes preventing overwrite drops during active transport transits.
  * Phase: Z0 Code Freeze Hardened (May 2026 Launch Edition).
@@ -43,7 +43,7 @@ export function useResourceProgress({ enrollmentId, moduleId }: UseResourceProgr
     enabled: !!enrollmentId && !!moduleId,
     staleTime: Infinity, // Rely completely on local buffers and explicit mutations
     queryFn: async () => {
-      // HUD: INITIALIZING_RESOURCE_STATE_HYDRATION
+      // dashboard: INITIALIZING_RESOURCE_STATE_HYDRATION
       try {
         const initialMap = (await getEnrollmentResourceState(enrollmentId!, moduleId!)) as ResourceStateMap;
         cacheRef.current = initialMap;
@@ -71,10 +71,10 @@ export function useResourceProgress({ enrollmentId, moduleId }: UseResourceProgr
     mutationFn: async (payload: ResourceStateMap) => {
       if (!enrollmentId || !moduleId) return;
 
-      // HUD: EXECUTING_JSONB_DOCUMENT_UPDATE_SYNC
+      // dashboard: EXECUTING_JSONB_DOCUMENT_UPDATE_SYNC
       await updateEnrollmentResourceState(enrollmentId, moduleId, payload);
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       // Digital Workforce Anomaly Trigger: Imprints tracing packets for background monitoring agents
       console.error("[Digital Workforce] ANOMALY: Buffered tracking snapshot flush failed.", {
         enrollmentId,
@@ -92,7 +92,7 @@ export function useResourceProgress({ enrollmentId, moduleId }: UseResourceProgr
 
     isFlushing.current = true;
 
-    // HUD: CAPTURING_SNAPSHOT_TRANSACTION
+    // dashboard: CAPTURING_SNAPSHOT_TRANSACTION
     // Isolate current mutations to allow high-frequency inputs to continue streaming cleanly
     const snapshotToFlush = { ...pendingRef.current };
     const mergedPayload = { ...cacheRef.current, ...snapshotToFlush };
@@ -155,3 +155,5 @@ export function useResourceProgress({ enrollmentId, moduleId }: UseResourceProgr
     flush,
   };
 }
+
+

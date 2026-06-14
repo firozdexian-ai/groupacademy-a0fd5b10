@@ -1,8 +1,8 @@
-/**
- * Profile domain — typed edge function wrappers (Phase 9g).
+﻿/**
+ * Profile domain â€” typed edge function wrappers (Phase 9g).
  *
  * Only `claim-public-handle` is owned by profile. `parse-cv` is owned by
- * jobs — import from `@/domains/jobs/api/jobsApi` directly.
+ * jobs â€” import from `@/domains/jobs/api/jobsApi` directly.
  */
 import { supabase } from "@/integrations/supabase/client";
 import { EdgeFunctionError } from "@/edge/EdgeFunctionError";
@@ -27,3 +27,4 @@ export async function claimPublicHandle(
     data ?? {},
   );
 }
+

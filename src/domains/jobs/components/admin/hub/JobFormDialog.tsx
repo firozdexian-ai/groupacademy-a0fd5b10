@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { uploadJobAsset } from "@/domains/jobs/repo/jobsRepo";
 import { enhanceJobDescription } from "@/domains/jobs/api/jobsApi";
 import { getJobById, insertJob, updateJob } from "@/domains/jobs/repo/jobsRepo";
@@ -110,7 +110,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
 
  setLoading(true);
  try {
- let data: any = null;
+ let data: unknown = null;
  try {
  data = await getJobById(jobId);
  } catch {
@@ -127,16 +127,16 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  company_name: data.company_name || "",
  company_logo_url: data.company_logo_url || "",
  location: data.location || "",
- job_type: (data.job_type as any) || "full_time",
- experience_level: (data.experience_level as any) || "entry",
+ job_type: (data.job_type as unknown) || "full_time",
+ experience_level: (data.experience_level as unknown) || "entry",
  salary_range_min: data.salary_range_min?.toString() || "",
  salary_range_max: data.salary_range_max?.toString() || "",
  salary_currency: data.salary_currency || "BDT",
  description: data.description || "",
- application_type: (data.application_type as any) || "internal",
+ application_type: (data.application_type as unknown) || "internal",
  application_email: data.application_email || "",
  application_url: data.application_url || "",
- source_platform: (data.source_platform as any) || "other",
+ source_platform: (data.source_platform as unknown) || "other",
  source_image_url: data.source_image_url || "",
  is_active: data.is_active ?? true,
  is_featured: data.is_featured ?? false,
@@ -162,7 +162,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  const { publicUrl } = await uploadJobAsset(fileName, file);
  updateField("company_logo_url", publicUrl);
  toast.success("Artifact Secured", { id: toastId });
- } catch (err: any) {
+ } catch (err: unknown) {
  toast.error("Upload Fault: " + err.message, { id: toastId });
  } finally {
  setIsUploadingLogo(false);
@@ -187,7 +187,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  updateField("description", enhanced);
  toast.success("Description Optimized", { id: toastId });
  }
- } catch (err: any) {
+ } catch (err: unknown) {
  toast.error("Neural Fault: " + err.message, { id: toastId });
  } finally {
  setIsEnhancing(false);
@@ -202,7 +202,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
 
  setIsSaving(true);
  try {
- const payload: any = {
+ const payload: unknown = {
  title: form.title.trim(),
  company_name: form.company_name.trim(),
  company_logo_url: form.company_logo_url || null,
@@ -233,7 +233,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  toast.success(jobId ? "Infrastructure Updated" : "Deployment Successful");
  onOpenChange(false);
  onSaved?.();
- } catch (err: any) {
+ } catch (err: unknown) {
  toast.error("Save failed: " + err.message);
  } finally {
  setIsSaving(false);
@@ -368,19 +368,19 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  label="Engagement Type"
  value={form.job_type}
  options={JOB_TYPES}
- onChange={(v) => updateField("job_type", v as any)}
+ onChange={(v) => updateField("job_type", v as unknown)}
  />
  <SelectNode
  label="Authority Level"
  value={form.experience_level}
  options={EXPERIENCE_LEVELS}
- onChange={(v) => updateField("experience_level", v as any)}
+ onChange={(v) => updateField("experience_level", v as unknown)}
  />
  <SelectNode
  label="Source Logic"
  value={form.source_platform}
  options={SOURCE_PLATFORMS}
- onChange={(v) => updateField("source_platform", v as any)}
+ onChange={(v) => updateField("source_platform", v as unknown)}
  />
  </div>
 
@@ -462,7 +462,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  </Label>
  <Select
  value={form.application_type}
- onValueChange={(v) => updateField("application_type", v as any)}
+ onValueChange={(v) => updateField("application_type", v as unknown)}
  >
  <SelectTrigger className="h-10 rounded-xl border font-bold uppercase text-[10px] bg-background">
  <SelectValue />
@@ -569,7 +569,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  );
 }
 
-function SelectNode({ label, value, options, onChange }: any) {
+function SelectNode({ label, value, options, onChange }: unknown) {
  return (
  <div className="space-y-2">
  <Label className="text-[10px] font-semibold uppercase text-primary italic ml-2">{label}</Label>
@@ -589,7 +589,7 @@ function SelectNode({ label, value, options, onChange }: any) {
  );
 }
 
-function SwitchNode({ label, checked, onChange }: any) {
+function SwitchNode({ label, checked, onChange }: unknown) {
  return (
  <label className="flex items-center gap-3 cursor-pointer group">
  <Switch checked={checked} onCheckedChange={onChange} />
@@ -599,3 +599,5 @@ function SwitchNode({ label, checked, onChange }: any) {
  </label>
  );
 }
+
+

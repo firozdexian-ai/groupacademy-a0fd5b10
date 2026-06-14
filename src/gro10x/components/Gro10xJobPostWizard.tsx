@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useGro10xCompanyId } from "../hooks/useGro10xCompanyId";
@@ -43,7 +43,7 @@ const EMPTY: FormState = {
 };
 
 /**
- * Manual "Post a Job" wizard for employers — bypasses chat and inserts directly
+ * Manual "Post a Job" wizard for employers â€” bypasses chat and inserts directly
  * into `jobs` for the active company.
  */
 export default function Gro10xJobPostWizard({ open, onClose }: Props) {
@@ -69,7 +69,7 @@ export default function Gro10xJobPostWizard({ open, onClose }: Props) {
         .map((s) => s.trim())
         .filter(Boolean);
 
-      const payload: any = {
+      const payload: unknown = {
         company_id: companyId,
         company_name: co?.name ?? "Company",
         company_logo_url: co?.logo_url ?? null,
@@ -97,7 +97,7 @@ export default function Gro10xJobPostWizard({ open, onClose }: Props) {
       setForm(EMPTY);
       onClose();
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       toast.error(err?.message ?? "Failed to create job");
     },
   });
@@ -146,14 +146,14 @@ export default function Gro10xJobPostWizard({ open, onClose }: Props) {
               value={form.description}
               onChange={(e) => set("description", e.target.value)}
               rows={5}
-              placeholder="Role overview, responsibilities, what you're looking for…"
+              placeholder="Role overview, responsibilities, what you're looking forâ€¦"
               className={inputCls}
             />
           </Field>
 
           <Field
             label="Requirements"
-            hint="One per line — stored as a JSON list"
+            hint="One per line â€” stored as a JSON list"
           >
             <textarea
               value={form.requirements}
@@ -169,7 +169,7 @@ export default function Gro10xJobPostWizard({ open, onClose }: Props) {
               <input
                 value={form.location}
                 onChange={(e) => set("location", e.target.value)}
-                placeholder="Remote · Dhaka · …"
+                placeholder="Remote Â· Dhaka Â· â€¦"
                 className={inputCls}
               />
             </Field>
@@ -307,3 +307,5 @@ function Field({
     </div>
   );
 }
+
+

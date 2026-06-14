@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+﻿import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLearningGraph } from "./hooks/useLearningGraph";
 import { listInstructorsLite } from "@/domains/learning/repo/learningRepo";
@@ -21,7 +21,7 @@ export function LearningCourseBriefsTab() {
  } = useLearningGraph();
  const { data, isLoading } = learningGraphQuery;
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ status: "draft" });
+ const [draft, setDraft] = useState<unknown>({ status: "draft" });
 
  const instructorsQ = useQuery({
    queryKey: ["instructors-lite-lookup"],
@@ -29,7 +29,7 @@ export function LearningCourseBriefsTab() {
  });
 
  const instructorsById = useMemo(
-   () => Object.fromEntries((instructorsQ.data ?? []).map((ins: any) => [ins.id, ins.full_name])),
+   () => Object.fromEntries((instructorsQ.data ?? []).map((ins: unknown) => [ins.id, ins.full_name])),
    [instructorsQ.data]
  );
 
@@ -197,7 +197,7 @@ export function LearningCourseBriefsTab() {
   <SelectItem value="none" className="font-bold text-xs text-muted-foreground">
   UNASSIGNED / NONE
   </SelectItem>
-  {instructorsQ.data?.map((ins: any) => (
+  {instructorsQ.data?.map((ins: unknown) => (
   <SelectItem key={ins.id} value={ins.id} className="font-bold text-xs uppercase">
   {ins.full_name}
   </SelectItem>
@@ -242,3 +242,5 @@ export function LearningCourseBriefsTab() {
 }
 
 export default LearningCourseBriefsTab;
+
+

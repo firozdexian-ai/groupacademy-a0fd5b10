@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -92,7 +92,7 @@ export default function WorkforceFleet() {
   const { data: templates, isLoading } = useQuery({
     queryKey: ["workforce-master-templates"],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await (supabase as unknown)
         .from("workforce_master_templates")
         .select("*")
         .order("name");
@@ -104,7 +104,7 @@ export default function WorkforceFleet() {
   const { data: instances, isLoading: instancesLoading } = useQuery({
     queryKey: ["workforce-hired-instances"],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await (supabase as unknown)
         .from("workforce_hired_instances")
         .select(
           `id, template_id, tenant_id, name_override, cluster_geo_id, status, created_at,
@@ -236,10 +236,10 @@ export default function WorkforceFleet() {
                         </TableCell>
                         <TableCell>
                           <Badge variant="secondary" className="font-mono text-xs">
-                            {inst.workforce_master_templates?.template_key ?? "—"}
+                            {inst.workforce_master_templates?.template_key ?? "â€”"}
                           </Badge>
                         </TableCell>
-                        <TableCell>{inst.companies?.name ?? "—"}</TableCell>
+                        <TableCell>{inst.companies?.name ?? "â€”"}</TableCell>
                         <TableCell className="text-muted-foreground">
                           {inst.cluster_geo_id || "Global"}
                         </TableCell>
@@ -351,7 +351,7 @@ function DeployDialog({
       return;
     }
     setSubmitting(true);
-    const { error } = await (supabase as any)
+    const { error } = await (supabase as unknown)
       .from("workforce_hired_instances")
       .insert({
         template_id: template.id,
@@ -394,7 +394,7 @@ function DeployDialog({
             <Label>Tenant / Company</Label>
             <Select value={tenantId} onValueChange={setTenantId}>
               <SelectTrigger>
-                <SelectValue placeholder="Select a company…" />
+                <SelectValue placeholder="Select a companyâ€¦" />
               </SelectTrigger>
               <SelectContent>
                 {(companies ?? []).map((c) => (
@@ -473,7 +473,7 @@ function ChannelDialog({
       return;
     }
     setSubmitting(true);
-    const { error } = await (supabase as any)
+    const { error } = await (supabase as unknown)
       .from("workforce_instance_credentials")
       .upsert(
         {
@@ -546,7 +546,7 @@ function ChannelDialog({
               type="password"
               value={botToken}
               onChange={(e) => setBotToken(e.target.value)}
-              placeholder="••••••••••••••••"
+              placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
               autoComplete="off"
             />
             <p className="text-xs text-muted-foreground">
@@ -572,3 +572,5 @@ function ChannelDialog({
     </Dialog>
   );
 }
+
+

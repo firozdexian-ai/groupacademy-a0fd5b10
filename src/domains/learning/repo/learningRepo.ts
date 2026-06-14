@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Learning domain repository.
  *
  * Single entry point for `supabase.from(...)` calls that the learning hooks
@@ -169,7 +169,7 @@ export async function upsertCohort(
     const { error } = await supabase.from("cohorts").update(rest).eq("id", id);
     if (error) throw error;
   } else {
-    const { error } = await supabase.from("cohorts").insert(rest as any);
+    const { error } = await supabase.from("cohorts").insert(rest as unknown);
     if (error) throw error;
   }
 }
@@ -182,7 +182,7 @@ export async function upsertCourseSession(
     const { error } = await supabase.from("course_sessions").update(rest).eq("id", id);
     if (error) throw error;
   } else {
-    const { error } = await supabase.from("course_sessions").insert(rest as any);
+    const { error } = await supabase.from("course_sessions").insert(rest as unknown);
     if (error) throw error;
   }
 }
@@ -214,12 +214,12 @@ export async function deleteCourseSession(id: string) {
 }
 
 export async function updateCourseSessionStatus(id: string, status: string) {
-  const { error } = await supabase.from("course_sessions").update({ status: status as any }).eq("id", id);
+  const { error } = await supabase.from("course_sessions").update({ status: status as unknown }).eq("id", id);
   if (error) throw error;
 }
 
 export async function bulkInsertCourseSessions(rows: Record<string, unknown>[]) {
-  const { error } = await supabase.from("course_sessions").insert(rows as any);
+  const { error } = await supabase.from("course_sessions").insert(rows as unknown);
   if (error) throw error;
 }
 
@@ -290,14 +290,14 @@ export async function resolveContentReport(id: string, status: "dismissed" | "re
 }
 
 export async function hideModerationTarget(table: ModerationTable, scopeId: string) {
-  const { error } = await supabase.from(table).update({ is_hidden: true } as any).eq("id", scopeId);
+  const { error } = await supabase.from(table).update({ is_hidden: true } as unknown).eq("id", scopeId);
   if (error) throw error;
 }
 
 /* ---------------- JSON / bulk importers ---------------- */
 
 export async function insertContent(payload: Record<string, unknown>) {
-  const { data, error } = await supabase.from("content").insert(payload as any).select().single();
+  const { data, error } = await supabase.from("content").insert(payload as unknown).select().single();
   if (error) throw error;
   return data;
 }
@@ -305,7 +305,7 @@ export async function insertContent(payload: Record<string, unknown>) {
 export async function insertCourseModule(payload: Record<string, unknown>) {
   const { data, error } = await supabase
     .from("course_modules")
-    .insert(payload as any)
+    .insert(payload as unknown)
     .select()
     .single();
   if (error) throw error;
@@ -313,7 +313,7 @@ export async function insertCourseModule(payload: Record<string, unknown>) {
 }
 
 export async function insertModuleResources(rows: Record<string, unknown>[]) {
-  const { error } = await supabase.from("module_resources").insert(rows as any);
+  const { error } = await supabase.from("module_resources").insert(rows as unknown);
   if (error) throw error;
 }
 
@@ -333,7 +333,7 @@ export async function listAcademiesSchoolsReadiness() {
   const [acadResult, schoolResult, readinessResult] = await Promise.all([
     supabase.from("academies").select("*").eq("is_active", true).order("display_order"),
     supabase.from("schools").select("*").eq("is_active", true).order("display_order"),
-    supabase.from("school_readiness_v" as any).select("*"),
+    supabase.from("school_readiness_v" as unknown).select("*"),
   ]);
   if (acadResult.error) throw acadResult.error;
   if (schoolResult.error) throw schoolResult.error;
@@ -341,7 +341,7 @@ export async function listAcademiesSchoolsReadiness() {
   return {
     academies: acadResult.data ?? [],
     schools: schoolResult.data ?? [],
-    readiness: (readinessResult.data as any[]) ?? [],
+    readiness: (readinessResult.data as unknown[]) ?? [],
   };
 }
 
@@ -412,7 +412,7 @@ export async function listModuleResourcesByType(moduleIds: string[], resourceTyp
     .from("module_resources")
     .select("module_id")
     .in("module_id", moduleIds)
-    .eq("resource_type", resourceType as any);
+    .eq("resource_type", resourceType as unknown);
   if (error) throw error;
   return data ?? [];
 }
@@ -432,7 +432,7 @@ export async function updateDraftPost(
   id: string,
   payload: Record<string, unknown>,
 ) {
-  const { error } = await supabase.from(table).update(payload as any).eq("id", id);
+  const { error } = await supabase.from(table).update(payload as unknown).eq("id", id);
   if (error) throw error;
 }
 
@@ -514,13 +514,13 @@ export async function getLearningGraphSlice() {
 
 export async function upsertLearningGraphRow(
   table: LearningGraphTable,
-  payload: Record<string, any>,
+  payload: Record<string, unknown>,
 ) {
   if (payload.id) {
     const { error } = await supabase.from(table).update(payload).eq("id", payload.id);
     if (error) throw error;
   } else {
-    const { error } = await supabase.from(table).insert(payload as any);
+    const { error } = await supabase.from(table).insert(payload as unknown);
     if (error) throw error;
   }
 }
@@ -531,7 +531,7 @@ export async function deleteLearningGraphRow(table: LearningGraphTable, id: stri
 }
 
 
-// ─── Phase 10j.2 — Discussions / Q&A / Submissions ─────────────────────────
+// â”€â”€â”€ Phase 10j.2 â€” Discussions / Q&A / Submissions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function listDiscussionThreads(cohortId: string) {
   const { data, error } = await supabase
     .from("discussion_threads")
@@ -624,7 +624,7 @@ export async function getSubmissionWithReviews(id: string) {
 export async function upsertSubmissionReview(payload: {
   submission_id: string;
   reviewer_id: string;
-  rubric: any;
+  rubric: unknown;
   score: number;
   comments?: string | null;
 }) {
@@ -643,7 +643,7 @@ export async function insertContentReport(payload: { scope: string; scope_id: st
 
 export async function getContentIdBySlug(slug: string): Promise<string | null> {
   const { data } = await supabase.from("content").select("id").eq("slug", slug).maybeSingle();
-  return ((data as any)?.id as string | null) ?? null;
+  return ((data as unknown)?.id as string | null) ?? null;
 }
 
 export async function findStudentIdByUserId(userId: string): Promise<string | null> {
@@ -653,7 +653,7 @@ export async function findStudentIdByUserId(userId: string): Promise<string | nu
     .eq("user_id", userId)
     .maybeSingle();
   if (error) throw error;
-  return ((data as any)?.id as string | null) ?? null;
+  return ((data as unknown)?.id as string | null) ?? null;
 }
 
 export async function requireStudentIdByUserId(userId: string): Promise<string> {
@@ -663,13 +663,13 @@ export async function requireStudentIdByUserId(userId: string): Promise<string> 
     .eq("user_id", userId)
     .single();
   if (error) throw error;
-  return String((data as any).id);
+  return String((data as unknown).id);
 }
 
 export async function getActiveAccessCode(
   code: string,
   contentId: string,
-): Promise<any | null> {
+): Promise<unknown | null> {
   const { data, error } = await supabase
     .from("access_codes")
     .select("*")
@@ -678,7 +678,7 @@ export async function getActiveAccessCode(
     .eq("is_active", true)
     .maybeSingle();
   if (error) throw error;
-  return data as any | null;
+  return data as unknown | null;
 }
 
 export async function insertEnrollmentRow(payload: {
@@ -686,13 +686,13 @@ export async function insertEnrollmentRow(payload: {
   content_id: string;
   status: string;
   payment_amount: number;
-}): Promise<{ error: any }> {
-  const { error } = await supabase.from("enrollments").insert(payload as any);
+}): Promise<{ error: unknown }> {
+  const { error } = await supabase.from("enrollments").insert(payload as unknown);
   return { error };
 }
 
 export async function insertQuizAttempt(payload: Record<string, unknown>): Promise<void> {
-  const { error } = await supabase.from("quiz_attempts").insert(payload as any);
+  const { error } = await supabase.from("quiz_attempts").insert(payload as unknown);
   if (error) throw error;
 }
 
@@ -702,7 +702,7 @@ export async function listQuizQuestionsByModule(moduleId: string) {
     .select("*")
     .eq("module_id", moduleId)
     .order("display_order");
-  return { data: data as any[] | null, error };
+  return { data: data as unknown[] | null, error };
 }
 
 export async function listFallbackQuizQuestionsByContent(contentId: string) {
@@ -712,7 +712,7 @@ export async function listFallbackQuizQuestionsByContent(contentId: string) {
     .eq("content_id", contentId)
     .is("module_id", null)
     .order("display_order");
-  return { data: data as any[] | null, error };
+  return { data: data as unknown[] | null, error };
 }
 
 export async function getAiInstructorName(id: string): Promise<string | null> {
@@ -722,7 +722,7 @@ export async function getAiInstructorName(id: string): Promise<string | null> {
     .eq("id", id)
     .maybeSingle();
   if (error) throw error;
-  return ((data as any)?.name as string | null) ?? null;
+  return ((data as unknown)?.name as string | null) ?? null;
 }
 
 // -----------------------------------------------------------------------------
@@ -737,7 +737,7 @@ export async function listAssessmentQuestionsForCategory(categoryId: string) {
     .or(`profession_category_id.is.null,profession_category_id.eq.${categoryId}`)
     .order("display_order");
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function getUpcomingPublishedEvent(daysAhead = 14) {
@@ -754,7 +754,7 @@ export async function getUpcomingPublishedEvent(daysAhead = 14) {
     .limit(1)
     .maybeSingle();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function listTalentSkillMastery(moduleId: string, signal?: AbortSignal) {
@@ -771,7 +771,7 @@ export async function listTalentSkillMastery(moduleId: string, signal?: AbortSig
 
 export async function getInstructorRecentEarningsCount(instructorUserId: string, sinceIso: string): Promise<number> {
   const { count, error } = await supabase
-    .from("instructor_earnings_ledger" as any)
+    .from("instructor_earnings_ledger" as unknown)
     .select("id", { count: "exact", head: true })
     .eq("instructor_user_id", instructorUserId)
     .gte("created_at", sinceIso);
@@ -795,7 +795,7 @@ export async function listEnrollmentsForContent(contentId: string) {
     .select("id,status,progress,current_module_id,last_accessed_at,enrolled_at,talent_id")
     .eq("content_id", contentId);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function listCourseModulesForContent(contentId: string) {
@@ -805,7 +805,7 @@ export async function listCourseModulesForContent(contentId: string) {
     .eq("content_id", contentId)
     .order("display_order", { ascending: true });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function listQuizAttemptsForModules(moduleIds: string[]) {
@@ -815,7 +815,7 @@ export async function listQuizAttemptsForModules(moduleIds: string[]) {
     .select("id,module_id,score,created_at,talent_id")
     .in("module_id", moduleIds);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function listScenarioRunsForModules(moduleIds: string[]) {
@@ -825,7 +825,7 @@ export async function listScenarioRunsForModules(moduleIds: string[]) {
     .select("id,module_id,evaluation,created_at,talent_id")
     .in("module_id", moduleIds);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function listModuleQuizPoolForModules(moduleIds: string[]) {
@@ -835,7 +835,7 @@ export async function listModuleQuizPoolForModules(moduleIds: string[]) {
     .select("module_id,quality_score,times_served")
     .in("module_id", moduleIds);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function listModuleScenarioPoolForModules(moduleIds: string[]) {
@@ -845,7 +845,7 @@ export async function listModuleScenarioPoolForModules(moduleIds: string[]) {
     .select("module_id,quality_score,times_served")
     .in("module_id", moduleIds);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 /* ---------------- Instructor CRUD (admin) ---------------- */
@@ -870,14 +870,14 @@ export async function getInstructorById(id: string) {
 }
 
 export async function insertInstructor(payload: Record<string, unknown>) {
-  const { error } = await supabase.from("instructors").insert([payload as any]);
+  const { error } = await supabase.from("instructors").insert([payload as unknown]);
   if (error) throw error;
 }
 
 export async function updateInstructor(id: string, patch: Record<string, unknown>) {
   const { error } = await supabase
     .from("instructors")
-    .update(patch as any)
+    .update(patch as unknown)
     .eq("id", id);
   if (error) throw error;
 }
@@ -913,7 +913,7 @@ export async function listAllSessionsWithRelations() {
 }
 
 export async function insertCourseSession(payload: Record<string, unknown>) {
-  const { error } = await supabase.from("course_sessions").insert(payload as any);
+  const { error } = await supabase.from("course_sessions").insert(payload as unknown);
   if (error) throw error;
 }
 
@@ -959,7 +959,7 @@ export async function listEnrollmentsWithRelations() {
 export async function getContentById(id: string) {
   const { data, error } = await supabase.from("content").select("*").eq("id", id).single();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function getContentBasic(id: string) {
@@ -983,7 +983,7 @@ export async function getContentSlim(id: string) {
 }
 
 export async function updateContent(id: string, patch: Record<string, unknown>) {
-  const { error } = await supabase.from("content").update(patch as any).eq("id", id);
+  const { error } = await supabase.from("content").update(patch as unknown).eq("id", id);
   if (error) throw error;
 }
 
@@ -1007,7 +1007,7 @@ export async function getContentBySlugPublished(slug: string) {
     .eq("is_published", true)
     .maybeSingle();
   if (error) throw error;
-  return data as any | null;
+  return data as unknown | null;
 }
 
 export async function getContentBySlugMaybe(slug: string) {
@@ -1017,7 +1017,7 @@ export async function getContentBySlugMaybe(slug: string) {
     .eq("slug", slug)
     .single();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function getContentBySlugWithProfession(slug: string) {
@@ -1027,7 +1027,7 @@ export async function getContentBySlugWithProfession(slug: string) {
     .eq("slug", slug)
     .maybeSingle();
   if (error) throw error;
-  return data as any | null;
+  return data as unknown | null;
 }
 
 export async function countCourseSessionsForContent(contentId: string): Promise<number> {
@@ -1043,11 +1043,11 @@ export async function countCourseSessionsForContent(contentId: string): Promise<
 export async function getCourseSessionById(id: string) {
   const { data, error } = await supabase.from("course_sessions").select("*").eq("id", id).single();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function updateCourseSession(id: string, patch: Record<string, unknown>) {
-  const { error } = await supabase.from("course_sessions").update(patch as any).eq("id", id);
+  const { error } = await supabase.from("course_sessions").update(patch as unknown).eq("id", id);
   if (error) throw error;
 }
 
@@ -1059,7 +1059,7 @@ export async function getCourseModuleById(id: string) {
     .eq("id", id)
     .maybeSingle();
   if (error) throw error;
-  return data as any | null;
+  return data as unknown | null;
 }
 
 export async function listCourseModulesForContentFull(contentId: string) {
@@ -1069,7 +1069,7 @@ export async function listCourseModulesForContentFull(contentId: string) {
     .eq("content_id", contentId)
     .order("display_order", { ascending: true, nullsFirst: false });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function listCourseModuleSummariesForContent(contentId: string) {
@@ -1079,7 +1079,7 @@ export async function listCourseModuleSummariesForContent(contentId: string) {
     .eq("content_id", contentId)
     .order("order_index", { ascending: true });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function listCourseModulesByDisplayOrder(contentId: string) {
@@ -1089,7 +1089,7 @@ export async function listCourseModulesByDisplayOrder(contentId: string) {
     .eq("content_id", contentId)
     .order("display_order");
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function listCourseModulesLite(contentId: string) {
@@ -1099,21 +1099,21 @@ export async function listCourseModulesLite(contentId: string) {
     .eq("content_id", contentId)
     .order("display_order");
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function insertCourseModuleReturning(payload: Record<string, unknown>) {
   const { data, error } = await supabase
     .from("course_modules")
-    .insert([payload as any])
+    .insert([payload as unknown])
     .select()
     .single();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function updateCourseModule(id: string, patch: Record<string, unknown>) {
-  const { error } = await supabase.from("course_modules").update(patch as any).eq("id", id);
+  const { error } = await supabase.from("course_modules").update(patch as unknown).eq("id", id);
   if (error) throw error;
 }
 
@@ -1161,28 +1161,28 @@ export async function listModuleResourcesForModule(moduleId: string) {
     .order("stage_number", { ascending: true })
     .order("display_order", { ascending: true });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function insertModuleResourceReturning(payload: Record<string, unknown>) {
   const { data, error } = await supabase
     .from("module_resources")
-    .insert([payload as any])
+    .insert([payload as unknown])
     .select()
     .single();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function updateModuleResourceReturning(id: string, patch: Record<string, unknown>) {
   const { data, error } = await supabase
     .from("module_resources")
-    .update(patch as any)
+    .update(patch as unknown)
     .eq("id", id)
     .select()
     .single();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function deleteModuleResourceById(id: string) {
@@ -1208,7 +1208,7 @@ export async function listQuizQuestionsByModuleOrdered(moduleId: string) {
     .eq("module_id", moduleId)
     .order("display_order");
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function listQuizQuestionsByContentOrdered(contentId: string) {
@@ -1218,7 +1218,7 @@ export async function listQuizQuestionsByContentOrdered(contentId: string) {
     .eq("content_id", contentId)
     .order("display_order");
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function deleteQuizQuestionsForModule(moduleId: string) {
@@ -1228,7 +1228,7 @@ export async function deleteQuizQuestionsForModule(moduleId: string) {
 
 export async function insertQuizQuestions(rows: Record<string, unknown>[]) {
   if (!rows.length) return;
-  const { error } = await supabase.from("quiz_questions").insert(rows as any);
+  const { error } = await supabase.from("quiz_questions").insert(rows as unknown);
   if (error) throw error;
 }
 
@@ -1240,7 +1240,7 @@ export async function getStudentRecordByUserId(userId: string) {
     .eq("user_id", userId)
     .maybeSingle();
   if (error) throw error;
-  return data as any | null;
+  return data as unknown | null;
 }
 
 export async function getStudentIdByUserIdStrict(userId: string) {
@@ -1250,7 +1250,7 @@ export async function getStudentIdByUserIdStrict(userId: string) {
     .eq("user_id", userId)
     .single();
   if (error) throw error;
-  return String((data as any).id);
+  return String((data as unknown).id);
 }
 
 export async function getEnrollmentForStudentAndContent(studentId: string, contentId: string) {
@@ -1272,7 +1272,7 @@ export async function findEnrollmentIdForStudentAndContent(studentId: string, co
     .eq("content_id", contentId)
     .maybeSingle();
   if (error) throw error;
-  return ((data as any)?.id as string | null) ?? null;
+  return ((data as unknown)?.id as string | null) ?? null;
 }
 
 export async function getEnrollmentForActorIds(contentId: string, actorIds: string[]) {
@@ -1288,11 +1288,11 @@ export async function getEnrollmentForActorIds(contentId: string, actorIds: stri
     .or(orFilter)
     .maybeSingle();
   if (error) throw error;
-  return data as any | null;
+  return data as unknown | null;
 }
 
 export async function updateEnrollmentRow(id: string, patch: Record<string, unknown>) {
-  const { error } = await supabase.from("enrollments").update(patch as any).eq("id", id);
+  const { error } = await supabase.from("enrollments").update(patch as unknown).eq("id", id);
   if (error) throw error;
 }
 
@@ -1305,7 +1305,7 @@ export async function getActiveAIInstructorByProfessionLine(professionLineId: st
     .eq("is_active", true)
     .maybeSingle();
   if (error) throw error;
-  return data as any | null;
+  return data as unknown | null;
 }
 
 
@@ -1316,10 +1316,10 @@ export async function getCertificateById(id: string) {
     .eq("id", id)
     .single();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
-// ─── Phase 10j.5d additions ────────────────────────────────────────────────
+// â”€â”€â”€ Phase 10j.5d additions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function listContentByIdsBasic(ids: string[]) {
   if (!ids.length) return [];
   const { data, error } = await supabase
@@ -1327,17 +1327,17 @@ export async function listContentByIdsBasic(ids: string[]) {
     .select("id, title, slug, thumbnail_url")
     .in("id", ids);
   if (error) throw error;
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
-// ─── Phase 10j.5e: instructor review queue + IELTS access ──────────────────
+// â”€â”€â”€ Phase 10j.5e: instructor review queue + IELTS access â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function listPublishedContentIdsLimit(limit = 50): Promise<string[]> {
   const { data } = await supabase
     .from("content")
     .select("id")
     .eq("is_published", true)
     .limit(limit);
-  return ((data as any[]) ?? []).map((c) => c.id as string);
+  return ((data as unknown[]) ?? []).map((c) => c.id as string);
 }
 
 export async function findInstructorIdByEmail(email: string): Promise<string | null> {
@@ -1346,7 +1346,7 @@ export async function findInstructorIdByEmail(email: string): Promise<string | n
     .select("id")
     .eq("email", email)
     .maybeSingle();
-  return (data as any)?.id ?? null;
+  return (data as unknown)?.id ?? null;
 }
 
 export async function listContentIdsForInstructor(instructorId: string): Promise<string[]> {
@@ -1354,7 +1354,7 @@ export async function listContentIdsForInstructor(instructorId: string): Promise
     .from("content_instructors")
     .select("content_id")
     .eq("instructor_id", instructorId);
-  return ((data as any[]) ?? []).map((r) => r.content_id as string);
+  return ((data as unknown[]) ?? []).map((r) => r.content_id as string);
 }
 
 export async function listCourseModuleIdsByContentIds(contentIds: string[]): Promise<string[]> {
@@ -1363,19 +1363,19 @@ export async function listCourseModuleIdsByContentIds(contentIds: string[]): Pro
     .from("course_modules")
     .select("id")
     .in("content_id", contentIds);
-  return ((data as any[]) ?? []).map((m) => m.id as string);
+  return ((data as unknown[]) ?? []).map((m) => m.id as string);
 }
 
-export async function insertIeltsResourceAccess(talentId: string, resourceId: string): Promise<{ error: any }> {
+export async function insertIeltsResourceAccess(talentId: string, resourceId: string): Promise<{ error: unknown }> {
   const { error } = await supabase
     .from("ielts_resource_access")
-    .insert([{ talent_id: talentId, resource_id: resourceId } as any]);
+    .insert([{ talent_id: talentId, resource_id: resourceId } as unknown]);
   return { error };
 }
 
-// ─── Phase 10j.6a: learning RPC helpers ────────────────────────────────────
+// â”€â”€â”€ Phase 10j.6a: learning RPC helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getInstructorEarningsSummary() {
-  const { data, error } = await (supabase as any).rpc("get_instructor_earnings_summary");
+  const { data, error } = await (supabase as unknown).rpc("get_instructor_earnings_summary");
   if (error) throw error;
   return data;
 }
@@ -1385,7 +1385,7 @@ export async function acceptLessonAnswer(_question_id: string, _answer_id: strin
   if (error) throw error;
 }
 
-// ─── Phase 10j.5g: gro10x B2B catalog + assignments ───────────────────────
+// â”€â”€â”€ Phase 10j.5g: gro10x B2B catalog + assignments â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export interface B2BCatalogCourse {
   id: string;
   title: string;
@@ -1413,7 +1413,7 @@ export async function listB2BCatalog(): Promise<B2BCatalogCourse[]> {
 export async function listMyCompanyCourseAssignments(
   userId: string,
   companyId: string | null,
-): Promise<any[]> {
+): Promise<unknown[]> {
   const orFilter = companyId
     ? `assigned_to.eq.${userId},and(assigned_to.is.null,company_id.eq.${companyId})`
     : `assigned_to.eq.${userId}`;
@@ -1427,10 +1427,10 @@ export async function listMyCompanyCourseAssignments(
     .or(orFilter)
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []).map((r: any) => ({ ...r, company_name: r.company?.name ?? null }));
+  return (data ?? []).map((r: unknown) => ({ ...r, company_name: r.company?.name ?? null }));
 }
 
-export async function listCompanyCourseAssignmentsByCompany(companyId: string): Promise<any[]> {
+export async function listCompanyCourseAssignmentsByCompany(companyId: string): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("company_course_assignments")
     .select(
@@ -1443,8 +1443,8 @@ export async function listCompanyCourseAssignmentsByCompany(companyId: string): 
   return data ?? [];
 }
 
-// ─── Phase 10j.5g2: course project + subtasks (CourseProjectDetail) ───────
-export async function getCourseProjectById(id: string): Promise<{ data: any; error: any }> {
+// â”€â”€â”€ Phase 10j.5g2: course project + subtasks (CourseProjectDetail) â”€â”€â”€â”€â”€â”€â”€
+export async function getCourseProjectById(id: string): Promise<{ data: unknown; error: unknown }> {
   const { data, error } = await supabase
     .from("course_projects")
     .select("id, course_id, status, claimed_by, deadline, total_credit_reward, progress_percent")
@@ -1453,7 +1453,7 @@ export async function getCourseProjectById(id: string): Promise<{ data: any; err
   return { data, error };
 }
 
-export async function getCourseProjectCourse(courseId: string): Promise<any | null> {
+export async function getCourseProjectCourse(courseId: string): Promise<unknown | null> {
   const { data } = await supabase
     .from("content")
     .select("id, title, description, cover_image_url")
@@ -1462,7 +1462,7 @@ export async function getCourseProjectCourse(courseId: string): Promise<any | nu
   return data ?? null;
 }
 
-export async function listCourseProjectSubtasks(projectId: string): Promise<any[]> {
+export async function listCourseProjectSubtasks(projectId: string): Promise<unknown[]> {
   const { data } = await supabase
     .from("course_project_subtasks")
     .select(
@@ -1471,10 +1471,10 @@ export async function listCourseProjectSubtasks(projectId: string): Promise<any[
     .eq("project_id", projectId)
     .order("display_order", { ascending: true })
     .order("created_at", { ascending: true });
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-export async function submitCourseProject(projectId: string): Promise<{ error: any }> {
+export async function submitCourseProject(projectId: string): Promise<{ error: unknown }> {
   const { error } = await supabase
     .from("course_projects")
     .update({ status: "submitted", submitted_at: new Date().toISOString() })
@@ -1484,19 +1484,19 @@ export async function submitCourseProject(projectId: string): Promise<{ error: a
 
 export async function updateCourseProjectSubtask(
   subtaskId: string,
-  patch: Record<string, any>,
-): Promise<{ error: any }> {
+  patch: Record<string, unknown>,
+): Promise<{ error: unknown }> {
   const { error } = await supabase.from("course_project_subtasks").update(patch).eq("id", subtaskId);
   return { error };
 }
 
-export async function claimCourseProject(projectId: string): Promise<any> {
+export async function claimCourseProject(projectId: string): Promise<unknown> {
   const { data, error } = await supabase.rpc("claim_course_project", { p_project_id: projectId });
   if (error) throw error;
   return data;
 }
 
-// ─── Phase 10j.5g4 ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Phase 10j.5g4 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function listRecommendedCoursesForProfession(
   professionLineId: string,
   limit = 3,
@@ -1546,10 +1546,10 @@ export async function getPublicWebinarBySlug(slug: string) {
     .eq("is_published", true)
     .maybeSingle();
   if (error) throw error;
-  return data as any | null;
+  return data as unknown | null;
 }
 
-// ─── Phase 10j.5h3: RPC wrappers ──────────────────────────────────────────
+// â”€â”€â”€ Phase 10j.5h3: RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function enrollLearningTrack(trackId: string): Promise<string> {
   const { data, error } = await supabase.rpc("talent_enroll_track", { p_track_id: trackId });
   if (error) throw error;
@@ -1562,15 +1562,15 @@ export async function upcomingSessionsForUser(args: { userId: string; limit: num
     _limit: args.limit,
   });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-// ─── Phase 10j.5h7: Learning / Org RPC wrappers ───────────────────────────
+// â”€â”€â”€ Phase 10j.5h7: Learning / Org RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getTutorMasteryContext(args: {
   talentId: string;
   moduleId?: string | null;
   contentId?: string | null;
-}): Promise<any> {
+}): Promise<unknown> {
   const { data, error } = await supabase.rpc("get_tutor_mastery_context", {
     _talent_id: args.talentId,
     _module_id: args.moduleId ?? null,
@@ -1580,13 +1580,13 @@ export async function getTutorMasteryContext(args: {
   return data;
 }
 
-export async function getOrgLearningHealth<T = any>(companyId: string): Promise<T> {
+export async function getOrgLearningHealth<T = unknown>(companyId: string): Promise<T> {
   const { data, error } = await supabase.rpc("org_learning_health", { p_company_id: companyId });
   if (error) throw error;
   return data as T;
 }
 
-export async function getOrgTeamMastery<T = any>(args: {
+export async function getOrgTeamMastery<T = unknown>(args: {
   companyId: string;
   contentId?: string | null;
 }): Promise<T[]> {
@@ -1606,7 +1606,7 @@ export async function orgAssignTalents(input: {
   due_at?: string | null;
   budget_per_seat?: number | null;
   note?: string | null;
-}): Promise<any> {
+}): Promise<unknown> {
   const { data, error } = await supabase.rpc("org_assign_talents", {
     p_company_id: input.company_id,
     p_content_id: input.content_id,
@@ -1620,7 +1620,7 @@ export async function orgAssignTalents(input: {
   return data;
 }
 
-export async function getCohortHealth(cohortId: string): Promise<any> {
+export async function getCohortHealth(cohortId: string): Promise<unknown> {
   const { data, error } = await supabase.rpc("cohort_health", { _cohort_id: cohortId });
   if (error) throw error;
   return Array.isArray(data) ? data[0] : data;
@@ -1631,13 +1631,13 @@ export async function markSessionAttendance(sessionId: string): Promise<void> {
   if (error) throw error;
 }
 
-export async function getInstructorSessionAttendance<T = any>(sessionId: string): Promise<T[]> {
+export async function getInstructorSessionAttendance<T = unknown>(sessionId: string): Promise<T[]> {
   const { data, error } = await supabase.rpc("instructor_session_attendance", { _session_id: sessionId });
   if (error) throw error;
   return (data ?? []) as T[];
 }
 
-export async function getAuthoringTrends<T = any>(args: { instructorId: string; days: number }): Promise<T> {
+export async function getAuthoringTrends<T = unknown>(args: { instructorId: string; days: number }): Promise<T> {
   const { data, error } = await supabase.rpc("get_authoring_trends", {
     _instructor_id: args.instructorId,
     _days: args.days,
@@ -1646,7 +1646,7 @@ export async function getAuthoringTrends<T = any>(args: { instructorId: string; 
   return data as T;
 }
 
-export async function getTrackProgress<T = any>(assignmentId: string): Promise<T> {
+export async function getTrackProgress<T = unknown>(assignmentId: string): Promise<T> {
   const { data, error } = await supabase.rpc("get_track_progress", { p_assignment_id: assignmentId });
   if (error) throw error;
   return data as T;
@@ -1657,7 +1657,7 @@ export async function orgAssignTrack(input: {
   company_id: string;
   user_ids: string[];
   due_at?: string | null;
-}): Promise<any> {
+}): Promise<unknown> {
   const { data, error } = await supabase.rpc("org_assign_track", {
     p_track_id: input.track_id,
     p_company_id: input.company_id,
@@ -1669,24 +1669,24 @@ export async function orgAssignTrack(input: {
 }
 
 
-// ─── Phase 10j.5h8: hub, instructor, enrollment, readiness RPC wrappers ───
-export async function getLearningHubDashboard<T = any>(): Promise<T> {
+// â”€â”€â”€ Phase 10j.5h8: hub, instructor, enrollment, readiness RPC wrappers â”€â”€â”€
+export async function getLearningHubDashboard<T = unknown>(): Promise<T> {
   const { data, error } = await supabase.rpc("get_learning_hub_dashboard");
   if (error) throw error;
   return data as T;
 }
 
-export async function getInstructorSummary<T = any>(): Promise<T> {
+export async function getInstructorSummary<T = unknown>(): Promise<T> {
   const { data, error } = await supabase.rpc("get_instructor_summary");
   if (error) throw error;
   return data as T;
 }
 
-export async function enrollInContent<T = any>(args: {
+export async function enrollInContent<T = unknown>(args: {
   contentId: string;
   refCode: string | null;
 }): Promise<T> {
-  const { data, error } = await supabase.rpc("enroll_in_content" as any, {
+  const { data, error } = await supabase.rpc("enroll_in_content" as unknown, {
     p_content_id: args.contentId,
     p_ref_code: args.refCode,
   });
@@ -1699,25 +1699,25 @@ export async function recomputeContentReadiness(contentId: string) {
   if (error) throw error;
 }
 
-// ─── Phase 10j.5h9 ────────────────────────────────────────────────────────
-export async function getInstructorDashboardV2<T = any>(): Promise<T | null> {
+// â”€â”€â”€ Phase 10j.5h9 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function getInstructorDashboardV2<T = unknown>(): Promise<T | null> {
   const { data, error } = await supabase.rpc("get_instructor_dashboard_v2");
   if (error) throw error;
   return (data ?? null) as T | null;
 }
 
 export async function incrementContentEnrollment(rowId: string): Promise<void> {
-  const { error } = await supabase.rpc("increment_content_enrollment" as any, { row_id: rowId });
+  const { error } = await supabase.rpc("increment_content_enrollment" as unknown, { row_id: rowId });
   if (error) throw error;
 }
 
 export async function incrementAccessCodeUse(rowId: string): Promise<void> {
-  const { error } = await supabase.rpc("increment_access_code_use" as any, { row_id: rowId });
+  const { error } = await supabase.rpc("increment_access_code_use" as unknown, { row_id: rowId });
   if (error) throw error;
 }
 
 // -----------------------------------------------------------------------------
-// Storage helpers (Phase 10j.5i) — module resources (public)
+// Storage helpers (Phase 10j.5i) â€” module resources (public)
 // -----------------------------------------------------------------------------
 
 export async function uploadModuleResource(
@@ -1735,7 +1735,7 @@ export async function uploadModuleResource(
 }
 
 // -----------------------------------------------------------------------------
-// Storage helpers — assessment / IELTS audio (private buckets)
+// Storage helpers â€” assessment / IELTS audio (private buckets)
 // -----------------------------------------------------------------------------
 
 export async function uploadIeltsAudio(
@@ -1763,7 +1763,7 @@ export async function uploadAssessmentAudio(
 }
 
 // -----------------------------------------------------------------------------
-// Realtime helpers (Phase 10j.5k1) — discussion + Q&A CDC subscriptions
+// Realtime helpers (Phase 10j.5k1) â€” discussion + Q&A CDC subscriptions
 // -----------------------------------------------------------------------------
 
 export function subscribeDiscussionPostsForCohort(cohortId: string, onChange: () => void): () => void {
@@ -1804,7 +1804,7 @@ export function subscribeLessonAnswers(
   };
 }
 
-// ─── Phase 10j.5k5: enrollment lookup + skill-credentials ────────────────
+// â”€â”€â”€ Phase 10j.5k5: enrollment lookup + skill-credentials â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function findTalentEnrollment(
   contentId: string,
   talentId: string,
@@ -1816,10 +1816,10 @@ export async function findTalentEnrollment(
     .or(`talent_id.eq.${talentId},student_id.eq.${talentId}`)
     .maybeSingle();
   if (error) throw error;
-  return (data as any) ?? null;
+  return (data as unknown) ?? null;
 }
 
-export async function listTalentSkillCredentials(talentId: string): Promise<any[]> {
+export async function listTalentSkillCredentials(talentId: string): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("skill_credentials")
     .select("*, content:content_id(title, slug)")
@@ -1827,14 +1827,14 @@ export async function listTalentSkillCredentials(talentId: string): Promise<any[
     .is("revoked_at", null)
     .order("issued_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-// ─── Phase 10j.5k7 — resource progress / org learning ───────────────────
+// â”€â”€â”€ Phase 10j.5k7 â€” resource progress / org learning â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getEnrollmentResourceState(
   enrollmentId: string,
   moduleId: string,
-): Promise<Record<string, any>> {
+): Promise<Record<string, unknown>> {
   const { data, error } = await supabase
     .from("enrollment_stage_progress")
     .select("resource_state")
@@ -1842,42 +1842,42 @@ export async function getEnrollmentResourceState(
     .eq("module_id", moduleId)
     .maybeSingle();
   if (error) throw error;
-  return (data?.resource_state as Record<string, any>) ?? {};
+  return (data?.resource_state as Record<string, unknown>) ?? {};
 }
 
 export async function updateEnrollmentResourceState(
   enrollmentId: string,
   moduleId: string,
-  payload: Record<string, any>,
+  payload: Record<string, unknown>,
 ): Promise<void> {
   const { error } = await supabase
     .from("enrollment_stage_progress")
-    .update({ resource_state: payload as any })
+    .update({ resource_state: payload as unknown })
     .eq("enrollment_id", enrollmentId)
     .eq("module_id", moduleId);
   if (error) throw error;
 }
 
-export async function listCompanyCourseAssignments(companyId: string): Promise<any[]> {
+export async function listCompanyCourseAssignments(companyId: string): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("company_course_assignments")
     .select("*, content:content_id(id,title), cohort:cohort_id(id,name)")
     .eq("company_id", companyId)
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-export async function listCompanyLearningSeats(companyId: string): Promise<any[]> {
+export async function listCompanyLearningSeats(companyId: string): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("company_learning_seats")
     .select("*, content:content_id(id,title)")
     .eq("company_id", companyId);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-// ─── Phase 10j.5k9: learning stats hook ───────────────────────────────────
+// â”€â”€â”€ Phase 10j.5k9: learning stats hook â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function listActiveTalentEnrollmentsWithModules(talentId: string, limit = 10) {
   const { data, error } = await supabase
     .from("enrollments")
@@ -1893,7 +1893,7 @@ export async function listActiveTalentEnrollmentsWithModules(talentId: string, l
     .order("last_accessed_at", { ascending: false, nullsFirst: false })
     .limit(limit);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function countCompletedEnrollments(talentId: string): Promise<number> {
@@ -1914,10 +1914,10 @@ export async function listRecentLearningActivity(talentId: string, limit = 30) {
     .order("activity_date", { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-// ─── Phase 10j.5k10: certificates, cohorts, course progress ────────────────
+// â”€â”€â”€ Phase 10j.5k10: certificates, cohorts, course progress â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getCertificateMinimalByEnrollment(enrollmentId: string) {
   const { data, error } = await supabase
     .from("certificates")
@@ -1925,17 +1925,17 @@ export async function getCertificateMinimalByEnrollment(enrollmentId: string) {
     .eq("enrollment_id", enrollmentId)
     .maybeSingle();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function insertCertificate(payload: Record<string, unknown>) {
   const { data, error } = await supabase
     .from("certificates")
-    .insert(payload as any)
+    .insert(payload as unknown)
     .select("id, verify_code")
     .single();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function getCertificateFullByEnrollment(enrollmentId: string) {
@@ -1945,7 +1945,7 @@ export async function getCertificateFullByEnrollment(enrollmentId: string) {
     .eq("enrollment_id", enrollmentId)
     .maybeSingle();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function listCohortsByContent(contentId: string) {
@@ -1965,7 +1965,7 @@ export async function getCohortDetail(cohortId: string) {
     .eq("id", cohortId)
     .maybeSingle();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function listCohortSessions(cohortId: string) {
@@ -1985,7 +1985,7 @@ export async function listCourseModulesByContent(contentId: string) {
     .eq("content_id", contentId)
     .order("display_order", { ascending: true });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function listStudentResourceProgressFull(talentId: string) {
@@ -1993,8 +1993,8 @@ export async function listStudentResourceProgressFull(talentId: string) {
     .from("student_resource_progress")
     .select("resource_id, completed_at, module_resources!inner(module_id, stage_number)")
     .eq("student_id", talentId);
-  if (error && (error as any).code !== "PGRST116") throw error;
-  return (data ?? []) as any[];
+  if (error && (error as unknown).code !== "PGRST116") throw error;
+  return (data ?? []) as unknown[];
 }
 
 export async function listModuleResourceIdsByStage(moduleId: string, stageNumber: number) {
@@ -2011,19 +2011,19 @@ export async function upsertStudentResourceProgress(rows: Array<{ student_id: st
   if (!rows.length) return;
   const { error } = await supabase
     .from("student_resource_progress")
-    .upsert(rows as any, { onConflict: "student_id,resource_id" });
+    .upsert(rows as unknown, { onConflict: "student_id,resource_id" });
   if (error) throw error;
 }
 
-export async function markEnrollmentCompleted(enrollmentId: string): Promise<{ error: any }> {
+export async function markEnrollmentCompleted(enrollmentId: string): Promise<{ error: unknown }> {
   const { error } = await supabase
     .from("enrollments")
-    .update({ status: "completed", completed_at: new Date().toISOString() } as any)
+    .update({ status: "completed", completed_at: new Date().toISOString() } as unknown)
     .eq("id", enrollmentId);
   return { error };
 }
 
-// ─── Phase 10j.5k11: ReportCard + verification helpers ────────────────────
+// â”€â”€â”€ Phase 10j.5k11: ReportCard + verification helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getEnrollmentWithStudentAndContent(enrollmentId: string) {
   const { data, error } = await supabase
     .from("enrollments")
@@ -2031,7 +2031,7 @@ export async function getEnrollmentWithStudentAndContent(enrollmentId: string) {
     .eq("id", enrollmentId)
     .single();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function getLatestQuizAttemptByEnrollment(enrollmentId: string) {
@@ -2043,7 +2043,7 @@ export async function getLatestQuizAttemptByEnrollment(enrollmentId: string) {
     .limit(1)
     .maybeSingle();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function getSkillCredentialByVerifyCode(code: string) {
@@ -2053,7 +2053,7 @@ export async function getSkillCredentialByVerifyCode(code: string) {
     .eq("verify_code", code.toUpperCase())
     .maybeSingle();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function getCertificateByVerifyCode(code: string) {
@@ -2062,7 +2062,7 @@ export async function getCertificateByVerifyCode(code: string) {
     .select("id, holder_name, course_title, verify_code, percentage, score, total_questions, issued_at, kind")
     .eq("verify_code", code.toUpperCase())
     .single();
-  return { data: data as any, error };
+  return { data: data as unknown, error };
 }
 
 // === Phase 10b: additional repo helpers ===
@@ -2085,19 +2085,19 @@ export function subscribeToModuleProgress(
   };
 }
 
-export async function listCourseBriefs(): Promise<any[]> {
+export async function listCourseBriefs(): Promise<unknown[]> {
   const { data, error } = await supabase
-    .from("course_briefs" as any)
+    .from("course_briefs" as unknown)
     .select("*")
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-export async function insertCourseBrief(input: Record<string, any>): Promise<any> {
+export async function insertCourseBrief(input: Record<string, unknown>): Promise<unknown> {
   const { data, error } = await supabase
-    .from("course_briefs" as any)
-    .insert(input as any)
+    .from("course_briefs" as unknown)
+    .insert(input as unknown)
     .select()
     .maybeSingle();
   if (error) throw error;
@@ -2147,10 +2147,10 @@ export async function listPublishedLearningTracks(limit = 24) {
   return data ?? [];
 }
 
-export async function insertLearningTrack(input: Record<string, any>) {
+export async function insertLearningTrack(input: Record<string, unknown>) {
   const { data, error } = await supabase
     .from("learning_tracks")
-    .insert(input as any)
+    .insert(input as unknown)
     .select()
     .single();
   if (error) throw error;
@@ -2185,7 +2185,7 @@ export async function submitContentForReview(contentId: string) {
     .update({
       author_status: "submitted",
       submitted_at: new Date().toISOString(),
-    } as any)
+    } as unknown)
     .eq("id", contentId);
   if (error) throw error;
 }
@@ -2235,7 +2235,7 @@ export async function getTalentIdByUserId(userId: string): Promise<string | null
     .eq("user_id", userId)
     .maybeSingle();
   if (error) throw error;
-  return (data as any)?.id ?? null;
+  return (data as unknown)?.id ?? null;
 }
 
 export async function listTalentEnrollmentsLite(talentId: string) {
@@ -2337,7 +2337,7 @@ export async function listContentForModulePicker(limit = 200) {
     .order("created_at", { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function listQuizEnabledCourses() {
@@ -2366,3 +2366,5 @@ export async function listQuizAttemptsAdmin(contentId: string | null, limit = 10
   if (error) return [];
   return data ?? [];
 }
+
+

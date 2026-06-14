@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -93,7 +93,7 @@ export default function MyResults() {
  void portfolios;
 
  return [
- ...(assessments?.map((a: any) => ({
+ ...(assessments?.map((a: unknown) => ({
  id: a.id,
  type: "assessment" as const,
  title: "Career Readiness",
@@ -101,7 +101,7 @@ export default function MyResults() {
  status: a.readiness_level,
  score: a.percentage,
  })) || []),
- ...(interviews?.map((i: any) => ({
+ ...(interviews?.map((i: unknown) => ({
  id: i.id,
  type: "interview" as const,
  title: i.job_title || "Mock Interview",
@@ -150,3 +150,5 @@ export default function MyResults() {
  </div>
  );
 }
+
+

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+﻿import { useState, useMemo } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { insertAiAgent } from "@/domains/agents/repo/agentsRepo";
 import { useTalent } from "@/hooks/useTalent";
@@ -72,15 +72,15 @@ export function CreatorOnboardingDialog({ open, onOpenChange, onCreated }: Creat
         throw new Error("INSUFFICIENT_CONTEXT: Brief payload requires length >= 20 characters.");
       }
 
-      // HUD: INVOKING_AGENT_BLUEPRINT_EDGE_ENGINE
-      const data: any = await agentBlueprint({ brief: brief.trim(), name: name.trim() || "New agent" });
+      // dashboard: INVOKING_AGENT_BLUEPRINT_EDGE_ENGINE
+      const data: unknown = await agentBlueprint({ brief: brief.trim(), name: name.trim() || "New agent" });
       return (data?.blueprint ?? data ?? null) as BlueprintPayload;
     },
     onSuccess: (generatedBlueprint) => {
       setBlueprint(generatedBlueprint);
       setStep(1);
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       console.warn(
         "[Digital Workforce] WARNING: Neural link unstable. Bypassing to manual logic fallback mode.",
         err.message,
@@ -111,7 +111,7 @@ export function CreatorOnboardingDialog({ open, onOpenChange, onCreated }: Creat
         .slice(0, 40);
       const uniqueSlug = `${safeSlug}-${Math.random().toString(36).slice(2, 6)}`;
 
-      // HUD: COMMITTING_AGENT_RECORD_INSERTION
+      // dashboard: COMMITTING_AGENT_RECORD_INSERTION
       try {
         await insertAiAgent({
           agent_key: uniqueSlug,
@@ -126,7 +126,7 @@ export function CreatorOnboardingDialog({ open, onOpenChange, onCreated }: Creat
           message_credit_cost: credits,
           is_active: true,
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         // Digital Workforce Anomaly Trigger: Imprints explicit failure trace parameters
         console.error("[Digital Workforce] ANOMALY: ai_agents ledger entry validation failure.", {
           talentId: talent.id,
@@ -384,3 +384,5 @@ export function CreatorOnboardingDialog({ open, onOpenChange, onCreated }: Creat
     </Dialog>
   );
 }
+
+

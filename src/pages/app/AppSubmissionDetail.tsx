@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { Link, useParams } from "react-router-dom";
 import { ChevronLeft, Loader2, Send, Inbox, ShieldAlert, Paperclip, CheckCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -77,7 +77,7 @@ const SCORING_RANGE_INDEX = [1, 2, 3, 4, 5];
 /**
  * GroUp Academy: Technical Peer-Review Evaluation Workspace (AppSubmissionDetail)
  * Hardened rubric evaluation terminal locking inline score arithmetic and isolating collection mapping records from DOM drift.
- * Version: Launch Candidate · Phase Z1 Transaction Matrix Sealed
+ * Version: Launch Candidate Â· Phase Z1 Transaction Matrix Sealed
  */
 export default function AppSubmissionDetail() {
  const { submissionId: unverifiedSubmissionIdStr } = useParams<{ submissionId: string }>();
@@ -155,7 +155,7 @@ export default function AppSubmissionDetail() {
  title: "Review submitted",
  description: "Your review has been saved.",
  });
- } catch (mutationExceptionPayload: any) {
+ } catch (mutationExceptionPayload: unknown) {
  toast({
  title: "Couldn't submit review",
  description: mutationExceptionPayload.message || "Something went wrong. Please try again.",
@@ -223,7 +223,7 @@ export default function AppSubmissionDetail() {
 
  return (
  <div className="max-w-2xl mx-auto px-4 py-4 pb-32 text-left antialiased block transform-gpu w-full">
- {/* HUD LEVEL 1: APPLICATION DIR RUNWAY HUD ROUTER CONSOLE */}
+ {/* dashboard LEVEL 1: APPLICATION DIR RUNWAY dashboard ROUTER CONSOLE */}
  <header className="block w-full select-none pb-2 border-b border-border/10">
  <Link
  to="/app/review-queue"
@@ -257,7 +257,7 @@ export default function AppSubmissionDetail() {
  </div>
  </header>
 
- {/* HUD LEVEL 2: DETAILED ABSTRACT SUBMISSION RECORD DESCRIPTION BODY CARD */}
+ {/* dashboard LEVEL 2: DETAILED ABSTRACT SUBMISSION RECORD DESCRIPTION BODY CARD */}
  <main className="mt-4 space-y-4 block w-full">
  <Card className="rounded-lg border border-border/60 bg-card/40 shadow-none overflow-hidden block w-full">
  <CardContent className="p-3.5 space-y-3 block w-full leading-none">
@@ -290,7 +290,7 @@ export default function AppSubmissionDetail() {
  </CardContent>
  </Card>
 
- {/* HUD LEVEL 3: HISTORIC VERIFIED RECRUITER AND PEER REVIEWS LOG PANEL STREAM */}
+ {/* dashboard LEVEL 3: HISTORIC VERIFIED RECRUITER AND PEER REVIEWS LOG PANEL STREAM */}
  {(isCurrentUserAuthorFlag ||
  assignmentSubmissionItem.status === "reviewed" ||
  assignmentSubmissionItem.status === "approved") &&
@@ -331,7 +331,7 @@ export default function AppSubmissionDetail() {
  </section>
  )}
 
- {/* HUD LEVEL 4: SYSTEM ASSIGNED INTERACTIVE RUBRIC SCORING TERMINAL SLOT */}
+ {/* dashboard LEVEL 4: SYSTEM ASSIGNED INTERACTIVE RUBRIC SCORING TERMINAL SLOT */}
  {isReviewerAssignedFlag && !hasAlreadyReviewedFlag && (
  <section className="space-y-2 block w-full pt-2">
  <h2 className="text-xs font-mono font-extrabold uppercase tracking-wide text-primary select-none block leading-none pb-2 border-b border-border/5">
@@ -422,3 +422,5 @@ export default function AppSubmissionDetail() {
  </div>
  );
 }
+
+

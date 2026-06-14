@@ -1,5 +1,5 @@
-/**
- * Phase 4.1 — Atomic publish: course brief → hidden instructor job.
+﻿/**
+ * Phase 4.1 â€” Atomic publish: course brief â†’ hidden instructor job.
  * Admin / content_lead only.
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
@@ -33,7 +33,7 @@ Deno.serve(async (req) => {
       .from("user_roles")
       .select("role")
       .eq("user_id", u.user.id);
-    const allowed = (roles ?? []).some((r: any) =>
+    const allowed = (roles ?? []).some((r: unknown) =>
       ["admin", "super_admin", "content_lead"].includes(r.role)
     );
     if (!allowed) return json({ error: "Forbidden" }, 403);
@@ -67,13 +67,13 @@ Deno.serve(async (req) => {
       "- Run live sessions or record lessons",
       "",
       "**How to apply**",
-      "Submit your CV, a 2-min teaching video link in your cover letter, and any prior course portfolio.",
+      "Submit your CV, a 2-min teaching video link in your cover letter, and unknown prior course portfolio.",
     ].join("\n");
 
     const { data: job, error: jErr } = await admin
       .from("jobs")
       .insert({
-        title: `Instructor — ${brief.title}`,
+        title: `Instructor â€” ${brief.title}`,
         company_name: "GroUp Academy",
         description,
         job_type: "contract",
@@ -98,7 +98,7 @@ Deno.serve(async (req) => {
       .eq("id", brief.id);
 
     return json({ ok: true, job_id: job.id });
-  } catch (e: any) {
+  } catch (e: unknown) {
     return json({ error: e.message ?? String(e) }, 500);
   }
 });
@@ -109,3 +109,5 @@ function json(body: unknown, status = 200) {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
+
+

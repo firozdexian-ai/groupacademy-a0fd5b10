@@ -1,9 +1,9 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+﻿import { useState, useCallback, useRef, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 /**
- * GroUp Academy: Network Transmission Sentinel (V2.1.0)
+ * GroUp Academy: Network Transmission guard (V2.1.0)
  * CTO Reference: Authoritative infrastructure engine for aborted, timed-out, and resilient fetching.
  * Architecture: Digital Workforce enabled - streams high-intensity latency faults to Admin OS logs.
  * Phase: Z0 Code Freeze Hardened (2026 Launch Candidate).
@@ -43,7 +43,7 @@ export function useDataFetch<T>(
   const abortControllerRef = useRef<AbortController | null>(null);
   const queryClient = useQueryClient();
 
-  // HUD: CLEANUP_PROTOCOL
+  // dashboard: CLEANUP_PROTOCOL
   useEffect(() => {
     return () => {
       abortControllerRef.current?.abort();
@@ -83,7 +83,7 @@ export function useDataFetch<T>(
           queryClient.setQueryData(options.queryKey, result);
         }
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       clearTimeout(timeoutId);
 
       const isAborted = err?.name === "AbortError" || controller.signal.aborted;
@@ -164,3 +164,5 @@ export async function withTimeout<T>(
     clearTimeout(timeoutId);
   }
 }
+
+

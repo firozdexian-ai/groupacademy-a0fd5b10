@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -48,7 +48,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Revenue & Target Orchestrator
  * CTO Reference: Authoritative node for MRR calibration and service mix simulation.
- * 2024 Standard: Executive Logic geometry with reinforced interaction analysis.
+ * 2024 Standard:  geometry with reinforced interaction analysis.
  */
 
 export function MRRTargetManager() {
@@ -82,7 +82,7 @@ export function MRRTargetManager() {
  // MUTATION: Synchronize Targets
  const saveMutation = useMutation({
  mutationFn: async () => {
- const payload: any = {
+ const payload: unknown = {
  month: currentMonth,
  mrr_target_usd: mrrTarget,
  service_mix: serviceMix,
@@ -98,13 +98,13 @@ export function MRRTargetManager() {
  setHasChanges(false);
  queryClient.invalidateQueries({ queryKey: ["ir-target"] });
  },
- onError: (error: any) => toast.error("Transmission Fault: " + error.message),
+ onError: (error: unknown) => toast.error("Transmission Fault: " + error.message),
  });
 
  // MUTATION: Close Period Lock
  const closePeriodMutation = useMutation({
  mutationFn: async () => {
- const payload: any = {
+ const payload: unknown = {
  month: currentMonth,
  mrr_target_usd: mrrTarget,
  service_mix: serviceMix,
@@ -120,7 +120,7 @@ export function MRRTargetManager() {
  toast.success("Period closed and locked successfully.");
  queryClient.invalidateQueries({ queryKey: ["ir-target"] });
  },
- onError: (error: any) => toast.error("Lock Protocol Failure: " + error.message),
+ onError: (error: unknown) => toast.error("Lock Protocol Failure: " + error.message),
  });
 
  const totalMixPercent = Object.values(serviceMix).reduce((sum, v) => sum + v, 0);
@@ -148,7 +148,7 @@ export function MRRTargetManager() {
  <h2 className="text-3xl font-semibold uppercase tracking-tight italic leading-none">Target Command</h2>
  </div>
  <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
- MRR Optimization · Service Mix Simulation
+ MRR Optimization Â· Service Mix Simulation
  </p>
  </div>
  <div className="flex items-center gap-3">
@@ -203,7 +203,7 @@ export function MRRTargetManager() {
  ) : (
  <Zap className={cn("h-4 w-4", hasChanges ? "fill-current" : "")} />
  )}
- {saveMutation.isPending ? "Saving…" : "Synchronize"}
+ {saveMutation.isPending ? "Savingâ€¦" : "Synchronize"}
  </Button>
  </div>
  )}
@@ -393,3 +393,5 @@ function SkeletonGrid() {
  </div>
  );
 }
+
+

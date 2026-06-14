@@ -1,5 +1,5 @@
-/**
- * Agent Anomaly Feed — Executive Dashboard Component.
+﻿/**
+ * Agent Anomaly Feed â€” Executive Dashboard Component.
  * Monitors platform_events in real-time, providing the core alerting interface
  * for the Digital Workforce operations center.
  */
@@ -42,7 +42,7 @@ export function AgentAnomalyFeed() {
         const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
         const { data, error } = await supabase
-          .from("vw_agent_anomalies" as any)
+          .from("vw_agent_anomalies" as unknown)
           .select("id, severity, agent_key, title, description, created_at")
           .gte("created_at", twentyFourHoursAgo)
           .order("created_at", { ascending: false })
@@ -65,7 +65,7 @@ export function AgentAnomalyFeed() {
     // Listen for incoming system markers to update status layout seamlessly
     const channel = supabase
       .channel("platform-anomalies")
-      .on("postgres_changes" as any, { event: "INSERT", schema: "public", table: "platform_events" }, () => {
+      .on("postgres_changes" as unknown, { event: "INSERT", schema: "public", table: "platform_events" }, () => {
         fetchEvents();
       })
       .subscribe();
@@ -144,7 +144,7 @@ export function AgentAnomalyFeed() {
           ) : (
             <div className="p-12 flex flex-col items-center justify-center gap-3 text-muted-foreground">
               <CheckCircle2 className="h-6 w-6 text-emerald-500/50" />
-              <p className="text-xs">All systems operational — No alerts in the last 24h</p>
+              <p className="text-xs">All systems operational â€” No alerts in the last 24h</p>
             </div>
           )}
         </div>
@@ -162,3 +162,5 @@ export function AgentAnomalyFeed() {
     </Card>
   );
 }
+
+

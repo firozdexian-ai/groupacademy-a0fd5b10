@@ -22,12 +22,12 @@ export function useGigGraph() {
     queryFn: async () => {
       const slice = await getGigGraphSlice();
       return {
-        quickActions: slice.gigs.map((g: any) => ({
+        quickActions: slice.gigs.map((g: unknown) => ({
           ...g,
           status: g.status ? "active" : "inactive",
         })) as GigNode[],
         marketplaceGigs: slice.marketplaceGigs as unknown as MarketplaceGig[],
-        courseProjects: slice.courseProjects.map((c: any) => ({
+        courseProjects: slice.courseProjects.map((c: unknown) => ({
           id: c.id,
           title: c.course?.title ?? "Untitled Project",
           status: c.status,
@@ -40,8 +40,8 @@ export function useGigGraph() {
     },
   });
 
-  const mapPayloadForDb = (table: GigGraphTable, payload: any) => {
-    const cleanPayload: any = {};
+  const mapPayloadForDb = (table: GigGraphTable, payload: unknown) => {
+    const cleanPayload: unknown = {};
     if (payload.id) cleanPayload.id = payload.id;
 
     if (table === "gigs") {
@@ -70,9 +70,9 @@ export function useGigGraph() {
     return cleanPayload;
   };
 
-  const createUpsertMutation = (table: GigGraphTable, entityName: string) =>
+  const useCreateUpsertMutation = (table: GigGraphTable, entityName: string) =>
     useMutation({
-      mutationFn: async (payload: any) => {
+      mutationFn: async (payload: unknown) => {
         const dbPayload = mapPayloadForDb(table, payload);
         await upsertGigGraphRow(table, dbPayload);
       },
@@ -83,7 +83,7 @@ export function useGigGraph() {
       onError: (e: Error) => toast.error(`Sync Failed: ${e.message}`),
     });
 
-  const createDeleteMutation = (table: GigGraphTable, entityName: string) =>
+  const useCreateDeleteMutation = (table: GigGraphTable, entityName: string) =>
     useMutation({
       mutationFn: async (id: string) => {
         await deleteGigGraphRow(table, id);
@@ -98,18 +98,20 @@ export function useGigGraph() {
   return {
     gigGraphQuery,
     mutations: {
-      upsertQuickAction: createUpsertMutation("gigs", "Quick Action Gig"),
-      deleteQuickAction: createDeleteMutation("gigs", "Quick Action Gig"),
-      upsertMarketplaceGig: createUpsertMutation("marketplace_gigs", "Marketplace Gig"),
-      deleteMarketplaceGig: createDeleteMutation("marketplace_gigs", "Marketplace Gig"),
-      upsertCourseProject: createUpsertMutation("course_projects", "Course Project"),
-      deleteCourseProject: createDeleteMutation("course_projects", "Course Project"),
-      upsertSubmission: createUpsertMutation("gig_submissions", "Gig Submission"),
-      deleteSubmission: createDeleteMutation("gig_submissions", "Gig Submission"),
-      upsertVerification: createUpsertMutation("gig_verifications", "Verification Node"),
-      deleteVerification: createDeleteMutation("gig_verifications", "Verification Node"),
-      upsertWithdrawal: createUpsertMutation("withdrawal_requests", "Withdrawal Request"),
-      deleteWithdrawal: createDeleteMutation("withdrawal_requests", "Withdrawal Request"),
+      upsertQuickAction: useCreateUpsertMutation("gigs", "Quick Action Gig"),
+      deleteQuickAction: useCreateDeleteMutation("gigs", "Quick Action Gig"),
+      upsertMarketplaceGig: useCreateUpsertMutation("marketplace_gigs", "Marketplace Gig"),
+      deleteMarketplaceGig: useCreateDeleteMutation("marketplace_gigs", "Marketplace Gig"),
+      upsertCourseProject: useCreateUpsertMutation("course_projects", "Course Project"),
+      deleteCourseProject: useCreateDeleteMutation("course_projects", "Course Project"),
+      upsertSubmission: useCreateUpsertMutation("gig_submissions", "Gig Submission"),
+      deleteSubmission: useCreateDeleteMutation("gig_submissions", "Gig Submission"),
+      upsertVerification: useCreateUpsertMutation("gig_verifications", "Verification Node"),
+      deleteVerification: useCreateDeleteMutation("gig_verifications", "Verification Node"),
+      upsertWithdrawal: useCreateUpsertMutation("withdrawal_requests", "Withdrawal Request"),
+      deleteWithdrawal: useCreateDeleteMutation("withdrawal_requests", "Withdrawal Request"),
     },
   };
 }
+
+

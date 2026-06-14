@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+﻿#!/usr/bin/env bun
 /**
  * v0.5 Jargon Sweep Engine
  *
@@ -23,13 +23,13 @@ const REPLACEMENT_LOOKUP_KEYWORDS = [
   "Clearance",
   "Telemetry",
   "Anomaly",
-  "Sentinel",
-  "Synthesis",
-  "Synthetic",
+  "guard",
+  "summary",
+  "generated",
   "Cognitive",
-  "Executive Logic",
+  "",
   "Logic Node",
-  "Node Failure",
+  "Couldn't load",
   "Reasoning Pipeline",
   "Verified \\w+ Sync",
   "Core (?:Boot|Clearance|Sync)",
@@ -206,7 +206,7 @@ function compileSummaryMarkdown(discoveredHits: ProductionCopyHit[]): string {
     return fileMapping;
   };
 
-  let outputReportMarkdown = `# Production UI Jargon Audit — Action Plan\n\n`;
+  let outputReportMarkdown = `# Production UI Jargon Audit â€” Action Plan\n\n`;
   outputReportMarkdown += `Generated: ${new Date().toISOString()}\n\n`;
   outputReportMarkdown += `**Total User-Visible Clean Targets Found:** ${discoveredHits.length}\n`;
   outputReportMarkdown += `- Urgent Actions (High-Visibility Views): ${segmentedHits.Urgent.length} items across ${new Set(segmentedHits.Urgent.map((h) => h.filePath)).size} files\n`;
@@ -225,7 +225,7 @@ function compileSummaryMarkdown(discoveredHits: ProductionCopyHit[]): string {
     for (const activePath of sortedFilePaths) {
       outputReportMarkdown += `### \`${activePath}\` (${fileGroupedData[activePath].length})\n`;
       for (const lineHit of fileGroupedData[activePath]) {
-        outputReportMarkdown += `- Line ${lineHit.lineNumber} \`${lineHit.detectedJargon}\` — ${lineHit.textPreview.replace(/`/g, "\\`")}\n`;
+        outputReportMarkdown += `- Line ${lineHit.lineNumber} \`${lineHit.detectedJargon}\` â€” ${lineHit.textPreview.replace(/`/g, "\\`")}\n`;
       }
       outputReportMarkdown += `\n`;
     }
@@ -239,5 +239,6 @@ mkdirSync(".lovable", { recursive: true });
 writeFileSync(".lovable/v0.5-jargon-hits.md", compileSummaryMarkdown(discoveredJargonHits));
 
 console.log(
-  `Successfully compiled audit registry to .lovable/v0.5-jargon-hits.md — Found ${discoveredJargonHits.length} items.`,
+  `Successfully compiled audit registry to .lovable/v0.5-jargon-hits.md â€” Found ${discoveredJargonHits.length} items.`,
 );
+

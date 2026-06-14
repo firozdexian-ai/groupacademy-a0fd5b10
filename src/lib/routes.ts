@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Centralized route definitions for the application.
  * Use these constants instead of hardcoding routes throughout the codebase.
  */
@@ -143,3 +143,4 @@ export const getAppRoute = (publicRoute: string): string | null => {
   
   return mappings[publicRoute] || null;
 };
+

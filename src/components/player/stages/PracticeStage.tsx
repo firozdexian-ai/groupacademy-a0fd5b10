@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useRef } from "react";
+﻿import { useEffect, useMemo, useState, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,7 +26,7 @@ interface PracticeStageProps {
 /**
  * GroUp Academy: Cognitive Consolidation Practice Component (PracticeStage)
  * An authoritative operational hub managing active recall flashcards, quizzes, and automated AI simulation runs.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function PracticeStage({
   resources = [],
@@ -56,7 +56,7 @@ export function PracticeStage({
   const quizResource = useMemo(() => resources.find((r) => r?.resource_type === "quiz"), [resources]);
 
   // REGISTRY_PROTOCOL: Normalize heterogeneous data formats with fallback assertions
-  const normalizeCard = (card: any, index: number): Flashcard | null => {
+  const normalizeCard = (card: unknown, index: number): Flashcard | null => {
     if (!card || typeof card !== "object") return null;
     const front = String(
       card.front || card.Front || card.question || card.Question || card.term || card.Term || card.q || card.Q || "",
@@ -87,12 +87,12 @@ export function PracticeStage({
     if (!rawData) return [];
     try {
       const cardsArray =
-        (rawData as any).cards && Array.isArray((rawData as any).cards)
-          ? (rawData as any).cards
+        (rawData as unknown).cards && Array.isArray((rawData as unknown).cards)
+          ? (rawData as unknown).cards
           : Array.isArray(rawData)
             ? rawData
             : [];
-      return cardsArray.map(normalizeCard).filter((c: any): c is Flashcard => c !== null);
+      return cardsArray.map(normalizeCard).filter((c: unknown): c is Flashcard => c !== null);
     } catch (e) {
       trackError(e, { component: "PracticeStage", action: "normalize_flashcards_payload", moduleId });
       return [];
@@ -101,7 +101,7 @@ export function PracticeStage({
 
   const scenario = useMemo((): AIScenario | null => {
     if (!scenarioResource?.resource_data) return null;
-    return { id: scenarioResource.id, ...(scenarioResource.resource_data as any) };
+    return { id: scenarioResource.id, ...(scenarioResource.resource_data as unknown) };
   }, [scenarioResource]);
 
   const hasFlashcards = useMemo(() => flashcards.length > 0, [flashcards]);
@@ -156,7 +156,7 @@ export function PracticeStage({
 
   return (
     <div className="space-y-5 text-left max-w-full w-full transform-gpu antialiased">
-      {/* HUD LEVEL 1: STAGE HEADER CONTEXT TITLE BLOCK */}
+      {/* dashboard LEVEL 1: STAGE HEADER CONTEXT TITLE BLOCK */}
       <div className="flex items-center justify-between gap-4 px-0.5 select-none w-full leading-none">
         <div className="space-y-1.5 text-left flex flex-col justify-center min-w-0 flex-1 leading-none">
           <h2 className="text-sm sm:text-base font-bold tracking-tight text-foreground uppercase tracking-wide flex items-center gap-2">
@@ -179,7 +179,7 @@ export function PracticeStage({
         )}
       </div>
 
-      {/* HUD LEVEL 2: COMPONENT CORE ENTRY DATA VALIDATION */}
+      {/* dashboard LEVEL 2: COMPONENT CORE ENTRY DATA VALIDATION */}
       {!hasFlashcards && !hasScenarioTab && !hasQuiz ? (
         <Card className="border border-dashed border-border/60 bg-card/40 backdrop-blur-md rounded-xl p-6 text-center select-none w-full max-w-full flex flex-col justify-center items-center py-12 animate-in fade-in duration-300">
           <Zap className="h-6 w-6 text-primary/30 mb-3 animate-pulse stroke-[2.2]" />
@@ -318,7 +318,7 @@ export function PracticeStage({
         </Tabs>
       )}
 
-      {/* HUD LEVEL 3: PRACTICAL TELEMETRY HINT COMPONENT RIBBON */}
+      {/* dashboard LEVEL 3: PRACTICAL TELEMETRY HINT COMPONENT RIBBON */}
       {(hasFlashcards || hasScenarioTab) && (
         <Card className="border border-primary/10 bg-primary/[0.015] rounded-xl text-left w-full select-none shadow-sm shrink-0">
           <CardContent className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 font-bold text-xs tracking-tight">
@@ -343,7 +343,7 @@ export function PracticeStage({
                         : "bg-muted border-border/40 text-muted-foreground",
                     )}
                   >
-                    {flashcardsCompleted ? "✓" : ""}
+                    {flashcardsCompleted ? "âœ“" : ""}
                   </div>
                   <span>Recall Vector Checked</span>
                 </div>
@@ -363,7 +363,7 @@ export function PracticeStage({
                         : "bg-muted border-border/40 text-muted-foreground",
                     )}
                   >
-                    {scenarioCompleted ? "✓" : ""}
+                    {scenarioCompleted ? "âœ“" : ""}
                   </div>
                   <span>Simulation Status Mapped</span>
                 </div>
@@ -373,7 +373,7 @@ export function PracticeStage({
         </Card>
       )}
 
-      {/* HUD LEVEL 4: ACTION TRANSACTION COMPLETION ROUTE BUTTON CONTAINER */}
+      {/* dashboard LEVEL 4: ACTION TRANSACTION COMPLETION ROUTE BUTTON CONTAINER */}
       {!isCompleted && (hasFlashcards || hasScenarioTab || hasQuiz) && (
         <div className="flex justify-end pt-3 border-t border-border/10 select-none w-full shrink-0">
           <Button
@@ -398,3 +398,5 @@ export function PracticeStage({
     </div>
   );
 }
+
+

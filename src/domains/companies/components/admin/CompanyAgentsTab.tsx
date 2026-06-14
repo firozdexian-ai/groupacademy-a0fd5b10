@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+﻿import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -87,7 +87,7 @@ interface CompanyAgent {
   monthly_budget: number | null;
   credits_used: number | null;
   is_active: boolean | null;
-  lead_config: any;
+  lead_config: unknown;
   created_at: string | null;
   ai_agents: {
     id: string;
@@ -576,7 +576,7 @@ export function CompanyAgentsManager() {
         </Dialog>
       </div>
 
-      {/* Partnership Dashboard HUD */}
+      {/* Partnership Dashboard dashboard */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
           {
@@ -882,7 +882,7 @@ export function CompanyAgentsManager() {
       <footer className="mt-20 pt-10 border-t border-border/40 flex items-center justify-between opacity-30">
         <div className="space-y-1 text-left">
           <p className="text-[9px] font-semibold uppercase tracking-[0.4em] italic">
-            Corporate Partner Portal · Admin Console
+            Corporate Partner Portal Â· Admin Console
           </p>
           <p className="text-[8px] font-bold text-muted-foreground uppercase">
             Platform Access Authorized Only
@@ -902,3 +902,4 @@ export function CompanyAgentsManager() {
 function Spacer({ label, className }: { label: string; className?: string }) {
   return <Label className={className}>{label}</Label>;
 }
+

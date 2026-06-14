@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+﻿import { useState, useCallback } from "react";
 import {
   Upload,
   Loader2,
@@ -84,7 +84,7 @@ export function SupportAITab() {
 
       setResponse(data as AIResponse);
       toast.success("Conversation analyzed.");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Analysis Fault:", err);
       toast.error(err.message || "Error: Analysis failed.");
     } finally {
@@ -326,7 +326,7 @@ export function SupportAITab() {
   );
 }
 
-function CheckCircle2(props: any) {
+function CheckCircle2(props: unknown) {
   return (
     <svg
       {...props}
@@ -348,3 +348,5 @@ function CheckCircle2(props: any) {
 }
 
 export default SupportAITab;
+
+

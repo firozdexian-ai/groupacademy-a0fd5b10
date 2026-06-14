@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+﻿import { useEffect, useMemo, useRef } from "react";
 import { Loader2, Briefcase, Coins, Clock, Sparkles, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -24,7 +24,7 @@ export function InfiniteGigsList({ talentId, search }: Props) {
   // 1. TanStack Infinite Query Server State Synchronization Hook
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, error } = useRankedGigs(talentId);
 
-  // 2. Defensive Infinite Scroll Handshake Sentinel Ingress Layer
+  // 2. Defensive Infinite Scroll Handshake guard Ingress Layer
   useEffect(() => {
     const activeSentinelNode = sentinelRef.current;
     if (!activeSentinelNode || !hasNextPage || isFetchingNextPage) return;
@@ -187,12 +187,12 @@ export function InfiniteGigsList({ talentId, search }: Props) {
         );
       })}
 
-      {/* Infinite Keyset Observer Sentinel Node */}
+      {/* Infinite Keyset Observer guard Node */}
       <div ref={sentinelRef} className="h-10 flex items-center justify-center select-none w-full">
         {isFetchingNextPage ? (
           <div className="flex items-center justify-center text-[11px] font-bold text-muted-foreground/70 tracking-wide animate-pulse">
             <Loader2 className="h-3.5 w-3.5 animate-spin mr-2 text-primary stroke-[2.5]" />
-            <span>Compiling subsequent timeline updates…</span>
+            <span>Compiling subsequent timeline updatesâ€¦</span>
           </div>
         ) : (
           !hasNextPage &&
@@ -206,3 +206,4 @@ export function InfiniteGigsList({ talentId, search }: Props) {
     </div>
   );
 }
+

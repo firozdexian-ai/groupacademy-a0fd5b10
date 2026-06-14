@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getCompanyWallet,
   getOrgLearningHealth,
@@ -63,7 +63,7 @@ export interface OrgSeat {
 
 export interface OrgWalletData {
   balance: { balance: number; earned_balance: number } | null;
-  transactions: any[];
+  transactions: unknown[];
 }
 
 // --- SENSORS: ORGANIZATIONAL METRIC OBSERVERS ---
@@ -76,7 +76,7 @@ export function useOrgLearningHealth(companyId: string | undefined) {
     queryFn: async (): Promise<OrgLearningHealth> => {
       try {
         return await getOrgLearningHealth<OrgLearningHealth>(companyId!);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: org_learning_health calculation rejected.", error);
         throw error;
       }
@@ -109,7 +109,7 @@ export function useOrgTeamMastery(companyId: string | undefined, contentId?: str
     queryFn: async (): Promise<OrgTeamMastery[]> => {
       try {
         return await getOrgTeamMastery<OrgTeamMastery>({ companyId: companyId!, contentId: contentId ?? null });
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: org_team_mastery query rejected.", error);
         throw error;
       }
@@ -140,7 +140,7 @@ export function useOrgWallet(companyId: string | undefined) {
     enabled: !!companyId,
     staleTime: 30000, // 30-second balance security window
     queryFn: async (): Promise<OrgWalletData> => {
-      // HUD: CONCURRENT_MONETARY_LEDGER_HANDSHAKE
+      // dashboard: CONCURRENT_MONETARY_LEDGER_HANDSHAKE
       const wallet = await getCompanyWallet(companyId!);
       return {
         balance: wallet.balance,
@@ -167,7 +167,7 @@ export function useAssignTalents() {
     }) => {
       try {
         return await orgAssignTalents(input);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] ANOMALY: org_assign_talents bulk operation rejected.", {
           companyId: input.company_id,
           message: error?.message,
@@ -186,8 +186,10 @@ export function useAssignTalents() {
 
       toast.success("Enterprise training track assigned to selected talent pool.");
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       toast.error(err.message ?? "Bulk assignment failed. Check credit availability.");
     },
   });
 }
+
+

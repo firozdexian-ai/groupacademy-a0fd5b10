@@ -114,7 +114,7 @@ export default function Gro10xFeed() {
           toast.error(data?.error ?? "Could not publish");
           return;
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
         toast.error(e?.message ?? "Could not publish");
         return;
       }
@@ -134,7 +134,7 @@ export default function Gro10xFeed() {
           toast.error(data?.error ?? "Could not discard");
           return;
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
         toast.error(e?.message ?? "Could not discard");
         return;
       }
@@ -148,7 +148,7 @@ export default function Gro10xFeed() {
   const handleComposerSubmit = async () => {
     const text = composer.trim();
     if (text.length < 20) {
-      toast.error("Post is a bit short — at least 20 characters please");
+      toast.error("Post is a bit short â€” at least 20 characters please");
       return;
     }
     if (!companyId) {
@@ -158,12 +158,12 @@ export default function Gro10xFeed() {
     setPosting(true);
     try {
       if (postAsCompany && isOwner) {
-        // Owner posting as the company — publish directly via the agent tool path.
-        let draftRes: any = null;
-        let draftErr: any = null;
+        // Owner posting as the company â€” publish directly via the agent tool path.
+        let draftRes: unknown = null;
+        let draftErr: unknown = null;
         try {
           draftRes = await companyAgentTools({ tool_key: "draft_company_post", args: { text_content: text, agent_key: null } });
-        } catch (e: any) { draftErr = e; }
+        } catch (e: unknown) { draftErr = e; }
         if (draftErr || !draftRes?.ok) {
           toast.error(draftRes?.error ?? draftErr?.message ?? "Could not save");
           return;
@@ -171,12 +171,14 @@ export default function Gro10xFeed() {
         if (draftRes.draft_id) {
           try {
             await companyAgentTools({ tool_key: "publish_company_post", args: { draft_id: draftRes.draft_id, audience } });
-          } catch {}
+          } catch {
+            // ignore
+          }
         }
         setComposer("");
         toast.success(`Posted as ${companyName ?? "company"}`);
       } else {
-        // Personal post — write directly to feed_posts with the chosen audience.
+        // Personal post â€” write directly to feed_posts with the chosen audience.
         const t = await getTalentMiniProfileByUser(user!.id);
         const { error } = await insertFeedPost({
           text_content: text,
@@ -243,10 +245,10 @@ export default function Gro10xFeed() {
               onChange={(e) => setComposer(e.target.value)}
               placeholder={
                 postAsCompany
-                  ? `Posting as ${companyName ?? "your company"}…`
+                  ? `Posting as ${companyName ?? "your company"}â€¦`
                   : audience === "internal"
-                  ? "Share with your team only…"
-                  : "Share an update with the network…"
+                  ? "Share with your team onlyâ€¦"
+                  : "Share an update with the networkâ€¦"
               }
               className="w-full bg-transparent text-sm placeholder:text-slate-500 focus:outline-none resize-none"
               rows={2}
@@ -276,7 +278,7 @@ export default function Gro10xFeed() {
                 disabled={posting || composer.trim().length < 20}
                 className="rounded-full bg-[#33E1E4] text-[#06121A] px-4 py-1.5 text-xs font-semibold disabled:opacity-40"
               >
-                {posting ? "Saving…" : "Post"}
+                {posting ? "Savingâ€¦" : "Post"}
               </button>
             </div>
           </div>
@@ -327,12 +329,12 @@ export default function Gro10xFeed() {
 
       {/* Feed */}
       <section className="px-4 mt-4 pb-6">
-        {loading && <Gro10xLoading label="Loading feed…" />}
+        {loading && <Gro10xLoading label="Loading feedâ€¦" />}
         {!loading && posts.length === 0 && (
           <div className="text-center text-sm text-slate-400 py-8">
             No posts yet.{" "}
             <Link to="/gro10x/c/growth" className="text-[#33E1E4] hover:underline">
-              Ask Growth Agent to draft one →
+              Ask Growth Agent to draft one â†’
             </Link>
           </div>
         )}
@@ -349,7 +351,7 @@ export default function Gro10xFeed() {
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium truncate">{p.author_name}</p>
                 <p className="text-[11px] text-slate-400 truncate">
-                  {p.author_type === "company" ? "Company" : p.author_title ?? "Member"} ·{" "}
+                  {p.author_type === "company" ? "Company" : p.author_title ?? "Member"} Â·{" "}
                   {new Date(p.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
                 </p>
               </div>
@@ -370,3 +372,5 @@ export default function Gro10xFeed() {
     </div>
   );
 }
+
+

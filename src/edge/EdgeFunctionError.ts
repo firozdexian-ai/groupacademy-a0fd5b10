@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Shared throwable for typed edge-function wrappers (Phase 9).
  *
  * Every `<domain>Api.<fn>` rejects with one of these when
@@ -19,3 +19,4 @@ export class EdgeFunctionError extends Error {
     this.cause = cause;
   }
 }
+

@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNotifications } from "@/hooks/useNotifications";
 import { Button } from "@/components/ui/button";
@@ -35,7 +35,7 @@ export default function Notifications() {
  const [filter, setFilter] = useState<"all" | "unread">("all");
 
  // Anomaly reporting to Digital Workforce Admin Chat
- const logToDigitalWorkforce = async (error: string, context: any) => {
+ const logToDigitalWorkforce = async (error: string, context: unknown) => {
  console.error(`[Digital Workforce Anomaly] ${error}`, context);
  // In production, this invokes the 'admin-support-assistant' or 'admin-aisha-analyst'[cite: 5, 6]
  };
@@ -188,3 +188,5 @@ export default function Notifications() {
  </div>
  );
 }
+
+

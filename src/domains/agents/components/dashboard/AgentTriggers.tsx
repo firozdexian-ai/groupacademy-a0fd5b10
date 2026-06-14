@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import {
   getTriggersBundle,
   listRecentAgentOutreach,
@@ -148,7 +148,7 @@ export function AgentTriggers() {
         channel: draft.channel && draft.channel !== "auto" ? draft.channel : null,
         cooldown_minutes: Number(draft.cooldown_minutes ?? 1440),
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Failed to create trigger",
         description: error.message || "An unexpected error occurred while saving.",
@@ -173,7 +173,7 @@ export function AgentTriggers() {
   async function toggleTrigger(t: Trigger) {
     try {
       await toggleAgentTrigger(t.id, !t.is_active);
-    } catch (error: any) {
+    } catch (error: unknown) {
       return toast({
         title: "Status change failed",
         description: error.message || "Could not toggle the active state.",
@@ -187,7 +187,7 @@ export function AgentTriggers() {
     if (!confirm("Are you sure you want to completely remove this automation trigger?")) return;
     try {
       await deleteAgentTrigger(id);
-    } catch (error: any) {
+    } catch (error: unknown) {
       return toast({
         title: "Deletion failed",
         description: error.message || "Could not purge the trigger profile.",
@@ -203,7 +203,7 @@ export function AgentTriggers() {
     const newBalance = (pool?.balance || 0) + amt;
     try {
       await updateHeadlessPoolBalance(newBalance);
-    } catch (error: any) {
+    } catch (error: unknown) {
       return toast({
         title: "Transaction failed",
         description: error.message || "Could not top up the credits.",
@@ -219,7 +219,7 @@ export function AgentTriggers() {
     if (!Number.isFinite(cap) || cap < 0) return;
     try {
       await updateHeadlessPoolMonthlyCap(cap);
-    } catch (error: any) {
+    } catch (error: unknown) {
       return toast({
         title: "Limits update failed",
         description: error.message || "Could not change monthly cap configuration.",
@@ -239,7 +239,7 @@ export function AgentTriggers() {
         description: `Successfully evaluated ${data?.events ?? 0} events and sent ${data?.dispatched ?? 0} messages.`,
       });
       load();
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast({
         title: "Execution failed",
         description: e.message || "Something went wrong while executing the background dispatcher.",
@@ -653,7 +653,7 @@ export function AgentTriggers() {
                       variant="outline"
                       className="mb-2 text-[10px] rounded border-border/60 text-muted-foreground bg-muted/20 px-1"
                     >
-                      Route: {o.channel} → {o.recipient_kind}
+                      Route: {o.channel} â†’ {o.recipient_kind}
                     </Badge>
 
                     <div className="text-xs text-foreground/80 font-medium leading-relaxed pl-2 border-l border-border/60">
@@ -671,3 +671,5 @@ export function AgentTriggers() {
 }
 
 export default AgentTriggers;
+
+

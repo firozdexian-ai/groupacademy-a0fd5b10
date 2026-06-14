@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Flame, MessageCircle, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -132,8 +132,8 @@ export function PostActionBar({ postId, initialHypeCount = 0, postTitle, postUrl
     trackEvent("post_share_intent_triggered", { postId, postUrl: fullUrl });
 
     try {
-      if (typeof navigator !== "undefined" && (navigator as any).share) {
-        await (navigator as any).share(payload);
+      if (typeof navigator !== "undefined" && (navigator as unknown).share) {
+        await (navigator as unknown).share(payload);
         recordShare(postId, "native");
         return;
       }
@@ -197,7 +197,7 @@ export function PostActionBar({ postId, initialHypeCount = 0, postTitle, postUrl
               ? "text-rose-600 bg-rose-500/10 hover:bg-rose-500/15"
               : "text-muted-foreground/80 hover:text-orange-600 hover:bg-orange-500/10 dark:hover:text-orange-500",
           )}
-          title="Tap to Hype · Hold to Boost"
+          title="Tap to Hype Â· Hold to Boost"
         >
           <Flame
             className={cn(
@@ -262,3 +262,4 @@ export function PostActionBar({ postId, initialHypeCount = 0, postTitle, postUrl
     </div>
   );
 }
+

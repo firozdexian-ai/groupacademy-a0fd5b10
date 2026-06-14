@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useMarketingGraph } from "./hooks/useMarketingGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -106,9 +106,9 @@ export function AccessCodesTab() {
                       <SelectValue placeholder="Select a paid course..." />
                     </SelectTrigger>
                     <SelectContent>
-                      {paidContent?.map((c: any) => (
+                      {paidContent?.map((c: unknown) => (
                         <SelectItem key={c.id} value={c.id}>
-                          {c.title.toUpperCase()} — ${c.price}
+                          {c.title.toUpperCase()} â€” ${c.price}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -166,7 +166,7 @@ export function AccessCodesTab() {
                   ) : data?.accessCodes?.length === 0 ? (
                     <TableRow><TableCell colSpan={4} className="text-center py-12 italic uppercase font-semibold text-xs tracking-widest opacity-30">Zero codes minted.</TableCell></TableRow>
                   ) : (
-                    data?.accessCodes?.map((row: any) => {
+                    data?.accessCodes?.map((row: unknown) => {
                       const isExhausted = row.current_uses >= row.max_uses;
                       return (
                         <TableRow key={row.id}>
@@ -241,3 +241,5 @@ export function AccessCodesTab() {
 }
 
 export default AccessCodesTab;
+
+

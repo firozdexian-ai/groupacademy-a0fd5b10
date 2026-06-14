@@ -1,1 +1,2 @@
-export type GtmEdgeContracts = Record<string, never>;
+﻿export type GtmEdgeContracts = Record<string, never>;
+

@@ -1,11 +1,11 @@
-/**
- * Group Academy — Agents Domain Export Engine (Barrel)
+﻿/**
+ * Group Academy â€” Agents Domain Export Engine (Barrel)
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Purpose: Single source of truth interface for all agent-domain network triggers.
  * Constraints: Blocks implicit leaks, enforces typed contract boundaries.
  */
 
-// ─── STAGE 1: EDGE NETWORK LAYER WRAPPERS (API) ───────────────────────────
+// â”€â”€â”€ STAGE 1: EDGE NETWORK LAYER WRAPPERS (API) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export {
   agentRuntime,
   aiGeneralChat,
@@ -18,7 +18,7 @@ export {
   triggerAgentPitch, // Phase 9h addition
 } from "./agentsApi";
 
-// ─── STAGE 2: HARDENED POSTGRES INFRASTRUCTURE (REPO) ─────────────────────
+// â”€â”€â”€ STAGE 2: HARDENED POSTGRES INFRASTRUCTURE (REPO) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Exporting repository functions so dashboard hooks can reach the data layer cleanly
 export {
   updateAiAgent,
@@ -81,7 +81,7 @@ export {
   listTopActiveAgentsForQuickActions,
 } from "../repo/agentsRepo";
 
-// ─── STAGE 3: BOUND INTEGRATION SCHEMA TYPE DEFINITIONS ───────────────────
+// â”€â”€â”€ STAGE 3: BOUND INTEGRATION SCHEMA TYPE DEFINITIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export type {
   AgentRuntimeRequest,
   AgentRuntimeResponse,
@@ -103,3 +103,4 @@ export type {
   TriggerAgentPitchRequest, // Phase 9h addition
   TriggerAgentPitchResponse, // Phase 9h addition
 } from "@/edge/contracts/agents";
+

@@ -1,4 +1,4 @@
-import { LucideIcon, Sparkles } from "lucide-react";
+﻿import { LucideIcon, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -23,7 +23,7 @@ interface EmptyStateProps {
 /**
  * GroUp Academy: Institutional Data Recovery Framework Node (EmptyState)
  * Authoritative interface managing alternative routing states and processing fallback interaction maps.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 export function EmptyState({
   icon: ActionIcon,
@@ -34,10 +34,10 @@ export function EmptyState({
   variant = "card",
   className,
 }: EmptyStateProps) {
-  // HUD LAYER: Build unified structural contents safely isolated from parent layouts
+  // dashboard LAYER: Build unified structural contents safely isolated from parent layouts
   const renderedContentBlockNode = (
     <div className="w-full max-w-sm mx-auto flex flex-col justify-center text-center transform-gpu antialiased animate-in fade-in slide-in-from-bottom-3 duration-300">
-      {/* HUD LEVEL 1: ICON HANDSHAKE TRACK CONTAINER */}
+      {/* dashboard LEVEL 1: ICON HANDSHAKE TRACK CONTAINER */}
       <div className="relative w-12 h-12 mx-auto mb-4 select-none pointer-events-none shrink-0">
         <div className="absolute inset-0 bg-primary/10 rounded-xl rotate-6 animate-pulse" />
         <div className="absolute inset-0 bg-background border border-border/40 rounded-xl flex items-center justify-center shadow-xs">
@@ -45,7 +45,7 @@ export function EmptyState({
         </div>
       </div>
 
-      {/* HUD LEVEL 2: TYPOGRAPHY DESCRIPTION MATRIX BLOCKS */}
+      {/* dashboard LEVEL 2: TYPOGRAPHY DESCRIPTION MATRIX BLOCKS */}
       <div className="space-y-1.5 min-w-0 w-full mb-5 leading-none">
         <h3 className="text-sm sm:text-base font-bold text-foreground uppercase tracking-wide leading-none pt-0.5">
           {title}
@@ -55,7 +55,7 @@ export function EmptyState({
         </p>
       </div>
 
-      {/* HUD LEVEL 3: RECOVERY SYSTEM SUGGESTION ACCORDIONS */}
+      {/* dashboard LEVEL 3: RECOVERY SYSTEM SUGGESTION ACCORDIONS */}
       {suggestions.length > 0 && (
         <div className="w-full text-left bg-muted/10 rounded-xl border border-border/40 p-4 mb-5 shadow-inner transition-colors hover:border-border/60">
           <div className="flex items-center gap-1.5 mb-2.5 leading-none select-none">
@@ -79,7 +79,7 @@ export function EmptyState({
         </div>
       )}
 
-      {/* HUD LEVEL 4: INTERACTIVE ACTION TRIGGER SUBMISSION CONTROLS */}
+      {/* dashboard LEVEL 4: INTERACTIVE ACTION TRIGGER SUBMISSION CONTROLS */}
       {actions.length > 0 && (
         <div className="flex flex-col sm:flex-row items-center justify-center gap-2 w-full pt-1">
           {actions.map((actionRowButton, indexId) => {
@@ -140,3 +140,4 @@ export function EmptyState({
     </Card>
   );
 }
+

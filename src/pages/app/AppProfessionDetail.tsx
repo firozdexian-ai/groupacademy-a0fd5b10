@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
  getProfessionTrackBySlug,
@@ -70,8 +70,8 @@ interface Course {
 
 /**
  * GroUp Academy: Specialist Profession Career Track Cockpit (AppProfessionDetail)
- * Hardened track hub managing concurrent instructor chats, compiling segmented course arrays, and anchoring credit allocation HUD metrics.
- * Version: Launch Candidate · Phase Z1 Architecture Matrix Sealed
+ * Hardened track hub managing concurrent instructor chats, compiling segmented course arrays, and anchoring credit allocation dashboard metrics.
+ * Version: Launch Candidate Â· Phase Z1 Architecture Matrix Sealed
  */
 export default function AppProfessionDetail() {
  const { slug: unverifiedTrackSlugStr } = useParams<{ slug: string }>();
@@ -247,7 +247,7 @@ export default function AppProfessionDetail() {
 
  return (
  <div className="max-w-5xl mx-auto px-4 py-6 pb-32 space-y-8 text-left antialiased block transform-gpu w-full">
- {/* HUD LEVEL 1: APPLICATION HEADER SUB-TRACK NAVIGATION CONTROL GRID */}
+ {/* dashboard LEVEL 1: APPLICATION HEADER SUB-TRACK NAVIGATION CONTROL GRID */}
  <header className="block w-full select-none pb-2 border-b border-border/10">
  <Button
  type="button"
@@ -261,7 +261,7 @@ export default function AppProfessionDetail() {
  </Button>
  </header>
 
- {/* HUD LEVEL 2: COMPOSITE PATH HERO DESCRIPTION SHELL */}
+ {/* dashboard LEVEL 2: COMPOSITE PATH HERO DESCRIPTION SHELL */}
  <section className="space-y-2 block w-full leading-none">
  <div className="flex items-center gap-2 select-none pointer-events-none leading-none w-full block">
  {professionRecordState.schools?.name && (
@@ -282,7 +282,7 @@ export default function AppProfessionDetail() {
  </p>
  </section>
 
- {/* HUD LEVEL 3: MODULAR RESOURCE COMMITMENT AND DIAGNOSTIC HUD ROW */}
+ {/* dashboard LEVEL 3: MODULAR RESOURCE COMMITMENT AND DIAGNOSTIC dashboard ROW */}
  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 block w-full">
  {/* INVESTMENT BALANCE OVERVIEW CARD */}
  <Card className="md:col-span-2 rounded-xl border border-border/60 bg-card shadow-none overflow-hidden block w-full select-none pointer-events-none">
@@ -359,7 +359,7 @@ export default function AppProfessionDetail() {
  </Card>
  </div>
 
- {/* HUD LEVEL 4: INSTRUCTOR INTERFACE MATRIX WITH PATH UNITS LISTING */}
+ {/* dashboard LEVEL 4: INSTRUCTOR INTERFACE MATRIX WITH PATH UNITS LISTING */}
  <div className="grid grid-cols-1 lg:grid-cols-[280px,1fr] gap-6 items-start block w-full">
  {/* INSTRUCTOR ASIDE CONTROL CONSOLE PROFILE CORES */}
  <aside className="space-y-4 lg:sticky lg:top-4 block w-full shrink-0">
@@ -464,7 +464,7 @@ export default function AppProfessionDetail() {
  <Clock className="h-3 w-3 stroke-[2.2]" />{" "}
  <span>{courseRecordNode.estimated_hours.toString()} Hours</span>
  </span>
- <span className="opacity-30 block shrink-0 select-none">•</span>
+ <span className="opacity-30 block shrink-0 select-none">â€¢</span>
  <span className="flex items-center gap-1 shrink-0">
  <Coins className="h-3 w-3 stroke-[2.2]" />{" "}
  <span>{(courseRecordNode.credit_cost || 0).toLocaleString()} Unit Cost</span>
@@ -492,3 +492,4 @@ export default function AppProfessionDetail() {
  </div>
  );
 }
+

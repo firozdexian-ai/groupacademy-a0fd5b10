@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+﻿import { useEffect, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { BadgeCheck, Award, Trophy, Layers, Sparkles, Activity, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -48,7 +48,7 @@ interface Props {
 /**
  * GroUp Academy: Talent Readiness Outcome Signal Panel (TalentSignalPanel)
  * An authoritative operational telemetry widget surfacing verified skills, performance tracks, and mastery scores.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function TalentSignalPanel({ talentId, compact = false, className }: Props) {
   const queryClient = useQueryClient();
@@ -131,13 +131,13 @@ export function TalentSignalPanel({ talentId, compact = false, className }: Prop
         className,
       )}
     >
-      {/* HUD LEVEL 1: TRACK SIGNAL ACTIVITY BADGE MARKS ROW */}
+      {/* dashboard LEVEL 1: TRACK SIGNAL ACTIVITY BADGE MARKS ROW */}
       <div className="flex flex-wrap gap-2 items-center w-full shrink-0">
         {synchronizedSignalModel.hasRecentActivity && (
           <Badge
             variant="outline"
             className="rounded px-2 h-5.5 text-[9px] font-extrabold tracking-wider uppercase border border-transparent bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 gap-1 flex items-center leading-none shadow-xs shrink-0 cursor-help"
-            title="Active learner node verification — active platform metrics observed within the past 30 days"
+            title="Active learner node verification â€” active platform metrics observed within the past 30 days"
           >
             <Activity className="h-3 w-3 stroke-[2.5] shrink-0" />
             <span className="pt-0.5 block">Active Learner</span>
@@ -146,7 +146,7 @@ export function TalentSignalPanel({ talentId, compact = false, className }: Prop
         <ActiveInstructorChip talentId={talentId} />
       </div>
 
-      {/* HUD LEVEL 2: EXTRACTED SKILL PROFICIENCY CREDENTIAL BADGES GRID */}
+      {/* dashboard LEVEL 2: EXTRACTED SKILL PROFICIENCY CREDENTIAL BADGES GRID */}
       {synchronizedSignalModel.skillsSlice.length > 0 && (
         <div className="space-y-1.5 w-full min-w-0">
           <span className="text-[10px] font-mono font-extrabold uppercase tracking-wider text-muted-foreground/50 block leading-none">
@@ -186,7 +186,7 @@ export function TalentSignalPanel({ talentId, compact = false, className }: Prop
         </div>
       )}
 
-      {/* HUD LEVEL 3: SYLLABUS TRACK COMPLETION ASSIGNMENT SUITE ROWS */}
+      {/* dashboard LEVEL 3: SYLLABUS TRACK COMPLETION ASSIGNMENT SUITE ROWS */}
       {synchronizedSignalModel.tracksSlice.length > 0 && (
         <div className="space-y-2 w-full min-w-0">
           <span className="text-[10px] font-mono font-extrabold uppercase tracking-wider text-muted-foreground/50 block leading-none select-none">
@@ -229,7 +229,7 @@ export function TalentSignalPanel({ talentId, compact = false, className }: Prop
         </div>
       )}
 
-      {/* HUD LEVEL 4: SPARK OVERALL PROGRESS CALIBRATION INSIGHT ROW */}
+      {/* dashboard LEVEL 4: SPARK OVERALL PROGRESS CALIBRATION INSIGHT ROW */}
       {synchronizedSignalModel.masterySummary &&
         synchronizedSignalModel.masterySummary.tracked_topics > 0 &&
         !compact && (
@@ -245,3 +245,4 @@ export function TalentSignalPanel({ talentId, compact = false, className }: Prop
     </div>
   );
 }
+

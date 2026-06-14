@@ -1,12 +1,12 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 import { Check, ChevronRight, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * GroUp Academy: Technical Quick-Action Context Interface HUD (ContextMenu)
+ * GroUp Academy: Technical Quick-Action Context Interface dashboard (ContextMenu)
  * Hardened responsive popover terminal handling localized macro-action lookups and context sync layers.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const ContextMenu = ContextMenuPrimitive.Root;
 const ContextMenuTrigger = ContextMenuPrimitive.Trigger;
@@ -200,3 +200,4 @@ export {
   ContextMenuSubTrigger,
   ContextMenuRadioGroup,
 };
+

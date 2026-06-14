@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { acceptConnectionAndOpenThread, respondTalentConnection } from "@/domains/talent/repo/talentRepo";
@@ -53,7 +53,7 @@ const SKELETON_ROWS_ROSTER = [1, 2, 3, 4];
 /**
  * GroUp Academy: Professional Connection Request Registry (Connections)
  * Hardened responsive communication control workspace grouping pending requests and isolating async state handlers.
- * Version: Launch Candidate · Phase Z1 Production Type Contract Sealed
+ * Version: Launch Candidate Â· Phase Z1 Production Type Contract Sealed
  */
 export default function Connections() {
  const { talent: currentTalentUserNode } = useTalent();
@@ -172,7 +172,7 @@ export default function Connections() {
  } else {
  await loadConnectionsLedgerInventory(isThreadMountedFlag);
  }
- } catch (fatalMutationException: any) {
+ } catch (fatalMutationException: unknown) {
  toast({
  title: "Authorization Refused",
  description: fatalMutationException.message || "Failed to accept.",
@@ -199,10 +199,10 @@ export default function Connections() {
 
  toast({
  title: "Request declined",
- description: "Any credits used have been refunded.",
+ description: "unknown credits used have been refunded.",
  });
  await loadConnectionsLedgerInventory(isThreadMountedFlag);
- } catch (fatalMutationException: any) {
+ } catch (fatalMutationException: unknown) {
  toast({
  title: "Couldn't decline",
  description: fatalMutationException.message || "Please try again.",
@@ -294,7 +294,7 @@ export default function Connections() {
  <span>
  {formatDistanceToNow(new Date(connectionRowItem.created_at), { addSuffix: true }).toUpperCase()}
  </span>
- <span className="opacity-30 select-none">•</span>
+ <span className="opacity-30 select-none">â€¢</span>
  <span>Draw Allocation: {connectionRowItem.fee_paid.toLocaleString()} Credits</span>
  </div>
  </div>
@@ -384,7 +384,7 @@ export default function Connections() {
 
  return (
  <div className="container mx-auto max-w-3xl px-4 py-6 space-y-5 text-left antialiased block transform-gpu w-full">
- {/* HUD LEVEL 1: STRUCTURAL HUD CONTEXT BAR TITLES */}
+ {/* dashboard LEVEL 1: STRUCTURAL dashboard CONTEXT BAR TITLES */}
  <header className="space-y-1 block select-none pointer-events-none border-b border-border/10 pb-3 w-full shrink-0 leading-none">
  <div className="flex items-center gap-2 leading-none w-full block">
  <Sparkles className="h-5 w-5 text-primary stroke-[2.2] shrink-0" />
@@ -398,7 +398,7 @@ export default function Connections() {
  </p>
  </header>
 
- {/* HUD LEVEL 2: DYNAMIC TABS DISPATCH MATRICES */}
+ {/* dashboard LEVEL 2: DYNAMIC TABS DISPATCH MATRICES */}
  <div className="w-full block">
  <Tabs defaultValue="incoming" className="w-full block">
  <TabsList className="grid w-full grid-cols-4 p-1 h-10 bg-muted/40 rounded-lg border border-border/10 select-none">
@@ -491,3 +491,5 @@ function EmptyScreenDisplayMessage({ msgText }: { msgText: string }) {
  </Card>
  );
 }
+
+

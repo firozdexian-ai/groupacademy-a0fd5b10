@@ -1,4 +1,4 @@
-import { z } from "zod";
+﻿import { z } from "zod";
 
 export const AuthActionSchema = z.enum([
   "welcome",
@@ -23,3 +23,4 @@ export const AuthAgentReplySchema = z.object({
 
 export type AuthActionT = z.infer<typeof AuthActionSchema>;
 export type AuthAgentReply = z.infer<typeof AuthAgentReplySchema>;
+

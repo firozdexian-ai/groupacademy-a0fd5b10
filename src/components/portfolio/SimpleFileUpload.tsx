@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
+﻿import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Upload, X, FileText, Link, AlertCircle, CheckCircle, Loader2, Zap, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,7 @@ const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 /**
  * GroUp Academy: Lightweight Single-Artifact Data Ingress System (SimpleFileUpload)
  * An authoritative singleton sandbox managing custom profile CV deployments and URL registration layers.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export const SimpleFileUpload: React.FC<SimpleFileUploadProps> = ({
   onFileUploaded,
@@ -295,7 +295,7 @@ export const SimpleFileUpload: React.FC<SimpleFileUploadProps> = ({
           <div className="flex gap-2 w-full font-semibold text-sm">
             <Input
               type="url"
-              placeholder="Paste the link to your file (e.g. https://drive.google.com/...)…"
+              placeholder="Paste the link to your file (e.g. https://drive.google.com/...)â€¦"
               value={urlInput}
               className="h-10 rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3 shadow-inner flex-1 min-w-0"
               onChange={(e) => {
@@ -421,3 +421,4 @@ export const SimpleFileUpload: React.FC<SimpleFileUploadProps> = ({
 
   return null;
 };
+

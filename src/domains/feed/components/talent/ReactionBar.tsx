@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { ThumbsUp, Lightbulb, PartyPopper, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";

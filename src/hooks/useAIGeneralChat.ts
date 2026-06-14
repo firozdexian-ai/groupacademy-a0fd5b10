@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+﻿import { useState, useCallback, useEffect, useRef } from "react";
 import { getAccessToken } from "@/lib/auth";
 import { createAgentChatSession, updateAgentChatSessionMessages, incrementAgentConversations } from "@/domains/agents/repo/agentsRepo";
 import { useTalent } from "@/hooks/useTalent";
@@ -130,7 +130,7 @@ export function useAIGeneralChat(initialQuery?: string): UseAIGeneralChatReturn 
         const decoder = new TextDecoder();
         let transmissionBuffer = "";
 
-        // UI HUD: Provision Assistant Message Node
+        // UI dashboard: Provision Assistant Message Node
         setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
         while (true) {
@@ -141,7 +141,7 @@ export function useAIGeneralChat(initialQuery?: string): UseAIGeneralChatReturn 
 
           let nlIndex: number;
           while ((nlIndex = transmissionBuffer.indexOf("\n")) !== -1) {
-            let line = transmissionBuffer.slice(0, nlIndex);
+            const line = transmissionBuffer.slice(0, nlIndex);
             transmissionBuffer = transmissionBuffer.slice(nlIndex + 1);
 
             if (line.startsWith("data: ")) {
@@ -193,3 +193,4 @@ export function useAIGeneralChat(initialQuery?: string): UseAIGeneralChatReturn 
 
   return { sessionId, messages, isStreaming, isLoading, sendMessage };
 }
+

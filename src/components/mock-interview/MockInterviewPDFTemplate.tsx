@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+﻿import { useEffect, useMemo } from "react";
 import { format } from "date-fns";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 
@@ -70,7 +70,7 @@ const PERFORMANCE_REGISTRY: Record<string, string> = {
 /**
  * GroUp Academy: Automated Career Trajectory Assessment Artifact (MockInterviewPDFTemplate)
  * An authoritative static print layer compiling performance metrics into high-fidelity immutable PDF structures.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function MockInterviewPDFTemplate({ interview }: Props) {
   // Monitor generation pipeline parameters safely via telemetry hooks
@@ -147,7 +147,7 @@ export function MockInterviewPDFTemplate({ interview }: Props) {
       }}
     >
       <div id="mock-interview-pdf-content" style={{ width: "100%", height: "100%" }}>
-        {/* HUD LEVEL 1: IMMUTABLE REPORT HEADER CONTEXT SUMMARY */}
+        {/* dashboard LEVEL 1: IMMUTABLE REPORT HEADER CONTEXT SUMMARY */}
         <div
           style={{
             display: "flex",
@@ -202,7 +202,7 @@ export function MockInterviewPDFTemplate({ interview }: Props) {
           </div>
         </div>
 
-        {/* HUD LEVEL 2: CANDIDATE SCHEDULING IDENTIFICATION SHIELD */}
+        {/* dashboard LEVEL 2: CANDIDATE SCHEDULING IDENTIFICATION SHIELD */}
         <div style={{ display: "flex", gap: "20px", marginBottom: "35px", width: "100%" }}>
           <div
             style={{
@@ -306,7 +306,7 @@ export function MockInterviewPDFTemplate({ interview }: Props) {
           </div>
         </div>
 
-        {/* HUD LEVEL 3: NEURAL SCORE PARITY GRADIENT COVER CARD */}
+        {/* dashboard LEVEL 3: NEURAL SCORE PARITY GRADIENT COVER CARD */}
         <div
           style={{
             textAlign: "center",
@@ -358,7 +358,7 @@ export function MockInterviewPDFTemplate({ interview }: Props) {
           </div>
         </div>
 
-        {/* HUD LEVEL 4: TWO-COLUMN DIAGNOSTIC STRENGTHS/ANOMALIES GRID */}
+        {/* dashboard LEVEL 4: TWO-COLUMN DIAGNOSTIC STRENGTHS/ANOMALIES GRID */}
         <div style={{ display: "flex", gap: "20px", marginBottom: "40px", width: "100%" }}>
           <div
             style={{
@@ -428,7 +428,7 @@ export function MockInterviewPDFTemplate({ interview }: Props) {
                 letterSpacing: "0.5px",
               }}
             >
-              [△] Areas for Improvement
+              [â–³] Areas for Improvement
             </h4>
             <ul
               style={{
@@ -455,7 +455,7 @@ export function MockInterviewPDFTemplate({ interview }: Props) {
           </div>
         </div>
 
-        {/* HUD LEVEL 5: COMPREHENSIVE QUESTION FEEDBACK LEDGER STACK */}
+        {/* dashboard LEVEL 5: COMPREHENSIVE QUESTION FEEDBACK LEDGER STACK */}
         <div style={{ marginBottom: "35px", textAlign: "left" }}>
           <h3
             style={{
@@ -602,7 +602,7 @@ export function MockInterviewPDFTemplate({ interview }: Props) {
           )}
         </div>
 
-        {/* HUD LEVEL 6: SYSTEM ARCHIVE AUDIT FOOTER BRAND STRIP */}
+        {/* dashboard LEVEL 6: SYSTEM ARCHIVE AUDIT FOOTER BRAND STRIP */}
         <div
           style={{
             borderTop: "2px solid #f1f5f9",
@@ -630,3 +630,4 @@ export function MockInterviewPDFTemplate({ interview }: Props) {
     </div>
   );
 }
+

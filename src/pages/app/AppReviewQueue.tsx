@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { Link } from "react-router-dom";
 import { Loader2, ClipboardList, Inbox } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -28,7 +28,7 @@ interface AssignmentRecord {
 /**
  * GroUp Academy: Talent Peer-Review Assignment Queue Cockpit (AppReviewQueue)
  * Hardened evaluation dashboard isolating dynamic metadata filters and shielding text fields from layout shifts.
- * Version: Launch Candidate · Phase Z1 Integration Stability Locked
+ * Version: Launch Candidate Â· Phase Z1 Integration Stability Locked
  */
 export default function AppReviewQueue() {
  const { data: reviewQueuePayload = [], isLoading: isQueueCacheResolving } = useReviewQueue();
@@ -52,7 +52,7 @@ export default function AppReviewQueue() {
 
  return (
  <div className="max-w-2xl mx-auto px-4 py-6 pb-24 text-left antialiased block transform-gpu w-full">
- {/* HUD LEVEL 1: APPLICATION HEADER PANEL SCHEMAS */}
+ {/* dashboard LEVEL 1: APPLICATION HEADER PANEL SCHEMAS */}
  <header className="block w-full select-none pb-3 border-b border-border/10 leading-none">
  <h1 className="text-base sm:text-lg md:text-xl font-bold uppercase tracking-wide text-foreground flex items-center gap-2 leading-none pt-0.5">
  <ClipboardList className="h-4 w-4 sm:h-5 w-5 text-primary stroke-[2.2] shrink-0 pointer-events-none" />
@@ -63,7 +63,7 @@ export default function AppReviewQueue() {
  </p>
  </header>
 
- {/* HUD LEVEL 2: INBOX GRID LIST VIEWPORT ITERATION CHANNELS */}
+ {/* dashboard LEVEL 2: INBOX GRID LIST VIEWPORT ITERATION CHANNELS */}
  <main className="mt-4 space-y-2 block w-full">
  {typedAssignmentsArray.length === 0 ? (
  <div className="rounded-lg border border-dashed border-border/60 bg-card/20 p-8 text-center select-none block mt-2">
@@ -131,3 +131,4 @@ export default function AppReviewQueue() {
  </div>
  );
 }
+

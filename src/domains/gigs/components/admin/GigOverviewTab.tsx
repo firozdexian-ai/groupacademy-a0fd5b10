@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+﻿import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { useGigGraph } from "./hooks/useGigGraph";
@@ -191,7 +191,7 @@ export function GigOverviewTab() {
   );
 }
 
-function MetricTile({ label, value, icon: Icon, color, bg }: any) {
+function MetricTile({ label, value, icon: Icon, color, bg }: unknown) {
   return (
     <Card className="rounded-2xl border-border/60">
       <CardContent className="p-4 flex items-center gap-3">
@@ -211,7 +211,7 @@ function MetricTile({ label, value, icon: Icon, color, bg }: any) {
   );
 }
 
-function PulseBar({ label, value, max, color }: any) {
+function PulseBar({ label, value, max, color }: unknown) {
   const percentage = Math.min(Math.round((value / max) * 100), 100);
   return (
     <div className="space-y-1.5">
@@ -227,3 +227,5 @@ function PulseBar({ label, value, max, color }: any) {
 }
 
 export default GigOverviewTab;
+
+

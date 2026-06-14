@@ -1,4 +1,4 @@
-import { LucideIcon, Inbox } from "lucide-react";
+﻿import { LucideIcon, Inbox } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -23,7 +23,7 @@ export function EmptyState({
 }: EmptyStateProps) {
   // action can be a ReactNode (preferred) or a {label, onClick} object (legacy)
   const isLegacyAction =
-    action && typeof action === "object" && "label" in (action as any) && "onClick" in (action as any);
+    action && typeof action === "object" && "label" in (action as unknown) && "onClick" in (action as unknown);
   const legacyAction = isLegacyAction ? (action as { label: string; onClick: () => void }) : null;
   const resolvedActionLabel = actionLabel ?? legacyAction?.label;
   const resolvedActionClick = onActionClick ?? legacyAction?.onClick;
@@ -56,3 +56,5 @@ export function EmptyState({
     </div>
   );
 }
+
+

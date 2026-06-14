@@ -18,7 +18,7 @@ interface ProfilePhotoUploadProps {
 /**
  * GroUp Academy: Identity Avatar Resource Ingress Node (ProfilePhotoUpload)
  * An authoritative operational sandbox layer parsing image formats and updating master account asset states.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function ProfilePhotoUpload({ currentPhotoUrl, fullName, onPhotoChange }: ProfilePhotoUploadProps) {
   const queryClient = useQueryClient();
@@ -79,7 +79,7 @@ export function ProfilePhotoUpload({ currentPhotoUrl, fullName, onPhotoChange }:
 
     setIsUploading(true);
     trackEvent("profile_photo_upload_initiated");
-    const dynamicToastTrackerId = toast.loading("Uploading photo…");
+    const dynamicToastTrackerId = toast.loading("Uploading photoâ€¦");
 
     try {
       const fileExtensionString = targetedFileItem.name.split(".").pop();
@@ -87,15 +87,10 @@ export function ProfilePhotoUpload({ currentPhotoUrl, fullName, onPhotoChange }:
       const fullTargetObjectStoragePathStr = `profile-photos/${nonCollidingUniqueFileNameStr}`;
 
       // STORAGE TRANSACT EXECUTION: Push binary object to bucket allocation
-      let publicUrl: string;
-      try {
-        const uploadResult = await uploadPortfolioFile(fullTargetObjectStoragePathStr, targetedFileItem, {
-          upsert: false,
-        });
-        publicUrl = uploadResult.publicUrl;
-      } catch (storageUploadRegistryError) {
-        throw storageUploadRegistryError;
-      }
+      const uploadResult = await uploadPortfolioFile(fullTargetObjectStoragePathStr, targetedFileItem, {
+        upsert: false,
+      });
+      const publicUrl = uploadResult.publicUrl;
 
       // Automated Efficiency: Synchronize cache streams immediately to avoid state drift across layouts
       await queryClient.invalidateQueries({ queryKey: ["talent-profile"] });
@@ -107,7 +102,7 @@ export function ProfilePhotoUpload({ currentPhotoUrl, fullName, onPhotoChange }:
         toast.success("Profile photo updated.", { id: dynamicToastTrackerId });
         trackEvent("profile_photo_upload_success");
       }
-    } catch (caughtPipelineExceptionErr: any) {
+    } catch (caughtPipelineExceptionErr: unknown) {
       const formattedExceptionMsgStr =
         caughtPipelineExceptionErr instanceof Error
           ? caughtPipelineExceptionErr.message
@@ -131,7 +126,7 @@ export function ProfilePhotoUpload({ currentPhotoUrl, fullName, onPhotoChange }:
 
   const handleTermination = async () => {
     trackEvent("profile_photo_purge_requested");
-    const dynamicToastTrackerId = toast.loading("Removing photo…");
+    const dynamicToastTrackerId = toast.loading("Removing photoâ€¦");
 
     try {
       await queryClient.invalidateQueries({ queryKey: ["talent-profile"] });
@@ -186,7 +181,7 @@ export function ProfilePhotoUpload({ currentPhotoUrl, fullName, onPhotoChange }:
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 backdrop-blur-md rounded-full z-20 animate-in fade-in duration-200 border border-primary/20">
             <Loader2 className="h-5 w-5 animate-spin text-primary stroke-[2.5]" />
             <span className="text-[8px] font-mono font-bold uppercase tracking-wider text-primary mt-1.5 animate-pulse leading-none">
-              Syncing…
+              Syncingâ€¦
             </span>
           </div>
         )}
@@ -237,3 +232,5 @@ export function ProfilePhotoUpload({ currentPhotoUrl, fullName, onPhotoChange }:
     </div>
   );
 }
+
+

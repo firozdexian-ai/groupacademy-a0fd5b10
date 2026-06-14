@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+﻿import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { GOAL_TO_AGENTS, DEFAULT_PINNED_AGENTS, type ProGoalKey } from "../lib/tokens";
 import {
@@ -79,7 +79,7 @@ export function useGro10xThreads() {
       }
 
       setState({ threads, companyId, loading: false, error: null });
-    } catch (e: any) {
+    } catch (e: unknown) {
       setState({ threads: [], companyId: null, loading: false, error: e?.message ?? "Failed to load inbox" });
     }
   }, [user?.id]);
@@ -132,3 +132,5 @@ export function useGro10xThreads() {
 
   return { ...state, refresh, pinAgent, markRead, bumpThread };
 }
+
+

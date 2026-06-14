@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { createTalentCvSignedUrl } from "@/domains/jobs/repo/jobsRepo";
@@ -122,7 +122,7 @@ const STATUS_INDEX: Record<string, number> = {
 /**
  * GroUp Academy: Authoritative Application Specification Ledger Node (AppApplicationDetail)
  * Hardened candidate workspace panel tracking recruitment status, processing parallel storage signing keys, and preventing client unmount memory leaks.
- * Version: Launch Candidate · Phase Z1 Integration Stability Locked
+ * Version: Launch Candidate Â· Phase Z1 Integration Stability Locked
  */
 export default function AppApplicationDetail() {
  const { id: rawRouteIdentifierStr } = useParams<{ id: string }>();
@@ -346,7 +346,7 @@ export default function AppApplicationDetail() {
 
  return (
  <div className="max-w-3xl mx-auto px-4 pt-3 pb-16 space-y-4 block text-left antialiased transform-gpu w-full">
- {/* HUD LEVEL 1: OVERVIEW CONTROL CONSOLE BAR */}
+ {/* dashboard LEVEL 1: OVERVIEW CONTROL CONSOLE BAR */}
  <div className="flex items-center justify-between select-none leading-none w-full shrink-0">
  <Button
  type="button"
@@ -373,7 +373,7 @@ export default function AppApplicationDetail() {
  </Badge>
  </div>
 
- {/* HUD LEVEL 2: DETAILED ASSIGNMENT SOURCE VIEW CARD */}
+ {/* dashboard LEVEL 2: DETAILED ASSIGNMENT SOURCE VIEW CARD */}
  <Card
  onClick={handleNavigateToJobSnapshot}
  className="rounded-xl border border-border/60 bg-card/40 hover:border-border-foreground/10 transition-colors duration-100 shadow-none cursor-pointer overflow-hidden block w-full"
@@ -396,7 +396,7 @@ export default function AppApplicationDetail() {
  {applicationDetailState.job.title}
  </p>
  <p className="text-[11px] font-semibold text-muted-foreground/70 truncate block select-text leading-tight">
- {applicationDetailState.job.company_name} <span className="font-mono opacity-30 select-none mx-1">·</span>{" "}
+ {applicationDetailState.job.company_name} <span className="font-mono opacity-30 select-none mx-1">Â·</span>{" "}
  {applicationDetailState.job.location || "Remote"}
  </p>
  <p className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-tight block leading-none tabular-nums pt-0.5">
@@ -411,7 +411,7 @@ export default function AppApplicationDetail() {
  </CardContent>
  </Card>
 
- {/* HUD LEVEL 3: PROGRESS TIMELINE CHANNELS BAR */}
+ {/* dashboard LEVEL 3: PROGRESS TIMELINE CHANNELS BAR */}
  {!isSubmissionLifecycleClosed && (
  <Card className="rounded-xl border border-border/60 bg-card/10 shadow-none overflow-hidden block w-full select-none">
  <CardContent className="p-4 block w-full leading-none">
@@ -458,7 +458,7 @@ export default function AppApplicationDetail() {
  </Card>
  )}
 
- {/* HUD LEVEL 4: SYSTEM COMPLIANCE INTERFACE NUDGE */}
+ {/* dashboard LEVEL 4: SYSTEM COMPLIANCE INTERFACE NUDGE */}
  {applicationDetailState.job.ai_assessment_enabled &&
  !isSubmissionLifecycleClosed &&
  applicationDetailState.assessment &&
@@ -487,7 +487,7 @@ export default function AppApplicationDetail() {
  </Card>
  )}
 
- {/* HUD LEVEL 5: SYNTHETIC SKILL CAP MATCH INDEX OVERVIEW */}
+ {/* dashboard LEVEL 5: SYNTHETIC SKILL CAP MATCH INDEX OVERVIEW */}
  {applicationDetailState.ai_match_score !== null && (
  <Card className="rounded-xl border border-border/60 bg-card/40 shadow-none block w-full overflow-hidden">
  <CardContent className="p-4 space-y-2 block w-full leading-none">
@@ -510,7 +510,7 @@ export default function AppApplicationDetail() {
  </Card>
  )}
 
- {/* HUD LEVEL 6: CANDIDATE SUBMISSION VERIFICATION WORKSPACE PACKAGES */}
+ {/* dashboard LEVEL 6: CANDIDATE SUBMISSION VERIFICATION WORKSPACE PACKAGES */}
  <Card className="rounded-xl border border-border/60 bg-card/40 shadow-none block w-full overflow-hidden">
  <CardContent className="p-4 space-y-3 block w-full leading-none">
  <p className="text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 select-none block leading-none pb-2 border-b border-border/5">
@@ -547,7 +547,7 @@ export default function AppApplicationDetail() {
  </CardContent>
  </Card>
 
- {/* HUD LEVEL 7: RECRUITER CHAT MESSAGES PANEL ARCHIVE */}
+ {/* dashboard LEVEL 7: RECRUITER CHAT MESSAGES PANEL ARCHIVE */}
  {!isSubmissionLifecycleClosed && (
  <Card className="rounded-xl border border-border/60 bg-card/40 shadow-none overflow-hidden block w-full">
  <CardContent className="p-4 space-y-3 block w-full leading-none">
@@ -560,10 +560,10 @@ export default function AppApplicationDetail() {
  </Card>
  )}
 
- {/* HUD LEVEL 8: RELATIONAL INTERVIEW SCHEDULING ROSTERS TRACKS */}
+ {/* dashboard LEVEL 8: RELATIONAL INTERVIEW SCHEDULING ROSTERS TRACKS */}
  <InterviewPanel applicationId={applicationDetailState.id} actorRole="talent" />
 
- {/* HUD LEVEL 9: COMPLIANCE MUTATION ROLLBACK TIMEFRAME INTERVAL TRIGGERS */}
+ {/* dashboard LEVEL 9: COMPLIANCE MUTATION ROLLBACK TIMEFRAME INTERVAL TRIGGERS */}
  {applicationDetailState.application_status === "withdrawn" &&
  applicationDetailState.withdrawn_at &&
  differenceInDays(new Date(), new Date(applicationDetailState.withdrawn_at)) < 7 && (
@@ -579,7 +579,7 @@ export default function AppApplicationDetail() {
  </Button>
  )}
 
- {/* HUD LEVEL 10: ALIGNMENT VOID WITHDRAWAL MUTATION MECHANISMS */}
+ {/* dashboard LEVEL 10: ALIGNMENT VOID WITHDRAWAL MUTATION MECHANISMS */}
  {!isSubmissionLifecycleClosed && (
  <AlertDialog>
  <AlertDialogTrigger asChild>
@@ -621,3 +621,4 @@ export default function AppApplicationDetail() {
  </div>
  );
 }
+

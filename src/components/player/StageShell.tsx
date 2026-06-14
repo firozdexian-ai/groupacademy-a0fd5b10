@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState, useMemo } from "react";
+﻿import { ReactNode, useEffect, useState, useMemo } from "react";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 import { cn } from "@/lib/utils";
 
@@ -11,7 +11,7 @@ interface Props {
  * GroUp Academy: Hardware-Accelerated Bimodal Stage Transition Shell (StageShell)
  * An authoritative wrapper layout enforcing accessible cross-fade state synchronizations
  * using pure CSS engine variables. Protects layout bounds from jarring structural pops.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export default function StageShell({ stageKey, children }: Props) {
   // Capture historical layout identity paths to isolate transitional state overlays
@@ -76,3 +76,4 @@ export default function StageShell({ stageKey, children }: Props) {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+﻿import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -39,9 +39,9 @@ Key requirements: ${reqSnippet || "See listing"}
 Apply link: ${apply_link}
 
 STRUCTURE (follow this exact layout):
-1. Line 1: A creative hook — a question, bold statement, or attention-grabbing opener
+1. Line 1: A creative hook â€” a question, bold statement, or attention-grabbing opener
 2. Blank line
-3. Job details block — role title, company, location, type — each on its own line with a relevant emoji
+3. Job details block â€” role title, company, location, type â€” each on its own line with a relevant emoji
 4. Blank line
 5. 1-2 lines about key requirements or what makes this role exciting
 6. Blank line
@@ -51,11 +51,11 @@ STRUCTURE (follow this exact layout):
 RULES:
 - ${instructions}
 - Use line breaks to separate sections. Do NOT write a single paragraph.
-- Format the job details clearly — one detail per line
+- Format the job details clearly â€” one detail per line
 - Include 2-3 relevant emojis as section markers
 - Under ${maxLen} characters total
 - AVOID generic openings like "We're hiring" or "Exciting opportunity"
-- Start with something creative — a question, bold statement, or hook
+- Start with something creative â€” a question, bold statement, or hook
 - English only
 - Do NOT use markdown formatting (except *bold* for WhatsApp)`;
 
@@ -98,3 +98,4 @@ RULES:
     });
   }
 });
+

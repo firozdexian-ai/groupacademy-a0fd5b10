@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
@@ -21,7 +21,7 @@ interface VerifiedMatchBadgeProps {
 /**
  * GroUp Academy: Validation Tracking Node (VerifiedMatchBadge)
  * CTO Reference: Authoritative micro-badge component visualizing candidate skill verifications.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function VerifiedMatchBadge({
   credentials = [],
@@ -116,3 +116,4 @@ export function VerifiedMatchBadge({
     </TooltipProvider>
   );
 }
+

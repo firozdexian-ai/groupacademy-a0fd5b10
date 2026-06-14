@@ -1,5 +1,5 @@
-// Instructor item-bank analytics — aggregates per-module quiz/scenario telemetry
-// Phase 2.7.a — admin-gated read aggregation, no schema changes.
+﻿// Instructor item-bank analytics â€” aggregates per-module quiz/scenario telemetry
+// Phase 2.7.a â€” admin-gated read aggregation, no schema changes.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -88,7 +88,7 @@ Deno.serve(async (req) => {
   const winCorrect = new Map<string, number>();
   for (const a of attempts ?? []) {
     const ids: string[] = a.item_ids ?? [];
-    const ans: any[] = Array.isArray(a.answers) ? a.answers : [];
+    const ans: unknown[] = Array.isArray(a.answers) ? a.answers : [];
     ids.forEach((iid, i) => {
       winServed.set(iid, (winServed.get(iid) ?? 0) + 1);
       const correct = quizCorrectIndex.get(iid);
@@ -104,7 +104,7 @@ Deno.serve(async (req) => {
     .from("talent_scenario_run")
     .select("scenario_id,evaluation,created_at")
     .gte("created_at", since)
-    .in("scenario_id", (scenarioPool ?? []).map((s: any) => s.id));
+    .in("scenario_id", (scenarioPool ?? []).map((s: unknown) => s.id));
 
   const runsByScenario = new Map<string, { count: number; overallSum: number; rubric: Record<string, { sum: number; n: number }> }>();
   for (const r of runs ?? []) {
@@ -117,7 +117,7 @@ Deno.serve(async (req) => {
     const perR = ev?.per_rubric ?? ev?.rubric_scores ?? {};
     if (perR && typeof perR === "object") {
       for (const [k, v] of Object.entries(perR)) {
-        const num = Number((v as any)?.score ?? v);
+        const num = Number((v as unknown)?.score ?? v);
         if (!isFinite(num)) continue;
         const cell = slot.rubric[k] ?? { sum: 0, n: 0 };
         cell.sum += num; cell.n += 1;
@@ -128,7 +128,7 @@ Deno.serve(async (req) => {
   }
 
   // Build quiz item rows
-  const quizItems = (quizPool ?? []).map((q: any) => {
+  const quizItems = (quizPool ?? []).map((q: unknown) => {
     const lifeServed = q.times_served ?? 0;
     const lifeCorrect = q.times_correct ?? 0;
     const pLife = lifeServed > 0 ? lifeCorrect / lifeServed : null;
@@ -156,7 +156,7 @@ Deno.serve(async (req) => {
     };
   });
 
-  const scenarioItems = (scenarioPool ?? []).map((s: any) => {
+  const scenarioItems = (scenarioPool ?? []).map((s: unknown) => {
     const slot = runsByScenario.get(s.id);
     const runsLife = s.times_served ?? 0;
     const runsWin = slot?.count ?? 0;
@@ -193,7 +193,7 @@ Deno.serve(async (req) => {
 
   // Learner mastery per topic
   const tags = Array.from(topicAgg.keys());
-  let masteryByTag = new Map<string, { sum: number; n: number }>();
+  const masteryByTag = new Map<string, { sum: number; n: number }>();
   if (tags.length) {
     const { data: profileRows = [] } = await admin
       .from("talent_skill_profile")
@@ -240,3 +240,5 @@ Deno.serve(async (req) => {
     topics,
   });
 });
+
+

@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useUgcGraph } from "./hooks/useUgcGraph";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ export function UgcVideosTab() {
  const { ugcGraphQuery, mutations: { upsertVideo, deleteVideo } } = useUgcGraph();
  const { data, isLoading } = ugcGraphQuery;
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ is_published: false });
+ const [draft, setDraft] = useState<unknown>({ is_published: false });
  const [search, setSearch] = useState("");
 
  const rows = (data?.videos ?? []).filter((r) =>
@@ -84,7 +84,7 @@ export function UgcVideosTab() {
  </div>
  </TableCell>
  <TableCell className="text-xs text-muted-foreground truncate max-w-[200px]">
- {row.youtube_url || "—"}
+ {row.youtube_url || "â€”"}
  </TableCell>
  <TableCell>
  <Badge
@@ -172,3 +172,5 @@ export function UgcVideosTab() {
 }
 
 export default UgcVideosTab;
+
+

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useAccountType } from "@/hooks/useAccountType";
@@ -69,10 +69,10 @@ const Auth = () => {
   const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
-  // REDIRECT GUARD — wait until we know account type to route correctly
+  // REDIRECT GUARD â€” wait until we know account type to route correctly
   useEffect(() => {
     if (authLoading || !user || accountTypeLoading) return;
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    getCurrentSession().then(async ({ data: { session } }) => {
       if (session) {
         await finalizePendingOnboarding();
         const dest = resolvePostAuthRoute(accountType, safeReturnTo(searchParams.get("returnTo")));
@@ -418,7 +418,7 @@ const Auth = () => {
               onClick={() => navigate("/gro10x/auth")}
               className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors"
             >
-              Hiring? Apply for company access →
+              Hiring? Apply for company access â†’
             </button>
           </div>
         </div>
@@ -463,3 +463,5 @@ const Auth = () => {
 };
 
 export default Auth;
+
+

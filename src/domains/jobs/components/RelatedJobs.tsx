@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   listRelatedJobsByCompany,
@@ -27,7 +27,7 @@ function extractCountry(location: string | null): string | null {
 }
 
 /**
- * Related jobs rail. Tiers: same company → same country → featured fallback.
+ * Related jobs rail. Tiers: same company â†’ same country â†’ featured fallback.
  */
 export function RelatedJobs({ currentJobId, companyName, location, linkPrefix }: RelatedJobsProps) {
   const navigate = useNavigate();
@@ -94,7 +94,7 @@ export function RelatedJobs({ currentJobId, companyName, location, linkPrefix }:
         count: finalList.length,
         mode: sectionTitle,
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       trackError(msg, {
         component: "RelatedJobs",
@@ -160,3 +160,5 @@ export function RelatedJobs({ currentJobId, companyName, location, linkPrefix }:
     </section>
   );
 }
+
+

@@ -1,4 +1,4 @@
-// Daily cron: refresh ai_job_recommendations for talents whose cache is >24h old.
+﻿// Daily cron: refresh ai_job_recommendations for talents whose cache is >24h old.
 // Calls the SECURITY DEFINER RPC cron_rebuild_stale_job_recs(_batch).
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.86.0";
 
@@ -38,3 +38,4 @@ Deno.serve(async (req) => {
     { headers: { ...corsHeaders, "content-type": "application/json" } },
   );
 });
+

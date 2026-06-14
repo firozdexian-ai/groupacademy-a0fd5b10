@@ -1,4 +1,4 @@
-// cron-session-reminders — runs every ~5 minutes via pg_cron.
+﻿// cron-session-reminders â€” runs every ~5 minutes via pg_cron.
 // Finds course_sessions in T-24h / T-1h / T-5min windows and dispatches
 // session_reminder_t{24,1,5} via notify-learning-event. Idempotent through
 // notification_dispatch (UNIQUE scope,scope_id,kind).
@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
   );
 
   const now = Date.now();
-  const dispatched: any[] = [];
+  const dispatched: unknown[] = [];
 
   for (const w of WINDOWS) {
     const center = new Date(now + w.min * 60_000);
@@ -94,3 +94,5 @@ Deno.serve(async (req) => {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 });
+
+

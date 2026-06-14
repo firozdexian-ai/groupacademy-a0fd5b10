@@ -55,7 +55,7 @@ export function ExternalApplicationPrep({
 }: ExternalApplicationPrepProps) {
   const queryClient = useQueryClient();
   const [phase, setPhase] = useState<Phase>("loading");
-  const [answers, setAnswers] = useState<any[]>([]);
+  const [answers, setAnswers] = useState<unknown[]>([]);
   const [generalSummary, setGeneralSummary] = useState("");
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [summaryCopied, setSummaryCopied] = useState(false);
@@ -106,16 +106,18 @@ export function ExternalApplicationPrep({
         });
 
         if (!response.ok) {
-          let errBody: any = {};
+          let errBody: unknown = {};
           try {
             errBody = await response.json();
-          } catch {}
+          } catch {
+            // ignore
+          }
           throw new Error(errBody.error || `Edge synapse process failure status token: [${response.status}]`);
         }
 
         const parsedData = (await response.ok) ? await response.json() : null;
         return parsedData;
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (err.name === "AbortError") {
           trackError("Ecosystem network connection timeout triggered over external form scraping lookup.", {
             component: "ExternalApplicationPrep",
@@ -162,7 +164,7 @@ export function ExternalApplicationPrep({
         trackEvent("external_application_scrape_success", { jobId, keysYielded: data?.answers?.length });
         toast.success("Application analyzed successfully");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       const exceptionMsg = err instanceof Error ? err.message : String(err);
 
       trackError(exceptionMsg, {
@@ -204,7 +206,7 @@ export function ExternalApplicationPrep({
       setGeneralSummary(data?.general_summary || "");
       setPhase("results");
       trackEvent("external_application_vision_sync_success", { jobId });
-    } catch (err: any) {
+    } catch (err: unknown) {
       const exceptionMsg = err instanceof Error ? err.message : String(err);
 
       trackError(exceptionMsg, {
@@ -525,3 +527,5 @@ export function ExternalApplicationPrep({
     </Dialog>
   );
 }
+
+

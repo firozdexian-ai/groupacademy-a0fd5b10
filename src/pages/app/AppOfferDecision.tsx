@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAcceptOffer, useDeclineOffer } from "@/hooks/useOffers";
@@ -50,7 +50,7 @@ interface DecisionMutationPayload {
 /**
  * GroUp Academy: Executive Offer Decision Matrix (AppOfferDecision)
  * Hardened responsive decision cockpit evaluating compensation vectors, securing signature capture strings, and tracking lifecycle threads safely.
- * Version: Launch Candidate · Phase Z1 Production Contract Locked
+ * Version: Launch Candidate Â· Phase Z1 Production Contract Locked
  */
 export default function AppOfferDecision() {
  const { id: unverifiedApplicationIdStr, offerId: unverifiedOfferIdStr } = useParams<{
@@ -263,7 +263,7 @@ export default function AppOfferDecision() {
 
  return (
  <div className="max-w-xl mx-auto px-4 py-4 space-y-4 text-left antialiased block transform-gpu w-full">
- {/* HUD LEVEL 1: APPLICATION COCKPIT DIRECTION BACK Nav FRAME */}
+ {/* dashboard LEVEL 1: APPLICATION COCKPIT DIRECTION BACK Nav FRAME */}
  <div className="block select-none leading-none w-full shrink-0">
  <Button
  type="button"
@@ -276,7 +276,7 @@ export default function AppOfferDecision() {
  </Button>
  </div>
 
- {/* HUD LEVEL 2: DETAILED EMOLUMENTS COMPILATION VIEW */}
+ {/* dashboard LEVEL 2: DETAILED EMOLUMENTS COMPILATION VIEW */}
  <Card className="rounded-xl border border-border/60 bg-card/40 overflow-hidden block w-full shadow-none">
  <CardContent className="p-4 sm:p-5 space-y-4 block w-full leading-none">
  <div className="flex items-center gap-3.5 leading-none block w-full select-none">
@@ -305,7 +305,7 @@ export default function AppOfferDecision() {
  </Badge>
  </div>
 
- {/* HUD LEVEL 3: TABULAR FINANCIAL VECTOR CONFIGS */}
+ {/* dashboard LEVEL 3: TABULAR FINANCIAL VECTOR CONFIGS */}
  <dl className="grid grid-cols-2 gap-3.5 pt-2 border-t border-border/5 text-xs font-semibold block w-full select-text tracking-normal">
  <div className="space-y-0.5 block">
  <dt className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-tight select-none pointer-events-none">
@@ -347,7 +347,7 @@ export default function AppOfferDecision() {
  )}
  </dl>
 
- {/* HUD LEVEL 4: SYSTEM BENEFITS COMPLIANCE ABSTRACT DESCRIPTIONS */}
+ {/* dashboard LEVEL 4: SYSTEM BENEFITS COMPLIANCE ABSTRACT DESCRIPTIONS */}
  {offerRecordState.benefits && (
  <div className="space-y-1 block w-full pt-1">
  <p className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-wide select-none pointer-events-none leading-none">
@@ -379,7 +379,7 @@ export default function AppOfferDecision() {
  </div>
  )}
 
- {/* HUD LEVEL 5: TRANSACTION LOGIC SIGNING DISPATCH CONTROLLERS */}
+ {/* dashboard LEVEL 5: TRANSACTION LOGIC SIGNING DISPATCH CONTROLLERS */}
  {!isDossierDecidedFlag && offerRecordState.status === "sent" && (
  <div className="space-y-3 pt-3.5 border-t border-border/40 block w-full leading-none">
  <div className="space-y-1 block w-full leading-none">
@@ -440,7 +440,7 @@ export default function AppOfferDecision() {
  </div>
  )}
 
- {/* HUD LEVEL 6: COMMITTED STATE TRACK ARCHIVE SIGNALS */}
+ {/* dashboard LEVEL 6: COMMITTED STATE TRACK ARCHIVE SIGNALS */}
  {offerRecordState.status === "accepted" && (
  <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/[0.01] p-3 font-semibold text-xs sm:text-sm text-foreground flex items-start gap-2 select-text leading-tight block w-full">
  <CheckCircle2 className="h-4 w-4 text-emerald-600 stroke-[2.5] shrink-0 mt-0.5 select-none pointer-events-none" />
@@ -469,3 +469,4 @@ export default function AppOfferDecision() {
  </div>
  );
 }
+

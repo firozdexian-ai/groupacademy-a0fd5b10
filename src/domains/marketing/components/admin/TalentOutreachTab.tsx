@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useMarketingGraph } from "./hooks/useMarketingGraph";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -62,8 +62,8 @@ export function TalentOutreachTab() {
   const [selectedSender, setSelectedSender] = useState("firoz");
   const [customSenderName, setCustomSenderName] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-  const [result, setResult] = useState<any>(null);
-  const [analyticsData, setAnalyticsData] = useState<any>(null);
+  const [result, setResult] = useState<unknown>(null);
+  const [analyticsData, setAnalyticsData] = useState<unknown>(null);
   const [isLoadingAnalytics, setIsLoadingAnalytics] = useState(false);
 
   const loadAnalytics = async () => {
@@ -76,7 +76,7 @@ export function TalentOutreachTab() {
       
       const counts: Record<string, number> = {};
       let total = 0;
-      (data || []).forEach((row: any) => {
+      (data || []).forEach((row: unknown) => {
         if (row.product) {
           counts[row.product] = (counts[row.product] || 0) + 1;
           total++;
@@ -87,7 +87,7 @@ export function TalentOutreachTab() {
         productCounts: counts,
         totalMessages: total,
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error("Telemetry failed to load");
     } finally {
       setIsLoadingAnalytics(false);
@@ -98,7 +98,7 @@ export function TalentOutreachTab() {
     setIsProcessing(true);
     setResult(null);
     try {
-      let parsedCVData: any = null;
+      let parsedCVData: unknown = null;
 
       if (inputMode === "upload") {
         if (!cvFile) throw new Error("Please select a CV file first.");
@@ -109,7 +109,7 @@ export function TalentOutreachTab() {
         const { publicUrl } = await uploadPortfolioFile(filePath, cvFile, { upsert: true });
         
         toast.loading("Analyzing CV structure...", { id: "cv-processing" });
-        const parseRes = await parseCv({ cvUrl: publicUrl, serviceType: "cv_outreach" } as any);
+        const parseRes = await parseCv({ cvUrl: publicUrl, serviceType: "cv_outreach" } as unknown);
         if (!parseRes?.success || !parseRes?.parsed) {
           throw new Error("Could not parse the CV content. Please try again with a different format.");
         }
@@ -117,7 +117,7 @@ export function TalentOutreachTab() {
       } else if (inputMode === "url") {
         if (!cvUrl.trim()) throw new Error("Please enter a CV URL first.");
         toast.loading("Analyzing remote CV...", { id: "cv-processing" });
-        const parseRes = await parseCv({ cvUrl: cvUrl.trim(), serviceType: "cv_outreach" } as any);
+        const parseRes = await parseCv({ cvUrl: cvUrl.trim(), serviceType: "cv_outreach" } as unknown);
         if (!parseRes?.success || !parseRes?.parsed) {
           throw new Error("Could not parse CV at the specified URL.");
         }
@@ -125,7 +125,7 @@ export function TalentOutreachTab() {
       } else {
         if (!cvText.trim()) throw new Error("Please paste CV text first.");
         toast.loading("Parsing CV text...", { id: "cv-processing" });
-        const parseRes = await parseCv({ cvText: cvText.trim(), serviceType: "cv_outreach" } as any);
+        const parseRes = await parseCv({ cvText: cvText.trim(), serviceType: "cv_outreach" } as unknown);
         if (!parseRes?.success || !parseRes?.parsed) {
           throw new Error("Could not parse the pasted CV text.");
         }
@@ -140,7 +140,7 @@ export function TalentOutreachTab() {
         professionCategory: parsedCVData?.profession_category || "Executive",
         senderName: finalSender || "Academy_Systems",
         language: selectedLanguage,
-      } as any);
+      } as unknown);
 
       if (!msgRes?.success || !msgRes?.message) {
         throw new Error("Failed to synthesize message pitch.");
@@ -155,7 +155,7 @@ export function TalentOutreachTab() {
       });
 
       toast.success("Outreach strategy generated successfully!", { id: "cv-processing" });
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err.message || "CV Processing Failed", { id: "cv-processing" });
       console.error(err);
     } finally {
@@ -192,7 +192,7 @@ export function TalentOutreachTab() {
         </Button>
       </header>
 
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full">
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as unknown)} className="w-full">
         <TabsList className="bg-muted/30 rounded-xl border border-border/60 p-1.5 mb-8 w-full max-w-2xl mx-auto flex">
           <TabsTrigger
             value="ledger"
@@ -296,7 +296,7 @@ export function TalentOutreachTab() {
                     Outreach Generator
                   </CardTitle>
                   <CardDescription className="text-[10px] font-black text-muted-foreground/60 italic">
-                    Personalized CV Artifact Synthesis
+                    Personalized CV Artifact summary
                   </CardDescription>
                 </div>
               </div>
@@ -437,7 +437,7 @@ export function TalentOutreachTab() {
               >
                 {isProcessing ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" /> Analyzing & Synthesis in Progress...
+                    <Loader2 className="w-4 h-4 animate-spin" /> Analyzing & summary in Progress...
                   </>
                 ) : (
                   <>
@@ -513,7 +513,7 @@ export function TalentOutreachTab() {
                   Distribution Breakdown
                 </p>
                 <div className="space-y-6 text-left">
-                  {Object.entries(analyticsData?.productCounts || {}).map(([prod, count]: any) => (
+                  {Object.entries(analyticsData?.productCounts || {}).map(([prod, count]: unknown) => (
                     <div key={prod} className="space-y-2">
                       <div className="flex justify-between text-[10px] font-black uppercase tracking-tighter">
                         <span className="text-muted-foreground">{prod.replace(/-/g, " ")}</span>
@@ -533,3 +533,5 @@ export function TalentOutreachTab() {
 }
 
 export default TalentOutreachTab;
+
+

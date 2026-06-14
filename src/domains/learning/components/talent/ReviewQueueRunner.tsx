@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -91,7 +91,7 @@ function TopicCard({ topic, onCompleted }: { topic: ReviewTopic; onCompleted: ()
     }
 
     setSubmitting(true);
-    let isRequestAlive = true;
+    const isRequestAlive = true;
     const toastId = toast.loading("Processing space retention verification payload...");
 
     const item_ids = normalizedItems.map((i) => i.id);
@@ -113,8 +113,8 @@ function TopicCard({ topic, onCompleted }: { topic: ReviewTopic; onCompleted: ()
 
       if (isRequestAlive) {
         setResult({
-          score: (data as any).score,
-          results: (data as any).results,
+          score: (data as unknown).score,
+          results: (data as unknown).results,
         });
 
         // Automated Efficiency: Synchronize cache streams immediately to cascade updated weight dimensions
@@ -123,11 +123,11 @@ function TopicCard({ topic, onCompleted }: { topic: ReviewTopic; onCompleted: ()
         queryClient.invalidateQueries({ queryKey: ["item-analytics"] });
 
         toast.success("Retention metrics calibrated successfully.", { id: toastId });
-        trackEvent("review_topic_quiz_success", { topicTag: topic.topic_tag, score: (data as any).score });
+        trackEvent("review_topic_quiz_success", { topicTag: topic.topic_tag, score: (data as unknown).score });
 
         onCompleted();
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       const parsedExceptionMsg = err instanceof Error ? err.message : String(err);
 
       trackError(parsedExceptionMsg, {
@@ -237,7 +237,7 @@ function TopicCard({ topic, onCompleted }: { topic: ReviewTopic; onCompleted: ()
             </div>
 
             {normalizedItems.map((it, idx) => {
-              const r: any = result.results[idx] || { correct: false };
+              const r: unknown = result.results[idx] || { correct: false };
               const isCorrectNode = !!r.correct;
               return (
                 <div
@@ -374,7 +374,7 @@ export function ReviewQueueRunner() {
         <CardContent className="py-12 flex flex-col items-center justify-center gap-3.5 text-center w-full">
           <Loader2 className="h-5 w-5 animate-spin text-primary stroke-[2.5]" />
           <p className="text-xs font-bold text-muted-foreground/80 uppercase tracking-wider pl-0.5 animate-pulse">
-            Loading your review queue…
+            Loading your review queueâ€¦
           </p>
         </CardContent>
       </Card>
@@ -454,7 +454,7 @@ export function ReviewQueueRunner() {
 
   return (
     <div className="space-y-3 text-left max-w-full w-full transform-gpu antialiased">
-      {/* HUD HEADER COVER BANNER ELEMENT */}
+      {/* dashboard HEADER COVER BANNER ELEMENT */}
       <Card className="border border-primary/20 bg-gradient-to-br from-primary/[0.04] to-accent/[0.03] dark:from-primary/[0.02] dark:to-accent/[0.01] rounded-2xl shadow-sm overflow-hidden select-none w-full">
         <CardContent className="p-4 flex items-center gap-3.5 text-left w-full">
           <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/5 flex items-center justify-center shrink-0 shadow-inner">
@@ -540,3 +540,5 @@ export function ReviewQueueRunner() {
     </div>
   );
 }
+
+

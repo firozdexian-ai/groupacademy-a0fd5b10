@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { getTrendingJobs } from "@/domains/jobs/repo/jobsRepo";
 import type { JobCardData } from "@/domains/jobs/components/JobCard";
 
@@ -19,11 +19,11 @@ export function useTrendingJobs(limit = 10) {
     // Performance Baseline: 2-minute stability window safeguarding database aggregate computations
     staleTime: 2 * 60 * 1000,
     queryFn: async (): Promise<JobCardData[]> => {
-      // HUD: EXECUTING_TRENDING_JOBS_RPC_INGRESS_SYNC
-      let data: any[];
+      // dashboard: EXECUTING_TRENDING_JOBS_RPC_INGRESS_SYNC
+      let data: unknown[];
       try {
         data = await getTrendingJobs(limit);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] ANOMALY: get_trending_jobs RPC aggregation failed.", {
           limit,
           message: error?.message,
@@ -34,7 +34,7 @@ export function useTrendingJobs(limit = 10) {
 
 
       // Hardened Data Normalization Layer: Sanitizes raw database variables against schema anomalies
-      return (data || []).map((row: any) => ({
+      return (data || []).map((row: unknown) => ({
         id: String(row.id ?? ""),
         title: String(row.title ?? "Untitled Position"),
         company_name: String(row.company_name ?? "Confidential Organization"),
@@ -50,3 +50,5 @@ export function useTrendingJobs(limit = 10) {
     },
   });
 }
+
+

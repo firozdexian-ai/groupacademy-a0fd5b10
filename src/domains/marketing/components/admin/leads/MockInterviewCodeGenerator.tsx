@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { getCurrentUser } from "@/lib/auth";
 import { insertMockInterviewAccessCode } from "@/domains/marketing/repo/marketingRepo";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
@@ -67,14 +67,14 @@ export function MockInterviewCodeGenerator({ leadEmail, leadName }: MockIntervie
 
  // 3. Monitor Execution via Platform Timeout Protocol
  const { error } = (await withTimeout(executeInsertion(), TIMEOUTS.DEFAULT, "Code insertion timed out")) as {
- error: any;
+ error: unknown;
  };
 
  if (error) throw error;
 
  setGeneratedCode(code);
  toast.success("Deployment Successful: Access code generated.");
- } catch (error: any) {
+ } catch (error: unknown) {
  console.error("Access Code Fault:", error);
  const isTimeout = error.message?.includes("timed out");
  toast.error(isTimeout ? "Network Latency Detected. Retrying..." : "System Error: Code generation failed.");
@@ -173,7 +173,7 @@ export function MockInterviewCodeGenerator({ leadEmail, leadName }: MockIntervie
  disabled={generating}
  className="w-full h-10 rounded-xl font-semibold text-lg shadow-sm hover:scale-[1.02] active:scale-95 transition-transform"
  >
- {generating ? "Saving…" : "Generate"}
+ {generating ? "Savingâ€¦" : "Generate"}
  </Button>
  </div>
  )}
@@ -193,3 +193,5 @@ export function MockInterviewCodeGenerator({ leadEmail, leadName }: MockIntervie
  </Dialog>
  );
 }
+
+

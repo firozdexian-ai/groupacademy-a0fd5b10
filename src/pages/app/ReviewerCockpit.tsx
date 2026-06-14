@@ -45,9 +45,9 @@ export default function ReviewerCockpit() {
  const [working, setWorking] = useState(false);
 
  // Internal error logger
- const reportAnomaly = async (event: string, context: any) => {
+ const reportAnomaly = async (event: string, context: unknown) => {
  console.error(`[app] ${event}`, context);
- try { await adminGigOps({ type: "reviewer_cockpit_error", event, context } as any); } catch {}
+ try { await adminGigOps({ type: "reviewer_cockpit_error", event, context } as unknown); } catch { /* ignore */ }
  };
 
  const load = async () => {
@@ -99,10 +99,10 @@ export default function ReviewerCockpit() {
  const a = assignments.find((x) => x.id === id);
  if (!a) return;
  setActive(a);
- setBrief("Loading brief…");
+ setBrief("Loading briefâ€¦");
  try {
  const data = await aiReviewerBrief({ assignment_id: id });
- setBrief((data as any)?.brief || "No brief available.");
+ setBrief((data as unknown)?.brief || "No brief available.");
  } catch {
  setBrief("Brief synthesis unavailable.");
  }
@@ -303,3 +303,5 @@ export default function ReviewerCockpit() {
  </div>
  );
 }
+
+

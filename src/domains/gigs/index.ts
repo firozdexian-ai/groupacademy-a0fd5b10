@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Public surface of the gigs domain.
  */
 
@@ -20,3 +20,4 @@ export * from "./components/talent/BidCoachDialog";
 export * from "./components/talent/OpenDisputeButton";
 export * from "./components/talent/MySubmissions";
 export { default as GigUploader } from "./components/talent/GigUploader";
+

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import {
   getCompanyProjectPipeline,
   createGigProject,
@@ -17,16 +17,16 @@ import { aiProjectScoper } from "@/domains/gigs/api/gigsApi";
 
 export default function Gro10xProjects() {
   const { data: companyId } = useGro10xCompanyId();
-  const [pipeline, setPipeline] = useState<any[]>([]);
+  const [pipeline, setPipeline] = useState<unknown[]>([]);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ title: "", summary: "", budget_credits: 0, brief: "" });
   const [proposing, setProposing] = useState(false);
-  const [proposed, setProposed] = useState<any[]>([]);
+  const [proposed, setProposed] = useState<unknown[]>([]);
 
   const load = async () => {
     if (!companyId) return;
     const data = await getCompanyProjectPipeline(companyId);
-    setPipeline((data as any) || []);
+    setPipeline((data as unknown) || []);
   };
   useEffect(() => { load(); }, [companyId]);
 
@@ -34,8 +34,8 @@ export default function Gro10xProjects() {
     setProposing(true);
     try {
       const data = await aiProjectScoper({ brief: form.brief, budget_credits: form.budget_credits });
-      setProposed((data as any)?.milestones || []);
-    } catch (error: any) {
+      setProposed((data as unknown)?.milestones || []);
+    } catch (error: unknown) {
       toast.error(error?.message ?? "Scoping failed");
     } finally {
       setProposing(false);
@@ -47,12 +47,12 @@ export default function Gro10xProjects() {
     try {
       const pid = await createGigProject({ company_id: companyId, title: form.title, summary: form.summary, budget_credits: form.budget_credits });
       for (const m of proposed) {
-        await addProjectMilestone(pid as any, m);
+        await addProjectMilestone(pid as unknown, m);
       }
       toast.success("Project created");
       setOpen(false); setProposed([]); setForm({ title: "", summary: "", budget_credits: 0, brief: "" });
       load();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error(error?.message ?? "Failed");
     }
   };
@@ -61,7 +61,7 @@ export default function Gro10xProjects() {
     try {
       await fundGigProject(id);
       toast.success("Funded"); load();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error(error?.message ?? "Failed");
     }
   };
@@ -78,14 +78,14 @@ export default function Gro10xProjects() {
               <Input placeholder="Title" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} />
               <Textarea placeholder="Summary" value={form.summary} onChange={e => setForm({ ...form, summary: e.target.value })} />
               <Input type="number" placeholder="Budget (credits)" value={form.budget_credits} onChange={e => setForm({ ...form, budget_credits: Number(e.target.value) })} />
-              <Textarea placeholder="Detailed brief — AI will propose milestones" value={form.brief} onChange={e => setForm({ ...form, brief: e.target.value })} rows={4} />
+              <Textarea placeholder="Detailed brief â€” AI will propose milestones" value={form.brief} onChange={e => setForm({ ...form, brief: e.target.value })} rows={4} />
               <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={proposeMilestones} disabled={proposing || !form.brief}>{proposing ? "Thinking…" : "Propose milestones"}</Button>
+                <Button size="sm" variant="outline" onClick={proposeMilestones} disabled={proposing || !form.brief}>{proposing ? "Thinkingâ€¦" : "Propose milestones"}</Button>
                 <Button size="sm" onClick={createProject} disabled={!form.title || proposed.length === 0}>Create</Button>
               </div>
               {proposed.length > 0 && (
                 <div className="space-y-1 mt-2">
-                  {proposed.map((m: any, i: number) => (
+                  {proposed.map((m: unknown, i: number) => (
                     <Card key={i} className="p-2 text-xs">
                       <div className="font-medium">{m.title}</div>
                       <div className="text-muted-foreground">{m.summary}</div>
@@ -100,14 +100,14 @@ export default function Gro10xProjects() {
       </div>
 
       {pipeline.length === 0 && <Card className="p-6 text-sm text-center text-muted-foreground">No projects yet.</Card>}
-      {pipeline.map((row: any) => (
+      {pipeline.map((row: unknown) => (
         <Card key={row.project.id} className="p-3 space-y-2">
           <div className="flex items-center justify-between">
             <div className="font-medium text-sm">{row.project.title}</div>
             <Badge variant="outline" className="capitalize">{row.project.status}</Badge>
           </div>
           <div className="text-xs text-muted-foreground">
-            Budget {row.project.budget_credits} · Held {row.escrow?.held_credits ?? 0} · Released {row.escrow?.released_credits ?? 0}
+            Budget {row.project.budget_credits} Â· Held {row.escrow?.held_credits ?? 0} Â· Released {row.escrow?.released_credits ?? 0}
           </div>
           <div className="text-xs">{row.milestones.length} milestones</div>
           {row.project.status === "draft" && <Button size="sm" onClick={() => fundProject(row.project.id)}>Fund</Button>}
@@ -116,3 +116,5 @@ export default function Gro10xProjects() {
     </div>
   );
 }
+
+

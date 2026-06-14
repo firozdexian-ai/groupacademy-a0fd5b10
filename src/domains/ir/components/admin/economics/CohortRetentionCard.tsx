@@ -1,6 +1,6 @@
-/**
+﻿/**
  * Cohort Retention Heatmap
- * Reads ir_retention_cohorts and pivots cohort_month × period_index into
+ * Reads ir_retention_cohorts and pivots cohort_month Ã— period_index into
  * a retention triangle (active_users / cohort_size).
  * Phase IR-Z1.1: orphaned-feature revival.
  */
@@ -119,17 +119,17 @@ export function CohortRetentionCard() {
                       row
                         ? `${row.active_users}/${c.size} active${
                             row.retained_revenue_usd != null
-                              ? ` · $${Number(row.retained_revenue_usd).toLocaleString()} retained`
+                              ? ` Â· $${Number(row.retained_revenue_usd).toLocaleString()} retained`
                               : ""
                           }${
                             row.expansion_revenue_usd
-                              ? ` · +$${Number(row.expansion_revenue_usd).toLocaleString()} expansion`
+                              ? ` Â· +$${Number(row.expansion_revenue_usd).toLocaleString()} expansion`
                               : ""
                           }`
                         : ""
                     }
                   >
-                    {pct == null ? "—" : `${pct.toFixed(0)}%`}
+                    {pct == null ? "â€”" : `${pct.toFixed(0)}%`}
                   </td>
                 );
               })}
@@ -142,3 +142,4 @@ export function CohortRetentionCard() {
 }
 
 export default CohortRetentionCard;
+

@@ -1,9 +1,11 @@
-import React from "react";
+﻿import React from "react";
 
-export const ROUTES: Record<string, React.LazyExoticComponent<any>> = {
+export const ROUTES: Record<string, React.LazyExoticComponent<unknown>> = {
   "quiz-manage": React.lazy(() => import("@/pages/QuizManagement")),
 };
 
 export const TITLES: Record<string, string> = {
   "quiz-manage": "Quiz management",
 };
+
+

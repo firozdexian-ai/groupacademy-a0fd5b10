@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+﻿import { useState, useEffect, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -41,7 +41,7 @@ const SCHEMA_TEMPLATES = {
 /**
  * GroUp Academy: Professional Profile Identity Configuration Architect (ProfileBuilderForm)
  * An authoritative operational workflow node managing structural portfolio data ingestion and resume block indexing.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export default function ProfileBuilderForm({ value, onChange }: ProfileBuilderFormProps) {
   const queryClient = useQueryClient();
@@ -84,9 +84,9 @@ export default function ProfileBuilderForm({ value, onChange }: ProfileBuilderFo
     [safeProfileValue],
   );
 
-  const updateRegistryNode = (key: keyof ProfileData, index: number, field: string, val: any) => {
+  const updateRegistryNode = (key: keyof ProfileData, index: number, field: string, val: unknown) => {
     try {
-      const updatedArray = [...safeProfileValue[key]] as any[];
+      const updatedArray = [...safeProfileValue[key]] as unknown[];
       if (index < 0 || index >= updatedArray.length) return;
 
       updatedArray[index] = { ...updatedArray[index], [field]: val };
@@ -119,7 +119,7 @@ export default function ProfileBuilderForm({ value, onChange }: ProfileBuilderFo
 
   return (
     <div className="space-y-4 text-left max-w-full w-full transform-gpu antialiased">
-      {/* HUD LEVEL 1: TAB SEGMENT REGISTRY CONTROL STRIP */}
+      {/* dashboard LEVEL 1: TAB SEGMENT REGISTRY CONTROL STRIP */}
       <div className="flex flex-wrap gap-2 pb-3 border-b border-border/10 select-none w-full">
         {segments.map((segmentItem) => {
           const SegmentIcon = segmentItem.icon;
@@ -156,7 +156,7 @@ export default function ProfileBuilderForm({ value, onChange }: ProfileBuilderFo
         })}
       </div>
 
-      {/* HUD LEVEL 2: DYNAMIC PORTFOLIO ARTIFACT ENTRY BLOCK CONTAINER */}
+      {/* dashboard LEVEL 2: DYNAMIC PORTFOLIO ARTIFACT ENTRY BLOCK CONTAINER */}
       <div className="w-full min-w-0 animate-in slide-in-from-bottom-1 duration-200 outline-none">
         <Card className="border border-border/40 bg-card/40 backdrop-blur-md rounded-2xl shadow-sm overflow-hidden text-left w-full min-w-0 flex flex-col justify-center">
           <CardHeader className="bg-muted/10 border-b border-border/10 p-4 sm:p-5 select-none leading-none w-full">
@@ -175,7 +175,7 @@ export default function ProfileBuilderForm({ value, onChange }: ProfileBuilderFo
           </CardHeader>
 
           <CardContent className="p-4 sm:p-5 space-y-4 w-full min-w-0 flex flex-col justify-center">
-            {(safeProfileValue[activeSegment] as any[]).map((artifactItem, idx) => (
+            {(safeProfileValue[activeSegment] as unknown[]).map((artifactItem, idx) => (
               <div
                 key={idx}
                 className="group relative border border-border/40 rounded-xl p-4 sm:p-5 bg-background/50 hover:border-border/80 transition-colors w-full min-w-0 shadow-xs flex flex-col justify-center"
@@ -305,7 +305,7 @@ export default function ProfileBuilderForm({ value, onChange }: ProfileBuilderFo
                         onChange={(e) => updateRegistryNode("experience", idx, "description", e.target.value)}
                         rows={3}
                         className="w-full rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3 leading-relaxed italic resize-none shadow-inner"
-                        placeholder="Outline core baseline system engineering deliverables, scale achievements, and tool configurations implemented…"
+                        placeholder="Outline core baseline system engineering deliverables, scale achievements, and tool configurations implementedâ€¦"
                       />
                     </div>
                   </div>
@@ -386,7 +386,7 @@ export default function ProfileBuilderForm({ value, onChange }: ProfileBuilderFo
                         onChange={(e) => updateRegistryNode("projects", idx, "description", e.target.value)}
                         rows={2}
                         className="w-full rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3 leading-relaxed resize-none shadow-inner"
-                        placeholder="Detail system architectural stacks, parallel processes initialized, and product outcomes managed…"
+                        placeholder="Detail system architectural stacks, parallel processes initialized, and product outcomes managedâ€¦"
                       />
                     </div>
                   </div>
@@ -428,7 +428,7 @@ export default function ProfileBuilderForm({ value, onChange }: ProfileBuilderFo
                         onChange={(e) => updateRegistryNode("achievements", idx, "description", e.target.value)}
                         rows={2}
                         className="w-full rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3 leading-relaxed resize-none shadow-inner"
-                        placeholder="Detail the scope of evaluation, competitive filters passed, and awarding institutions involved…"
+                        placeholder="Detail the scope of evaluation, competitive filters passed, and awarding institutions involvedâ€¦"
                       />
                     </div>
                   </div>
@@ -442,7 +442,7 @@ export default function ProfileBuilderForm({ value, onChange }: ProfileBuilderFo
               variant="outline"
               onClick={() => {
                 trackEvent("profile_builder_node_appended", { segmentKey: activeSegment });
-                const templateMappingRecord: Record<keyof ProfileData, any> = {
+                const templateMappingRecord: Record<keyof ProfileData, unknown> = {
                   education: SCHEMA_TEMPLATES.education,
                   experience: SCHEMA_TEMPLATES.experience,
                   skills: SCHEMA_TEMPLATES.skill,
@@ -466,7 +466,7 @@ export default function ProfileBuilderForm({ value, onChange }: ProfileBuilderFo
         </Card>
       </div>
 
-      {/* HUD LEVEL 3: RECTILINEAR SYNAPSE MATRIX REGISTRY ACCOUNT TRACK LOGS */}
+      {/* dashboard LEVEL 3: RECTILINEAR SYNAPSE MATRIX REGISTRY ACCOUNT TRACK LOGS */}
       <div className="bg-muted/20 border border-border/40 p-4 sm:p-5 rounded-xl relative overflow-hidden select-none shadow-inner w-full shrink-0">
         <Zap className="absolute top-0 right-0 p-4 opacity-[0.015] h-20 w-20 transform rotate-12 pointer-events-none" />
         <span className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground/60 block pl-0.5 leading-none mb-3.5">
@@ -499,3 +499,5 @@ export default function ProfileBuilderForm({ value, onChange }: ProfileBuilderFo
     </div>
   );
 }
+
+

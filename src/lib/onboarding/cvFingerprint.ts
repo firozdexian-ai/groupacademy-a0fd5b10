@@ -1,6 +1,6 @@
-/**
+﻿/**
  * Compute a stable SHA-256 fingerprint of a parsed CV so we can detect
- * the same résumé being uploaded under multiple accounts.
+ * the same rÃ©sumÃ© being uploaded under multiple accounts.
  *
  * The fingerprint deliberately ignores formatting / file metadata and
  * focuses on the *substance* of the CV: skills, work history, schooling.
@@ -45,3 +45,4 @@ export async function computeCVFingerprint(parsed: FingerprintInput): Promise<st
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
 }
+

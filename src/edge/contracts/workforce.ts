@@ -1,1 +1,2 @@
-export type WorkforceEdgeContracts = Record<string, never>;
+﻿export type WorkforceEdgeContracts = Record<string, never>;
+

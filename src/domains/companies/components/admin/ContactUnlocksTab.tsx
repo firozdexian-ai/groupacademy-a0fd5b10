@@ -1,5 +1,5 @@
-/**
- * Contact Unlocks Ledger — Profile Unlocks Tracking Hub
+﻿/**
+ * Contact Unlocks Ledger â€” Profile Unlocks Tracking Hub
  * Version: 2024 Highly Professional SAAS UI
  * Fixes: A7 (Server-side KPI Aggregation), R1 (Missing Button Import)
  * Restored: Contact Details (Email/Phone) for Audit Visibility
@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 export function ContactUnlocksTab() {
-  const [rows, setRows] = useState<any[]>([]);
+  const [rows, setRows] = useState<unknown[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [stats, setStats] = useState({ total_unlocks: 0, total_credits: 0, last_7d: 0 });
@@ -35,11 +35,11 @@ export function ContactUnlocksTab() {
         listRecentContactUnlocks(500),
       ]);
 
-      if (summary) setStats(summary as any);
+      if (summary) setStats(summary as unknown);
 
       if (ledgerRows.length) {
-        const companyIds = Array.from(new Set(ledgerRows.map((r: any) => r.company_id).filter(Boolean))) as string[];
-        const userIds = Array.from(new Set(ledgerRows.map((r: any) => r.unlocked_by).filter(Boolean))) as string[];
+        const companyIds = Array.from(new Set(ledgerRows.map((r: unknown) => r.company_id).filter(Boolean))) as string[];
+        const userIds = Array.from(new Set(ledgerRows.map((r: unknown) => r.unlocked_by).filter(Boolean))) as string[];
 
         const [comps, users] = await Promise.all([
           listCompaniesByIds(companyIds),
@@ -49,10 +49,10 @@ export function ContactUnlocksTab() {
         const compMap = Object.fromEntries(comps.map((c) => [c.id, c.name]));
         const userMap = Object.fromEntries(users.map((u) => [u.user_id, u.email]));
 
-        const enriched = ledgerRows.map((r: any) => ({
+        const enriched = ledgerRows.map((r: unknown) => ({
           ...r,
           company_name: compMap[r.company_id] || "Independent Partner",
-          unlocker_email: r.unlocked_by ? userMap[r.unlocked_by] || "Platform Admin" : "—",
+          unlocker_email: r.unlocked_by ? userMap[r.unlocked_by] || "Platform Admin" : "â€”",
         }));
 
         setRows(enriched);
@@ -162,7 +162,7 @@ export function ContactUnlocksTab() {
                 filtered.map((r) => (
                   <tr key={r.id} className="group hover:bg-primary/[0.02] transition-colors border-b last:border-0">
                     <td className="px-8 py-4 font-mono text-[10px] opacity-60 text-left">
-                      {format(new Date(r.created_at), "MMM d · HH:mm")}
+                      {format(new Date(r.created_at), "MMM d Â· HH:mm")}
                     </td>
                     <td className="px-6 py-4 text-left">
                       <p className="font-semibold text-sm uppercase italic group-hover:text-primary transition-colors text-foreground">
@@ -194,7 +194,7 @@ export function ContactUnlocksTab() {
                         variant="outline"
                         className="font-semibold text-[10px] border-2 border-emerald-500/20 text-emerald-500 bg-emerald-500/5"
                       >
-                        − {r.credits_spent} CR
+                        âˆ’ {r.credits_spent} CR
                       </Badge>
                     </td>
                   </tr>
@@ -208,7 +208,7 @@ export function ContactUnlocksTab() {
   );
 }
 
-function MetricTile({ label, value, icon: Icon, color, bg }: any) {
+function MetricTile({ label, value, icon: Icon, color, bg }: unknown) {
   return (
     <Card className="rounded-2xl border border-border/60 bg-card p-6 text-left group hover:border-primary/30 transition-all shadow-md relative overflow-hidden">
       <div className="flex items-center gap-5">
@@ -231,3 +231,4 @@ function MetricTile({ label, value, icon: Icon, color, bg }: any) {
 }
 
 export default ContactUnlocksTab;
+

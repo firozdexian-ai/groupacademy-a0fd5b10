@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Edge-function contracts for the talent domain (Phase 9a/9b + 9h).
  */
 import { z } from "zod";
@@ -21,7 +21,7 @@ export type BatchParseCvsResponse = z.infer<typeof BatchParseCvsResponseSchema>;
 export interface GenerateOutreachMessageRequest {
   talent_id?: string;
   product_context?: string;
-  parsedCV?: any;
+  parsedCV?: unknown;
   product?: string;
   professionCategory?: string;
   senderName?: string;
@@ -99,3 +99,5 @@ export const AnalyzeCareerAssessmentResponseSchema = z
 export type AnalyzeCareerAssessmentResponse = z.infer<
   typeof AnalyzeCareerAssessmentResponseSchema
 >;
+
+

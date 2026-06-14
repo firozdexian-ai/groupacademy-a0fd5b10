@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+﻿import { useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 const SERVICE_CONFIG: Record<
   ServiceHistoryItem["type"],
   {
-    icon: any;
+    icon: unknown;
     color: string;
     bgColor: string;
     label: string;
@@ -58,7 +58,7 @@ const SERVICE_CONFIG: Record<
 /**
  * GroUp Academy: Institutional Service Engagement Ledger Tracker (ServiceHistoryCard)
  * An authoritative operational utility hub parsing history engagement milestones and psychometric yield outputs.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function ServiceHistoryCard() {
   const navigate = useNavigate();
@@ -126,7 +126,7 @@ export function ServiceHistoryCard() {
         <CardContent className="p-5 py-10 flex flex-col items-center justify-center gap-3 w-full">
           <Loader2 className="h-5 w-5 animate-spin text-primary stroke-[2.5]" />
           <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary italic animate-pulse leading-none">
-            Loading your history…
+            Loading your historyâ€¦
           </p>
         </CardContent>
       </Card>
@@ -155,7 +155,7 @@ export function ServiceHistoryCard() {
 
   return (
     <Card className="w-full text-left rounded-xl border border-border/40 bg-card/40 backdrop-blur-md shadow-sm antialiased transform-gpu overflow-hidden animate-in fade-in duration-300">
-      {/* HUD LEVEL 1: TOP PANEL TRACK HEADING BLOCK CONNECTOR */}
+      {/* dashboard LEVEL 1: TOP PANEL TRACK HEADING BLOCK CONNECTOR */}
       <CardHeader className="p-4 sm:p-5 border-b border-border/10 bg-muted/10 select-none leading-none w-full shrink-0">
         <div className="space-y-1.5 flex flex-col justify-center leading-none min-w-0 text-left">
           <CardTitle className="text-xs sm:text-sm font-bold text-foreground/90 uppercase tracking-wide flex items-center gap-2 leading-none block truncate">
@@ -168,7 +168,7 @@ export function ServiceHistoryCard() {
         </div>
       </CardHeader>
 
-      {/* HUD LEVEL 2: MAP ROW SEGMENT ITEMS STACK LIST */}
+      {/* dashboard LEVEL 2: MAP ROW SEGMENT ITEMS STACK LIST */}
       <CardContent className="p-4 sm:p-5 space-y-2 w-full min-w-0 flex flex-col justify-center font-bold text-xs tracking-tight">
         {safeRecentHistoryList.map((historyItem) => {
           const matchingConfigNode = SERVICE_CONFIG[historyItem.type];
@@ -245,3 +245,5 @@ export function ServiceHistoryCard() {
     </Card>
   );
 }
+
+

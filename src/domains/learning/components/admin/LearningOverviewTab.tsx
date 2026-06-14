@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+﻿import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { useLearningGraph } from "./hooks/useLearningGraph";
@@ -224,7 +224,7 @@ export function LearningOverviewTab() {
   );
 }
 
-function MetricTile({ label, value, icon: Icon, color, bg }: any) {
+function MetricTile({ label, value, icon: Icon, color, bg }: unknown) {
   return (
     <Card className="rounded-2xl border border-border/60 bg-card backdrop-blur-sm shadow-xl overflow-hidden hover:border-primary/30 transition-all group">
       <CardContent className="p-6 flex items-center gap-5">
@@ -250,7 +250,7 @@ function MetricTile({ label, value, icon: Icon, color, bg }: any) {
   );
 }
 
-function PulseBar({ label, value, max, color }: any) {
+function PulseBar({ label, value, max, color }: unknown) {
   const percentage = Math.min(Math.round((value / max) * 100), 100);
   return (
     <div className="space-y-2">
@@ -269,3 +269,5 @@ function PulseBar({ label, value, max, color }: any) {
 }
 
 export default LearningOverviewTab;
+
+

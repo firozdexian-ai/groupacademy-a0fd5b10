@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { Bot, type LucideIcon } from "lucide-react";
 import { listAdminAgentBasics } from "@/domains/agents/repo/agentsRepo";
 import { ADMIN_AGENTS_BY_KEY, type AdminAgent } from "@/lib/adminAgents";
@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 
 /**
- * useAdminAgents — Reads database configurations for administrative profiles,
+ * useAdminAgents â€” Reads database configurations for administrative profiles,
  * and merges matching visual properties (icons, accents, suggest parameters)
  * to support active chat instances across dashboard views.
  */
@@ -62,8 +62,8 @@ interface AiAgentRow {
   icon: string | null;
   color: string | null;
   display_order: number | null;
-  personality_traits: Record<string, any> | null;
-  sample_conversations: any;
+  personality_traits: Record<string, unknown> | null;
+  sample_conversations: unknown;
 }
 
 function rowToAgent(row: AiAgentRow): AdminAgent {
@@ -95,3 +95,5 @@ export function useAdminAgents() {
     staleTime: 5 * 60 * 1000,
   });
 }
+
+

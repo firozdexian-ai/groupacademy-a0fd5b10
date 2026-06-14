@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Authoritative Registry Selector Navigation Hub (Select)
  * Hardened WAI-ARIA compliant combobox isolating multi-tier category maps and securing dynamic layout variables.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const Select = SelectPrimitive.Root;
 const SelectGroup = SelectPrimitive.Group;
@@ -165,3 +165,4 @@ export {
   SelectScrollUpButton,
   SelectScrollDownButton,
 };
+

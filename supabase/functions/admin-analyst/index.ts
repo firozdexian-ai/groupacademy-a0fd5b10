@@ -1,4 +1,4 @@
-// Admin Business Analyst — streaming chat with whitelisted DB tools.
+﻿// Admin Business Analyst â€” streaming chat with whitelisted DB tools.
 // Super-admin only. Uses Lovable AI Gateway with tool calling.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { augmentLastUserMessage } from "../_shared/attachments.ts";
@@ -15,7 +15,7 @@ const TOOLS = [
     function: {
       name: "analyst_metric",
       description:
-        "Get a single metric value over a period. metric ∈ {talents_count, transactions_count, transactions_revenue_bdt, jobs_count, job_applications_count, companies_count, enrollments_count, agent_sessions_count, credits_issued, credits_spent}. period = {from?: ISO, to?: ISO}.",
+        "Get a single metric value over a period. metric âˆˆ {talents_count, transactions_count, transactions_revenue_bdt, jobs_count, job_applications_count, companies_count, enrollments_count, agent_sessions_count, credits_issued, credits_spent}. period = {from?: ISO, to?: ISO}.",
       parameters: {
         type: "object",
         properties: {
@@ -52,7 +52,7 @@ const TOOLS = [
     function: {
       name: "analyst_series",
       description:
-        "Time series for metric ∈ {talents_count, transactions_count, transactions_revenue_bdt, jobs_count}. granularity ∈ {day, week, month}.",
+        "Time series for metric âˆˆ {talents_count, transactions_count, transactions_revenue_bdt, jobs_count}. granularity âˆˆ {day, week, month}.",
       parameters: {
         type: "object",
         properties: {
@@ -67,7 +67,7 @@ const TOOLS = [
 ];
 
 const SYSTEM = `You are the Business Analyst agent for an internal admin panel.
-You answer the operator's questions about the platform by CALLING TOOLS — never invent numbers.
+You answer the operator's questions about the platform by CALLING TOOLS â€” never invent numbers.
 Always pick a sensible time period (today, this week, this month, this quarter, lifetime) from the user's words.
 Return concise, scannable answers with bold numbers and short bullet lists. Use markdown tables for multi-row results.
 Today's date: ${new Date().toISOString().slice(0, 10)}.`;
@@ -102,7 +102,7 @@ Deno.serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
 
     // Tool-call loop. We resolve tools server-side then re-prompt the model.
-    const convo: any[] = [{ role: "system", content: SYSTEM }, ...messages];
+    const convo: unknown[] = [{ role: "system", content: SYSTEM }, ...messages];
     await augmentLastUserMessage(admin, convo, body.attachments);
 
     for (let step = 0; step < 5; step++) {
@@ -131,12 +131,12 @@ Deno.serve(async (req) => {
         convo.push(msg);
         for (const tc of msg.tool_calls) {
           const args = safeParse(tc.function?.arguments);
-          let toolResult: any = { error: "unknown tool" };
+          let toolResult: unknown = { error: "unknown tool" };
           try {
             // Use a user-scoped client so the SECURITY DEFINER function still
             // sees auth.uid() for its has_role check.
             const { data: rpcData, error } = await userClient.rpc(
-              tc.function.name as any,
+              tc.function.name as unknown,
               args,
             );
             toolResult = error ? { error: error.message } : rpcData;
@@ -171,3 +171,5 @@ Deno.serve(async (req) => {
     try { return JSON.parse(s); } catch { return {}; }
   }
 });
+
+

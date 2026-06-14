@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+﻿import { useMemo } from "react";
 import { format, isValid } from "date-fns";
 
 /**
@@ -94,7 +94,7 @@ export function CertificatePDFTemplate({ data }: CertificatePDFTemplateProps) {
         boxSizing: "border-box",
       }}
     >
-      {/* HUD: EXTERNAL_DECORATIVE_FRAME */}
+      {/* dashboard: EXTERNAL_DECORATIVE_FRAME */}
       <div
         style={{
           position: "absolute",
@@ -131,7 +131,7 @@ export function CertificatePDFTemplate({ data }: CertificatePDFTemplateProps) {
               height: "120px",
               background: `linear-gradient(135deg, ${BRAND.primary}10, ${BRAND.secondary}15)`,
               ...cornerStyle,
-            } as any
+            } as unknown
           }
         />
       ))}
@@ -150,7 +150,7 @@ export function CertificatePDFTemplate({ data }: CertificatePDFTemplateProps) {
           zIndex: 10,
         }}
       >
-        {/* HUD: INSTITUTIONAL_HEADER */}
+        {/* dashboard: INSTITUTIONAL_HEADER */}
         <div style={{ marginBottom: "12px" }}>
           <h1
             style={{
@@ -229,7 +229,7 @@ export function CertificatePDFTemplate({ data }: CertificatePDFTemplateProps) {
           {sanitizedStringsLedger.courseTitleUppercase}
         </h3>
 
-        {/* HUD: METRIC_SYNC */}
+        {/* dashboard: METRIC_SYNC */}
         {data.percentage !== null && (
           <div
             style={{
@@ -253,12 +253,12 @@ export function CertificatePDFTemplate({ data }: CertificatePDFTemplateProps) {
                 fontFamily: "monospace",
               }}
             >
-              ✓ Diagnostic_Yield: {Number(data.score)}/{Number(data.total_questions)} ({Number(data.percentage)}%)
+              âœ“ Diagnostic_Yield: {Number(data.score)}/{Number(data.total_questions)} ({Number(data.percentage)}%)
             </span>
           </div>
         )}
 
-        {/* HUD: SIGNATURE_AUTHORITY */}
+        {/* dashboard: SIGNATURE_AUTHORITY */}
         <div
           style={{
             display: "flex",
@@ -309,7 +309,7 @@ export function CertificatePDFTemplate({ data }: CertificatePDFTemplateProps) {
           </div>
         </div>
 
-        {/* HUD: VERIFICATION_LEDGER */}
+        {/* dashboard: VERIFICATION_LEDGER */}
         <div
           style={{
             position: "absolute",
@@ -333,10 +333,12 @@ export function CertificatePDFTemplate({ data }: CertificatePDFTemplateProps) {
           </div>
           <div style={{ textAlign: "right" }}>
             <span style={{ display: "block", marginBottom: "4px" }}>Verification_Status: LEVEL_1_VERIFIED</span>
-            <span>© {normalizedTemporalContext.structuralYear} GroUp_Academy_Neural_Registry</span>
+            <span>Â© {normalizedTemporalContext.structuralYear} GroUp_Academy_Neural_Registry</span>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+

@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useUgcGraph } from "./hooks/useUgcGraph";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,7 @@ export function UgcFeedTab() {
  const { ugcGraphQuery, mutations: { upsertFeedPost, deleteFeedPost } } = useUgcGraph();
  const { data, isLoading } = ugcGraphQuery;
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ content_type: "text", status: "published", is_active: true, is_pinned: false, audience: "network" });
+ const [draft, setDraft] = useState<unknown>({ content_type: "text", status: "published", is_active: true, is_pinned: false, audience: "network" });
  const [search, setSearch] = useState("");
 
  const rows = (data?.feedPosts ?? []).filter((r) =>
@@ -82,7 +82,7 @@ export function UgcFeedTab() {
   <div className="flex items-center gap-2 font-medium max-w-md">
   <MessageSquare className="h-4 w-4 text-primary shrink-0" />
   <span className="truncate">
-  {row.text_content ? row.text_content.substring(0, 60) + (row.text_content.length > 60 ? "…" : "") : "(no text)"}
+  {row.text_content ? row.text_content.substring(0, 60) + (row.text_content.length > 60 ? "â€¦" : "") : "(no text)"}
   </span>
   </div>
   </TableCell>
@@ -244,3 +244,5 @@ export function UgcFeedTab() {
 }
 
 export default UgcFeedTab;
+
+

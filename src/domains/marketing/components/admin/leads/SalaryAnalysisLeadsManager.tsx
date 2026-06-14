@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { listSalaryAnalysisLeads } from "@/domains/marketing/repo/marketingRepo";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
@@ -42,7 +42,7 @@ interface SalaryAnalysisLead {
   job_title: string | null;
   company_name: string | null;
   status: string | null;
-  ai_analysis: any;
+  ai_analysis: unknown;
   created_at: string | null;
   profession_category: {
     name: string;
@@ -86,10 +86,10 @@ export const SalaryAnalysisLeadsManager = () => {
         listSalaryAnalysisLeads(),
         TIMEOUTS.DEFAULT,
         "Loading salary analysis leads timed out",
-      )) as any[];
+      )) as unknown[];
 
       setLeads(leadsData || []);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Telemetry Fault:", err);
       setError(err.message || "Failed to load leads");
       toast.error("System Error: Lead synchronization failed.");
@@ -312,7 +312,7 @@ export const SalaryAnalysisLeadsManager = () => {
 };
 
 // Helper for consistency
-function Calendar(props: any) {
+function Calendar(props: unknown) {
   return (
     <svg
       {...props}
@@ -334,3 +334,5 @@ function Calendar(props: any) {
     </svg>
   );
 }
+
+

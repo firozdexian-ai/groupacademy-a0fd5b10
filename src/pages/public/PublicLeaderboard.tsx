@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams, Link, NavLink } from "react-router-dom";
 import { getLeaderboard } from "@/domains/ugc/repo/ugcRepo";
 import { setHead } from "@/lib/setHead";
@@ -26,7 +26,7 @@ interface LeaderboardTab {
 /**
  * GroUp Academy: Dynamic Cross-Sector Leaderboard Matrix (PublicLeaderboard)
  * Hardened responsive page node isolating metadata handshakes and securing component mapping hooks from structural drift.
- * Version: Launch Candidate · Phase Z0 Lifecycle Integration Hardened
+ * Version: Launch Candidate Â· Phase Z0 Lifecycle Integration Hardened
  */
 function PublicLeaderboardInner() {
   const { kind: unverifiedRouteKindParamStr } = useParams<{ kind: Kind }>();
@@ -62,7 +62,7 @@ function PublicLeaderboardInner() {
 
         // Apply synchronized metadata metrics inside the data pipeline resolution thread
         setHead({
-          title: `Top ${activeKindToken} · Leaderboard`,
+          title: `Top ${activeKindToken} Â· Leaderboard`,
           description: `Live leaderboard of top ${activeKindToken} on GroUp Academy based on completed projects and milestones.`,
           canonical: `https://groupacademy.online/leaderboards/${activeKindToken}`,
           jsonLd: {
@@ -96,7 +96,7 @@ function PublicLeaderboardInner() {
 
   return (
     <div className="min-h-screen bg-background text-foreground antialiased selection:bg-primary/10 block text-left transform-gpu w-full">
-      {/* HUD LEVEL 1: CONTROL BOARD DIRECTORY HEADER */}
+      {/* dashboard LEVEL 1: CONTROL BOARD DIRECTORY HEADER */}
       <header className="border-b border-border/40 bg-card/10 block w-full select-none">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 py-6 block w-full leading-none">
           <Link
@@ -152,7 +152,7 @@ function PublicLeaderboardInner() {
         </div>
       </header>
 
-      {/* HUD LEVEL 2: DETERMINISTIC RANK PAYLOAD DATA VIEWPORT */}
+      {/* dashboard LEVEL 2: DETERMINISTIC RANK PAYLOAD DATA VIEWPORT */}
       <main className="mx-auto max-w-4xl px-4 sm:px-6 py-6 block w-full">
         {isNetworkLookupProcessing ? (
           <div
@@ -304,4 +304,5 @@ export default function PublicLeaderboard() {
     </ComingSoonGate>
   );
 }
+
 

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+﻿import React, { useMemo, useState } from "react";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -39,7 +39,7 @@ export function IRPipelineBoard() {
   }, [data, leadFilter]);
 
   const grouped = useMemo(() => {
-    const map: Record<string, any[]> = {
+    const map: Record<string, unknown[]> = {
       target: [],
       warm_intro: [],
       first_meeting: [],
@@ -141,7 +141,7 @@ export function IRPipelineBoard() {
           icon={<TrendingUp className="h-4 w-4" />}
           label="Weighted Pipeline"
           value={formatUSD(stats.pipelineValue)}
-          hint="Σ Check × Probability"
+          hint="Î£ Check Ã— Probability"
           color="text-warning"
           bg="bg-warning/10"
         />
@@ -233,3 +233,5 @@ function KpiCard({
     </Card>
   );
 }
+
+

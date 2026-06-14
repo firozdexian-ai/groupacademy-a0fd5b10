@@ -1,4 +1,4 @@
-import html2canvas from "html2canvas";
+﻿import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
 /**
@@ -11,7 +11,7 @@ export async function generateCertificatePDF(holderName: string, courseTitle: st
   const element = document.getElementById("certificate-pdf-content");
 
   if (!element) {
-    console.error("[Sentinel] REGISTRY_FAULT: Certificate DOM node not found.");
+    console.error("[guard] REGISTRY_FAULT: Certificate DOM node not found.");
     return false;
   }
 
@@ -34,10 +34,10 @@ export async function generateCertificatePDF(holderName: string, courseTitle: st
     const imgWidth = 297; // Standard A4 Landscape Width (mm)
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-    // HUD: Render artifact to PDF binary
+    // dashboard: Render artifact to PDF binary
     pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, imgWidth, imgHeight);
 
-    // HUD: Filename_Sanitization_Protocol
+    // dashboard: Filename_Sanitization_Protocol
     const safeName = holderName.replace(/[^a-z0-9]/gi, "_");
     const safeTitle = courseTitle.replace(/[^a-z0-9]/gi, "_").slice(0, 30);
 
@@ -46,7 +46,8 @@ export async function generateCertificatePDF(holderName: string, courseTitle: st
 
     return true;
   } catch (err) {
-    console.error("[Sentinel] CREDENTIAL_INGRESS_FAULT:", err);
+    console.error("[guard] CREDENTIAL_INGRESS_FAULT:", err);
     return false;
   }
 }
+

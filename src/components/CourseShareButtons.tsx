@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useMemo } from "react";
+﻿import { useEffect, useState, useRef, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Share2, Facebook, Linkedin, MessageCircle, Link as LinkIcon, Zap, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ interface CourseShareButtonsProps {
 /**
  * GroUp Academy: Social Amplification Node & Curriculum Dispatcher (CourseShareButtons)
  * An authoritative operational sandbox managing external distribution web channels and client clip sync operations.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function CourseShareButtons({ title, url, className }: CourseShareButtonsProps) {
   const isMountedRef = useRef<boolean>(true);
@@ -90,7 +90,7 @@ export function CourseShareButtons({ title, url, className }: CourseShareButtons
         className,
       )}
     >
-      {/* HUD LEVEL 1: TOP PANEL TRACK HEADING CONTROLS BLOCK */}
+      {/* dashboard LEVEL 1: TOP PANEL TRACK HEADING CONTROLS BLOCK */}
       <div className="flex items-center justify-between gap-4 select-none leading-none w-full shrink-0 px-0.5">
         <div className="flex items-center gap-2 text-left leading-none min-w-0">
           <div className="h-6 w-6 rounded bg-primary/10 border border-primary/5 text-primary flex items-center justify-center shrink-0 shadow-inner">
@@ -107,7 +107,7 @@ export function CourseShareButtons({ title, url, className }: CourseShareButtons
         </div>
       </div>
 
-      {/* HUD LEVEL 2: COMPOSITE SECTOR TRIGGER COMMAND RIBBON BUTTON SLOTS GRID */}
+      {/* dashboard LEVEL 2: COMPOSITE SECTOR TRIGGER COMMAND RIBBON BUTTON SLOTS GRID */}
       <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full font-bold text-xs tracking-tight">
         {/* Core Trigger Component: Dynamic Native/Clipboard Handshake */}
         <Button
@@ -175,7 +175,7 @@ export function CourseShareButtons({ title, url, className }: CourseShareButtons
         </Button>
       </div>
 
-      {/* HUD LEVEL 3: RECTILINEAR OVERLAY BOTTOM METRIC LOG OMNIPRESENCE SHIELD */}
+      {/* dashboard LEVEL 3: RECTILINEAR OVERLAY BOTTOM METRIC LOG OMNIPRESENCE SHIELD */}
       <p className="text-[8px] font-mono font-extrabold text-muted-foreground/40 italic text-center uppercase tracking-widest leading-none pt-1 select-none pointer-events-none w-full block">
         Neural Egress Matrix Active &bull; External Registry Verification Complete
       </p>
@@ -184,3 +184,4 @@ export function CourseShareButtons({ title, url, className }: CourseShareButtons
 }
 
 export default CourseShareButtons;
+

@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { searchPublicActiveJobs } from "@/domains/jobs/repo/jobsRepo";
 import { useSavedItems } from "@/hooks/useSavedItems";
@@ -28,7 +28,7 @@ const SKELETONS = [1, 2, 3, 4];
 const PAGE_SIZE = 50;
 
 /**
- * All jobs — filterable search surface.
+ * All jobs â€” filterable search surface.
  * Used by /app/jobs/all (header "View all" + tab-overflow deep links).
  */
 export default function AppJobs() {
@@ -175,7 +175,7 @@ export default function AppJobs() {
  </div>
  <p className="text-xs sm:text-sm text-muted-foreground pl-[3.4rem]">
  {loading
- ? "Loading jobs…"
+ ? "Loading jobsâ€¦"
  : `${filteredJobs.length} ${filteredJobs.length === 1 ? "job" : "jobs"} matching your filters.`}
  </p>
  </header>
@@ -186,7 +186,7 @@ export default function AppJobs() {
  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50 pointer-events-none" />
  <Input
  type="search"
- placeholder="Search by title, company or skill…"
+ placeholder="Search by title, company or skillâ€¦"
  value={query}
  onChange={(e) => setQuery(e.target.value)}
  className="w-full h-10 pl-9 pr-9 text-sm rounded-lg"
@@ -263,7 +263,7 @@ export default function AppJobs() {
  Minimum salary
  </Label>
  <span className="text-xs font-medium text-primary bg-primary/5 px-2 py-0.5 rounded border border-primary/10 tabular-nums">
- {minSalaryK > 0 ? `$${minSalaryK}K+` : "Any"}
+ {minSalaryK > 0 ? `$${minSalaryK}K+` : "unknown"}
  </span>
  </div>
  <div className="pt-2 w-full px-1">
@@ -347,7 +347,7 @@ export default function AppJobs() {
  className="h-9 px-6 rounded-lg text-xs font-semibold border-border/60 gap-2 disabled:opacity-50"
  >
  <RefreshCw className={cn("h-3.5 w-3.5 text-muted-foreground", loadingMore && "animate-spin")} />
- <span>{loadingMore ? "Loading…" : "Load more jobs"}</span>
+ <span>{loadingMore ? "Loadingâ€¦" : "Load more jobs"}</span>
  </Button>
  </div>
  )}
@@ -356,3 +356,5 @@ export default function AppJobs() {
  </div>
  );
 }
+
+

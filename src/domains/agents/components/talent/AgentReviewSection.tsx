@@ -46,10 +46,10 @@ export function AgentReviewSection({ agentKey, canReview }: Props) {
     queryKey,
     staleTime: 30 * 1000, // 30-second stability cache window for ledger metrics
     queryFn: async (): Promise<Review[]> => {
-      // HUD: EXECUTING_RELATIONAL_LEDGER_INGRESS_SELECT
+      // dashboard: EXECUTING_RELATIONAL_LEDGER_INGRESS_SELECT
       const data = await listAgentReviews(agentKey);
 
-      return data.map((row: any) => ({
+      return data.map((row: unknown) => ({
         id: String(row.id),
         talent_id: String(row.talent_id),
         rating: Number(row.rating ?? 5),
@@ -67,7 +67,7 @@ export function AgentReviewSection({ agentKey, canReview }: Props) {
       if (!talent?.id) throw new Error("AUTH_REQUIRED: Authentication layer sync required.");
       const cleanText = text.trim();
 
-      // HUD: COMMITTING_REVIEW_LEDGER_UPSERT
+      // dashboard: COMMITTING_REVIEW_LEDGER_UPSERT
       try {
         await upsertAgentReview({
           agent_key: agentKey,
@@ -75,7 +75,7 @@ export function AgentReviewSection({ agentKey, canReview }: Props) {
           rating,
           review_text: cleanText || null,
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         // Digital Workforce Anomaly Trigger: Imprints explicit trace tracking packets
         console.error("[Digital Workforce] ANOMALY: agent_reviews upsert transaction rejected.", {
           agentKey,
@@ -194,13 +194,12 @@ export function AgentReviewSection({ agentKey, canReview }: Props) {
       ) : (
         <div className="grid gap-3">
           {reviews.slice(0, 10).map((r) => {
-            const dateValue = useMemo(() => {
-              try {
-                return format(new Date(r.created_at), "MMM d, yyyy");
-              } catch {
-                return "Recent Ingress";
-              }
-            }, [r.created_at]);
+            let dateValue = "Recent Ingress";
+            try {
+              dateValue = format(new Date(r.created_at), "MMM d, yyyy");
+            } catch {
+              // ignore
+            }
 
             return (
               <div
@@ -239,3 +238,5 @@ export function AgentReviewSection({ agentKey, canReview }: Props) {
     </section>
   );
 }
+
+

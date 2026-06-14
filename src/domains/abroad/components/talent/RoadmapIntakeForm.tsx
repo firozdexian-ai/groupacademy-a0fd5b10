@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { insertRoadmapContactLead, insertStudyAbroadRoadmap } from "@/domains/abroad/repo/abroadRepo";
@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 import { InlineSpinner } from "@/components/common/InlineSpinner";
 
 /**
- * Group Academy — Career Abroad Study Roadmap Intake Wizard
+ * Group Academy â€” Career Abroad Study Roadmap Intake Wizard
  * Version: Phase 10i.2 Hardened (Production Candidate)
  * Architecture: Optimized multi-step validation engine wired to credit balance gates.
  */
@@ -41,7 +41,7 @@ const DEGREE_LEVELS = [
 
 const BUDGET_NODES = [
   { value: "low", label: "Budget-friendly", sub: "Under $15k/year tuition" },
-  { value: "medium", label: "Balanced", sub: "$15k – $35k/year" },
+  { value: "medium", label: "Balanced", sub: "$15k â€“ $35k/year" },
   { value: "high", label: "Premium", sub: "$35k+/year" },
   { value: "scholarship", label: "Need a scholarship", sub: "Funding required" },
 ];
@@ -138,7 +138,7 @@ export function RoadmapIntakeForm() {
       return roadmap.id;
     },
     onSuccess: async (roadmapId) => {
-      toast.success("Roadmap is being built…");
+      toast.success("Roadmap is being builtâ€¦");
 
       await Promise.all([
         qc.invalidateQueries({ queryKey: ["talent-credits-balance"] }),
@@ -148,7 +148,7 @@ export function RoadmapIntakeForm() {
 
       navigate(`/app/abroad/roadmap/${roadmapId}`);
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       trackError("study-abroad-roadmap-generation-failure", {
         talentId: talent?.id,
         formData,
@@ -371,7 +371,7 @@ export function RoadmapIntakeForm() {
         <Button
           variant="outline"
           type="button"
-          onClick={() => (step > 1 ? setStep((s) => (s - 1) as any) : navigate(-1))}
+          onClick={() => (step > 1 ? setStep((s) => (s - 1) as unknown) : navigate(-1))}
           disabled={isSubmitting}
           className="h-14 px-8 rounded-2xl border-2 font-black uppercase italic text-[10px] tracking-widest"
         >
@@ -381,7 +381,7 @@ export function RoadmapIntakeForm() {
         {step < 3 ? (
           <Button
             type="button"
-            onClick={() => setStep((s) => (s + 1) as any)}
+            onClick={() => setStep((s) => (s + 1) as unknown)}
             disabled={step === 1 ? !isStep1Valid : !isStep2Valid}
             className="h-14 flex-1 rounded-2xl font-black uppercase italic text-[10px] tracking-[0.2em] shadow-lg disabled:cursor-not-allowed"
           >
@@ -407,3 +407,5 @@ export function RoadmapIntakeForm() {
     </div>
   );
 }
+
+

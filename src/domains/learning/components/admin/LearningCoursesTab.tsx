@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useLearningGraph } from "./hooks/useLearningGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,12 +28,12 @@ export function LearningCoursesTab() {
  } = useLearningGraph();
  const { data, isLoading } = learningGraphQuery;
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ status: "draft", content_type: "recorded_course" });
+ const [draft, setDraft] = useState<unknown>({ status: "draft", content_type: "recorded_course" });
 
  // Selected course for module management
  const [selectedModuleCourseId, setSelectedModuleCourseId] = useState<string | null>(null);
  const [showBatchGenerator, setShowBatchGenerator] = useState(false);
- const [selectedCourseForChecklist, setSelectedCourseForChecklist] = useState<any | null>(null);
+ const [selectedCourseForChecklist, setSelectedCourseForChecklist] = useState<unknown | null>(null);
  const [tempResourceUrl, setTempResourceUrl] = useState<string | null>(null);
 
  // Unified ContentFilters state
@@ -45,7 +45,7 @@ export function LearningCoursesTab() {
  typeSegment: "all",
  });
 
- // Map ContentFilters → existing dataset
+ // Map ContentFilters â†’ existing dataset
  const courses = (() => {
  const list = (data?.content ?? []).filter((c) => {
  const seg = filters.typeSegment ?? "all";
@@ -109,7 +109,7 @@ export function LearningCoursesTab() {
  </div>
  </header>
 
- {/* Unified Content Filters HUD */}
+ {/* Unified Content Filters dashboard */}
  <div className="flex flex-col sm:flex-row gap-4 px-2 items-start">
  <div className="flex items-center gap-2 text-muted-foreground pt-2">
  <Filter className="h-4 w-4" />
@@ -433,3 +433,5 @@ export function LearningCoursesTab() {
 }
 
 export default LearningCoursesTab;
+
+

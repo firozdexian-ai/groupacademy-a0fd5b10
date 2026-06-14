@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   getContentById,
@@ -67,7 +67,7 @@ export default function QuizManagement() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [course, setCourse] = useState<any>(null);
+  const [course, setCourse] = useState<unknown>(null);
   const [modules, setModules] = useState<CourseModule[]>([]);
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -98,7 +98,7 @@ export default function QuizManagement() {
         setModules(mods);
         setSelectedModuleId(mods[0].id);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setLoadError(err.message);
     } finally {
       setLoading(false);
@@ -107,7 +107,7 @@ export default function QuizManagement() {
 
   const loadModuleQuestions = async (moduleId: string) => {
     const data = await listQuizQuestionsByModuleOrdered(moduleId);
-    if (data && data.length > 0) setQuestions(data as any);
+    if (data && data.length > 0) setQuestions(data as unknown);
     else
       setQuestions([
         {
@@ -145,7 +145,7 @@ export default function QuizManagement() {
     setQuestions([...questions, ...newQs]);
     setImportDialogOpen(false);
     setAiQuizText("");
-    toast.success(`Synthetic Logic Imported: ${newQs.length} Nodes added.`);
+    toast.success(`generated Logic Imported: ${newQs.length} Nodes added.`);
   };
 
   const handleSave = async () => {
@@ -260,7 +260,7 @@ export default function QuizManagement() {
                         size="sm"
                         className="h-8 rounded-lg border-primary/20 text-primary font-black uppercase text-[9px] tracking-widest bg-primary/5"
                       >
-                        <Wand2 className="h-3 w-3 mr-1.5" /> Synthetic Import
+                        <Wand2 className="h-3 w-3 mr-1.5" /> generated Import
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="rounded-2xl max-w-2xl border-border/40 shadow-2xl">
@@ -349,8 +349,8 @@ export default function QuizManagement() {
                               Option {opt.toUpperCase()}
                             </Label>
                             <Input
-                              value={(q as any)[`option_${opt}`]}
-                              onChange={(e) => updateQuestion(i, `option_${opt}` as any, e.target.value)}
+                              value={(q as unknown)[`option_${opt}`]}
+                              onChange={(e) => updateQuestion(i, `option_${opt}` as unknown, e.target.value)}
                               className="h-10 rounded-xl bg-muted/20"
                             />
                           </div>
@@ -454,3 +454,5 @@ export default function QuizManagement() {
     </div>
   );
 }
+
+

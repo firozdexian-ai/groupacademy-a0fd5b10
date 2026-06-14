@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -31,7 +31,7 @@ import { WhyYouMatchPanel } from "./WhyYouMatchPanel";
 /**
  * GroUp Academy: Career Intelligence Hub
  * CTO Reference: Authoritative node for neural mapping and market telemetry.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 
 const MATCH_STAGES: ProcessingStage[] = [
@@ -57,8 +57,8 @@ export function AIJobInsights({ jobId, talentId }: AIJobInsightsProps) {
   const queryClient = useQueryClient();
   const { canAfford, deductCredits } = useCredits();
 
-  const [matchResult, setMatchResult] = useState<any | null>(null);
-  const [marketInsight, setMarketInsight] = useState<any | null>(null);
+  const [matchResult, setMatchResult] = useState<unknown | null>(null);
+  const [marketInsight, setMarketInsight] = useState<unknown | null>(null);
   const [loadingMatch, setLoadingMatch] = useState(false);
   const [loadingMarket, setLoadingMarket] = useState(false);
   const [matchOpen, setMatchOpen] = useState(false);
@@ -109,7 +109,7 @@ export function AIJobInsights({ jobId, talentId }: AIJobInsightsProps) {
 
       toast.success("Match analysis ready");
       trackEvent("ai_job_insights_match_sync_success", { jobId, matchScore: data?.overall_match });
-    } catch (err: any) {
+    } catch (err: unknown) {
       const parsedExceptionMsg = err instanceof Error ? err.message : String(err);
 
       trackError(parsedExceptionMsg, {
@@ -151,7 +151,7 @@ export function AIJobInsights({ jobId, talentId }: AIJobInsightsProps) {
 
       toast.success("Market insights ready");
       trackEvent("ai_job_insights_market_telemetry_success", { jobId });
-    } catch (err: any) {
+    } catch (err: unknown) {
       const parsedExceptionMsg = err instanceof Error ? err.message : String(err);
 
       trackError(parsedExceptionMsg, {
@@ -177,7 +177,7 @@ export function AIJobInsights({ jobId, talentId }: AIJobInsightsProps) {
   return (
     <Card className="rounded-3xl border border-accent/20 bg-card/60 backdrop-blur-md shadow-sm transition-all duration-300 relative overflow-hidden select-none w-full max-w-full">
       <CardContent className="p-4 sm:p-5 w-full min-w-0">
-        {/* HUD: SECTION IDENTITY HEADER */}
+        {/* dashboard: SECTION IDENTITY HEADER */}
         <div className="flex items-center gap-3.5 mb-5 select-none border-b border-border/10 pb-3">
           <div className="h-10 w-10 rounded-xl bg-accent/10 border border-accent/10 flex items-center justify-center shrink-0 shadow-sm">
             <Brain className="h-5 w-5 text-accent animate-pulse stroke-[2.2]" />
@@ -484,3 +484,5 @@ export function AIJobInsights({ jobId, talentId }: AIJobInsightsProps) {
     </Card>
   );
 }
+
+

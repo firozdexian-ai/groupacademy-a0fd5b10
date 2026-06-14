@@ -1,5 +1,5 @@
-/**
- * Analyst Chat Tab — Consolidated Redirect
+﻿/**
+ * Analyst Chat Tab â€” Consolidated Redirect
  * Centralizes entry points for the Business Analyst (Nia) under the unified Agentic OS Messenger.
  * Adheres to the 2024 Professional SaaS UI guidelines and records session telemetry events.
  */
@@ -78,3 +78,4 @@ export function AnalystChatTab() {
     </div>
   );
 }
+

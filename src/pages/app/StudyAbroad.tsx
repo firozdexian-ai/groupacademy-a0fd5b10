@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { listActiveStudyAbroadPrograms } from "@/domains/abroad/repo/abroadRepo";
@@ -58,7 +58,7 @@ export default function StudyAbroad() {
  const [selectedDegree, setSelectedDegree] = useState(searchParams.get("degree") || "All Degrees");
 
  // Internal error logger
- const reportAnomaly = async (event: string, context: any) => {
+ const reportAnomaly = async (event: string, context: unknown) => {
  console.error(`[abroad] ${event}`, context);
  try {
  await adminSupportAssistant({ type: "study_abroad_sync_error", event, context });
@@ -69,7 +69,7 @@ export default function StudyAbroad() {
 
  // Sync state to URL for deep-linking[cite: 8]
  useEffect(() => {
- const params: any = {};
+ const params: unknown = {};
  if (selectedCountry !== "all") params.country = selectedCountry;
  if (selectedDegree !== "All Degrees") params.degree = selectedDegree;
  if (searchTerm) params.search = searchTerm;
@@ -127,7 +127,7 @@ export default function StudyAbroad() {
 
  <div className="space-y-3">
  <Input
- placeholder="Search universities…"
+ placeholder="Search universitiesâ€¦"
  value={searchTerm}
  onChange={(e) => setSearchTerm(e.target.value)}
  className="h-11 rounded-xl"
@@ -138,7 +138,7 @@ export default function StudyAbroad() {
  <SelectValue placeholder="Country" />
  </SelectTrigger>
  <SelectContent>
- <SelectItem value="all">🌍 All Countries</SelectItem>
+ <SelectItem value="all">ðŸŒ All Countries</SelectItem>
  {STUDY_COUNTRIES.map((c) => (
  <SelectItem key={c.code} value={c.code}>
  {getCountryFlag(c.code)} {c.name}
@@ -226,3 +226,5 @@ export default function StudyAbroad() {
  </div>
  );
 }
+
+

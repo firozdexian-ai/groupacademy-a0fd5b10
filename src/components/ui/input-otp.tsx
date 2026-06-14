@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { OTPInput, OTPInputContext } from "input-otp";
 import { Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Identity Verification Handshake Terminal (InputOTP)
  * Hardened multi-factor authorization input grid providing isolated field contexts and full slot matrix dereferencing insulation.
- * Version: Launch Candidate · Phase Z0 Lifecycle & Index Safeguards Hardened
+ * Version: Launch Candidate Â· Phase Z0 Lifecycle & Index Safeguards Hardened
  */
 const InputOTP = React.forwardRef<
   React.ElementRef<typeof OTPInput>,
@@ -71,7 +71,7 @@ const InputOTPSlot = React.forwardRef<
         {char}
       </span>
       
-      {/* HUD LEVEL 1: ISOLATED KEYBOARD FOCUS VECTOR CARET LOOP */}
+      {/* dashboard LEVEL 1: ISOLATED KEYBOARD FOCUS VECTOR CARET LOOP */}
       {hasFakeCaret && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center select-none" aria-hidden="true">
           <div className="animate-caret-blink h-4 w-0.5 rounded-full bg-primary duration-1000" />

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentUser } from "@/lib/auth";
 import { listAllInstructors, deleteInstructor } from "@/domains/learning/repo/learningRepo";
@@ -114,7 +114,7 @@ const Instructors = () => {
       toast.success("Instructor node purged.");
       refetch();
       setDeleteDialogOpen(false);
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(e.message);
     }
   };
@@ -335,3 +335,5 @@ const Instructors = () => {
 };
 
 export default Instructors;
+
+

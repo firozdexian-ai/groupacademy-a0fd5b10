@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams, Link } from "react-router-dom";
 import { getCompanyPublicProjects } from "@/domains/ugc/repo/ugcRepo";
 import { setHead } from "@/lib/setHead";
@@ -28,7 +28,7 @@ interface Payload {
 /**
  * GroUp Academy: Authoritative Public Portfolio Directory (CompanyPublicProjects)
  * Hardened responsive view module isolating layout-dependent side-effects and securing async metadata synchronization loops.
- * Version: Launch Candidate · Phase Z0 Lifecycle Insulation Locked
+ * Version: Launch Candidate Â· Phase Z0 Lifecycle Insulation Locked
  */
 export default function CompanyPublicProjects() {
   const { slug: rawRouteSlugParameterStr } = useParams<{ slug: string }>();
@@ -80,7 +80,7 @@ export default function CompanyPublicProjects() {
 
     // Insulate metadata generation hooks to protect layout consistency from runtime shifts
     setHead({
-      title: `${isolatedCompanyNode.name} · Projects`,
+      title: `${isolatedCompanyNode.name} Â· Projects`,
       description:
         isolatedCompanyNode.tagline ?? `Public project portfolio workspace for ${isolatedCompanyNode.name} on Gro10x.`,
       canonical: `https://groupacademy.online/c/${rawRouteSlugParameterStr}/projects`,
@@ -142,7 +142,7 @@ export default function CompanyPublicProjects() {
 
   return (
     <div className="min-h-screen bg-background text-foreground antialiased selection:bg-primary/10 block text-left transform-gpu w-full">
-      {/* HUD LEVEL 1: CORPORATE IDENTITY STRUT HEADER */}
+      {/* dashboard LEVEL 1: CORPORATE IDENTITY STRUT HEADER */}
       <header className="border-b border-border/40 bg-card/10 block w-full select-none">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 py-5 sm:py-6 flex items-center gap-3.5 sm:gap-4 leading-none w-full">
           <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-lg bg-card border border-border/80 shadow-2xs overflow-hidden grid place-items-center shrink-0 pointer-events-none">
@@ -169,7 +169,7 @@ export default function CompanyPublicProjects() {
         </div>
       </header>
 
-      {/* HUD LEVEL 2: METADATA DRIVEN PORTFOLIO ARCHIVE */}
+      {/* dashboard LEVEL 2: METADATA DRIVEN PORTFOLIO ARCHIVE */}
       <main className="mx-auto max-w-5xl px-4 sm:px-6 py-6 sm:py-8 md:py-10 block w-full">
         <h2 className="text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 select-none block leading-none pb-3 sm:pb-4 border-b border-border/10">
           Public Workspace Allocations
@@ -234,3 +234,4 @@ export default function CompanyPublicProjects() {
     </div>
   );
 }
+

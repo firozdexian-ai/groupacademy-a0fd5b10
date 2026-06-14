@@ -1,4 +1,4 @@
-/**
+﻿/**
  * GroUp Academy: Finance Domain Serverless Edge Function Wrappers
  * Safe, explicitly typed integration pathways coordinating platform checkout flows and payout operations.
  */
@@ -59,3 +59,4 @@ export async function requestInstructorPayout(
   if (error) throw new EdgeFunctionError("request-instructor-payout", error);
   return parseEdgeResponse("request-instructor-payout", RequestInstructorPayoutResponseSchema, data ?? {});
 }
+

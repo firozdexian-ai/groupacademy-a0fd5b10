@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { listActiveProfessionCategoriesBasic } from "@/domains/marketing/repo/marketingRepo";
 import { ProfessionSelector } from "@/components/assessment/ProfessionSelector";
@@ -47,7 +47,7 @@ const ASSESSMENT_COST = 50;
 /**
  * GroUp Academy: AI Career Readiness Telemetry Orchestrator (AppCareerAssessment)
  * Hardened responsive wizard interface tracking candidate telemetry, insulating credit transactions, and preventing dangling abort signal memory leaks.
- * Version: Launch Candidate · Phase Z1 Transaction Matrix Sealed
+ * Version: Launch Candidate Â· Phase Z1 Transaction Matrix Sealed
  */
 export default function AppCareerAssessment() {
  const navigateHook = useNavigate();
@@ -58,9 +58,9 @@ export default function AppCareerAssessment() {
 
  const [assessmentStepState, setAssessmentStepState] = React.useState<AssessmentStep>("intro");
  const [candidateEmailState, setCandidateEmailState] = React.useState<string>("");
- const [professionCategoriesArray, setProfessionCategoriesArray] = React.useState<any[]>([]);
- const [selectedCategoryRecord, setSelectedCategoryRecord] = React.useState<any | null>(null);
- const [accumulatedAnswersState, setAccumulatedAnswersState] = React.useState<Record<string, any>>({});
+ const [professionCategoriesArray, setProfessionCategoriesArray] = React.useState<unknown[]>([]);
+ const [selectedCategoryRecord, setSelectedCategoryRecord] = React.useState<unknown | null>(null);
+ const [accumulatedAnswersState, setAccumulatedAnswersState] = React.useState<Record<string, unknown>>({});
  const [isMutationProcessing, setIsMutationProcessing] = React.useState<boolean>(false);
 
  const hasFormProcessedRefFlag = React.useRef<boolean>(false);
@@ -91,9 +91,9 @@ export default function AppCareerAssessment() {
  clearTimeout(timeoutToken);
  if (cancelled) return;
  if (dbCategoriesPayload) {
- setProfessionCategoriesArray(dbCategoriesPayload as any);
+ setProfessionCategoriesArray(dbCategoriesPayload as unknown);
  }
- } catch (pipelineException: any) {
+ } catch (pipelineException: unknown) {
  clearTimeout(timeoutToken);
  if (!cancelled) {
  console.error("Failed to load category grid:", pipelineException);
@@ -137,7 +137,7 @@ export default function AppCareerAssessment() {
  );
  if (!isCreditHandshakeSettled) throw new Error("Couldn't process credits.");
 
- const edgeFunctionResponseData: any = await analyzeCareerAssessment({
+ const edgeFunctionResponseData: unknown = await analyzeCareerAssessment({
  answers: accumulatedAnswersState,
  professionCategoryId: selectedCategoryRecord.id,
  email: candidateEmailState,
@@ -164,7 +164,7 @@ export default function AppCareerAssessment() {
  } else {
  navigateHook("/app/jobs?tab=tools");
  }
- } catch (fatalMutationExceptionPayload: any) {
+ } catch (fatalMutationExceptionPayload: unknown) {
  toast({
  title: "Submission Failed",
  description: "The assessment couldn't be submitted. Please try again.",
@@ -206,12 +206,12 @@ export default function AppCareerAssessment() {
  });
  }, [navigateHook]);
 
- const handleProfessionSelectionComplete = React.useCallback((categoryNode: any) => {
+ const handleProfessionSelectionComplete = React.useCallback((categoryNode: unknown) => {
  setSelectedCategoryRecord(categoryNode);
  setAssessmentStepState("questions");
  }, []);
 
- const handleAssessmentQuestionsComplete = React.useCallback((answersPayload: Record<string, any>) => {
+ const handleAssessmentQuestionsComplete = React.useCallback((answersPayload: Record<string, unknown>) => {
  setAccumulatedAnswersState(answersPayload);
  setAssessmentStepState("lead-capture");
  }, []);
@@ -222,7 +222,7 @@ export default function AppCareerAssessment() {
 
  return (
  <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 min-h-svh space-y-8 text-left antialiased block transform-gpu w-full">
- {/* HUD LEVEL 1: TRACKING SEQUENCE HUD BAR HEADER */}
+ {/* dashboard LEVEL 1: TRACKING SEQUENCE dashboard BAR HEADER */}
  <header className="space-y-3 block select-none pointer-events-none w-full shrink-0">
  <div className="flex justify-between items-end px-0.5 leading-none w-full block">
  <div className="leading-none space-y-1 block">
@@ -243,7 +243,7 @@ export default function AppCareerAssessment() {
  />
  </header>
 
- {/* HUD LEVEL 2: REVERT TERMINATE PIPELINE CONSOLE BUTTON */}
+ {/* dashboard LEVEL 2: REVERT TERMINATE PIPELINE CONSOLE BUTTON */}
  {assessmentStepState !== "processing" && (
  <div className="block shrink-0 select-none">
  <Button
@@ -258,7 +258,7 @@ export default function AppCareerAssessment() {
  </div>
  )}
 
- {/* HUD LEVEL 3: DYNAMIC TRACK CONTAINER WIZARD VIEWS */}
+ {/* dashboard LEVEL 3: DYNAMIC TRACK CONTAINER WIZARD VIEWS */}
  <main className="relative block w-full">
  {assessmentStepState === "intro" && (
  <div className="space-y-6 block w-full animate-in fade-in duration-200">
@@ -380,3 +380,5 @@ export default function AppCareerAssessment() {
  </div>
  );
 }
+
+

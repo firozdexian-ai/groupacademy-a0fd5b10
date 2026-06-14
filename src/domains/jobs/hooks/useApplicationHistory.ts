@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { listTalentApplicationHistory } from "@/domains/jobs/repo/jobsRepo";
 import { useTalent } from "@/hooks/useTalent";
 
@@ -29,11 +29,11 @@ export function useApplicationHistory() {
     queryFn: async (): Promise<ApplicationHistoryItem[]> => {
       if (!talent?.id) return [];
 
-      // HUD: NEURAL_RELATIONAL_SYNC
-      let data: any[];
+      // dashboard: NEURAL_RELATIONAL_SYNC
+      let data: unknown[];
       try {
         data = await listTalentApplicationHistory(talent.id, 20);
-      } catch (fetchError: any) {
+      } catch (fetchError: unknown) {
         console.error("[Digital Workforce] FAULT: LEDGER_SYNC_FAULT", {
           talentId: talent.id,
           error: fetchError?.message,
@@ -43,8 +43,8 @@ export function useApplicationHistory() {
       }
 
 
-      // HUD: REGISTRY_MAPPING_PROTOCOL
-      return (data || []).map((app: any) => ({
+      // dashboard: REGISTRY_MAPPING_PROTOCOL
+      return (data || []).map((app: unknown) => ({
         id: app.id,
         jobId: app.job_id,
         jobTitle: app.jobs?.title || "Unknown_Node",
@@ -57,3 +57,5 @@ export function useApplicationHistory() {
     },
   });
 }
+
+

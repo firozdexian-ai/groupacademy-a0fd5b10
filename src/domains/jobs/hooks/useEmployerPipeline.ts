@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getEmployerPipelineFull,
   updateApplicationStatus,
@@ -60,15 +60,15 @@ export function useEmployerPipeline(opts: { companyId?: string | null; jobId?: s
     // Realtime context constraint: staleTime set to 0 to ensure live recruiter synchronicity
     staleTime: 0,
     queryFn: async (): Promise<PipelineDashboardPayload> => {
-      // HUD: EXECUTING_RPC_PIPELINE_SELECT
-      let data: any;
+      // dashboard: EXECUTING_RPC_PIPELINE_SELECT
+      let data: unknown;
       try {
         data = await getEmployerPipelineFull({
           companyId: opts.companyId ?? null,
           jobId: opts.jobId ?? null,
           limit: 500,
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: get_employer_pipeline_full database ingress rejected.", {
           companyId: opts.companyId,
           jobId: opts.jobId,
@@ -90,10 +90,10 @@ export function useEmployerPipeline(opts: { companyId?: string | null; jobId?: s
   // --------------------------------------------------------
   const moveMutation = useMutation({
     mutationFn: async ({ applicationId, to }: { applicationId: string; to: PipelineStatus }) => {
-      // HUD: ATOMIC_APPLICATION_STATUS_UPDATE
+      // dashboard: ATOMIC_APPLICATION_STATUS_UPDATE
       await updateApplicationStatus(applicationId, to);
 
-      // HUD: EDGE_INVOCATION_NOTIFICATION_DISPATCH
+      // dashboard: EDGE_INVOCATION_NOTIFICATION_DISPATCH
       // Hardened tracking logic replaces baseline ignoring of failed email pipelines
       try {
         await notifyApplicationStatus({
@@ -115,7 +115,7 @@ export function useEmployerPipeline(opts: { companyId?: string | null; jobId?: s
       void queryClient.invalidateQueries({ queryKey });
       toast.success("Applicant status updated safely.");
     },
-    onError: (err: any, variables) => {
+    onError: (err: unknown, variables) => {
       // Digital Workforce Sensor: Stream critical mutation blocks straight to Admin Console layers
       console.error("[Digital Workforce] ANOMALY: job_applications Kanban transition state failure.", {
         applicationId: variables.applicationId,
@@ -147,10 +147,10 @@ export function useEmployerPipeline(opts: { companyId?: string | null; jobId?: s
  */
 export async function ensureDirectThread(companyId: string, talentId: string): Promise<string | null> {
   try {
-    // HUD: EXECUTING_RPC_THREAD_UPSERT (delegated to messagingRepo)
+    // dashboard: EXECUTING_RPC_THREAD_UPSERT (delegated to messagingRepo)
     const { upsertDirectThread } = await import("@/domains/messaging/repo/messagingRepo");
     return await upsertDirectThread({ companyId, talentId });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[Digital Workforce] ANOMALY: upsert_direct_thread RPC workflow failure.", {
       companyId,
       talentId,
@@ -159,3 +159,5 @@ export async function ensureDirectThread(companyId: string, talentId: string): P
     return null;
   }
 }
+
+

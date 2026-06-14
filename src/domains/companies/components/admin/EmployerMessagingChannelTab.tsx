@@ -1,5 +1,5 @@
-/**
- * Employer Outreach Messaging Terminal — Phase Z0 Hardened
+﻿/**
+ * Employer Outreach Messaging Terminal â€” Phase Z0 Hardened
  * Version: 2024 Highly Professional SAAS UI
  * Rules: Enforces Human-in-the-loop validation for white-glove client success paths.
  */
@@ -34,7 +34,7 @@ export function EmployerMessagingChannelTab() {
         <div className="p-2">
           <MessagingChannelsTab
             agentKey="employer-outreach"
-            defaultLabel="Employer Outreach — BD"
+            defaultLabel="Employer Outreach â€” BD"
             defaultRegion="Bangladesh"
             title="Employer WhatsApp Line"
             description="Direct 1-on-1 with employers and B2B contacts. Auto-reply is OFF by default; enable per-channel for white-glove client-success groups."

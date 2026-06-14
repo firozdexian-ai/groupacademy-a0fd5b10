@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, GraduationCap, Sparkles, Target } from "lucide-react";
@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Personal Learning & Progress Cockpit (AppMyLearning)
  * Hardened user-facing dashboard ensuring fluid scannability and unifying text scaling configurations across viewports.
- * Version: Launch Candidate · Phase Z1 Production Design Tokens Locked
+ * Version: Launch Candidate Â· Phase Z1 Production Design Tokens Locked
  */
 export default function AppMyLearning() {
  const executeNavigationHook = useNavigate();
@@ -24,7 +24,7 @@ export default function AppMyLearning() {
 
  return (
  <div className="min-h-screen bg-background text-left antialiased block transform-gpu w-full">
- {/* HUD LEVEL 1: EXECUTIVE HUB STICKY NAV RECONCILIATION COMMAND HEADER */}
+ {/* dashboard LEVEL 1: EXECUTIVE HUB STICKY NAV RECONCILIATION COMMAND HEADER */}
  <header className="sticky top-0 z-50 w-full bg-background/80 border-b border-border/40 select-none">
  <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4 leading-none w-full">
  <div className="flex items-center gap-3.5 min-w-0">
@@ -71,7 +71,7 @@ export default function AppMyLearning() {
  </div>
  </header>
 
- {/* HUD LEVEL 2: COMPOSITE SECTOR PORTFOLIO DISPATCH VIEWPORT */}
+ {/* dashboard LEVEL 2: COMPOSITE SECTOR PORTFOLIO DISPATCH VIEWPORT */}
  <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 pb-32 block w-full space-y-6">
  {/* Artifact Exploration Reference Line */}
  <div className="flex items-center justify-between gap-4 leading-none w-full shrink-0 select-none pointer-events-none">
@@ -105,3 +105,4 @@ export default function AppMyLearning() {
  </div>
  );
 }
+

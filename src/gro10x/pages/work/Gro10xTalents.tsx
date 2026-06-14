@@ -1,5 +1,5 @@
-/**
- * Talents tab — every talent who has ever interacted with the active company:
+﻿/**
+ * Talents tab â€” every talent who has ever interacted with the active company:
  * job applicants + revealed/shortlisted candidates. Lightweight aggregate view.
  */
 import { useEffect, useState } from "react";
@@ -36,25 +36,25 @@ export default function Gro10xTalents() {
 
       // Applicants on this company's jobs
       const apps = await listRecentApplicationsWithJobMeta(200);
-      const filteredApps: any[] = ((apps ?? []) as any[]).filter(
-        (a: any) => a?.jobs?.company_id === companyId
+      const filteredApps: unknown[] = ((apps ?? []) as unknown[]).filter(
+        (a: unknown) => a?.jobs?.company_id === companyId
       );
 
       const talentIds = Array.from(
-        new Set(filteredApps.map((a: any) => a.talent_id).filter(Boolean))
+        new Set(filteredApps.map((a: unknown) => a.talent_id).filter(Boolean))
       ) as string[];
 
       // Shortlist
       const short = await listCompanyShortlistsRecent(companyId, 200);
       const shortIds = Array.from(
-        new Set((short ?? []).map((s: any) => s.talent_id).filter(Boolean))
+        new Set((short ?? []).map((s: unknown) => s.talent_id).filter(Boolean))
       ) as string[];
 
       const allIds = Array.from(new Set([...talentIds, ...shortIds]));
-      let talentMap: Record<string, any> = {};
+      let talentMap: Record<string, unknown> = {};
       if (allIds.length) {
         const t = await listTalentsBasicByIds(allIds);
-        talentMap = Object.fromEntries((t ?? []).map((row: any) => [row.id, row]));
+        talentMap = Object.fromEntries((t ?? []).map((row: unknown) => [row.id, row]));
       }
 
       const merged: Row[] = [];
@@ -106,7 +106,7 @@ export default function Gro10xTalents() {
   if (loading) {
     return (
       <div className="px-4 py-12 text-center text-sm text-slate-400">
-        <Loader2 className="h-5 w-5 mx-auto animate-spin mb-2" /> Loading talents…
+        <Loader2 className="h-5 w-5 mx-auto animate-spin mb-2" /> Loading talentsâ€¦
       </div>
     );
   }
@@ -148,7 +148,7 @@ export default function Gro10xTalents() {
             )}
             <p className={`text-[11px] ${GRO10X_MUTED} truncate`}>
               {r.profession || "Talent"}
-              {r.job_title ? ` · applied to ${r.job_title}` : r.source === "shortlist" ? " · shortlisted" : ""}
+              {r.job_title ? ` Â· applied to ${r.job_title}` : r.source === "shortlist" ? " Â· shortlisted" : ""}
             </p>
           </div>
           <Link
@@ -163,3 +163,5 @@ export default function Gro10xTalents() {
     </ul>
   );
 }
+
+

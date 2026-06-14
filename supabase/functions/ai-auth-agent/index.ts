@@ -1,8 +1,8 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+﻿import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 /**
- * GroUp Academy: Neural Onboarding Sentinel (Aisha)
+ * GroUp Academy: Neural Onboarding guard (Aisha)
  * CTO Reference: Authoritative Edge Function for managed enrollment trajectories.
  * Logic: Implements deterministic human checks and bimodal auth state management.
  */
@@ -14,7 +14,7 @@ const corsHeaders = {
 
 const AGENT_NAME = "Aisha";
 
-// HUD: Deterministic Logic Gates
+// dashboard: Deterministic Logic Gates
 const QUIZZES = [
   { q: "What is the opposite of hot?", a: "cold" },
   { q: "Which common pet animal meows?", a: "cat" },
@@ -71,7 +71,7 @@ serve(async (req) => {
       }
       return new Response(
         JSON.stringify({
-          reply: "Not quite — please try the human-check question again.",
+          reply: "Not quite â€” please try the human-check question again.",
           action: "verify_human",
           quiz: null,
           quiz_passed: false,
@@ -83,11 +83,11 @@ serve(async (req) => {
 
     // Persona resolution: pulled from the WaaS instance bound to this auth-page
     // visitor (mkt-seo-01 country-specific Marketing & SEO agent). Legacy
-    // `ai_agents` lookup is removed — all front-door personas now live in
+    // `ai_agents` lookup is removed â€” all front-door personas now live in
     // workforce_hired_instances + workforce_master_templates.
     let systemPrompt = FALLBACK_SYSTEM_PROMPT;
     let model = "google/gemini-2.5-flash";
-    const instanceId = (context as any)?.instance_id ?? (context as any)?.instanceId;
+    const instanceId = (context as unknown)?.instance_id ?? (context as unknown)?.instanceId;
     if (SUPA_URL && SERVICE_KEY && instanceId) {
       try {
         const instAdmin = createClient(SUPA_URL, SERVICE_KEY);
@@ -99,7 +99,7 @@ serve(async (req) => {
           )
           .eq("id", instanceId)
           .maybeSingle();
-        const tpl: any = inst?.template;
+        const tpl: unknown = inst?.template;
         const active = inst && !inst.kill_switch && inst.status === "active" && tpl?.is_active !== false;
         if (active) {
           const basePrompt = inst.prompt_override || tpl?.base_system_prompt;
@@ -131,12 +131,12 @@ serve(async (req) => {
 
     if (!response.ok) {
       const body = await response.text().catch(() => "");
-      console.error("[Sentinel] AI_GATEWAY_FAULT:", response.status, body.slice(0, 500));
+      console.error("[guard] AI_GATEWAY_FAULT:", response.status, body.slice(0, 500));
       // Graceful fallback so the auth UI never blanks out on gateway hiccups
       // (rate limits, transient 5xx, model deprecation, etc.).
       const friendly =
         response.status === 429
-          ? "I'm a bit busy right now — please try again in a moment."
+          ? "I'm a bit busy right now â€” please try again in a moment."
           : response.status === 402
             ? "AI credits are temporarily unavailable. Please try again shortly."
             : "Sorry, I had trouble responding. Please try again.";
@@ -147,11 +147,11 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    let parsed: any = {};
+    let parsed: unknown = {};
     try {
       parsed = JSON.parse(data.choices?.[0]?.message?.content || "{}");
     } catch (_e) {
-      parsed = { reply: data.choices?.[0]?.message?.content || "…", action: "noop", quiz: null };
+      parsed = { reply: data.choices?.[0]?.message?.content || "â€¦", action: "noop", quiz: null };
     }
 
     // Server-side bot check: generate a question, persist the expected answer
@@ -173,13 +173,13 @@ serve(async (req) => {
               { onConflict: "session_id" },
             );
         } catch (e) {
-          console.error("[Sentinel] QUIZ_STORE_FAULT:", e);
+          console.error("[guard] QUIZ_STORE_FAULT:", e);
         }
       }
     }
 
 
-    // HUD: Telemetry — log conversation to aisha_conversations for the admin console.
+    // dashboard: Telemetry â€” log conversation to aisha_conversations for the admin console.
     try {
       const sessionId = context?.session_id || context?.sessionId;
       if (sessionId) {
@@ -187,7 +187,7 @@ serve(async (req) => {
         const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
         if (SUPA_URL && SERVICE_KEY) {
           const admin = createClient(SUPA_URL, SERVICE_KEY);
-          const lastUser = [...(messages || [])].reverse().find((m: any) => m.role === "user");
+          const lastUser = [...(messages || [])].reverse().find((m: unknown) => m.role === "user");
           await admin.from("aisha_conversations").upsert(
             {
               session_id: String(sessionId),
@@ -206,14 +206,14 @@ serve(async (req) => {
         }
       }
     } catch (logErr) {
-      console.error("[Sentinel] AISHA_LOG_FAULT:", logErr);
+      console.error("[guard] AISHA_LOG_FAULT:", logErr);
     }
 
     return new Response(JSON.stringify(parsed), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-  } catch (err: any) {
-    console.error("[Sentinel] AUTH_AGENT_FAULT:", err?.message, err?.stack);
+  } catch (err: unknown) {
+    console.error("[guard] AUTH_AGENT_FAULT:", err?.message, err?.stack);
     // Return 200 with a friendly fallback so the auth chat UI keeps working
     // even if the AI gateway or persona lookup throws unexpectedly.
     return new Response(
@@ -228,3 +228,5 @@ serve(async (req) => {
     );
   }
 });
+
+

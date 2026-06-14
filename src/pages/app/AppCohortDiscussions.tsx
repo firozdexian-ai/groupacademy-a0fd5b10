@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { Link, useParams } from "react-router-dom";
 import { ChevronLeft, MessageSquare, Pin, Lock, Plus, Loader2, Inbox, CheckCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -34,7 +34,7 @@ interface ComposerForm {
 /**
  * GroUp Academy: Collaborative Cohort Discussion Matrix (AppCohortDiscussions)
  * Hardened responsive communication board securing asynchronous compilation maps and isolating thread composer inputs.
- * Version: Launch Candidate · Phase Z1 Production Contract Locked
+ * Version: Launch Candidate Â· Phase Z1 Production Contract Locked
  */
 export default function AppCohortDiscussions() {
  const { cohortId: unverifiedCohortIdStr } = useParams<{ cohortId: string }>();
@@ -80,7 +80,7 @@ export default function AppCohortDiscussions() {
 
  setComposerFormState({ title: "", body: "" });
  setIsComposerSheetOpen(false);
- } catch (mutationExceptionPayload: any) {
+ } catch (mutationExceptionPayload: unknown) {
  toast({
  title: "Couldn't post discussion",
  description: mutationExceptionPayload.message || "Something went wrong. Please try again.",
@@ -93,7 +93,7 @@ export default function AppCohortDiscussions() {
 
  return (
  <div className="max-w-2xl mx-auto px-4 py-4 pb-24 text-left antialiased block transform-gpu w-full">
- {/* HUD LEVEL 1: APP SHELL HUD HEADER ADMINISTRATIVE CORE */}
+ {/* dashboard LEVEL 1: APP SHELL dashboard HEADER ADMINISTRATIVE CORE */}
  <header className="block w-full select-none pb-3 border-b border-border/10">
  <Link
  to={`/app/cohorts/${unverifiedCohortIdStr}`}
@@ -125,7 +125,7 @@ export default function AppCohortDiscussions() {
  </div>
  </header>
 
- {/* HUD LEVEL 2: DETERMINISTIC DISCUSSION ENTRY ROW STREAM */}
+ {/* dashboard LEVEL 2: DETERMINISTIC DISCUSSION ENTRY ROW STREAM */}
  <main className="mt-4 space-y-2 block w-full">
  {isThreadsCacheResolving ? (
  <div
@@ -256,3 +256,5 @@ export default function AppCohortDiscussions() {
  </div>
  );
 }
+
+

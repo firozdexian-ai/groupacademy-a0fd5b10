@@ -1,4 +1,4 @@
-import { TIMEOUTS } from "@/lib/timeoutConfig";
+﻿import { TIMEOUTS } from "@/lib/timeoutConfig";
 
 /**
  * Creates an abortable Supabase query runner.
@@ -14,7 +14,7 @@ export interface AbortableQueryOptions {
  * This actually cancels the network request when timeout is reached.
  */
 export async function abortableQuery<T>(
-  queryFn: (signal: AbortSignal) => PromiseLike<{ data: T | null; error: any }>,
+  queryFn: (signal: AbortSignal) => PromiseLike<{ data: T | null; error: unknown }>,
   options: AbortableQueryOptions = {}
 ): Promise<{ data: T | null; error: Error | null; aborted: boolean }> {
   const { timeoutMs = TIMEOUTS.DEFAULT, onTimeout } = options;
@@ -40,7 +40,7 @@ export async function abortableQuery<T>(
       return { data: null, error: result.error, aborted: false };
     }
     return { data: result.data, error: null, aborted: false };
-  } catch (err: any) {
+  } catch (err: unknown) {
     clearTimeout(timeoutId);
     
     // Check if it was an abort
@@ -65,7 +65,7 @@ export async function abortableQuery<T>(
  * All queries are cancelled if timeout is reached.
  */
 export async function abortableQueries<T extends readonly unknown[]>(
-  queryFns: { [K in keyof T]: (signal: AbortSignal) => PromiseLike<{ data: T[K] | null; error: any }> },
+  queryFns: { [K in keyof T]: (signal: AbortSignal) => PromiseLike<{ data: T[K] | null; error: unknown }> },
   options: AbortableQueryOptions = {}
 ): Promise<{ data: T | null; error: Error | null; aborted: boolean }> {
   const { timeoutMs = TIMEOUTS.DEFAULT, onTimeout } = options;
@@ -94,7 +94,7 @@ export async function abortableQueries<T extends readonly unknown[]>(
       error: null, 
       aborted: false 
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
     clearTimeout(timeoutId);
     
     if (err?.name === "AbortError" || controller.signal.aborted) {
@@ -152,3 +152,5 @@ export function isAbortError(error: unknown): boolean {
   }
   return false;
 }
+
+

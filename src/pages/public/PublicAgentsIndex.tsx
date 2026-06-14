@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { PublicLayout } from "@/layouts/PublicLayout";
@@ -91,7 +91,7 @@ export default function PublicAgentsIndex() {
           <div className="text-center mt-20 p-8 md:p-12 rounded-[40px] border border-border/40 bg-card/30 max-w-4xl mx-auto backdrop-blur-sm space-y-6">
             <h2 className="text-2xl md:text-3xl font-black tracking-tight uppercase">Ready to get started?</h2>
             <p className="text-xs text-muted-foreground font-medium max-w-lg mx-auto leading-relaxed">
-              Create your account now to claim your welcome credits and begin a chat session with any of our specialized AI coaches immediately.
+              Create your account now to claim your welcome credits and begin a chat session with unknown of our specialized AI coaches immediately.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
               <Button
@@ -111,3 +111,5 @@ export default function PublicAgentsIndex() {
     </PublicLayout>
   );
 }
+
+

@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -39,7 +39,7 @@ import { InlineSpinner } from "@/components/common/InlineSpinner";
 /**
  * GroUp Academy: Institutional Capital Registry (VCFirmsManager)
  * CTO Reference: High-fidelity orchestrator for VC firm categorization and IR telemetry.
- * 2024 Standard: Executive Logic geometry with reinforced interaction analysis.
+ * 2024 Standard:  geometry with reinforced interaction analysis.
  */
 
 interface VCFirm {
@@ -84,7 +84,7 @@ export function VCFirmsManager() {
 
  const saveMutation = useMutation({
  mutationFn: async () => {
- const payload: any = {
+ const payload: unknown = {
  name: formData.name,
  logo_url: formData.logo_url || null,
  stage_focus: formData.stage_focus.length > 0 ? formData.stage_focus : null,
@@ -103,7 +103,7 @@ export function VCFirmsManager() {
  resetForm();
  queryClient.invalidateQueries({ queryKey: ["ir-vc-firms"] });
  },
- onError: (error: any) => toast.error("Transmission Fault: " + error.message),
+ onError: (error: unknown) => toast.error("Transmission Fault: " + error.message),
  });
 
  const deleteMutation = useMutation({
@@ -115,7 +115,7 @@ export function VCFirmsManager() {
  // Also invalidate investors to refetch the firm names in their tables
  queryClient.invalidateQueries({ queryKey: ["ir-investors"] });
  },
- onError: (error: any) => toast.error("Termination Fault: " + error.message),
+ onError: (error: unknown) => toast.error("Termination Fault: " + error.message),
  });
 
  const resetForm = () => {
@@ -214,7 +214,7 @@ export function VCFirmsManager() {
  >
  <div className="flex flex-col items-center gap-4">
  <RefreshCw className="h-6 w-6 animate-spin text-primary" />
- Loading…
+ Loadingâ€¦
  </div>
  </TableCell>
  </TableRow>
@@ -517,7 +517,7 @@ export function VCFirmsManager() {
  ) : (
  <ShieldCheck className="h-5 w-5 fill-current" />
  )}
- {saveMutation.isPending ? "Saving…" : "Authorize Deployment"}
+ {saveMutation.isPending ? "Savingâ€¦" : "Authorize Deployment"}
  </Button>
  </DialogFooter>
  </div>
@@ -571,3 +571,5 @@ export function VCFirmsManager() {
  </div>
  );
 }
+
+

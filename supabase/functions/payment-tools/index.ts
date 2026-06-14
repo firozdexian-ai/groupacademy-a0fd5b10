@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+﻿import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
 const corsHeaders = {
@@ -76,12 +76,12 @@ serve(async (req) => {
     const adminChatId = Deno.env.get("TELEGRAM_ADMIN_CHAT_ID");
 
     if (botToken && adminChatId) {
-      const message = `🚨 *New Payment Request*\n\n*Amount:* ৳${amount_bdt || "N/A"}\n*Credits Requested:* ${requested_credits}\n*TrxID:* \`${trx_id}\`\n\nApprove this transaction to fund the user's wallet?`;
+      const message = `ðŸš¨ *New Payment Request*\n\n*Amount:* à§³${amount_bdt || "N/A"}\n*Credits Requested:* ${requested_credits}\n*TrxID:* \`${trx_id}\`\n\nApprove this transaction to fund the user's wallet?`;
       const keyboard = {
         inline_keyboard: [
           [
-            { text: "✅ Approve", callback_data: `approve_${request.id}` },
-            { text: "❌ Reject", callback_data: `reject_${request.id}` },
+            { text: "âœ… Approve", callback_data: `approve_${request.id}` },
+            { text: "âŒ Reject", callback_data: `reject_${request.id}` },
           ],
         ],
       };
@@ -108,7 +108,7 @@ serve(async (req) => {
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Payment Tool Error:", error.message);
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -116,3 +116,5 @@ serve(async (req) => {
     });
   }
 });
+
+

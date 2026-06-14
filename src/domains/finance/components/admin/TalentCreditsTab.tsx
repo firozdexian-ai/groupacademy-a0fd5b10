@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+﻿import { useState, useEffect, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getTalentCreditsTotalCirculation,
@@ -195,7 +195,7 @@ export function TalentCreditsTab() {
         return toast.error("Operation Denied: Target user profile has insufficient credits for deduction.");
       }
 
-      let rpcError: any = null;
+      let rpcError: unknown = null;
       try {
         if (adjustDialog.type === "add") {
           await addCreditsRpc({
@@ -240,7 +240,7 @@ export function TalentCreditsTab() {
       setAdjustAmount("");
       setAdjustReason("");
       loadData();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("[Credit Operations] Quota adjustment script failed:", err);
       toast.error("Transaction processing error. Balance changes discarded.");
     } finally {
@@ -424,7 +424,7 @@ export function TalentCreditsTab() {
                           </TableCell>
                           <TableCell className="text-left">
                             <span className="text-xs font-medium text-muted-foreground/70">
-                              {credit.talent?.email || "—"}
+                              {credit.talent?.email || "â€”"}
                             </span>
                           </TableCell>
                           <TableCell className="text-left">
@@ -641,3 +641,5 @@ export function TalentCreditsTab() {
 }
 
 export default TalentCreditsTab;
+
+

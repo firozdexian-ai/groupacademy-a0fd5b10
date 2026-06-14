@@ -1,10 +1,10 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Authoritative Kinetic Pre-render Blueprint Node (Skeleton)
  * Hardened atomic placeholder holding spatial canvas footprints cleanly during data latency intervals.
- * Version: Launch Candidate · Phase Z0 Lifecycle & Animation Performance Locked
+ * Version: Launch Candidate Â· Phase Z0 Lifecycle & Animation Performance Locked
  */
 function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
@@ -21,3 +21,4 @@ function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>)
 }
 
 export { Skeleton };
+

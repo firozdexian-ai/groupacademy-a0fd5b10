@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+﻿import { useMemo } from "react";
 import { LucideIcon, Coins, Star, Users, Zap } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { AgentAvatar } from "@/domains/agents/components/chat/AgentAvatar";
 
 /**
- * Group Academy — Marketplace Agent Card Node
+ * Group Academy â€” Marketplace Agent Card Node
  * Version: Phase 10j.5 Hardened
  * Purpose: Interactive profile node for corporate and creator agents.
  */
@@ -144,3 +144,4 @@ export function AgentCard({
     </Card>
   );
 }
+

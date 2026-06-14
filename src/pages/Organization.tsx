@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
 import {
   Building2,
   Briefcase,
@@ -231,10 +231,12 @@ export default function Organization() {
 }
 
 // Internal Helper for Labels
-function Label({ children, className, ...props }: any) {
+function Label({ children, className, ...props }: unknown) {
   return (
     <label className={cn("block text-sm font-medium", className)} {...props}>
       {children}
     </label>
   );
 }
+
+

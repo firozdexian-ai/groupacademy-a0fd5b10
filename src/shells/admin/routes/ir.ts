@@ -1,6 +1,6 @@
-import React from "react";
+﻿import React from "react";
 
-export const ROUTES: Record<string, React.LazyExoticComponent<any>> = {
+export const ROUTES: Record<string, React.LazyExoticComponent<unknown>> = {
   "ir-dashboard": React.lazy(() => import("@/domains/ir/components/admin/IRDashboard").then((m) => ({ default: m.IRDashboard }))),
   "ir-targets": React.lazy(() => import("@/domains/ir/components/admin/MRRTargetManager").then((m) => ({ default: m.MRRTargetManager }))),
   "ir-vcs": React.lazy(() => import("@/domains/ir/components/admin/VCFirmsManager").then((m) => ({ default: m.VCFirmsManager }))),
@@ -23,3 +23,5 @@ export const TITLES: Record<string, string> = {
   "ir-economics": "Unit economics",
   "ir-influencers": "Key influencers",
 };
+
+

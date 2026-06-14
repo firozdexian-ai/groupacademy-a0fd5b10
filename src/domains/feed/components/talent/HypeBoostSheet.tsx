@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Flame, Loader2 } from "lucide-react";
@@ -59,7 +59,7 @@ export function HypeBoostSheet({ open, onOpenChange, onConfirm, contextData }: P
 
       toast.success(`Post successfully boosted by ${picked} hypes!`);
       onOpenChange(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       const parsedError = err instanceof Error ? err.message : String(err);
 
       // Route credit verification or transaction anomalies directly to logging pipelines
@@ -139,3 +139,4 @@ export function HypeBoostSheet({ open, onOpenChange, onConfirm, contextData }: P
     </Sheet>
   );
 }
+

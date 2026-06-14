@@ -1,4 +1,4 @@
-// Admin AI General Analyst — operator-side console for the platform concierge.
+﻿// Admin AI General Analyst â€” operator-side console for the platform concierge.
 // Tools: profile completion stats, talent search, broadcast nudges.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { augmentLastUserMessage } from "../_shared/attachments.ts";
@@ -24,7 +24,7 @@ const TOOLS = [
     function: {
       name: "talents_missing",
       description:
-        "List talents missing a piece of profile data. field ∈ {cv, profession, phone, role}. limit defaults to 20.",
+        "List talents missing a piece of profile data. field âˆˆ {cv, profession, phone, role}. limit defaults to 20.",
       parameters: {
         type: "object",
         properties: {
@@ -67,7 +67,7 @@ const SYSTEM = `You are AI General's operator console for the GroUp Academy supe
 AI General is the concierge that talks to logged-in users.
 Answer questions about engagement and profile completion by CALLING TOOLS.
 Before calling nudge_talents, ALWAYS confirm the count and the message text in your reply
-and ask the operator to say "yes send it" — do not nudge on the first turn.
+and ask the operator to say "yes send it" â€” do not nudge on the first turn.
 Be concise. Use markdown. Today: ${new Date().toISOString().slice(0, 10)}.`;
 
 Deno.serve(async (req) => {
@@ -92,7 +92,7 @@ Deno.serve(async (req) => {
       .from("user_roles")
       .select("role")
       .eq("user_id", userData.user.id);
-    const roles = (roleRows ?? []).map((r: any) => r.role);
+    const roles = (roleRows ?? []).map((r: unknown) => r.role);
     if (!roles.includes("super_admin") && !roles.includes("admin")) {
       return json({ error: "forbidden" }, 403);
     }
@@ -101,7 +101,7 @@ Deno.serve(async (req) => {
     const messages = body.messages ?? [];
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
 
-    const convo: any[] = [{ role: "system", content: SYSTEM }, ...messages];
+    const convo: unknown[] = [{ role: "system", content: SYSTEM }, ...messages];
     await augmentLastUserMessage(admin, convo, body.attachments);
 
     for (let step = 0; step < 5; step++) {
@@ -129,7 +129,7 @@ Deno.serve(async (req) => {
         convo.push(msg);
         for (const tc of msg.tool_calls) {
           const args = safeParse(tc.function?.arguments);
-          let toolResult: any = { error: "unknown tool" };
+          let toolResult: unknown = { error: "unknown tool" };
           try {
             toolResult = await runTool(admin, tc.function.name, args);
           } catch (e) {
@@ -164,20 +164,20 @@ Deno.serve(async (req) => {
   }
 });
 
-async function runTool(admin: any, name: string, args: any) {
+async function runTool(admin: unknown, name: string, args: unknown) {
   switch (name) {
     case "profile_completion_stats": {
-      const head = (q: any) => q.select("id", { head: true, count: "exact" });
+      const head = (q: unknown) => q.select("id", { head: true, count: "exact" });
       const [total, withCV, withProf, withPhone, complete] = await Promise.all([
-        head(admin.from("talents")).then((r: any) => r.count ?? 0),
-        head(admin.from("talents")).not("cv_url", "is", null).then((r: any) => r.count ?? 0),
-        head(admin.from("talents")).not("profession_category_id", "is", null).then((r: any) => r.count ?? 0),
-        head(admin.from("talents")).not("phone", "is", null).then((r: any) => r.count ?? 0),
+        head(admin.from("talents")).then((r: unknown) => r.count ?? 0),
+        head(admin.from("talents")).not("cv_url", "is", null).then((r: unknown) => r.count ?? 0),
+        head(admin.from("talents")).not("profession_category_id", "is", null).then((r: unknown) => r.count ?? 0),
+        head(admin.from("talents")).not("phone", "is", null).then((r: unknown) => r.count ?? 0),
         head(admin.from("talents"))
           .not("cv_url", "is", null)
           .not("profession_category_id", "is", null)
           .not("phone", "is", null)
-          .then((r: any) => r.count ?? 0),
+          .then((r: unknown) => r.count ?? 0),
       ]);
       return { total, with_cv: withCV, with_profession: withProf, with_phone: withPhone, complete };
     }
@@ -220,3 +220,5 @@ async function runTool(admin: any, name: string, args: any) {
       return { error: `unknown tool: ${name}` };
   }
 }
+
+

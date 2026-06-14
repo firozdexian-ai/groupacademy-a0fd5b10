@@ -1,5 +1,5 @@
-/**
- * Group Academy — Agent Runtime Thread Hook
+﻿/**
+ * Group Academy â€” Agent Runtime Thread Hook
  * Version: Phase 10j.3 Hardened
  * Purpose: DB-backed conversational hook for administrative chat surfaces.
  * Constraints: Enforces strict subject-kind 'admin' filtering for RBAC security.
@@ -49,7 +49,7 @@ export function useAdminAgentThreads() {
       if (error) throw error;
 
       setThreads(
-        ((data as any[]) ?? []).map((r) => ({
+        ((data as unknown[]) ?? []).map((r) => ({
           id: r.id,
           agent_key: r.agent_key,
           title: r.title,
@@ -57,7 +57,7 @@ export function useAdminAgentThreads() {
           last_read_at: r.updated_at,
         })),
       );
-    } catch (err: any) {
+    } catch (err: unknown) {
       trackError("agents-hook-load-threads-failure", { error: err.message });
     }
   }, []);
@@ -121,7 +121,7 @@ export function useAgentRuntimeThread(agentKey: string | null): UseAgentRuntimeT
 
           if (cancelled) return;
           setMessages(
-            ((rows as any[]) ?? [])
+            ((rows as unknown[]) ?? [])
               .filter((r) => r.role === "user" || r.role === "assistant")
               .map((r) => ({
                 id: r.id,
@@ -131,7 +131,7 @@ export function useAgentRuntimeThread(agentKey: string | null): UseAgentRuntimeT
               })),
           );
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         trackError("agents-hook-load-thread-failure", { agentKey, error: err.message });
       } finally {
         if (!cancelled) setLoading(false);
@@ -151,7 +151,7 @@ export function useAgentRuntimeThread(agentKey: string | null): UseAgentRuntimeT
 
     if (error || !rows) return;
 
-    const canonical: ChatMsg[] = (rows as any[])
+    const canonical: ChatMsg[] = (rows as unknown[])
       .filter((r) => r.role === "user" || r.role === "assistant")
       .map((r) => ({
         id: r.id,
@@ -173,7 +173,7 @@ export function useAgentRuntimeThread(agentKey: string | null): UseAgentRuntimeT
     async (text: string) => {
       const content = text.trim();
       if (!content || !agentKey || sending) return;
-      const agent = agents.find((a: any) => a.key === agentKey || a.agent_key === agentKey);
+      const agent = agents.find((a: unknown) => a.key === agentKey || a.agent_key === agentKey);
       if (!agent) {
         trackError("agents-hook-send-unknown-agent", { agentKey });
         return;
@@ -241,7 +241,7 @@ export function useAgentRuntimeThread(agentKey: string | null): UseAgentRuntimeT
           }
         }
         if (newThreadId || threadId) await reconcileTail((newThreadId ?? threadId)!);
-      } catch (err: any) {
+      } catch (err: unknown) {
         trackError("agents-hook-send-failure", { agentKey, error: err.message });
         setMessages((prev) => prev.filter((m) => !(m.role === "assistant" && !m.id)));
         throw err;
@@ -280,3 +280,5 @@ export function useAgentRuntimeThread(agentKey: string | null): UseAgentRuntimeT
 
   return { messages, loading, sending, send, clear, regenerate, uploadAttachment: undefined };
 }
+
+

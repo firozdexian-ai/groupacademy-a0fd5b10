@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+﻿import { useState, useEffect, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -28,7 +28,7 @@ interface StructuralTalentListNode {
 /**
  * GroUp Academy: Talent Pipeline Curation Sheet Orchestrator (SaveToListSheet)
  * An authoritative operational sandbox managing target profile saving actions, dynamic pipeline generation, and list metrics tracking.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function SaveToListSheet({ companyId, talentId, talentName, onClose }: SaveToListSheetProps) {
   const queryClient = useQueryClient();
@@ -64,7 +64,7 @@ export function SaveToListSheet({ companyId, talentId, talentName, onClose }: Sa
 
     setInternalActionBusy(true);
     trackEvent("save_to_list_execution_initiated", { targetListIdStr });
-    const dynamicToastTrackerId = toast.loading("Committing curation properties down pipeline tracking rows…");
+    const dynamicToastTrackerId = toast.loading("Committing curation properties down pipeline tracking rowsâ€¦");
 
     try {
       await addToListMutation.mutateAsync({
@@ -86,7 +86,7 @@ export function SaveToListSheet({ companyId, talentId, talentName, onClose }: Sa
         trackEvent("save_to_list_execution_success", { targetListIdStr });
         onClose();
       }
-    } catch (caughtPipelineExceptionErr: any) {
+    } catch (caughtPipelineExceptionErr: unknown) {
       const formattedExceptionMsgStr =
         caughtPipelineExceptionErr instanceof Error
           ? caughtPipelineExceptionErr.message
@@ -112,7 +112,7 @@ export function SaveToListSheet({ companyId, talentId, talentName, onClose }: Sa
 
     setInternalActionBusy(true);
     trackEvent("save_to_list_workspace_creation_initiated");
-    const dynamicToastTrackerId = toast.loading("Initializing fresh candidate roster sector parameters…");
+    const dynamicToastTrackerId = toast.loading("Initializing fresh candidate roster sector parametersâ€¦");
 
     try {
       const newlyCreatedListObjectNode = await createListMutation.mutateAsync({
@@ -129,7 +129,7 @@ export function SaveToListSheet({ companyId, talentId, talentName, onClose }: Sa
 
       // Secondary Cascade Ingress: Automatically save target profile directly to newly established track
       await handleProfileSaveExecute(newlyCreatedListObjectNode.id);
-    } catch (caughtPipelineExceptionErr: any) {
+    } catch (caughtPipelineExceptionErr: unknown) {
       const formattedExceptionMsgStr =
         caughtPipelineExceptionErr instanceof Error
           ? caughtPipelineExceptionErr.message
@@ -161,7 +161,7 @@ export function SaveToListSheet({ companyId, talentId, talentName, onClose }: Sa
         side="bottom"
         className="h-[80vh] max-h-[80vh] rounded-t-xl border-t border-border/40 bg-background/95 backdrop-blur-xl flex flex-col p-4 sm:p-5 text-left antialiased transform-gpu select-none sm:select-text"
       >
-        {/* HUD LEVEL 1: OVERLAY CONTENT WORKSPACE ROW HEADER */}
+        {/* dashboard LEVEL 1: OVERLAY CONTENT WORKSPACE ROW HEADER */}
         <SheetHeader className="mb-4 text-left select-none shrink-0 leading-none w-full">
           <div className="flex items-center gap-2.5 leading-none w-full">
             <div className="h-7 w-7 rounded-lg bg-primary/10 border border-primary/5 text-primary flex items-center justify-center shrink-0 shadow-inner">
@@ -178,28 +178,28 @@ export function SaveToListSheet({ companyId, talentId, talentName, onClose }: Sa
           </div>
         </SheetHeader>
 
-        {/* HUD LEVEL 2: COMPONENT ROW CURATION NOTE ATTACHMENT TEXTAREA */}
+        {/* dashboard LEVEL 2: COMPONENT ROW CURATION NOTE ATTACHMENT TEXTAREA */}
         <div className="space-y-4 flex-1 overflow-y-auto pr-1 outline-none font-bold text-xs text-foreground/90 w-full min-w-0 flex flex-col justify-start">
           <div className="space-y-1.5 text-left w-full min-w-0 shrink-0">
             <Textarea
               rows={2}
               value={curationNoteInput}
               disabled={internalActionBusy}
-              placeholder="Inject precise contextual sourcing context notes (e.g. key psychometric parity yields, performance vectors observed)…"
+              placeholder="Inject precise contextual sourcing context notes (e.g. key psychometric parity yields, performance vectors observed)â€¦"
               onChange={(e) => setCurationNoteInput(e.target.value)}
               className="w-full rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3 leading-relaxed resize-none shadow-inner min-h-[60px] focus-visible:ring-1 focus-visible:ring-ring"
               maxLength={300}
             />
           </div>
 
-          {/* HUD LEVEL 3: SCROLL AREA DIRECTORY HOSTING ACTIVE ACCOUNT RETRIEVAL ARRAYS */}
+          {/* dashboard LEVEL 3: SCROLL AREA DIRECTORY HOSTING ACTIVE ACCOUNT RETRIEVAL ARRAYS */}
           <ScrollArea className="flex-1 border border-border/10 bg-muted/5 rounded-xl p-2 w-full min-w-0 select-none">
             <div className="space-y-2 w-full min-w-0 flex flex-col justify-start">
               {isRegistryLoading ? (
                 <div className="flex items-center justify-center gap-2 py-12 text-muted-foreground leading-none w-full">
                   <Loader2 className="h-4 w-4 animate-spin text-primary stroke-[2.5]" />
                   <span className="text-[10px] font-mono font-extrabold uppercase tracking-wider animate-pulse">
-                    Hydrating organizational lists matrix…
+                    Hydrating organizational lists matrixâ€¦
                   </span>
                 </div>
               ) : safeTalentListsCollection.length === 0 ? (
@@ -231,7 +231,7 @@ export function SaveToListSheet({ companyId, talentId, talentName, onClose }: Sa
             </div>
           </ScrollArea>
 
-          {/* HUD LEVEL 4: CONDITIONAL PANEL DISPATCHING FRESH WORKSPACE GENERATION */}
+          {/* dashboard LEVEL 4: CONDITIONAL PANEL DISPATCHING FRESH WORKSPACE GENERATION */}
           <div className="w-full shrink-0 font-bold text-xs select-none border-t border-border/10 pt-3 mt-auto">
             {showCreateWorkspace ? (
               <div className="space-y-3 p-3 border border-border/40 bg-background/50 rounded-xl w-full flex flex-col justify-center animate-in slide-in-from-bottom-1 duration-150">
@@ -239,7 +239,7 @@ export function SaveToListSheet({ companyId, talentId, talentName, onClose }: Sa
                   <Input
                     value={newListNameInput}
                     disabled={internalActionBusy}
-                    placeholder="Enter precise configuration name for replacement pipeline roster…"
+                    placeholder="Enter precise configuration name for replacement pipeline rosterâ€¦"
                     onChange={(e) => setNewListNameInput(e.target.value)}
                     className="h-10 rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3 shadow-inner w-full block focus-visible:ring-1 focus-visible:ring-ring uppercase select-text"
                     maxLength={50}
@@ -294,7 +294,7 @@ export function SaveToListSheet({ companyId, talentId, talentName, onClose }: Sa
           </div>
         </div>
 
-        {/* HUD LEVEL 5: OVERLAY BOTTOM OMNIPRESENCE SHIELD RIBBON FOOTER */}
+        {/* dashboard LEVEL 5: OVERLAY BOTTOM OMNIPRESENCE SHIELD RIBBON FOOTER */}
         <div className="shrink-0 pt-2 border-t border-border/10 select-none shadow-none pointer-events-none tracking-normal font-bold text-[9px] text-muted-foreground/40 font-mono leading-none uppercase w-full flex items-center justify-center gap-1.5 h-6">
           <Zap className="h-3.5 w-3.5 text-amber-500 fill-amber-500/10 stroke-[2.2] shrink-0 animate-pulse" />
           <span>Talent tracking classification curation segment variables index processing complete</span>
@@ -303,3 +303,5 @@ export function SaveToListSheet({ companyId, talentId, talentName, onClose }: Sa
     </Sheet>
   );
 }
+
+

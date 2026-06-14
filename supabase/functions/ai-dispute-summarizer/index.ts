@@ -26,17 +26,20 @@ Deno.serve(async (req) => {
           body: JSON.stringify({
             model: "google/gemini-2.5-flash",
             messages: [
-              { role: "system", content: "You produce neutral two-sided fact sheets (≤200 words) for dispute panels. No verdicts." },
+              { role: "system", content: "You produce neutral two-sided fact sheets (â‰¤200 words) for dispute panels. No verdicts." },
               { role: "user", content: JSON.stringify(d).slice(0, 6000) },
             ],
           }),
         });
         const j = await resp.json();
         summary = j?.choices?.[0]?.message?.content || summary;
-      } catch (_) {}
+      } catch (_) {
+        // Intentionally empty
+      }
     }
     return new Response(JSON.stringify({ summary }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
     return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
+

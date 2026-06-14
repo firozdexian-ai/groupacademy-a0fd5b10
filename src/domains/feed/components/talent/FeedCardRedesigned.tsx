@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Play, BookOpen, Newspaper, FileText, ArrowRight, Bookmark, ExternalLink } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -24,7 +24,7 @@ function extractYouTubeId(url: string): string | null {
   return match ? match[1] : null;
 }
 
-const typeConfigs: Record<string, { icon: any; style: string; label: string; cta: string }> = {
+const typeConfigs: Record<string, { icon: unknown; style: string; label: string; cta: string }> = {
   video: {
     icon: <Play className="h-3 w-3 fill-current" />,
     style: "text-rose-600 bg-rose-500/10 border-rose-500/20 dark:text-rose-400 dark:bg-rose-500/5",
@@ -257,7 +257,7 @@ export function FeedCardRedesigned({ item, onInterested, onNotInterested }: Feed
             <ArrowRight className="h-3.5 w-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" />
           </Button>
 
-          {(["course", "video", "blog"] as const).includes(item.type as any) && (
+          {(["course", "video", "blog"] as const).includes(item.type as unknown) && (
             <HypeButton
               contentType={item.type as HypeContentType}
               contentId={item.id}
@@ -272,3 +272,4 @@ export function FeedCardRedesigned({ item, onInterested, onNotInterested }: Feed
     </Card>
   );
 }
+

@@ -1,5 +1,5 @@
-/**
- * Institutional Child Registry — Phase INST-Z2 Hardened
+﻿/**
+ * Institutional Child Registry â€” Phase INST-Z2 Hardened
  * CTO Version: May 2026
  * Fixes: B4 (Radix Crash), B5 (Null club_id), R3/R4 (Field Restoration), P5 (Empty States)
  */
@@ -74,15 +74,15 @@ interface Props {
  description: string;
  fields: Field[];
  badgeKey?: string;
- icon: any;
+ icon: unknown;
 }
 
 function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon }: Props) {
  const qc = useQueryClient();
  const [open, setOpen] = useState(false);
  const [purgeId, setPurgeId] = useState<string | null>(null);
- const [editingNode, setEditingNode] = useState<any | null>(null);
- const [draft, setDraft] = useState<Record<string, any>>({});
+ const [editingNode, setEditingNode] = useState<unknown | null>(null);
+ const [draft, setDraft] = useState<Record<string, unknown>>({});
 
  const [instFilter, setInstFilter] = useState<string>("all");
  const [eventTab, setEventTab] = useState<"upcoming" | "past">("upcoming");
@@ -105,7 +105,7 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
 
  const saveMutation = useMutation({
  mutationFn: async () => {
- const payload: any = { ...draft };
+ const payload: unknown = { ...draft };
  // B5 Fix: Explicit nullification of club_id via sentinel
  if (payload.club_id === NONE_SENTINEL) payload.club_id = null;
  if (editingNode) payload.id = editingNode.id;
@@ -118,7 +118,7 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
  setEditingNode(null);
  setDraft({});
  },
- onError: (e: any) => toast.error(`Sync Fault: ${e.message}`),
+ onError: (e: unknown) => toast.error(`Sync Fault: ${e.message}`),
  });
 
  // Restored: actual delete mutation (was reduced to a no-op invalidate)
@@ -129,10 +129,10 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
  setPurgeId(null);
  qc.invalidateQueries({ queryKey: [table] });
  },
- onError: (e: any) => toast.error(`Termination Fault: ${e.message}`),
+ onError: (e: unknown) => toast.error(`Termination Fault: ${e.message}`),
  });
 
- const handleEdit = (row: any) => {
+ const handleEdit = (row: unknown) => {
  setEditingNode(row);
  // B4 Fix: Map null to sentinel for Radix safety
  setDraft({ ...row, club_id: row.club_id ?? NONE_SENTINEL });
@@ -140,7 +140,7 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
  };
 
  const institutionsById = useMemo(
- () => Object.fromEntries((institutionsQ.data ?? []).map((i: any) => [i.id, i.name])),
+ () => Object.fromEntries((institutionsQ.data ?? []).map((i: unknown) => [i.id, i.name])),
  [institutionsQ.data],
  );
 
@@ -523,3 +523,5 @@ export function OrgEventsManager() {
  />
  );
 }
+
+

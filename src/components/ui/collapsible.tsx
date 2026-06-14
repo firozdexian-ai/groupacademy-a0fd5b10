@@ -1,11 +1,11 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as CollapsiblePrimitive from "@radix-ui/react-collapsible";
 import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Technical Information Density Toggle Framework (Collapsible)
  * Authoritative WAI-ARIA compliant disclosure block regulating cognitive load profiles across workspace panels.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 const Collapsible = CollapsiblePrimitive.Root;
 
@@ -40,3 +40,4 @@ const CollapsibleContent = React.forwardRef<
 CollapsibleContent.displayName = "Collapsible_Core_Content_Node";
 
 export { Collapsible, CollapsibleTrigger, CollapsibleContent };
+

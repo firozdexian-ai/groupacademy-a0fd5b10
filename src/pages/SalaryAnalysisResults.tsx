@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -50,7 +50,7 @@ const SalaryAnalysisResults = () => {
   const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
 
-  const [analysis, setAnalysis] = useState<any>(null);
+  const [analysis, setAnalysis] = useState<unknown>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
@@ -67,7 +67,7 @@ const SalaryAnalysisResults = () => {
       if (data.profession_category_id) {
         loadRecommendedCourses(data.profession_category_id);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setLoadError("Results node currently unreachable.");
     } finally {
       setIsLoading(false);
@@ -136,7 +136,7 @@ const SalaryAnalysisResults = () => {
             </h1>
             <div className="flex items-center gap-3 text-sm font-bold text-muted-foreground uppercase tracking-tight">
               <Briefcase className="h-4 w-4 text-primary" /> {analysis.job_title || "Professional Role"}
-              <span className="opacity-20">•</span>
+              <span className="opacity-20">â€¢</span>
               <Globe className="h-4 w-4" /> Global Market Node
             </div>
           </div>
@@ -155,7 +155,7 @@ const SalaryAnalysisResults = () => {
 
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
-            {/* Logic Score HUD */}
+            {/* Logic Score dashboard */}
             <Card className="rounded-2xl border-border/40 shadow-2xl bg-card overflow-hidden">
               <CardContent className="p-10 flex flex-col md:flex-row items-center gap-10">
                 <div className="relative h-32 w-32 shrink-0">
@@ -279,7 +279,7 @@ const SalaryAnalysisResults = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-8 space-y-6">
-                {ai.negotiation_tips?.map((tip: any, i: number) => (
+                {ai.negotiation_tips?.map((tip: unknown, i: number) => (
                   <div key={i} className="space-y-2 group">
                     <p className="font-black text-sm uppercase tracking-tight group-hover:text-primary transition-colors">
                       {tip.tip}
@@ -293,7 +293,7 @@ const SalaryAnalysisResults = () => {
             </Card>
           </div>
 
-          {/* Upsell Sidebar HUD */}
+          {/* Upsell Sidebar dashboard */}
           <aside className="space-y-8">
             <Card className="rounded-2xl border-primary/20 bg-primary/5 shadow-2xl overflow-hidden sticky top-24">
               <CardContent className="p-8 space-y-8">
@@ -390,3 +390,5 @@ const SalaryAnalysisResults = () => {
 };
 
 export default SalaryAnalysisResults;
+
+

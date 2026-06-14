@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+﻿import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { listTalentEnrollmentsFull } from "@/domains/learning/repo/learningRepo";
@@ -206,7 +206,7 @@ export function MyCoursesTab({ onBrowseCatalog }: MyCoursesTabProps) {
     refetchOnWindowFocus: false, // Drop redundant window re-focus polling layers
     queryFn: async () => {
       const data = await listTalentEnrollmentsFull(talent!.id);
-      return (data as any[]).filter((e) => e.content?.content_type !== "free_video") as Enrollment[];
+      return (data as unknown[]).filter((e) => e.content?.content_type !== "free_video") as Enrollment[];
     },
   });
 
@@ -282,7 +282,7 @@ export function MyCoursesTab({ onBrowseCatalog }: MyCoursesTabProps) {
             No Enrollments Found
           </h3>
           <p className="text-[11px] font-medium text-muted-foreground/70 leading-normal max-w-xs mx-auto mt-1.5 mb-4">
-            You haven't enrolled in any educational programs or live cohorts yet.
+            You haven't enrolled in unknown educational programs or live cohorts yet.
           </p>
           <Button
             onClick={handleBrowseCatalogFallbackClick}
@@ -348,3 +348,5 @@ export function MyCoursesTab({ onBrowseCatalog }: MyCoursesTabProps) {
     </div>
   );
 }
+
+

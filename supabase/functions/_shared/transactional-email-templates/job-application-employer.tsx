@@ -1,4 +1,4 @@
-import * as React from 'npm:react@18.3.1'
+﻿import * as React from 'npm:react@18.3.1'
 import {
   Body, Button, Container, Head, Heading, Html, Preview, Text, Link,
 } from 'npm:@react-email/components@0.0.22'
@@ -21,7 +21,7 @@ const JobApplicationEmployerEmail = ({ job_title, company_name, applicant_name, 
     <Preview>New application for {job_title || 'your position'} via {SITE_NAME}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>New Application Received 📩</Heading>
+        <Heading style={h1}>New Application Received ðŸ“©</Heading>
         <Text style={text}>
           Hi {company_name || 'Hiring Manager'},
         </Text>
@@ -35,7 +35,7 @@ const JobApplicationEmployerEmail = ({ job_title, company_name, applicant_name, 
         ) : null}
         {match_score ? (
           <Text style={matchBadge}>
-            🎯 AI Match Score: <strong>{match_score}%</strong>
+            ðŸŽ¯ AI Match Score: <strong>{match_score}%</strong>
           </Text>
         ) : null}
         {cover_letter ? (
@@ -50,7 +50,7 @@ const JobApplicationEmployerEmail = ({ job_title, company_name, applicant_name, 
           </Button>
         ) : null}
         <Text style={footer}>
-          Sent via {SITE_NAME} — Connecting talent with opportunity
+          Sent via {SITE_NAME} â€” Connecting talent with opportunity
         </Text>
       </Container>
     </Body>
@@ -59,7 +59,7 @@ const JobApplicationEmployerEmail = ({ job_title, company_name, applicant_name, 
 
 export const template = {
   component: JobApplicationEmployerEmail,
-  subject: (data: Record<string, any>) => `New application for ${data.job_title || 'your position'}`,
+  subject: (data: Record<string, unknown>) => `New application for ${data.job_title || 'your position'}`,
   displayName: 'Job application (employer copy)',
   previewData: { job_title: 'Senior Developer', company_name: 'TechCorp', applicant_name: 'Sarah Khan', match_score: 85, cover_letter: 'I am excited to apply...' },
 } satisfies TemplateEntry
@@ -74,3 +74,5 @@ const coverLetterLabel = { fontSize: '12px', fontWeight: 'bold' as const, color:
 const coverLetterText = { fontSize: '14px', color: '#333333', lineHeight: '1.6', margin: '0' }
 const button = { backgroundColor: '#2A7DDE', color: '#ffffff', fontSize: '14px', borderRadius: '8px', padding: '12px 24px', textDecoration: 'none', fontWeight: '600' as const }
 const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+
+

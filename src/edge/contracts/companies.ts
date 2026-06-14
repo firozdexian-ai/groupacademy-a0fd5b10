@@ -1,5 +1,5 @@
-/**
- * Companies domain — edge function contracts (Phase 9h).
+﻿/**
+ * Companies domain â€” edge function contracts (Phase 9h).
  */
 import { z } from "zod";
 
@@ -42,3 +42,4 @@ export const CheckCompanyAccountResponseSchema = z
 export type CheckCompanyAccountResponse = z.infer<
   typeof CheckCompanyAccountResponseSchema
 >;
+

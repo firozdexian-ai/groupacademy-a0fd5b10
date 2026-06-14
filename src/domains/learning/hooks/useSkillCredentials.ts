@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listTalentSkillCredentials } from "@/domains/learning/repo/learningRepo";
 import { issueSkillCredentials } from "@/domains/learning/api/learningApi";
 import { toast } from "sonner";
@@ -19,7 +19,7 @@ export interface SkillCredential {
   level: "foundational" | "proficient" | "expert";
   mastery_at_issue: number;
   attempts_at_issue: number;
-  evidence: any;
+  evidence: unknown;
   verify_code: string;
   issued_at: string;
   revoked_at: string | null;
@@ -43,18 +43,18 @@ export function useSkillCredentials(talentId?: string | null) {
     enabled: !!talentId,
     staleTime: 5 * 60 * 1000, // 5-minute cache consistency boundary for archival records
     queryFn: async (): Promise<SkillCredential[]> => {
-      // HUD: EXECUTING_CREDENTIALS_LEDGER_INGRESS_SELECT
-      let data: any[];
+      // dashboard: EXECUTING_CREDENTIALS_LEDGER_INGRESS_SELECT
+      let data: unknown[];
       try {
         data = await listTalentSkillCredentials(talentId!);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: skill_credentials lookup failed.", error);
         throw error;
       }
 
 
       // Hardened Data Normalization Layer: Sanitizes nested items against schema anomalies
-      return (data || []).map((row: any) => ({
+      return (data || []).map((row: unknown) => ({
         id: String(row.id),
         talent_id: String(row.talent_id),
         topic_tag: String(row.topic_tag ?? "General Skill"),
@@ -86,13 +86,13 @@ export function useIssueSkillCredentials(talentId?: string | null) {
 
   return useMutation({
     mutationFn: async (): Promise<IssueCredentialsResponse> => {
-      // HUD: INVOKING_CREDENTIAL_ISSUANCE_EDGE_ENGINE
+      // dashboard: INVOKING_CREDENTIAL_ISSUANCE_EDGE_ENGINE
       const data = await issueSkillCredentials({});
 
       interface EdgeResponseWrapper {
         error?: string;
         message?: string;
-        newly_issued?: any[];
+        newly_issued?: unknown[];
         evaluated?: number;
       }
 
@@ -116,11 +116,13 @@ export function useIssueSkillCredentials(talentId?: string | null) {
       if (res.newly_issued.length > 0) {
         toast.success(`Issued ${res.newly_issued.length} new skill credentials.`);
       } else {
-        toast.info(`Review complete — your mastery is up to date across ${res.evaluated} topics.`);
+        toast.info(`Review complete â€” your mastery is up to date across ${res.evaluated} topics.`);
       }
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       toast.error(err.message || "Cryptographic badge issuance validation failed.");
     },
   });
 }
+
+

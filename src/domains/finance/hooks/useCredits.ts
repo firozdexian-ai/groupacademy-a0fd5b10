@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   deductCreditsRpc,
   addCreditsRpc,
@@ -24,7 +24,7 @@ export interface CreditBalanceNode {
   earned_balance: number;
 }
 
-const isValidUUID = (id: any): boolean => {
+const isValidUUID = (id: unknown): boolean => {
   if (!id || typeof id !== "string") return false;
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   return uuidRegex.test(id);
@@ -68,7 +68,7 @@ export function useCredits() {
     enabled: !!talent?.id,
     staleTime: 60000,
     queryFn: async (): Promise<CreditTransaction[]> => {
-      let data: any[];
+      let data: unknown[];
       try {
         data = await listTalentCreditTransactions(talent!.id, 20);
       } catch (error) {
@@ -123,7 +123,7 @@ export function useCredits() {
         referenceId: safeRefId,
         description: description || `Service: ${serviceType}`,
       });
-      const result = data as any;
+      const result = data as unknown;
       if (!result?.success) throw new Error(result?.error || "TRANSACTION_DENIED");
 
       return data;
@@ -133,7 +133,7 @@ export function useCredits() {
       queryClient.invalidateQueries({ queryKey: ["talent-credit-transactions", talent?.id] });
       queryClient.invalidateQueries({ queryKey: ["talent-lifetime-credits", talent?.id] });
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       const msg = err.message || "";
       if (msg.includes("INSUFFICIENT_CREDITS") || msg.includes("FISCAL_DEFICIT")) {
         toast({
@@ -181,12 +181,12 @@ export function useCredits() {
       queryClient.invalidateQueries({ queryKey: ["talent-credit-transactions", talent?.id] });
       if (vars.type === "welcome_bonus") {
         toast({
-          title: "Welcome bonus added 🎉",
+          title: "Welcome bonus added ðŸŽ‰",
           description: "250 credits have been added to your wallet.",
         });
       }
     },
-    onError: (err: any, vars: any) => {
+    onError: (err: unknown, vars: unknown) => {
       console.error("[Credit Operations] Credit update account injection bottleneck encountered:", {
         talentId: talent?.id,
         type: vars.type,
@@ -240,3 +240,5 @@ export function useCredits() {
     transactionHistory: txHistory,
   };
 }
+
+

@@ -1,5 +1,5 @@
-/**
- * Talent Outreach Console — Refactored for Phase Z0
+﻿/**
+ * Talent Outreach Console â€” Refactored for Phase Z0
  * CTO Version: May 2026
  * Fixes: B3 (Column Selects), B4 (Standardized Logging)
  */
@@ -65,7 +65,7 @@ export function TalentOutreachConsoleTab() {
       const { data, error } = await talentRepo.listOutreachableTalents(search);
       if (error) throw error;
 
-      const formatted = (data ?? []).map((t: any) => ({
+      const formatted = (data ?? []).map((t: unknown) => ({
         id: t.id,
         full_name: t.full_name || "Unknown Talent",
         phone: t.phone,
@@ -121,7 +121,7 @@ export function TalentOutreachConsoleTab() {
       toast.success("Message logged to Outreach Terminal");
       setDraft("");
       setSelectedTalent(null);
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error("Dispatch failure");
     } finally {
       setSending(false);
@@ -151,7 +151,7 @@ export function TalentOutreachConsoleTab() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
               <Input
                 placeholder="Search talent..."
-                className="pl-8 h-9 text-xs rounded-lg"
+                className="pl-9 h-12 rounded-xl bg-surface text-primary"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -217,3 +217,5 @@ export function TalentOutreachConsoleTab() {
     </div>
   );
 }
+
+

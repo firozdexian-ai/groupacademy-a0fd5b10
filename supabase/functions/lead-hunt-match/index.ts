@@ -1,4 +1,4 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
+﻿import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
@@ -194,7 +194,7 @@ serve(async (req) => {
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error in lead-hunt-match:", error);
     return new Response(JSON.stringify({ error: error?.message || "Internal server error" }), {
       status: 500,
@@ -203,7 +203,7 @@ serve(async (req) => {
   }
 });
 
-function parseJobRequirements(jd: string): any {
+function parseJobRequirements(jd: string): unknown {
   const jdLower = jd.toLowerCase();
 
   // Extract skills
@@ -293,7 +293,7 @@ function parseJobRequirements(jd: string): any {
   };
 }
 
-function calculateInitialScore(talent: any, requirements: any): number {
+function calculateInitialScore(talent: unknown, requirements: unknown): number {
   let score = 0;
   const talentText = JSON.stringify({
     skills: talent.skills,
@@ -329,3 +329,5 @@ function calculateInitialScore(talent: any, requirements: any): number {
 
   return Math.round(score);
 }
+
+

@@ -1,4 +1,4 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+﻿import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Briefcase, Users, Megaphone, Upload, Zap, ShieldCheck, BarChart3 } from "lucide-react";
 import { JobsManageTab } from "./JobsManageTab";
 import { JobsApplicationsTab } from "./JobsApplicationsTab";
@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useJobsGraph } from "@/domains/jobs/components/admin/hooks/useJobsGraph";
 
 /**
- * Jobs Hub — unified admin command center for jobs, applications, outreach, and uploads.
+ * Jobs Hub â€” unified admin command center for jobs, applications, outreach, and uploads.
  */
 export function JobsHub() {
   const { jobsGraphQuery } = useJobsGraph();
@@ -69,7 +69,7 @@ export function JobsHub() {
   );
 }
 
-function TabNode({ value, icon: Icon, label }: { value: string; icon: any; label: string }) {
+function TabNode({ value, icon: Icon, label }: { value: string; icon: unknown; label: string }) {
   return (
     <TabsTrigger
       value={value}
@@ -80,3 +80,5 @@ function TabNode({ value, icon: Icon, label }: { value: string; icon: any; label
     </TabsTrigger>
   );
 }
+
+

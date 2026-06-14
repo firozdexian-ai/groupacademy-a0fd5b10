@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+﻿import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +18,7 @@ import {
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy — Career Abroad Management Dashboard: Overview Tab
+ * Group Academy â€” Career Abroad Management Dashboard: Overview Tab
  * Version: Phase 10i.2 Hardened (Production Candidate Edition)
  * Surface: /dashboard?tab=overview (Admin Command Center Cockpit)[cite: 2, 4]
  * Operations Mode: Real-time macro aggregator managing international admissions workflows[cite: 2, 4].
@@ -315,3 +315,4 @@ function PulseBar({ label, value, max, color }: PulseBarProps) {
 }
 
 export default AbroadOverviewTab;
+

@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useAbroadGraph } from "./hooks/useAbroadGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy — Abroad Group Tab: IELTS Mock Attempts Assessment Console
+ * Group Academy â€” Abroad Group Tab: IELTS Mock Attempts Assessment Console
  * Version: Phase 10i.2 Hardened (Production Candidate Edition)
  * Surface: /dashboard?tab=ielts (Admin Command Center Layout)
  * Operations Mode: Human-in-the-loop scoring bypass for specialized English proficiency evaluations.
@@ -26,7 +26,7 @@ export function AbroadIELTSPromptsTab() {
 
   const { data, isLoading } = abroadGraphQuery;
   const [open, setOpen] = useState(false);
-  const [draft, setDraft] = useState<any>({ score: 0 });
+  const [draft, setDraft] = useState<unknown>({ score: 0 });
 
   return (
     <div className="space-y-6 p-4 md:p-6 animate-in fade-in duration-500">
@@ -235,3 +235,5 @@ export function AbroadIELTSPromptsTab() {
 }
 
 export default AbroadIELTSPromptsTab;
+
+

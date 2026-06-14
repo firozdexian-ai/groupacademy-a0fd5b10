@@ -1,11 +1,11 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Technical Status Telemetry Indicator Nodes (Badge)
  * Hardened operational badge rendering semantic state tags, system categorizations, and validation indices.
- * Version: Launch Candidate · Phase Z0 Architectural Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Architectural Balance Lock
  */
 const badgeVariants = cva(
   "inline-flex items-center justify-center rounded px-1.5 h-5 font-mono text-[9px] font-extrabold uppercase tracking-wide border select-none pointer-events-none leading-none shadow-xs antialiased transition-colors duration-200 focus:outline-none focus:ring-0 shrink-0 tabular-nums w-fit block pt-0.5",
@@ -33,3 +33,4 @@ function Badge({ className, variant, ...props }: BadgeProps) {
 }
 
 export { Badge, badgeVariants };
+

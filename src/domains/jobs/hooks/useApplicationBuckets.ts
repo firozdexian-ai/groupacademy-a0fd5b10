@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { getApplicationBuckets } from "@/domains/jobs/repo/jobsRepo";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -24,11 +24,11 @@ export function useApplicationBuckets() {
     queryFn: async (): Promise<ApplicationBuckets> => {
       if (!user?.id) return { active: 0, action_needed: 0, closed: 0 };
 
-      // HUD: EXECUTING_RPC_HANDSHAKE
+      // dashboard: EXECUTING_RPC_HANDSHAKE
       try {
         const data = await getApplicationBuckets(user.id);
         return ((data as unknown) as ApplicationBuckets) || { active: 0, action_needed: 0, closed: 0 };
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: get_application_buckets failed sync.", {
           userId: user.id,
           error: error?.message,
@@ -41,3 +41,5 @@ export function useApplicationBuckets() {
     staleTime: 60_000,
   });
 }
+
+

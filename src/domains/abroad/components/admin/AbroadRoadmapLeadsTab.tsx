@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useAbroadGraph } from "./hooks/useAbroadGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy — Abroad Group Tab: Roadmap Inquiry CRM Leads Management
+ * Group Academy â€” Abroad Group Tab: Roadmap Inquiry CRM Leads Management
  * Version: Phase 10i.2 Hardened (Production Candidate Edition)
  * Surface: /dashboard?tab=roadmap-leads (Admin Command Center Viewport)
  * Operations Mode: Human-in-the-loop sales pipeline engine managing counselor advisory queues.
@@ -27,7 +27,7 @@ export function AbroadRoadmapLeadsTab() {
 
   const { data, isLoading } = abroadGraphQuery;
   const [open, setOpen] = useState(false);
-  const [draft, setDraft] = useState<any>({ status: "new" });
+  const [draft, setDraft] = useState<unknown>({ status: "new" });
 
   const handleOpenChange = (nextOpenState: boolean) => {
     if (upsertRoadmap.isPending) return;
@@ -266,3 +266,5 @@ export function AbroadRoadmapLeadsTab() {
 }
 
 export default AbroadRoadmapLeadsTab;
+
+

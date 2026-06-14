@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getInstructorSummary,
   listInstructorEarnings,
@@ -47,11 +47,11 @@ export function useInstructorSummary() {
     queryKey: ["instructor-summary"],
     staleTime: 5 * 60 * 1000, // 5-minute financial stability window
     queryFn: async (): Promise<InstructorSummary> => {
-      // HUD: EXECUTING_RPC_INSTRUCTOR_FINANCIAL_SYNC
-      let data: any;
+      // dashboard: EXECUTING_RPC_INSTRUCTOR_FINANCIAL_SYNC
+      let data: unknown;
       try {
         data = await getInstructorSummary();
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: get_instructor_summary sync failure.", error);
         throw error;
       }
@@ -105,14 +105,14 @@ export function useSubmitForReview() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (contentId: string) => {
-      // HUD: ATOMIC_CONTENT_STATUS_TRANSITION
+      // dashboard: ATOMIC_CONTENT_STATUS_TRANSITION
       await submitContentForReview(contentId);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["instructor-summary"] });
       toast.success("Content submitted to the pedagogical board.");
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       // Digital Workforce Anomaly Sensor:
       // Critical for identifying content pipeline bottlenecks.
       console.error("[Digital Workforce] ANOMALY: Content submission transaction failed.", err);
@@ -120,3 +120,5 @@ export function useSubmitForReview() {
     },
   });
 }
+
+

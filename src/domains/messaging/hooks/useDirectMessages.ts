@@ -39,11 +39,11 @@ export function useDirectMessages(threadId: string | undefined) {
     // Real-time channel constraint: staleTime is set to zero to force immediate hydration updates
     staleTime: 0,
     queryFn: async (): Promise<DirectMessage[]> => {
-      // HUD: EXECUTING_INDEX_THREAD_SELECT
+      // dashboard: EXECUTING_INDEX_THREAD_SELECT
       try {
         const rows = await listDirectMessages(threadId!);
         return rows as DirectMessage[];
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: direct_messages historical selection failure.", {
           threadId,
           error: error?.message,
@@ -61,7 +61,7 @@ export function useDirectMessages(threadId: string | undefined) {
 
     const channelName = `dm_realtime_${threadId}`;
 
-    // HUD: BINDING_POSTGRES_CHANGES_SOCKET
+    // dashboard: BINDING_POSTGRES_CHANGES_SOCKET
     const channel = supabase
       .channel(channelName)
       .on(
@@ -100,19 +100,15 @@ export function useDirectMessages(threadId: string | undefined) {
       const user = await getCurrentUser();
       if (!user) throw new Error("AUTH_SYNC_REQUIRED: Identity node untrusted.");
 
-      // HUD: EXECUTING_MESSAGE_INGRESS_INSERT
-      try {
-        await insertDirectMessage({
-          threadId,
-          senderId: user.id,
-          senderRole: input.role,
-          body: input.body.trim(),
-        });
-      } catch (insertError) {
-        throw insertError;
-      }
+      // dashboard: EXECUTING_MESSAGE_INGRESS_INSERT
+      await insertDirectMessage({
+        threadId,
+        senderId: user.id,
+        senderRole: input.role,
+        body: input.body.trim(),
+      });
     },
-    onError: (err: any, variables) => {
+    onError: (err: unknown, variables) => {
       // Digital Workforce Sensor: Intercept transmission friction points for real-time parsing
       console.error("[Digital Workforce] ANOMALY: direct_messages transaction handshake rejected.", {
         threadId,
@@ -142,10 +138,10 @@ export function useDirectMessages(threadId: string | undefined) {
  */
 export async function ensureDirectThread(companyId: string, talentId: string): Promise<string | null> {
   try {
-    // HUD: EXECUTING_RPC_THREAD_UPSERT (delegated to messagingRepo)
+    // dashboard: EXECUTING_RPC_THREAD_UPSERT (delegated to messagingRepo)
     const { upsertDirectThread } = await import("@/domains/messaging/repo/messagingRepo");
     return await upsertDirectThread({ companyId, talentId });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[Digital Workforce] ANOMALY: upsert_direct_thread RPC handshake failure.", {
       companyId,
       talentId,
@@ -154,3 +150,5 @@ export async function ensureDirectThread(companyId: string, talentId: string): P
     return null;
   }
 }
+
+

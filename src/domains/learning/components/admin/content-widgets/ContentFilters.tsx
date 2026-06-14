@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { listProfessionCategoriesAndLevels } from "@/domains/learning/repo/learningRepo";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -6,9 +6,9 @@ import { Filter, Layers, Zap, ArrowDownWideNarrow } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * Platform Logic: Registry Query HUD (Content Filters)
+ * Platform Logic: Registry Query dashboard (Content Filters)
  * High-fidelity control node for interrogating the academic content registry.
- * 2026 Standard: Executive Logic geometry with reinforced state handshakes.
+ * 2026 Standard:  geometry with reinforced state handshakes.
  */
 
 interface FilterOption {
@@ -34,7 +34,7 @@ const TYPE_SEGMENTS: { value: NonNullable<ContentFilterValues["typeSegment"]>; l
 ];
 
 const DATE_WINDOWS: { value: NonNullable<ContentFilterValues["dateWindow"]>; label: string }[] = [
-  { value: "all", label: "Any date" },
+  { value: "all", label: "unknown date" },
   { value: "upcoming", label: "Upcoming" },
   { value: "this_week", label: "This week" },
   { value: "past", label: "Past" },
@@ -212,3 +212,5 @@ const ContentFilters = ({ values, onChange, className }: ContentFiltersProps) =>
 };
 
 export default ContentFilters;
+
+

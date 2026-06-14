@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, MessageCircle, Star, Users, Coins, Bot, CheckCircle2, Loader2, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -43,7 +43,7 @@ interface TelemetryStats {
 /**
  * GroUp Academy: Specialist Agent Professional Profile Node (AgentProfile)
  * Hardened responsive identity layout tracking dynamic credit costs and insulating parallel asynchronous handshakes.
- * Version: Launch Candidate · Phase Z1 Integration Stability Locked
+ * Version: Launch Candidate Â· Phase Z1 Integration Stability Locked
  */
 export default function AgentProfile() {
  const { agentKey: unverifiedAgentKeyStr } = useParams<{ agentKey: string }>();
@@ -115,7 +115,7 @@ export default function AgentProfile() {
  if (!isThreadActiveAndValid) return;
 
  const calculatedMessagesVolume = (sessionRows || []).reduce(
- (accumulatedTotal: number, sessionRowItem: any) =>
+ (accumulatedTotal: number, sessionRowItem: unknown) =>
  accumulatedTotal + (Array.isArray(sessionRowItem.messages) ? sessionRowItem.messages.length : 0),
  0,
  );
@@ -228,7 +228,7 @@ export default function AgentProfile() {
 
  return (
  <div className="max-w-2xl mx-auto pb-32 block text-left antialiased transform-gpu w-full">
- {/* HUD LEVEL 1: PROFILE APPSHELL TOP NAV BAR */}
+ {/* dashboard LEVEL 1: PROFILE APPSHELL TOP NAV BAR */}
  <header className="sticky top-0 z-10 bg-background/95 border-b border-border/40 flex items-center gap-2 px-2 py-2 select-none w-full shrink-0">
  <Button
  variant="ghost"
@@ -243,7 +243,7 @@ export default function AgentProfile() {
  </p>
  </header>
 
- {/* HUD LEVEL 2: CORPORATE SHIELD IDENTITY HERO */}
+ {/* dashboard LEVEL 2: CORPORATE SHIELD IDENTITY HERO */}
  <section
  className="relative h-24 w-full block pointer-events-none select-none shrink-0"
  style={{ background: `linear-gradient(135deg, ${computedBrandHeadlineHexCode}, hsl(var(--primary)/0.8))` }}
@@ -274,12 +274,12 @@ export default function AgentProfile() {
  </div>
  </div>
 
- {/* HUD LEVEL 3: TABULAR QUANTUM TELEMETRY METRICS */}
+ {/* dashboard LEVEL 3: TABULAR QUANTUM TELEMETRY METRICS */}
  <div className="grid grid-cols-3 gap-3 block w-full select-none pointer-events-none">
  <div className="rounded-lg border border-border/60 bg-card/40 p-2.5 text-center leading-none space-y-1 block shadow-2xs">
  <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500 mx-auto stroke-[1.8]" />
  <p className="text-xs sm:text-sm font-black font-mono text-foreground tabular-nums pt-0.5 leading-none">
- {telemetryStatsState.rating ? telemetryStatsState.rating.toFixed(1) : "—"}
+ {telemetryStatsState.rating ? telemetryStatsState.rating.toFixed(1) : "â€”"}
  </p>
  <p className="font-mono text-[9px] font-bold text-muted-foreground/30 uppercase tracking-tight block leading-none">
  {telemetryStatsState.reviews.toLocaleString()} Reviews
@@ -305,7 +305,7 @@ export default function AgentProfile() {
  </div>
  </div>
 
- {/* HUD LEVEL 4: TECHNICAL ABSTRACT SUMMARY */}
+ {/* dashboard LEVEL 4: TECHNICAL ABSTRACT SUMMARY */}
  {agentProfileData.description && (
  <section className="block w-full">
  <h2 className="text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 select-none block leading-none pb-2 border-b border-border/5">
@@ -317,7 +317,7 @@ export default function AgentProfile() {
  </section>
  )}
 
- {/* HUD LEVEL 5: DOMAIN AREA VECTORS LIST */}
+ {/* dashboard LEVEL 5: DOMAIN AREA VECTORS LIST */}
  {verifiedAreasOfExpertiseList.length > 0 && (
  <section className="block w-full">
  <h2 className="text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 select-none block leading-none pb-2 border-b border-border/5">
@@ -337,7 +337,7 @@ export default function AgentProfile() {
  </section>
  )}
 
- {/* HUD LEVEL 6: UNIT ALLOCATION PRICING SCHEMA BLOCK */}
+ {/* dashboard LEVEL 6: UNIT ALLOCATION PRICING SCHEMA BLOCK */}
  <section className="rounded-xl border border-border/60 bg-card p-3 flex items-center justify-between gap-4 leading-none w-full block select-none pointer-events-none shadow-2xs">
  <div className="leading-none space-y-1 block">
  <p className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-wide leading-none">
@@ -363,13 +363,13 @@ export default function AgentProfile() {
  )}
  </section>
 
- {/* HUD LEVEL 7: SYSTEM COMMITTED STUDENT EVALUATION STREAM */}
+ {/* dashboard LEVEL 7: SYSTEM COMMITTED STUDENT EVALUATION STREAM */}
  <div className="block w-full pt-2">
  <AgentReviewSection agentKey={unverifiedAgentKeyStr!} canReview={hasSufficientChatFootprint} />
  </div>
  </div>
 
- {/* HUD LEVEL 8: STICKY SUBMISSION INGRESS CONTROLLER FOOTER BAR */}
+ {/* dashboard LEVEL 8: STICKY SUBMISSION INGRESS CONTROLLER FOOTER BAR */}
  <div className="fixed bottom-0 left-0 right-0 z-20 bg-background/95 border-t border-border/40 px-4 py-3 pb-[max(env(safe-area-inset-bottom),0.75rem)] select-none">
  <div className="max-w-2xl mx-auto w-full block">
  {isUplinkConnected ? (
@@ -405,3 +405,5 @@ export default function AgentProfile() {
  </div>
  );
 }
+
+

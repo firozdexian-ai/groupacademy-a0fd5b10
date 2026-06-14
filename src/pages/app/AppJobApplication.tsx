@@ -194,8 +194,8 @@ export default function AppJobApplication() {
 
  setIsAIComposerProcessing(true);
  try {
- let rpcResponsePayload: any = null;
- let edgeFunctionInvokeError: any = null;
+ let rpcResponsePayload: unknown = null;
+ let edgeFunctionInvokeError: unknown = null;
  try {
  rpcResponsePayload = await enhanceCoverLetter({
  coverLetter:
@@ -264,14 +264,14 @@ export default function AppJobApplication() {
  setSubmissionProgressValue(40);
  setSubmissionProgressMessage("Sending your application to the employer...");
 
- try { await sendJobApplication({ applicationId: applicationInsertPayload.id }); } catch {}
+ try { await sendJobApplication({ applicationId: applicationInsertPayload.id }); } catch { /* ignore */ }
 
  if (jobRecordState.ai_assessment_enabled) {
  setSubmissionProgressValue(65);
  setSubmissionProgressMessage("Preparing your AI interview...");
 
- let assessmentResponsePayload: any = null;
- let assessmentGenerationError: any = null;
+ let assessmentResponsePayload: unknown = null;
+ let assessmentGenerationError: unknown = null;
  try {
  assessmentResponsePayload = await generateJobAssessment({
  jobId: jobRecordState.id,
@@ -518,7 +518,7 @@ export default function AppJobApplication() {
  Upload CV Target Artifact
  </h3>
  <p className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-wider block">
- Isolated Sandbox Payload Endpoint • Upper Constraint Threshold Boundary Limit: 5.0 MB
+ Isolated Sandbox Payload Endpoint â€¢ Upper Constraint Threshold Boundary Limit: 5.0 MB
  </p>
  </div>
 
@@ -641,3 +641,5 @@ export default function AppJobApplication() {
  </div>
  );
 }
+
+

@@ -1,4 +1,4 @@
-import { Card } from "@/components/ui/card";
+﻿import { Card } from "@/components/ui/card";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, Legend } from "recharts";
 import { type IRSnapshot } from "@/hooks/useUnitEconomics";
 
@@ -34,3 +34,4 @@ export function HitLCogsCard({ data }: { data: IRSnapshot[] }) {
     </Card>
   );
 }
+

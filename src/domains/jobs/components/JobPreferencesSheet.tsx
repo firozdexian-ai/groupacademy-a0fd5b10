@@ -1,7 +1,7 @@
-/**
+﻿/**
  * GroUp Academy: Job Preferences Configuration Sheet
  * CTO Reference: Authoritative constraint configuration sheet mapping profile parameters.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  * Enhancements: Performance optimization, jargon sweep, uniform telemetry signatures.
  */
 
@@ -88,7 +88,7 @@ export function JobPreferencesSheet({
         setPreferences(prefs as unknown as JobPreferences);
         trackEvent("job_preferences_load_success", { talentId: talent.id });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       trackError(err, {
         component: "JobPreferencesSheet",
         action: "load_user_preferences",
@@ -101,7 +101,7 @@ export function JobPreferencesSheet({
     if (!talent?.id) return;
 
     setSaving(true);
-    const toastId = toast.loading("Saving your preferences…");
+    const toastId = toast.loading("Saving your preferencesâ€¦");
 
     trackEvent("job_preferences_save_requested", { talentId: talent.id });
 
@@ -119,7 +119,7 @@ export function JobPreferencesSheet({
 
       onSaved?.();
       onOpenChange(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : String(err);
 
       trackError(errorMsg, {
@@ -308,7 +308,7 @@ export function JobPreferencesSheet({
             {saving ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Saving…</span>
+                <span>Savingâ€¦</span>
               </>
             ) : (
               <>
@@ -322,3 +322,5 @@ export function JobPreferencesSheet({
     </Sheet>
   );
 }
+
+

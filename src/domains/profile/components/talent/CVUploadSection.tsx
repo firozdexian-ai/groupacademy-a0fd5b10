@@ -27,13 +27,13 @@ interface ParsedCVData {
   fullName?: string;
   phone?: string;
   email?: string;
-  education?: any[];
-  experience?: any[];
-  skills?: any[];
+  education?: unknown[];
+  experience?: unknown[];
+  skills?: unknown[];
   linkedinUrl?: string;
   portfolioUrl?: string;
   summary?: string;
-  achievements?: any[];
+  achievements?: unknown[];
   profileType?: string;
   currentStatus?: string;
   institution?: string;
@@ -54,7 +54,7 @@ const PARSING_STAGES = [
 /**
  * GroUp Academy: Psychometric CV Artifact Ingress Terminal (CVUploadSection)
  * An authoritative operational sandbox managing dynamic PDF/Word storage commits and automated AI parsing steps.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function CVUploadSection() {
   const queryClient = useQueryClient();
@@ -153,7 +153,7 @@ export function CVUploadSection() {
         fullTargetStoragePathStr,
         selectedFileNode,
         { upsert: true },
-      ).catch((e: any) => {
+      ).catch((e: unknown) => {
         throw new Error(`Upload failed: ${e.message}`);
       });
 
@@ -167,12 +167,7 @@ export function CVUploadSection() {
         setUploadProgress(40);
       }
 
-      let edgeFunctionResponsePayload: any;
-      try {
-        edgeFunctionResponsePayload = await parseCv({ cvUrl: generatedPublicCvUrlStr });
-      } catch (parseEdgeFunctionRpcError) {
-        throw parseEdgeFunctionRpcError;
-      }
+      const edgeFunctionResponsePayload = await parseCv({ cvUrl: generatedPublicCvUrlStr });
 
       clearSyncInterval();
 
@@ -183,8 +178,8 @@ export function CVUploadSection() {
 
       // PROFILE HYDRATION LAYER: Commit parsed matrices down configuration rows
       if (edgeFunctionResponsePayload?.success && edgeFunctionResponsePayload?.parsed) {
-        const parsedNodePayload: any = edgeFunctionResponsePayload.parsed;
-        const compiledSyncPayloadBlock: Record<string, any> = {
+        const parsedNodePayload: unknown = edgeFunctionResponsePayload.parsed;
+        const compiledSyncPayloadBlock: Record<string, unknown> = {
           cvUrl: generatedPublicCvUrlStr,
           cvParsedAt: new Date().toISOString(),
         };
@@ -206,7 +201,7 @@ export function CVUploadSection() {
 
         // Normalize Experience: map position (fallback to title) and start/end dates (fallback to duration)
         if (Array.isArray(parsedNodePayload.experience) && parsedNodePayload.experience.length) {
-          compiledSyncPayloadBlock.experience = parsedNodePayload.experience.map((exp: any) => ({
+          compiledSyncPayloadBlock.experience = parsedNodePayload.experience.map((exp: unknown) => ({
             company: exp.company || "",
             position: exp.position || exp.title || "",
             startDate: exp.startDate || exp.duration || "",
@@ -217,7 +212,7 @@ export function CVUploadSection() {
 
         // Normalize Education: map fieldOfStudy (fallback to field)
         if (Array.isArray(parsedNodePayload.education) && parsedNodePayload.education.length) {
-          compiledSyncPayloadBlock.education = parsedNodePayload.education.map((edu: any) => ({
+          compiledSyncPayloadBlock.education = parsedNodePayload.education.map((edu: unknown) => ({
             institution: edu.institution || "",
             degree: edu.degree || "",
             fieldOfStudy: edu.fieldOfStudy || edu.field || "",
@@ -229,11 +224,11 @@ export function CVUploadSection() {
         // Normalize Skills: map string array to array of objects with name property
         if (Array.isArray(parsedNodePayload.skills) && parsedNodePayload.skills.length) {
           compiledSyncPayloadBlock.skills = parsedNodePayload.skills
-            .map((s: any) => {
+            .map((s: unknown) => {
               const nameVal = typeof s === "string" ? s : s?.name || "";
               return { name: nameVal.trim() };
             })
-            .filter((s: any) => s.name);
+            .filter((s: unknown) => s.name);
         }
 
         await updateTalent(compiledSyncPayloadBlock);
@@ -253,7 +248,7 @@ export function CVUploadSection() {
         setUploadProgress(100);
         toast.success("CV uploaded. Your profile has been updated.");
       }
-    } catch (caughtPipelineExceptionErr: any) {
+    } catch (caughtPipelineExceptionErr: unknown) {
       clearSyncInterval();
       const formattedExceptionMsgStr =
         caughtPipelineExceptionErr instanceof Error
@@ -281,7 +276,7 @@ export function CVUploadSection() {
 
   return (
     <Card className="w-full text-left rounded-xl border border-border/40 bg-card/40 backdrop-blur-md shadow-sm antialiased transform-gpu overflow-hidden transition-colors hover:border-border/60">
-      {/* HUD LEVEL 1: TOP SUMMARY TEXT LABELS ROW HEADER */}
+      {/* dashboard LEVEL 1: TOP SUMMARY TEXT LABELS ROW HEADER */}
       <CardHeader className="p-4 sm:p-5 border-b border-border/10 bg-muted/10 select-none leading-none w-full shrink-0">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full leading-none">
           <div className="space-y-1.5 flex flex-col justify-center leading-none min-w-0 flex-1 text-left">
@@ -335,7 +330,7 @@ export function CVUploadSection() {
               className="h-2 rounded-full border-none bg-primary/10 shadow-inner w-full block"
             />
             <p className="text-[9px] text-primary/40 uppercase font-bold text-center tracking-widest leading-none pt-1 animate-pulse select-none">
-              Extracting your details…
+              Extracting your detailsâ€¦
             </p>
           </div>
         ) : error ? (
@@ -442,3 +437,5 @@ export function CVUploadSection() {
     </Card>
   );
 }
+
+

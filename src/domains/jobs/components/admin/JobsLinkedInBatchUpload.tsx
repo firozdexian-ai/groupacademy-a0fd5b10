@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+﻿import { useState, useRef } from "react";
 import { insertJobsBulk, listExistingJobSourceUrls } from "@/domains/jobs/repo/jobsRepo";
 import { listCompaniesByNames, insertCompaniesBulk } from "@/domains/companies/repo/companiesRepo";
 
@@ -31,7 +31,7 @@ import { cn } from "@/lib/utils";
 /**
  * Platform Logic: Job Registry Ingestion Node
  * High-fidelity orchestrator for bulk LinkedIn job artifacts and company mapping.
- * 2026 Standard: Executive Logic geometry with reinforced deduplication telemetry.
+ * 2026 Standard:  geometry with reinforced deduplication telemetry.
  */
 
 // --- Types & Schema ---
@@ -181,7 +181,7 @@ async function resolveCompanies(
 
  let createdCount = 0;
  if (toCreate.length > 0) {
- const created = await insertCompaniesBulk(toCreate as any);
+ const created = await insertCompaniesBulk(toCreate as unknown);
  created?.forEach((c) => nameToId.set(c.name.toLowerCase(), c.id));
  createdCount = created?.length || 0;
  }
@@ -260,13 +260,13 @@ export function JobsLinkedInBatchUpload({
  mapped.map((j) => j.source_url).filter(Boolean) as string[],
  ),
  );
- const fresh = mapped.filter((j) => !existingUrls.has(j.source_url as any));
+ const fresh = mapped.filter((j) => !existingUrls.has(j.source_url as unknown));
 
 
  setNewJobs(fresh);
  setDuplicateCount(mapped.length - fresh.length);
  setStep("preview");
- toast.success("Payload Synthesis Complete");
+ toast.success("Payload summary Complete");
  } catch (err) {
  toast.error("Invalid JSON");
  } finally {
@@ -292,9 +292,9 @@ export function JobsLinkedInBatchUpload({
  for (let i = 0; i < jobsToInsert.length; i += batchSize) {
  const chunk = jobsToInsert.slice(i, i + batchSize);
  try {
- await insertJobsBulk(chunk as any);
+ await insertJobsBulk(chunk as unknown);
  created += chunk.length;
- } catch (e: any) {
+ } catch (e: unknown) {
  errors.push(e?.message ?? String(e));
  }
  setProgress(Math.round(((i + chunk.length) / jobsToInsert.length) * 100));
@@ -586,3 +586,5 @@ export function JobsLinkedInBatchUpload({
  </Dialog>
  );
 }
+
+

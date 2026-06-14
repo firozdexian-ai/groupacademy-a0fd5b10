@@ -90,7 +90,7 @@ serve(async (req) => {
     }
 
     const cvContent = analysis.cv_text || "No CV provided - analyze based on job description only";
-    // @ts-ignore - Supabase join type
+    // @ts-expect-error - Supabase join type
     const professionName = analysis.profession_categories?.name || "General";
 
     const prompt = `You are an expert HR consultant and salary negotiation specialist for the Bangladesh job market.
@@ -246,7 +246,7 @@ Focus on the Bangladesh job market context. Be realistic and practical with sala
     // Fire-and-forget: send service completion email
     if (analysis.talent_id) {
       const range = parsedAnalysis.market_salary_range;
-      const summary = `Market range: $${range?.min_monthly || "?"}–$${range?.max_monthly || "?"}/mo. Readiness: ${parsedAnalysis.overall_readiness_score || "N/A"}%`;
+      const summary = `Market range: $${range?.min_monthly || "?"}â€“$${range?.max_monthly || "?"}/mo. Readiness: ${parsedAnalysis.overall_readiness_score || "N/A"}%`;
       fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${supabaseServiceKey}` },
@@ -267,3 +267,4 @@ Focus on the Bangladesh job market context. Be realistic and practical with sala
     });
   }
 });
+

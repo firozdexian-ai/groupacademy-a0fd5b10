@@ -1,13 +1,13 @@
-/**
- * Gro10x Learn — B2B-only learning hub.
+﻿/**
+ * Gro10x Learn â€” B2B-only learning hub.
  *
  * Three sections:
- *  1. Assigned to me — pushed by the company (with sponsorship pill).
- *  2. B2B catalog — courses tagged is_b2b=true.
- *  3. (Reserved) Company tracks — coming next phase.
+ *  1. Assigned to me â€” pushed by the company (with sponsorship pill).
+ *  2. B2B catalog â€” courses tagged is_b2b=true.
+ *  3. (Reserved) Company tracks â€” coming next phase.
  *
  * All course detail / playback re-uses the Talent learning routes
- * (/app/learning/...) — single source of truth.
+ * (/app/learning/...) â€” single source of truth.
  */
 import { Link } from "react-router-dom";
 import { GraduationCap, Sparkles, BookOpen, Building2, Clock, Coins, Layers } from "lucide-react";
@@ -94,7 +94,7 @@ export default function Gro10xLearn() {
         </div>
 
         {assignments.isLoading ? (
-          <Gro10xLoading label="Loading assignments…" />
+          <Gro10xLoading label="Loading assignmentsâ€¦" />
         ) : !assignments.data || assignments.data.length === 0 ? (
           <div className={`${GRO10X_PANEL} border border-white/10 rounded-2xl p-4 text-center`}>
             <p className="text-xs text-slate-400">
@@ -147,11 +147,11 @@ export default function Gro10xLearn() {
         </h2>
 
         {catalog.isLoading ? (
-          <Gro10xLoading label="Loading catalog…" />
+          <Gro10xLoading label="Loading catalogâ€¦" />
         ) : !catalog.data || catalog.data.length === 0 ? (
           <div className={`${GRO10X_PANEL} border border-white/10 rounded-2xl p-4 text-center`}>
             <p className="text-xs text-slate-400">
-              No B2B courses yet. The catalog is being curated — check back soon.
+              No B2B courses yet. The catalog is being curated â€” check back soon.
             </p>
           </div>
         ) : (
@@ -211,10 +211,11 @@ export default function Gro10xLearn() {
 
 function SponsorPill({ mode, company }: { mode: "free" | "company_credits" | "employee_credits"; company: string }) {
   const map = {
-    free: { label: `Free · ${company}`, cls: "bg-emerald-500/15 text-emerald-300" },
+    free: { label: `Free Â· ${company}`, cls: "bg-emerald-500/15 text-emerald-300" },
     company_credits: { label: `Paid by ${company}`, cls: "bg-[#33E1E4]/15 text-[#33E1E4]" },
-    employee_credits: { label: `Top-up · ${company}`, cls: "bg-amber-500/15 text-amber-300" },
+    employee_credits: { label: `Top-up Â· ${company}`, cls: "bg-amber-500/15 text-amber-300" },
   } as const;
   const m = map[mode];
   return <span className={`px-1.5 py-0.5 rounded-full ${m.cls}`}>{m.label}</span>;
 }
+

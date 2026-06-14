@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useGigGraph } from "./hooks/useGigGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,7 @@ export function GigsSubmissionsTab() {
  } = useGigGraph();
  const { data, isLoading } = gigGraphQuery;
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ status: "pending" });
+ const [draft, setDraft] = useState<unknown>({ status: "pending" });
 
  return (
  <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
@@ -224,3 +224,5 @@ export function GigsSubmissionsTab() {
 }
 
 export default GigsSubmissionsTab;
+
+

@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams, Link } from "react-router-dom";
 import { getCompanyBrandedCatalog } from "@/domains/ugc/repo/ugcRepo";
 import { Building2, BookOpen, ArrowRight } from "lucide-react";
@@ -27,7 +27,7 @@ interface BrandedCatalog {
 /**
  * GroUp Academy: Authoritative Enterprise Branded Catalog Explorer (CompanyBrandedCatalog)
  * Hardened responsive page node isolating metadata updates and securing network endpoints against uninsulated routing inputs.
- * Version: Launch Candidate · Phase Z0 Execution Stability Locked
+ * Version: Launch Candidate Â· Phase Z0 Execution Stability Locked
  */
 export default function CompanyBrandedCatalog() {
   const { slug: unverifiedRouteSlugString } = useParams<{ slug: string }>();
@@ -76,7 +76,7 @@ export default function CompanyBrandedCatalog() {
     if (!catalogPayloadState?.company) return;
 
     const validatedCompanyNode = catalogPayloadState.company;
-    const computedDocumentTitleString = `${validatedCompanyNode.name} · Learning Catalog`;
+    const computedDocumentTitleString = `${validatedCompanyNode.name} Â· Learning Catalog`;
     const computedMetaDescriptionString =
       validatedCompanyNode.tagline ??
       `Explore learning tracks authored by ${validatedCompanyNode.name}.`;
@@ -171,7 +171,7 @@ export default function CompanyBrandedCatalog() {
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/10 antialiased block transform-gpu text-left w-full">
-      {/* HUD LEVEL 1: BRANDED HERO BANNER SECTOR */}
+      {/* dashboard LEVEL 1: BRANDED HERO BANNER SECTOR */}
       <header className="relative w-full block border-b border-border/40 overflow-hidden select-none">
         {activeCompanyRecord.banner_url ? (
           <img
@@ -212,7 +212,7 @@ export default function CompanyBrandedCatalog() {
         </div>
       </header>
 
-      {/* HUD LEVEL 2: COMPOSITE SYLLABUS DIRECTORY GRID */}
+      {/* dashboard LEVEL 2: COMPOSITE SYLLABUS DIRECTORY GRID */}
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 md:py-10 block w-full">
         <h2 className="text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 select-none block leading-none pb-3 sm:pb-4 border-b border-border/10">
           Published Learning Tracks
@@ -272,13 +272,14 @@ export default function CompanyBrandedCatalog() {
           </div>
         )}
 
-        {/* HUD LEVEL 3: FOOTER ENDPOINT COMPLIANCE DISCLOSURE SLOTS */}
+        {/* dashboard LEVEL 3: FOOTER ENDPOINT COMPLIANCE DISCLOSURE SLOTS */}
         <footer className="mt-12 sm:mt-16 pt-4 border-t border-border/10 select-none pointer-events-none block w-full text-center leading-none">
           <p className="font-mono text-[9px] font-bold uppercase tracking-widest text-muted-foreground/30">
-            Sponsored by {activeCompanyRecord.name} · Powered by GroUp Academy
+            Sponsored by {activeCompanyRecord.name} Â· Powered by GroUp Academy
           </p>
         </footer>
       </main>
     </div>
   );
 }
+

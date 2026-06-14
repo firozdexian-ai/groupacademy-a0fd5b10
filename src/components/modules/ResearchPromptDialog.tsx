@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+﻿import { useEffect, useState, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -50,9 +50,9 @@ function buildResearchProtocol(props: Omit<ResearchPromptDialogProps, "open" | "
         .split("\n")
         .map((l) => l.trim())
         .filter(Boolean)
-        .map((l) => `• ${l}`)
+        .map((l) => `â€¢ ${l}`)
         .join("\n")}\n`
-    : "\n[TALKING_POINTS]: (none yet — explore the topic broadly)\n";
+    : "\n[TALKING_POINTS]: (none yet â€” explore the topic broadly)\n";
 
   return `SYSTEM_ROLE: Curriculum_Research_Specialist
 INSTITUTIONAL_TARGET: ${academyName} // ${schoolName}
@@ -81,7 +81,7 @@ FORMAT: Output must be structured with high-intensity headers. Content must be d
 /**
  * GroUp Academy: Curriculum Intelligence Uplink Bridge (ResearchPromptDialog)
  * An authoritative operational modal structured to construct high-yield research protocols for external research platforms.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export default function ResearchPromptDialog(props: ResearchPromptDialogProps) {
   const { open, onOpenChange, ...promptProps } = props;
@@ -131,7 +131,7 @@ export default function ResearchPromptDialog(props: ResearchPromptDialogProps) {
       }}
     >
       <DialogContent className="max-w-2xl max-h-[85vh] rounded-2xl border border-border/40 bg-card/60 backdrop-blur-3xl shadow-2xl p-0 overflow-hidden flex flex-col text-left antialiased transform-gpu">
-        {/* HUD: HEADER BANNER SEGMENT AREA */}
+        {/* dashboard: HEADER BANNER SEGMENT AREA */}
         <div className="p-6 border-b border-border/10 bg-primary/[0.02] shrink-0 select-none w-full">
           <DialogHeader className="text-left leading-none">
             <div className="flex items-center gap-3.5 w-full">
@@ -172,7 +172,7 @@ export default function ResearchPromptDialog(props: ResearchPromptDialogProps) {
           </p>
         </div>
 
-        {/* HUD: FOOTER INTERACTION ROUTE COMMAND RIBBON */}
+        {/* dashboard: FOOTER INTERACTION ROUTE COMMAND RIBBON */}
         <DialogFooter className="p-6 bg-muted/5 border-t border-border/10 flex flex-row items-center justify-end gap-3 select-none shrink-0 w-full">
           <Button
             variant="outline"
@@ -208,3 +208,4 @@ export default function ResearchPromptDialog(props: ResearchPromptDialogProps) {
     </Dialog>
   );
 }
+

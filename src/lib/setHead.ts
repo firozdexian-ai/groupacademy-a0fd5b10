@@ -1,4 +1,4 @@
-// Lightweight head injection helpers for SSR-friendly public pages.
+﻿// Lightweight head injection helpers for SSR-friendly public pages.
 export function setHead(opts: { title: string; description: string; image?: string; canonical?: string; jsonLd?: object | null; key?: string }) {
   const { title, description, image, canonical, jsonLd, key = "discovery" } = opts;
   document.title = title;
@@ -27,3 +27,4 @@ export function setHead(opts: { title: string; description: string; image?: stri
     s.text = JSON.stringify(jsonLd);
   } else if (s) s.remove();
 }
+

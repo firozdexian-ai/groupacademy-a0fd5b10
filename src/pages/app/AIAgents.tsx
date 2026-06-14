@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Bot, Search, Sparkles, MessageCircle, Inbox, type LucideIcon } from "lucide-react";
@@ -56,7 +56,7 @@ interface TransformedAgent {
 /**
  * GroUp Academy: Technical AI Agent Discovery Marketplace (AIAgents)
  * Hardened responsive listing directory tracking dynamic metadata maps and neutralizing skeleton layout shifts.
- * Version: Launch Candidate · Phase Z1 Production Contract Locked
+ * Version: Launch Candidate Â· Phase Z1 Production Contract Locked
  */
 export default function AIAgents() {
  const executeNavigationHook = useNavigate();
@@ -92,7 +92,7 @@ export default function AIAgents() {
 
  return baselineInventorySource.map((agentRecordItem) => {
  const isDatabaseInstantiatedNode = "agent_key" in agentRecordItem;
- const targetIdentificationKeyStr = isDatabaseInstantiatedNode ? agentRecordItem.agent_key : (agentRecordItem as any).id;
+ const targetIdentificationKeyStr = isDatabaseInstantiatedNode ? agentRecordItem.agent_key : (agentRecordItem as unknown).id;
  const verifiedStaticMetaRecord = getAgentById(targetIdentificationKeyStr);
 
  return {
@@ -160,7 +160,7 @@ export default function AIAgents() {
  return (
  <div className="max-w-3xl mx-auto pb-24 text-left antialiased block transform-gpu w-full">
  
- {/* HUD LEVEL 1: APPLICATION HEADER BAR WITH SYSTEM CONTROL PANEL */}
+ {/* dashboard LEVEL 1: APPLICATION HEADER BAR WITH SYSTEM CONTROL PANEL */}
  <header className="sticky top-0 z-50 bg-background/95 border-b border-border/40 px-3 py-2.5 space-y-2 select-none w-full shrink-0 block">
  <div className="flex items-center justify-between gap-4 leading-none w-full">
  <div className="flex items-center gap-2 min-w-0">
@@ -202,7 +202,7 @@ export default function AIAgents() {
  </div>
  </header>
 
- {/* HUD LEVEL 2: DYNAMIC LIST EXPLORER VIEWPORT AREA */}
+ {/* dashboard LEVEL 2: DYNAMIC LIST EXPLORER VIEWPORT AREA */}
  <div className="px-3 py-3 space-y-4 block w-full">
  
  {/* Marketplace Banner Display Deck */}
@@ -214,7 +214,7 @@ export default function AIAgents() {
  showCompanyTab={isCompanyTabLinkAvailable}
  />
 
- {/* HUD LEVEL 3: FEATURED ALLOCATION STRIP COMPILER */}
+ {/* dashboard LEVEL 3: FEATURED ALLOCATION STRIP COMPILER */}
  {!textSearchQueryInput && selectedCategoryFilter === "all" && memoizedFeaturedAgents.length > 0 && (
  <section className="block w-full">
  <div className="flex items-center gap-1.5 mb-2 px-1 select-none pointer-events-none leading-none">
@@ -238,7 +238,7 @@ export default function AIAgents() {
  </section>
  )}
 
- {/* HUD LEVEL 4: GRID DIRECTORY COMPILER SWITCHPORTS */}
+ {/* dashboard LEVEL 4: GRID DIRECTORY COMPILER SWITCHPORTS */}
  <section className="block w-full">
  <div className="flex items-center justify-between mb-2 px-1 border-b border-border/5 pb-2 select-none pointer-events-none leading-none w-full shrink-0">
  <h2 className="text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 leading-none">
@@ -295,3 +295,4 @@ export default function AIAgents() {
  </div>
  );
 }
+

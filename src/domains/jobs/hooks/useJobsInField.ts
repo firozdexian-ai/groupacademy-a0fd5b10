@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { getJobsInField } from "@/domains/jobs/repo/jobsRepo";
 import type { JobCardData } from "@/domains/jobs/components/JobCard";
 
@@ -20,11 +20,11 @@ export function useJobsInField(talentId: string | undefined, limit = 5) {
     // Performance Baseline: 5-minute stability caching for field discovery
     staleTime: 5 * 60 * 1000,
     queryFn: async (): Promise<JobCardData[]> => {
-      // HUD: EXECUTING_FIELD_AFFINITY_MATCHING_SYNC
+      // dashboard: EXECUTING_FIELD_AFFINITY_MATCHING_SYNC
       try {
         const data = await getJobsInField({ talentId: talentId!, limit });
         return (data || []) as JobCardData[];
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] ANOMALY: get_jobs_in_field RPC handshake failed.", {
           talentId,
           limit,
@@ -35,3 +35,5 @@ export function useJobsInField(talentId: string | undefined, limit = 5) {
     },
   });
 }
+
+

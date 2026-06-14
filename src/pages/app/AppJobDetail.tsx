@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useTalent } from "@/hooks/useTalent";
@@ -52,8 +52,8 @@ interface Job {
  salary_currency: string | null;
  description: string;
  ai_enhanced_description: string | null;
- requirements: any;
- preferred_skills: any;
+ requirements: unknown;
+ preferred_skills: unknown;
  application_type: string;
  application_email: string | null;
  application_url: string | null;
@@ -94,11 +94,11 @@ function formatSalaryRange(
  if (!min && !max) return null;
  const code = currency || "BDT";
  const fmt = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(0)}K` : `${n}`);
- if (min && max) return `${code} ${fmt(min)}–${fmt(max)}`;
+ if (min && max) return `${code} ${fmt(min)}â€“${fmt(max)}`;
  return `${code} ${fmt((min || max) as number)}+`;
 }
 
-function parseChips(raw: any): string[] {
+function parseChips(raw: unknown): string[] {
  if (!raw) return [];
  if (Array.isArray(raw)) return raw.map(String).filter(Boolean);
  if (typeof raw === "string") {
@@ -128,7 +128,7 @@ export default function AppJobDetail() {
  const [liveScore, setLiveScore] = React.useState<{
  score: number;
  rationale?: string | null;
- verifiedMatch?: any | null;
+ verifiedMatch?: unknown | null;
  } | null>(null);
  const [descriptionOpen, setDescriptionOpen] = React.useState<boolean>(false);
 
@@ -173,7 +173,7 @@ export default function AppJobDetail() {
  .maybeSingle();
 
  if (appData && mounted.current) {
- const cast = appData as any;
+ const cast = appData as unknown;
  const assessment = cast.job_assessments?.[0];
  setExistingApplication({
  id: cast.id,
@@ -212,7 +212,7 @@ export default function AppJobDetail() {
  const paid = await deductCredits("JOB_MATCH_SCORE", jobId, "Job match score");
  if (!paid) throw new Error("payment_failed");
 
- const res: any = await scoreJobMatch({ jobId, talentId: talent.id });
+ const res: unknown = await scoreJobMatch({ jobId, talentId: talent.id });
  setLiveScore({
  score: res?.match_score ?? 0,
  rationale: res?.rationale,
@@ -426,7 +426,7 @@ export default function AppJobDetail() {
  <>
  <p className="text-sm font-semibold text-foreground">See why you match</p>
  <p className="text-xs text-muted-foreground">
- 10 credits · gap analysis + tailored learning suggestions.
+ 10 credits Â· gap analysis + tailored learning suggestions.
  </p>
  </>
  )}
@@ -626,7 +626,7 @@ export default function AppJobDetail() {
  </p>
  {existingApplication && (
  <p className="text-[11px] text-muted-foreground truncate">
- Applied · {existingApplication.application_status}
+ Applied Â· {existingApplication.application_status}
  </p>
  )}
  </div>
@@ -643,3 +643,5 @@ export default function AppJobDetail() {
  </div>
  );
 }
+
+

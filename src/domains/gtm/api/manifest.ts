@@ -1,2 +1,3 @@
-export const gtmApi = {} as const;
+﻿export const gtmApi = {} as const;
 export type GtmApi = typeof gtmApi;
+

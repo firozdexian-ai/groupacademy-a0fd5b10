@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+﻿import { useState, useEffect, useCallback } from "react";
 import { scoreJobMatch } from "@/domains/jobs/api/jobsApi";
 import {
   listActiveJobsLite,
@@ -79,7 +79,7 @@ export function JobsApplicationsTab() {
 
   const loadJobs = useCallback(async () => {
     const data = await listActiveJobsLite(500);
-    setJobsList(data as any);
+    setJobsList(data as unknown);
   }, []);
 
   const loadApps = useCallback(async () => {
@@ -109,9 +109,9 @@ export function JobsApplicationsTab() {
         jobIds,
         searchActive,
       });
-      setApps(rows as any);
+      setApps(rows as unknown);
       setTotalCount(count);
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error("Save failed: " + err.message);
     } finally {
       setLoading(false);
@@ -128,7 +128,7 @@ export function JobsApplicationsTab() {
   const updateStatus = async (id: string, st: string) => {
     try {
       await updateApplicationStatus(id, st);
-    } catch (error: any) {
+    } catch (error: unknown) {
       return toast.error("Could not update: " + error.message);
     }
     setApps((prev) => prev.map((a) => (a.id === id ? { ...a, application_status: st } : a)));
@@ -482,3 +482,5 @@ export function JobsApplicationsTab() {
     </div>
   );
 }
+
+

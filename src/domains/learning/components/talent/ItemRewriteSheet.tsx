@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -36,7 +36,7 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
 
   const [notes, setNotes] = useState("");
   const [picked, setPicked] = useState<number | null>(null);
-  const [draft, setDraft] = useState<any>(null);
+  const [draft, setDraft] = useState<unknown>(null);
   const [applying, setApplying] = useState(false);
 
   // Memoize flag keys safely to disarm array pointer reconciliation loops
@@ -90,7 +90,7 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
 
       if (onApplied) onApplied();
       onOpenChange(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       const parsedExceptionMsg = err instanceof Error ? err.message : String(err);
 
       trackError(parsedExceptionMsg, {
@@ -597,8 +597,8 @@ function ScenarioPreview({ s }: { s: ScenarioSuggestion }) {
   );
 }
 
-export function QuizEditor({ draft, setDraft }: { draft: any; setDraft: (d: any) => void }) {
-  const upd = (k: string, v: any) => setDraft({ ...draft, [k]: v });
+export function QuizEditor({ draft, setDraft }: { draft: unknown; setDraft: (d: unknown) => void }) {
+  const upd = (k: string, v: unknown) => setDraft({ ...draft, [k]: v });
   const updOpt = (i: number, v: string) => {
     const next = [...(draft.options ?? [])];
     next[i] = v;
@@ -691,9 +691,9 @@ export function QuizEditor({ draft, setDraft }: { draft: any; setDraft: (d: any)
   );
 }
 
-export function ScenarioEditor({ draft, setDraft }: { draft: any; setDraft: (d: any) => void }) {
-  const upd = (k: string, v: any) => setDraft({ ...draft, [k]: v });
-  const updRub = (i: number, k: string, v: any) => {
+export function ScenarioEditor({ draft, setDraft }: { draft: unknown; setDraft: (d: unknown) => void }) {
+  const upd = (k: string, v: unknown) => setDraft({ ...draft, [k]: v });
+  const updRub = (i: number, k: string, v: unknown) => {
     const next = [...(draft.rubric ?? [])];
     next[i] = { ...next[i], [k]: v };
     setDraft({ ...draft, rubric: next });
@@ -730,7 +730,7 @@ export function ScenarioEditor({ draft, setDraft }: { draft: any; setDraft: (d: 
           Evaluation Rubrics Mappings
         </Label>
         <div className="space-y-2.5 max-h-48 overflow-y-auto pr-1 w-full">
-          {rubricsCollectionBuffer.map((rubricRowItem: any, index: number) => {
+          {rubricsCollectionBuffer.map((rubricRowItem: unknown, index: number) => {
             if (!rubricRowItem) return null;
             return (
               <div
@@ -752,7 +752,7 @@ export function ScenarioEditor({ draft, setDraft }: { draft: any; setDraft: (d: 
                     value={rubricRowItem.weight ?? 0}
                     onChange={(e) => updRub(index, "weight", Number(e.target.value) || 0)}
                     className="text-xs font-mono font-bold h-7 rounded-lg border border-border/40 bg-background/50 focus-visible:ring-1 focus-visible:ring-ring text-primary select-text shadow-sm w-full tabular-nums"
-                    placeholder="Weight fractional 0–1"
+                    placeholder="Weight fractional 0â€“1"
                   />
                 </div>
                 <Textarea
@@ -769,3 +769,5 @@ export function ScenarioEditor({ draft, setDraft }: { draft: any; setDraft: (d: 
     </div>
   );
 }
+
+

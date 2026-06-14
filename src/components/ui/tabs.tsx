@@ -1,11 +1,11 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
 import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Technical Logic Partition Protocol Switchboard (Tabs)
  * Hardened WAI-ARIA compliant tab router ensuring zero visual layout shifts during viewport panel transitions.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const Tabs = TabsPrimitive.Root;
 
@@ -60,3 +60,4 @@ const TabsContent = React.forwardRef<
 TabsContent.displayName = "Tabs_Core_Content_Node";
 
 export { Tabs, TabsList, TabsTrigger, TabsContent };
+

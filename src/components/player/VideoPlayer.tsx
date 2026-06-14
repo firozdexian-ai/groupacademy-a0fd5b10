@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+﻿import { useEffect, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,7 @@ interface VideoPlayerProps {
 /**
  * GroUp Academy: Curriculum Video Ingestion Node (VideoPlayer)
  * An authoritative operational sandbox validating multimedia consumption metrics and updating target profile state parameters.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function VideoPlayer({ module, onComplete, isCompleted }: VideoPlayerProps) {
   const queryClient = useQueryClient();
@@ -82,7 +82,7 @@ export function VideoPlayer({ module, onComplete, isCompleted }: VideoPlayerProp
 
   return (
     <Card className="w-full text-left rounded-xl border border-border/40 bg-card/40 backdrop-blur-md shadow-sm antialiased transform-gpu overflow-hidden">
-      {/* HUD LEVEL 1: TOP PANEL TRACK HEADING CONTAINER */}
+      {/* dashboard LEVEL 1: TOP PANEL TRACK HEADING CONTAINER */}
       <CardHeader className="p-4 sm:p-5 border-b border-border/10 bg-muted/10 w-full select-none leading-none">
         <div className="flex items-start justify-between gap-4 w-full leading-none">
           <div className="space-y-1.5 flex flex-col justify-center leading-none min-w-0 flex-1 text-left">
@@ -115,7 +115,7 @@ export function VideoPlayer({ module, onComplete, isCompleted }: VideoPlayerProp
       </CardHeader>
 
       <CardContent className="p-4 sm:p-5 space-y-4 w-full min-w-0 flex flex-col justify-center">
-        {/* HUD LEVEL 2: IFRAME MULTIMEDIA RENDER ENVIRONMENT FRAME CONTAINER */}
+        {/* dashboard LEVEL 2: IFRAME MULTIMEDIA RENDER ENVIRONMENT FRAME CONTAINER */}
         <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-border/40 bg-black shadow-inner group/video select-none transform-gpu shrink-0">
           {embedUrl ? (
             <iframe
@@ -135,7 +135,7 @@ export function VideoPlayer({ module, onComplete, isCompleted }: VideoPlayerProp
           )}
         </div>
 
-        {/* HUD LEVEL 3: TIMELINE TRANSACTION CONFIGURATION CONTROL COMMAND DISPATCH ROW STRIP */}
+        {/* dashboard LEVEL 3: TIMELINE TRANSACTION CONFIGURATION CONTROL COMMAND DISPATCH ROW STRIP */}
         {!isCompleted && (
           <Button
             type="button"
@@ -152,3 +152,4 @@ export function VideoPlayer({ module, onComplete, isCompleted }: VideoPlayerProp
     </Card>
   );
 }
+

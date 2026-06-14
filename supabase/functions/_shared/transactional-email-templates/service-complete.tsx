@@ -1,4 +1,4 @@
-import * as React from 'npm:react@18.3.1'
+﻿import * as React from 'npm:react@18.3.1'
 import {
   Body, Button, Container, Head, Heading, Html, Preview, Text,
 } from 'npm:@react-email/components@0.0.22'
@@ -19,7 +19,7 @@ const ServiceCompleteEmail = ({ name, service_name, summary }: ServiceCompletePr
     <Preview>Your {service_name || 'service'} results are ready!</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Your Results Are Ready ✅</Heading>
+        <Heading style={h1}>Your Results Are Ready âœ…</Heading>
         <Text style={text}>
           {name ? `Hi ${name},` : 'Hi there,'}
         </Text>
@@ -35,7 +35,7 @@ const ServiceCompleteEmail = ({ name, service_name, summary }: ServiceCompletePr
           View Your Results
         </Button>
         <Text style={footer}>
-          Keep building your career — The {SITE_NAME} Team
+          Keep building your career â€” The {SITE_NAME} Team
         </Text>
       </Container>
     </Body>
@@ -44,9 +44,9 @@ const ServiceCompleteEmail = ({ name, service_name, summary }: ServiceCompletePr
 
 export const template = {
   component: ServiceCompleteEmail,
-  subject: (data: Record<string, any>) => `Your ${data.service_name || 'service'} results are ready ✅`,
+  subject: (data: Record<string, unknown>) => `Your ${data.service_name || 'service'} results are ready âœ…`,
   displayName: 'Service complete notification',
-  previewData: { name: 'Ahmed', service_name: 'Career Assessment', summary: 'Overall score: 78% — Market Ready' },
+  previewData: { name: 'Ahmed', service_name: 'Career Assessment', summary: 'Overall score: 78% â€” Market Ready' },
 } satisfies TemplateEntry
 
 const main = { backgroundColor: '#ffffff', fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif" }
@@ -56,3 +56,5 @@ const text = { fontSize: '14px', color: '#677280', lineHeight: '1.6', margin: '0
 const summaryBox = { fontSize: '14px', color: '#333333', lineHeight: '1.6', margin: '0 0 20px', padding: '16px', backgroundColor: '#f0f7ff', borderRadius: '8px', borderLeft: '4px solid #2A7DDE' }
 const button = { backgroundColor: '#2A7DDE', color: '#ffffff', fontSize: '14px', borderRadius: '8px', padding: '12px 24px', textDecoration: 'none', fontWeight: '600' as const }
 const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+
+

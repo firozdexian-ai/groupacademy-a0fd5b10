@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+﻿import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 /**
  * Platform Logic: Visual Ingestion Placeholders
  * High-fidelity skeletons for asynchronous data states.
- * 2026 Standard: Executive Logic geometry with reinforced scannability.
+ * 2026 Standard:  geometry with reinforced scannability.
  */
 
 export function DashboardCardSkeleton() {
@@ -114,3 +114,4 @@ export function DashboardErrorState({
     </Card>
   );
 }
+

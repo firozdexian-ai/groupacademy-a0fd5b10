@@ -1,4 +1,4 @@
-import { useNavigate, useParams, useSearchParams, useLocation } from "react-router-dom";
+﻿import { useNavigate, useParams, useSearchParams, useLocation } from "react-router-dom";
 import { ArrowLeft, Send } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -9,7 +9,7 @@ import { getAgentMeta } from "../lib/agents";
 import { GRO10X_PANEL } from "../lib/tokens";
 
 /**
- * Gro10x Chat — wires the Gro10x agent_key to the unified agent-runtime
+ * Gro10x Chat â€” wires the Gro10x agent_key to the unified agent-runtime
  * with subject={kind:"company", id:companyId}. Bumps gro10x_agent_threads
  * after each exchange so the inbox stays sorted.
  *
@@ -39,7 +39,7 @@ export default function Gro10xChat() {
     }
     return ctx;
   }, [location.pathname, location.search, searchParams]);
-  const runtime = useAgentRuntime(subject as any, contextProvider);
+  const runtime = useAgentRuntime(subject as unknown, contextProvider);
   const { messages, isStreaming, sendMessage, startOrResumeSession } = runtime;
 
   const [input, setInput] = useState("");
@@ -127,7 +127,7 @@ export default function Gro10xChat() {
       <div ref={scrollRef} className="flex-1 px-4 py-4 space-y-3 overflow-y-auto">
         {messages.length === 0 && !isStreaming && (
           <div className={`rounded-2xl rounded-tl-sm ${GRO10X_PANEL} border border-white/5 p-3 max-w-[85%] text-sm`}>
-            Hi — I'm <strong>{meta.name}</strong>. {meta.desc}. What would you like to do?
+            Hi â€” I'm <strong>{meta.name}</strong>. {meta.desc}. What would you like to do?
           </div>
         )}
         {messages.map((m, i) => (
@@ -140,7 +140,7 @@ export default function Gro10xChat() {
             }
           >
             {m.role === "assistant" ? (
-              <ReactMarkdown>{m.content || "…"}</ReactMarkdown>
+              <ReactMarkdown>{m.content || "â€¦"}</ReactMarkdown>
             ) : (
               m.content
             )}
@@ -160,7 +160,7 @@ export default function Gro10xChat() {
               }
             }}
             type="text"
-            placeholder={`Message ${meta.name}…`}
+            placeholder={`Message ${meta.name}â€¦`}
             className="flex-1 bg-transparent text-sm placeholder:text-slate-500 focus:outline-none py-2"
             disabled={isStreaming}
           />
@@ -177,3 +177,5 @@ export default function Gro10xChat() {
     </div>
   );
 }
+
+

@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { getCurrentUser } from "@/lib/auth";
@@ -65,7 +65,7 @@ const STAGE_COLOR: Record<Stage, string> = {
 /**
  * GroUp Academy: Authoritative Academic Counselor Workspace (AbroadCounsellor)
  * Hardened operational tracking deck isolating background security checks and debouncing pipeline category sorting.
- * Version: Launch Candidate · Phase Z0 Matrix Stability Locked
+ * Version: Launch Candidate Â· Phase Z0 Matrix Stability Locked
  */
 export default function AbroadCounsellor() {
  const executeNavigationHook = useNavigate();
@@ -173,7 +173,7 @@ export default function AbroadCounsellor() {
  toast.success("Stage updated.");
  queryClientInstance.invalidateQueries({ queryKey: ["counsellor-applications-matrix"] });
  },
- onError: (err: any) => {
+ onError: (err: unknown) => {
  toast.error(err.message || "Couldn't update stage. Please try again.");
  },
  });
@@ -213,7 +213,7 @@ export default function AbroadCounsellor() {
 
  return (
  <div className="p-3 sm:p-4 space-y-4 max-w-7xl mx-auto block text-left antialiased transform-gpu w-full pb-24">
- {/* HUD LEVEL 1: ADMINISTRATIVE TOP HEADER BAR */}
+ {/* dashboard LEVEL 1: ADMINISTRATIVE TOP HEADER BAR */}
  <div className="flex items-center justify-between leading-none w-full shrink-0 select-none pb-2 border-b border-border/10">
  <div className="space-y-0.5 block">
  <h1 className="text-xl sm:text-2xl font-bold uppercase tracking-wide text-foreground leading-none pt-0.5">
@@ -232,11 +232,11 @@ export default function AbroadCounsellor() {
  </Badge>
  </div>
 
- {/* HUD LEVEL 2: COMPOSITE SECTOR GRID EXPLORER RUNWAY */}
+ {/* dashboard LEVEL 2: COMPOSITE SECTOR GRID EXPLORER RUNWAY */}
  {isRegistryCacheResolving ? (
  <div className="w-full flex items-center justify-center py-12 font-mono text-[10px] sm:text-xs font-bold uppercase tracking-widest text-muted-foreground/40 select-none pointer-events-none gap-2">
  <InlineSpinner size="sm" />
- <span>Loading applications…</span>
+ <span>Loading applicationsâ€¦</span>
  </div>
  ) : (
  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 block w-full align-top">
@@ -288,7 +288,7 @@ export default function AbroadCounsellor() {
  </p>
  <p className="font-mono text-sm font-medium text-muted-foreground/40 leading-none select-text block tracking-tight uppercase truncate">
  Term: {applicationNodeItem.intake_term ?? "TBC"}
- <span className="font-sans font-medium opacity-30 mx-1.5 select-none">·</span>
+ <span className="font-sans font-medium opacity-30 mx-1.5 select-none">Â·</span>
  {new Date(applicationNodeItem.updated_at).toLocaleDateString("en-US", {
  timeZone: "UTC",
  })}
@@ -307,7 +307,7 @@ export default function AbroadCounsellor() {
  }
  >
  <SelectTrigger className="h-7 text-[10px] font-mono font-bold uppercase tracking-wider rounded border border-border/60 bg-background/50 shadow-none flex-1">
- <SelectValue placeholder="Move stage →" />
+ <SelectValue placeholder="Move stage â†’" />
  </SelectTrigger>
  <SelectContent className="rounded-lg border border-border/60 bg-popover text-popover-foreground">
  {STAGES.filter(
@@ -348,3 +348,5 @@ export default function AbroadCounsellor() {
  </div>
  );
 }
+
+

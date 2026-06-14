@@ -1,9 +1,9 @@
-/**
- * Group Academy — Abroad Domain API Layer
+﻿/**
+ * Group Academy â€” Abroad Domain API Layer
  * Version: Phase 10i.2 Hardened (Production Candidate)
  * Security Profile: Strictly typed edge wrappers utilizing runtime response mapping.
  * Convention (Locked in Phase 9b):
- *    - One async function per edge function — import by name[cite: 10].
+ *    - One async function per edge function â€” import by name[cite: 10].
  *    - No `*Api` const, no `<DOMAIN>_EDGE_FUNCTIONS` array[cite: 10].
  *    - Responses validated at runtime via `parseEdgeResponse`[cite: 10].
  *    - Failures throw `EdgeFunctionError`[cite: 10].
@@ -42,7 +42,7 @@ export async function aiDestinationAgent(req: AiDestinationAgentRequest): Promis
     }
 
     return parseEdgeResponse("ai-destination-agent", AiDestinationAgentResponseSchema, data ?? {});
-  } catch (err: any) {
+  } catch (err: unknown) {
     trackError("ai-destination-agent-failure", { error: err.message, payload: req });
     throw err;
   }
@@ -60,7 +60,7 @@ export async function generateStudyRoadmap(req: GenerateStudyRoadmapRequest): Pr
     }
 
     return parseEdgeResponse("generate-study-roadmap", GenerateStudyRoadmapResponseSchema, data ?? {});
-  } catch (err: any) {
+  } catch (err: unknown) {
     trackError("generate-study-roadmap-failure", { error: err.message, payload: req });
     throw err;
   }
@@ -78,7 +78,7 @@ export async function bookLanguageSession(req: BookLanguageSessionRequest): Prom
     }
 
     return parseEdgeResponse("book-language-session", BookLanguageSessionResponseSchema, data ?? {});
-  } catch (err: any) {
+  } catch (err: unknown) {
     trackError("book-language-session-failure", { error: err.message, payload: req });
     throw err;
   }
@@ -96,7 +96,7 @@ export async function aiLanguagePartner(req: AiLanguagePartnerRequest): Promise<
     }
 
     return parseEdgeResponse("ai-language-partner", AiLanguagePartnerResponseSchema, data ?? {});
-  } catch (err: any) {
+  } catch (err: unknown) {
     trackError("ai-language-partner-failure", { error: err.message, payload: req });
     throw err;
   }
@@ -114,8 +114,10 @@ export async function aiIeltsEvaluate(req: AiIeltsEvaluateRequest): Promise<AiIe
     }
 
     return parseEdgeResponse("ai-ielts-evaluate", AiIeltsEvaluateResponseSchema, data ?? {});
-  } catch (err: any) {
+  } catch (err: unknown) {
     trackError("ai-ielts-evaluate-failure", { error: err.message, payload: req });
     throw err;
   }
 }
+
+

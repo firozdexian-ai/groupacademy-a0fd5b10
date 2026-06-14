@@ -1,8 +1,8 @@
-/**
+﻿/**
  * Edge function contracts for the feed domain.
  *
  * The feed domain currently has no dedicated `supabase.functions.invoke`
- * callsites — all server interaction goes through Postgres RPCs
+ * callsites â€” all server interaction goes through Postgres RPCs
  * (`get_feed_engagement`, `hype_content`, `tip_comment`) and direct table
  * reads. This file reserves the namespace and documents the RPC surface
  * so future edge functions for the feed plug into the same pattern as
@@ -36,3 +36,4 @@ export interface TipCommentArgs {
   _comment_id: string;
   _amount: number;
 }
+

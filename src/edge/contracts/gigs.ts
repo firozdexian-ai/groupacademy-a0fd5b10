@@ -1,5 +1,5 @@
-/**
- * Gigs domain — edge function contracts (Phase 9g + 9h).
+﻿/**
+ * Gigs domain â€” edge function contracts (Phase 9g + 9h).
  */
 import { z } from "zod";
 
@@ -124,3 +124,4 @@ export const OgImageRenderResponseSchema = z
   })
   .passthrough();
 export type OgImageRenderResponse = z.infer<typeof OgImageRenderResponseSchema>;
+

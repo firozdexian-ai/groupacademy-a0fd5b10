@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Investor Relations Configuration
  * Global currency: USD ($10 USD = 500 Credits)
  */
@@ -203,3 +203,4 @@ export function calculateAutoKPIs(mrrUsd: number, arpu: number = 20) {
     cacCeiling: (arpu * 24) / 4, // 4:1 LTV:CAC ratio
   };
 }
+

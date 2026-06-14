@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useAbroadGraph } from "./hooks/useAbroadGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy — Abroad Group Tab: Destination Agents Management
+ * Group Academy â€” Abroad Group Tab: Destination Agents Management
  * Version: Phase 10i.2 Hardened (Production Candidate Edition)
  * Surface: /dashboard?tab=destinations (Admin Command Center Surface)[cite: 2, 4]
  * Operations Mode: Human-in-the-loop overview governing registered global destination paths[cite: 2, 4].
@@ -27,7 +27,7 @@ export function AbroadDestinationsTab() {
 
   const { data, isLoading } = abroadGraphQuery;
   const [open, setOpen] = useState(false);
-  const [draft, setDraft] = useState<any>({ status: "active" });
+  const [draft, setDraft] = useState<unknown>({ status: "active" });
 
   return (
     <div className="space-y-6 p-4 md:p-6 animate-in fade-in duration-500">
@@ -239,3 +239,5 @@ export function AbroadDestinationsTab() {
 }
 
 export default AbroadDestinationsTab;
+
+

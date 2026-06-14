@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Investor Relations Email Templates
  */
 
@@ -50,21 +50,21 @@ Best,
 
 Here's what happened this week at {{companyName}}:
 
-📊 **Metrics**
+ðŸ“Š **Metrics**
 - MRR: {{mrr}} ({{mrrGrowth}} vs last week)
 - Active Users: {{users}}
 
-🎯 **Progress**
+ðŸŽ¯ **Progress**
 {{#highlights}}
 - {{.}}
 {{/highlights}}
 
-🚧 **Challenges**
+ðŸš§ **Challenges**
 {{#challenges}}
 - {{.}}
 {{/challenges}}
 
-📅 **Next Week**
+ðŸ“… **Next Week**
 {{#plans}}
 - {{.}}
 {{/plans}}
@@ -78,7 +78,7 @@ Cheers,
   },
   
   special_update: {
-    subject: '🎉 {{milestone}}: {{companyName}}',
+    subject: 'ðŸŽ‰ {{milestone}}: {{companyName}}',
     template: `Hi {{investorName}},
 
 Excited to share some big news!
@@ -130,7 +130,7 @@ export function fillTemplate(
     }
   });
   
-  // Clean up any remaining template tags
+  // Clean up unknown remaining template tags
   result = result.replace(/\{\{#\w+\}\}[\s\S]*?\{\{\/\w+\}\}/g, '');
   result = result.replace(/\{\{\w+\}\}/g, '');
   
@@ -155,3 +155,5 @@ export function getDefaultCompanyInfo(): Pick<EmailTemplateVars, 'founderName' |
     companyName: 'GroUp Academy',
   };
 }
+
+

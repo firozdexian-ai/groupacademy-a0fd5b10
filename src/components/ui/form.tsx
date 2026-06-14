@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
 import { Controller, ControllerProps, FieldPath, FieldValues, FormProvider, useFormContext } from "react-hook-form";
@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Technical Data Entry & Form Schema Interface Primitives (Form)
  * Hardened operational architecture integrating React Hook Form & Radix UI accessible anchor maps.
- * Version: Launch Candidate · Phase Z0 Context & Structural Safeguards Hardened
+ * Version: Launch Candidate Â· Phase Z0 Context & Structural Safeguards Hardened
  */
 const Form = FormProvider;
 
@@ -181,3 +181,4 @@ const FormMessage = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<
 FormMessage.displayName = "Form_Core_Message_Node";
 
 export { useFormField, Form, FormItem, FormLabel, FormControl, FormDescription, FormMessage, FormField };
+

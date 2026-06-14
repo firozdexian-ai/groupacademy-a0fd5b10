@@ -1,7 +1,7 @@
-import { useSyncExternalStore, useCallback } from "react";
+﻿import { useSyncExternalStore, useCallback } from "react";
 
 /**
- * GroUp Academy: Environment Detection Sentinel (V5.6.0)
+ * GroUp Academy: Environment Detection guard (V5.6.0)
  * CTO Reference: Authoritative controller identifying PWA sandbox and TWA standalone layers.
  * Architecture: Optimized via useSyncExternalStore to eliminate hydration presentation shifts.
  * Phase: Z0 Code Freeze Hardened (May 2026 Launch Variant).
@@ -17,7 +17,7 @@ function evaluateStandaloneStatus(): boolean {
   const isStandalone = window.matchMedia("(display-mode: standalone)").matches;
 
   // iOS: Proprietary webkit navigation layer parameters
-  const isIOSStandalone = (window.navigator as any).standalone === true;
+  const isIOSStandalone = (window.navigator as unknown).standalone === true;
 
   // Android: Trusted Web Activity (TWA) origin referrer footprints
   const isAndroidTWA = document.referrer.includes("android-app://");
@@ -30,7 +30,7 @@ function evaluateStandaloneStatus(): boolean {
  * Ensures instant environment synchronization without flash-of-unstyled-content (FOUC).
  */
 export function usePWADetect() {
-  // --- HUD: DISPLAY_MODE_SUBSCRIPTION_ORCHESTRATOR ---
+  // --- dashboard: DISPLAY_MODE_SUBSCRIPTION_ORCHESTRATOR ---
   const subscribe = useCallback((callback: () => void) => {
     if (typeof window === "undefined") return () => {};
 
@@ -45,7 +45,7 @@ export function usePWADetect() {
     }
   }, []);
 
-  // --- HUD: SNAPSHOT_EXTRACTORS ---
+  // --- dashboard: SNAPSHOT_EXTRACTORS ---
   const getSnapshot = () => evaluateStandaloneStatus();
   const getServerSnapshot = () => false; // Server compilation maps securely to fallback parameters
 
@@ -58,3 +58,5 @@ export function usePWADetect() {
 }
 
 export default usePWADetect;
+
+

@@ -1,4 +1,4 @@
-import { SimpleAdminRegistry } from "@/platform/admin/ui/SimpleAdminRegistry";
+﻿import { SimpleAdminRegistry } from "@/platform/admin/ui/SimpleAdminRegistry";
 
 export const AcademiesTab = () => (
   <SimpleAdminRegistry
@@ -43,3 +43,4 @@ export const ProfessionalLivesTab = () => (
     primaryKey="title"
   />
 );
+

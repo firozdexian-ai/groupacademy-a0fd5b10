@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { aiItemApply, aiItemRewrite } from "@/domains/learning/api/learningApi";
 import { toast } from "sonner";
 
@@ -34,9 +34,9 @@ export interface ScenarioSuggestion {
 
 export interface RewriteResult {
   kind: RewriteKind;
-  item: any;
+  item: unknown;
   flags: string[];
-  stats?: any;
+  stats?: unknown;
   suggestions: (QuizSuggestion | ScenarioSuggestion)[];
 }
 
@@ -55,7 +55,7 @@ export function useItemRewrite() {
       flags: string[];
       notes?: string;
     }): Promise<RewriteResult> => {
-      // HUD: INVOKING_AI_REWRITE_AGENT
+      // dashboard: INVOKING_AI_REWRITE_AGENT
       const res = await aiItemRewrite({
         kind: input.kind,
         item_id: input.itemId,
@@ -67,7 +67,7 @@ export function useItemRewrite() {
 
       return res as unknown as RewriteResult;
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       // Digital Workforce Anomaly Trigger:
       // Critical for monitoring LLM semantic drift or edge function timeouts.
       console.error("[Digital Workforce] ANOMALY: ai-item-rewrite execution failed.", {
@@ -80,8 +80,8 @@ export function useItemRewrite() {
 
   // --- ACTION: APPLY_CHOSEN_REFACTOR ---
   const applyMutation = useMutation({
-    mutationFn: async (input: { kind: RewriteKind; itemId: string; patch: any; flagsAddressed: string[] }) => {
-      // HUD: EXECUTING_REVISION_PATCH_handshake
+    mutationFn: async (input: { kind: RewriteKind; itemId: string; patch: unknown; flagsAddressed: string[] }) => {
+      // dashboard: EXECUTING_REVISION_PATCH_handshake
       const res = await aiItemApply({
         kind: input.kind,
         item_id: input.itemId,
@@ -99,7 +99,7 @@ export function useItemRewrite() {
       queryClient.invalidateQueries({ queryKey: ["item-analytics", variables.itemId] });
       toast.success("Item refactored and version-patched successfully.");
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       console.error("[Digital Workforce] ANOMALY: ai-item-apply mutation rejected.", err);
       toast.error("Handshake failed. Database revision not committed.");
     },
@@ -115,3 +115,5 @@ export function useItemRewrite() {
     error: generateMutation.error?.message || null,
   };
 }
+
+

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { uploadJobAsset } from "@/domains/jobs/repo/jobsRepo";
 import { insertGigSubmission } from "@/domains/gigs/repo/gigsRepo";
@@ -35,7 +35,7 @@ interface JobPostingGigFormProps {
 /**
  * GroUp Academy: Job Intelligence Acquisition Node
  * CTO Reference: Authoritative interface for structured job data extraction and curation.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function JobPostingGigForm({ gig, talentId, onSubmitted }: JobPostingGigFormProps) {
   const queryClient = useQueryClient();
@@ -48,7 +48,7 @@ export function JobPostingGigForm({ gig, talentId, onSubmitted }: JobPostingGigF
   const [parseError, setParseError] = useState<string | null>(null);
   const [sourceImageUrl, setSourceImageUrl] = useState("");
 
-  const [parsedRaw, setParsedRaw] = useState<any>(null);
+  const [parsedRaw, setParsedRaw] = useState<unknown>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editCompany, setEditCompany] = useState("");
   const [editLocation, setEditLocation] = useState("");
@@ -93,7 +93,7 @@ export function JobPostingGigForm({ gig, talentId, onSubmitted }: JobPostingGigF
     trackEvent("job_posting_intelligence_sync_started", { inputMode, talentId });
 
     try {
-      let payload: any = {};
+      let payload: unknown = {};
 
       if (inputMode === "image" && screenshotFile) {
         toast.info("Uploading screenshot...", { id: toastId });
@@ -113,7 +113,7 @@ export function JobPostingGigForm({ gig, talentId, onSubmitted }: JobPostingGigF
       }
 
       // INGRESS: Invoke edge engine function for automated entity extraction parameters
-      const data: any = await parseJobPost(payload as any);
+      const data: unknown = await parseJobPost(payload as unknown);
 
       const parsed = data.parsed || data;
       if (!parsed) throw new Error("Could not extract details from the description.");
@@ -126,7 +126,7 @@ export function JobPostingGigForm({ gig, talentId, onSubmitted }: JobPostingGigF
 
       toast.success("Details extracted successfully", { id: toastId });
       trackEvent("job_posting_intelligence_sync_success", { gigId: gig.id });
-    } catch (err: any) {
+    } catch (err: unknown) {
       const exceptionMsg = err instanceof Error ? err.message : String(err);
 
       trackError(exceptionMsg, {
@@ -176,7 +176,7 @@ export function JobPostingGigForm({ gig, talentId, onSubmitted }: JobPostingGigF
 
       toast.success("Gig submitted successfully for review", { id: toastId });
       onSubmitted();
-    } catch (err: any) {
+    } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
 
       trackError(msg, {
@@ -196,7 +196,7 @@ export function JobPostingGigForm({ gig, talentId, onSubmitted }: JobPostingGigF
     <div className="space-y-6 text-left select-none sm:select-text antialiased max-w-full w-full">
       {!hasParsedSync ? (
         <div className="space-y-5 animate-in fade-in duration-300">
-          {/* HUD: INPUT_PROTOCOL_TOGGLE Strip */}
+          {/* dashboard: INPUT_PROTOCOL_TOGGLE Strip */}
           <div className="p-1.5 bg-muted/20 border border-border/40 backdrop-blur-md rounded-2xl flex gap-2 select-none">
             {(["text", "image"] as const).map((mode) => {
               const isSelectedMode = inputMode === mode;
@@ -441,3 +441,5 @@ export function JobPostingGigForm({ gig, talentId, onSubmitted }: JobPostingGigF
     </div>
   );
 }
+
+

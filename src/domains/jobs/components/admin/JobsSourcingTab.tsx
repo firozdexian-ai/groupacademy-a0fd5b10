@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useJobsGraph } from "./hooks/useJobsGraph";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,7 +20,7 @@ export function JobsSourcingTab() {
  } = useJobsGraph();
  const { data, isLoading } = jobsGraphQuery;
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ status: "sent" });
+ const [draft, setDraft] = useState<unknown>({ status: "sent" });
 
  return (
  <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
@@ -173,7 +173,7 @@ export function JobsSourcingTab() {
               <SelectValue placeholder="Select Job" />
             </SelectTrigger>
             <SelectContent>
-              {data?.jobs?.map((job: any) => (
+              {data?.jobs?.map((job: unknown) => (
                 <SelectItem key={job.id} value={job.id}>
                   {job.title} ({job.id.substring(0, 8)})
                 </SelectItem>
@@ -200,7 +200,7 @@ export function JobsSourcingTab() {
                   const { data } = await mod.talentRepo.listTalentsLite(200);
                   return data;
                 },
-              }).data?.map((t: any) => (
+              }).data?.map((t: unknown) => (
                 <SelectItem key={t.id} value={t.id}>
                   {t.full_name} ({t.id.substring(0, 8)})
                 </SelectItem>
@@ -245,3 +245,5 @@ export function JobsSourcingTab() {
 }
 
 export default JobsSourcingTab;
+
+

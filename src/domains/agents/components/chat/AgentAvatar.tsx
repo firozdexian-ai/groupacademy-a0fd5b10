@@ -1,11 +1,11 @@
-import { useMemo } from "react";
+﻿import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Building2, Bot, Sparkles, type LucideIcon } from "lucide-react";
 
 /**
- * Group Academy — Agent Avatar Identity Component
+ * Group Academy â€” Agent Avatar Identity Component
  * Version: Phase 10j.5 Hardened
  * Purpose: Visual identity node for conversational agents in the Admin Messenger.
  * Constraints: Enforces standardized iconography and institutional badging.
@@ -144,3 +144,4 @@ export function AgentAvatar({
     </div>
   );
 }
+

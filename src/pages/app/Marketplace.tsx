@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { listMarketplaceGigsCatalog } from "@/domains/gigs/repo/gigsRepo";
@@ -32,7 +32,7 @@ interface GigRecord {
 /**
  * GroUp Academy: Professional Project Marketplace (Marketplace)
  * Hardened responsive discovery engine for high-value gig artifacts.
- * Version: Launch Candidate · Phase Z1 Production Contract Sealed
+ * Version: Launch Candidate Â· Phase Z1 Production Contract Sealed
  */
 export default function Marketplace() {
  const navigateHook = useNavigate();
@@ -66,7 +66,7 @@ export default function Marketplace() {
 
  return (
  <div className={cn(PAGE_SHELL_WIDE, "max-w-5xl mx-auto space-y-10")}>
- {/* HUD LEVEL 1: EXECUTIVE HUB HEADER */}
+ {/* dashboard LEVEL 1: EXECUTIVE HUB HEADER */}
  <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-border/10 pb-6">
  <div className="space-y-1 block">
  <div className="flex items-center gap-3">
@@ -82,7 +82,7 @@ export default function Marketplace() {
  </Badge>
  </header>
 
- {/* HUD LEVEL 2: QUERY CONSOLE & FILTER PROTOCOL */}
+ {/* dashboard LEVEL 2: QUERY CONSOLE & FILTER PROTOCOL */}
  <div className="space-y-4">
  <div className="relative group">
  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
@@ -117,7 +117,7 @@ export default function Marketplace() {
  </div>
  </div>
 
- {/* HUD LEVEL 3: LIST VIEWPORT */}
+ {/* dashboard LEVEL 3: LIST VIEWPORT */}
  {isRegistryLoading ? (
  <div className="space-y-4">
  {[1, 2, 3].map((i) => (
@@ -182,3 +182,4 @@ export default function Marketplace() {
  </div>
  );
 }
+

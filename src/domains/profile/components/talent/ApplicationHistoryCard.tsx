@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+﻿import { useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { Briefcase, Clock, CheckCircle, XCircle, Send, ChevronRight, Zap, Target, Loader2 } from "lucide-react";
@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 
 const STATUS_CONFIG: Record<
   string,
-  { label: string; variant: "default" | "secondary" | "destructive" | "outline"; icon: any; color: string }
+  { label: string; variant: "default" | "secondary" | "destructive" | "outline"; icon: unknown; color: string }
 > = {
   submitted: {
     label: "SUBMITTED",
@@ -56,7 +56,7 @@ const STATUS_CONFIG: Record<
 /**
  * GroUp Academy: Application Pipeline Tracker Panel (ApplicationHistoryCard)
  * An authoritative operational utility hub monitoring real-time user-to-employer synchronization records.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function ApplicationHistoryCard() {
   const navigate = useNavigate();
@@ -93,7 +93,7 @@ export function ApplicationHistoryCard() {
 
   const handlePipelineNavigationTrigger = async (
     navigationTargetUrlStr: string,
-    pipelineEventContextObj?: Record<string, any>,
+    pipelineEventContextObj?: Record<string, unknown>,
   ) => {
     if (!navigationTargetUrlStr) return;
     trackEvent("application_pipeline_navigation_requested", {
@@ -147,7 +147,7 @@ export function ApplicationHistoryCard() {
 
   return (
     <Card className="w-full text-left rounded-xl border border-border/40 bg-card/40 backdrop-blur-md shadow-sm antialiased transform-gpu overflow-hidden transition-colors hover:border-border/60">
-      {/* HUD LEVEL 1: TOP PANEL TRACK HEADING BLOCK CONNECTOR */}
+      {/* dashboard LEVEL 1: TOP PANEL TRACK HEADING BLOCK CONNECTOR */}
       <CardHeader className="p-4 sm:p-5 border-b border-border/10 bg-muted/10 select-none leading-none w-full shrink-0">
         <div className="flex items-center justify-between gap-4 w-full leading-none">
           <div className="space-y-1.5 flex flex-col justify-center leading-none min-w-0 flex-1 text-left">
@@ -178,7 +178,7 @@ export function ApplicationHistoryCard() {
       </CardHeader>
 
       <CardContent className="p-4 sm:p-5 w-full min-w-0 flex flex-col justify-center">
-        {/* HUD LEVEL 2: INGRESS ERROR CAPTURE VIEW LANE */}
+        {/* dashboard LEVEL 2: INGRESS ERROR CAPTURE VIEW LANE */}
         {initialQueryHistoryError ? (
           <div className="py-6 text-center select-all w-full leading-none flex flex-col justify-center items-center gap-2 font-bold text-xs">
             <XCircle className="h-5 w-5 text-destructive stroke-[2.5]" />
@@ -187,7 +187,7 @@ export function ApplicationHistoryCard() {
             </p>
           </div>
         ) : !hasActiveApplications ? (
-          /* HUD LEVEL 3: RECTILINEAR COLD COLD-START COLD EMPTY INVITATION SCREEN */
+          /* dashboard LEVEL 3: RECTILINEAR COLD COLD-START COLD EMPTY INVITATION SCREEN */
           <div className="text-center py-6 space-y-4 select-none w-full flex flex-col justify-center items-center">
             <div className="h-14 w-14 bg-muted/20 border border-dashed border-border/40 rounded-xl flex items-center justify-center mx-auto transform transition-transform duration-300 hover:rotate-3 shadow-inner">
               <Briefcase className="h-5 w-5 text-muted-foreground/40 stroke-[2.2]" />
@@ -214,7 +214,7 @@ export function ApplicationHistoryCard() {
             </Button>
           </div>
         ) : (
-          /* HUD LEVEL 4: ACTIVE RECRUITMENT TIMELINE SUB-NODE ARRAY LIST */
+          /* dashboard LEVEL 4: ACTIVE RECRUITMENT TIMELINE SUB-NODE ARRAY LIST */
           <div className="space-y-2 w-full min-w-0 text-left font-bold text-xs tracking-tight">
             {safeApplicationsQueueList.map((applicationItem) => {
               if (!applicationItem || !applicationItem.id) return null;
@@ -281,3 +281,5 @@ export function ApplicationHistoryCard() {
     </Card>
   );
 }
+
+

@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { Link, useParams } from "react-router-dom";
 import { ChevronLeft, Plus, Loader2, Calendar, Users, Inbox, Clock, CheckCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -76,7 +76,7 @@ interface SessionForm {
 /**
  * GroUp Academy: Technical Classroom Session Controller Hub (InstructorCourseSessions)
  * Hardened operational cockpit tracking relational lists and insulating data mutations with explicit type safety.
- * Version: Launch Candidate · Phase Z1 Production Contract Locked
+ * Version: Launch Candidate Â· Phase Z1 Production Contract Locked
  */
 export default function InstructorCourseSessions() {
  const { contentId: unverifiedContentParamStr } = useParams<{ contentId: string }>();
@@ -112,7 +112,7 @@ export default function InstructorCourseSessions() {
 
  return (
  <div className="max-w-3xl mx-auto px-4 py-4 pb-24 text-left antialiased block transform-gpu w-full">
- {/* HUD LEVEL 1: ADMINISTRATIVE HUB CONTROL BAR */}
+ {/* dashboard LEVEL 1: ADMINISTRATIVE HUB CONTROL BAR */}
  <header className="block w-full select-none pb-4 border-b border-border/10">
         <Link
           to="/app/instructor"
@@ -214,7 +214,7 @@ function CohortSessions({ cohort, onAddSession, onAttendance }: CohortSessionsPr
           <Calendar className="h-3.5 w-3.5 text-primary stroke-[2.2]" />
           <span>
             {cohort.starts_on ?? "Self-paced"}
-            {cohort.ends_on ? ` → ${cohort.ends_on}` : ""}
+            {cohort.ends_on ? ` â†’ ${cohort.ends_on}` : ""}
           </span>
         </p>
         <Button
@@ -232,7 +232,7 @@ function CohortSessions({ cohort, onAddSession, onAttendance }: CohortSessionsPr
       {isSessionsLoading ? (
         <div className="w-full flex items-center justify-center py-8 font-mono text-xs font-medium tracking-widest text-muted-foreground/40 select-none pointer-events-none gap-2">
           <InlineSpinner size="sm" />
-          <span>Loading sessions…</span>
+          <span>Loading sessionsâ€¦</span>
         </div>
       ) : typedSessionsArray.length === 0 ? (
         <Card className="rounded-xl border border-dashed border-border/60 bg-card/20 p-6 text-center select-none block">
@@ -257,7 +257,7 @@ function CohortSessions({ cohort, onAddSession, onAttendance }: CohortSessionsPr
  sessionNodeItem.scheduled_date,
  sessionNodeItem.event_timezone || DEFAULT_EVENT_TZ,
  )}{" "}
- • {sessionNodeItem.duration_minutes ?? 60} MIN
+ â€¢ {sessionNodeItem.duration_minutes ?? 60} MIN
  </p>
  <div className="mt-1.5 flex items-center gap-1.5 select-none pointer-events-none flex-wrap leading-none">
  <Badge
@@ -349,7 +349,7 @@ function CohortSheet({ open, onClose, contentId }: CohortSheetProps) {
         status: "open",
       });
       onClose();
-    } catch (mutationExceptionPayload: any) {
+    } catch (mutationExceptionPayload: unknown) {
       toast({
         title: "Couldn't save cohort",
         description: mutationExceptionPayload.message || "Please try again.",
@@ -498,7 +498,7 @@ function SessionSheet({ open, onClose, cohort, contentId }: SessionSheetProps) {
  }
  }, [open]);
 
- const handleInputChange = React.useCallback((fieldKey: keyof SessionForm, val: any) => {
+ const handleInputChange = React.useCallback((fieldKey: keyof SessionForm, val: unknown) => {
  setSessionFormState((prev) => ({ ...prev, [fieldKey]: val }));
  }, []);
 
@@ -530,7 +530,7 @@ function SessionSheet({ open, onClose, cohort, contentId }: SessionSheetProps) {
         description: "Your session has been added to the cohort calendar.",
       });
       onClose();
-    } catch (mutationExceptionPayload: any) {
+    } catch (mutationExceptionPayload: unknown) {
       toast({
         title: "Couldn't save session",
         description: mutationExceptionPayload.message || "Please try again.",
@@ -680,7 +680,7 @@ function AttendanceSheet({ sessionId, onClose }: AttendanceSheetProps) {
         {isAttendanceResolving ? (
           <div className="w-full flex items-center justify-center py-12 font-mono text-xs font-medium tracking-widest text-muted-foreground/40 select-none pointer-events-none gap-2">
             <InlineSpinner size="sm" />
-            <span>Loading attendance…</span>
+            <span>Loading attendanceâ€¦</span>
           </div>
         ) : (
           <div className="mt-4 block w-full divide-y divide-border/5">
@@ -719,3 +719,5 @@ function AttendanceSheet({ sessionId, onClose }: AttendanceSheetProps) {
  </Sheet>
  );
 }
+
+

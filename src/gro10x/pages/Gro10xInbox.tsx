@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+﻿import { Link, useNavigate } from "react-router-dom";
 import { Search, Plus, Building2 } from "lucide-react";
 import { GRO10X_PANEL, GRO10X_MUTED } from "../lib/tokens";
 import { useGro10xThreads } from "../hooks/useGro10xThreads";
@@ -81,7 +81,7 @@ export default function Gro10xInbox() {
         </div>
       </header>
 
-      {loading && <Gro10xLoading label="Loading your inbox…" />}
+      {loading && <Gro10xLoading label="Loading your inboxâ€¦" />}
 
       {!loading && !companyId && (
         <div className="px-4 py-10 text-center">
@@ -102,7 +102,7 @@ export default function Gro10xInbox() {
         <div className="px-4 py-8 text-center text-sm text-slate-400">
           No agents pinned yet.{" "}
           <Link to="/gro10x/agents" className="text-[#33E1E4] hover:underline">
-            Browse Agent Network →
+            Browse Agent Network â†’
           </Link>
         </div>
       )}
@@ -156,10 +156,11 @@ export default function Gro10xInbox() {
             to="/gro10x/agents"
             className="block text-center text-sm text-[#33E1E4] hover:underline"
           >
-            Browse Agent Network →
+            Browse Agent Network â†’
           </Link>
         </div>
       )}
     </div>
   );
 }
+

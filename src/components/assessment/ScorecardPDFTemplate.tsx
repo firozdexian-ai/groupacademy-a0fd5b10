@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+﻿import { useMemo } from "react";
 import { format, isValid } from "date-fns";
 
 /**
@@ -17,7 +17,7 @@ interface Assessment {
   total_score: number;
   max_score: number;
   created_at: string;
-  ai_analysis: any;
+  ai_analysis: unknown;
   improvement_areas: string[];
   profession_categories?: {
     name: string;
@@ -97,7 +97,7 @@ export function ScorecardPDFTemplate({ assessment }: { assessment: Assessment })
         boxSizing: "border-box",
       }}
     >
-      {/* HUD: DOCUMENT_HEADER */}
+      {/* dashboard: DOCUMENT_HEADER */}
       <div
         style={{
           display: "flex",
@@ -193,7 +193,7 @@ export function ScorecardPDFTemplate({ assessment }: { assessment: Assessment })
         </div>
       </div>
 
-      {/* HUD: SCORE_METRIC_CENTER_PANEL */}
+      {/* dashboard: SCORE_METRIC_CENTER_PANEL */}
       <div
         style={{
           textAlign: "center",
@@ -335,7 +335,7 @@ export function ScorecardPDFTemplate({ assessment }: { assessment: Assessment })
               letterSpacing: "1px",
             }}
           >
-            [△] Optimization_Nodes
+            [â–³] Optimization_Nodes
           </h3>
           <ul
             style={{
@@ -360,7 +360,7 @@ export function ScorecardPDFTemplate({ assessment }: { assessment: Assessment })
         </div>
       </div>
 
-      {/* HUD: ACTIONABLE_RECOMMENDATIONS_ENGINE */}
+      {/* dashboard: ACTIONABLE_RECOMMENDATIONS_ENGINE */}
       {assessment?.ai_analysis?.recommendations && (
         <div style={{ marginBottom: "35px", padding: "25px", border: "2px solid #f1f5f9", borderRadius: "24px" }}>
           <h3
@@ -410,9 +410,11 @@ export function ScorecardPDFTemplate({ assessment }: { assessment: Assessment })
         </div>
         <div style={{ textAlign: "right" }}>
           <p style={{ margin: 0 }}>Generated_By: GroUp_Academy_Neural_Engine</p>
-          <p style={{ margin: "4px 0 0" }}>© {normalizedTemporalContext.structuralYear} ALL_RIGHTS_RESERVED</p>
+          <p style={{ margin: "4px 0 0" }}>Â© {normalizedTemporalContext.structuralYear} ALL_RIGHTS_RESERVED</p>
         </div>
       </div>
     </div>
   );
 }
+
+

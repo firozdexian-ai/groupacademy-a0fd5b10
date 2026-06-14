@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Marketing domain repository (Phase 10i.3).
  *
  * Wraps raw supabase.from(...) calls for the Marketing admin area:
@@ -9,24 +9,24 @@
  */
 import { supabase } from "@/integrations/supabase/client";
 
-// ─── Generic helpers ───────────────────────────────────────────────────────
-export async function upsertGraphRow(table: string, payload: any): Promise<void> {
+// â”€â”€â”€ Generic helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function upsertGraphRow(table: string, payload: unknown): Promise<void> {
   if (payload?.id) {
     const { id, ...patch } = payload;
-    const { error } = await supabase.from(table as any).update(patch).eq("id", id);
+    const { error } = await supabase.from(table as unknown).update(patch).eq("id", id);
     if (error) throw error;
   } else {
-    const { error } = await supabase.from(table as any).insert(payload);
+    const { error } = await supabase.from(table as unknown).insert(payload);
     if (error) throw error;
   }
 }
 
 export async function deleteGraphRow(table: string, id: string): Promise<void> {
-  const { error } = await supabase.from(table as any).delete().eq("id", id);
+  const { error } = await supabase.from(table as unknown).delete().eq("id", id);
   if (error) throw error;
 }
 
-// ─── Marketing master graph ───────────────────────────────────────────────
+// â”€â”€â”€ Marketing master graph â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getMarketingGraphMaster() {
   const [channelsRes, groupsRes, talentOutreachRes, companyOutreachRes, bannersRes, themesRes, codesRes] =
     await Promise.all([
@@ -86,8 +86,8 @@ export async function getMarketingGraphMaster() {
   };
 }
 
-// ─── Banners ────────────────────────────────────────────────────────────────
-export async function listBannersWithContent(): Promise<any[]> {
+// â”€â”€â”€ Banners â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function listBannersWithContent(): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("banners")
     .select(
@@ -105,11 +105,11 @@ export async function listPublishedContentTitles(): Promise<Array<{ id: string; 
     .eq("is_published", true)
     .order("title");
   if (error) throw error;
-  return (data ?? []) as any;
+  return (data ?? []) as unknown;
 }
 
-export async function insertBanner(payload: Record<string, any>): Promise<void> {
-  const { error } = await (supabase.from("banners") as any).insert([payload]);
+export async function insertBanner(payload: Record<string, unknown>): Promise<void> {
+  const { error } = await (supabase.from("banners") as unknown).insert([payload]);
   if (error) throw error;
 }
 
@@ -123,8 +123,8 @@ export async function deleteBanner(bannerId: string): Promise<void> {
   if (error) throw error;
 }
 
-// ─── Content outreach ─────────────────────────────────────────────────────
-export async function listPromotableContent(): Promise<any[]> {
+// â”€â”€â”€ Content outreach â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function listPromotableContent(): Promise<unknown[]> {
   const cutoff = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
   const [recordedRes, liveRes] = await Promise.all([
     supabase
@@ -151,7 +151,7 @@ export async function listPromotableContent(): Promise<any[]> {
   return [...(recordedRes.data ?? []), ...(liveRes.data ?? [])];
 }
 
-export async function listOutreachableTalents(): Promise<any[]> {
+export async function listOutreachableTalents(): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("talents")
     .select("id, full_name, email, phone, profession_category_id, country")
@@ -162,7 +162,7 @@ export async function listOutreachableTalents(): Promise<any[]> {
   return data ?? [];
 }
 
-export async function listCourseOutreachRecords(courseId: string): Promise<any[]> {
+export async function listCourseOutreachRecords(courseId: string): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("outreach_messages")
     .select("talent_id, course_id")
@@ -177,7 +177,7 @@ export async function logCourseOutreach(input: {
   courseId: string;
   messageContent: string;
 }): Promise<void> {
-  const { error } = await (supabase.from("outreach_messages") as any).insert({
+  const { error } = await (supabase.from("outreach_messages") as unknown).insert({
     talent_id: input.talentId,
     product: "course",
     course_id: input.courseId,
@@ -186,7 +186,7 @@ export async function logCourseOutreach(input: {
   if (error) throw error;
 }
 
-export async function listContentShareLogs(contentId: string): Promise<any[]> {
+export async function listContentShareLogs(contentId: string): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("content_share_logs")
     .select("channel, shared_at")
@@ -196,7 +196,7 @@ export async function listContentShareLogs(contentId: string): Promise<any[]> {
 }
 
 export async function insertContentShareLog(input: { contentId: string; channel: string }): Promise<void> {
-  const { error } = await (supabase.from("content_share_logs") as any).insert({
+  const { error } = await (supabase.from("content_share_logs") as unknown).insert({
     content_id: input.contentId,
     channel: input.channel,
     shared_at: new Date().toISOString(),
@@ -204,8 +204,8 @@ export async function insertContentShareLog(input: { contentId: string; channel:
   if (error) throw error;
 }
 
-// ─── Lead hunter ──────────────────────────────────────────────────────────
-export async function listLeadHuntSessionsAndJobs(): Promise<{ sessions: any[]; jobs: any[] }> {
+// â”€â”€â”€ Lead hunter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function listLeadHuntSessionsAndJobs(): Promise<{ sessions: unknown[]; jobs: unknown[] }> {
   const [sessionsRes, jobsRes] = await Promise.all([
     supabase.from("lead_hunt_sessions").select("*").order("created_at", { ascending: false }),
     supabase
@@ -219,7 +219,7 @@ export async function listLeadHuntSessionsAndJobs(): Promise<{ sessions: any[]; 
   return { sessions: sessionsRes.data ?? [], jobs: jobsRes.data ?? [] };
 }
 
-export async function listLeadHuntMatches(sessionId: string): Promise<any[]> {
+export async function listLeadHuntMatches(sessionId: string): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("lead_hunt_matches")
     .select(
@@ -235,7 +235,7 @@ export async function logTalentWelcomeOutreach(input: {
   talentId: string;
   channel: "whatsapp" | "email" | "linkedin";
 }): Promise<void> {
-  const { error } = await (supabase.from("outreach_messages") as any).insert({
+  const { error } = await (supabase.from("outreach_messages") as unknown).insert({
     talent_id: input.talentId,
     product: "welcome",
     channel: input.channel,
@@ -243,14 +243,14 @@ export async function logTalentWelcomeOutreach(input: {
   if (error) throw error;
 }
 
-// ─── Access codes (mock interview / salary) ───────────────────────────────
+// â”€â”€â”€ Access codes (mock interview / salary) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function insertMockInterviewAccessCode(input: {
   code: string;
   email: string;
   createdBy?: string;
   expiresAt: string;
-}): Promise<{ error: any }> {
-  const { error } = await (supabase.from("mock_interview_access_codes") as any).insert({
+}): Promise<{ error: unknown }> {
+  const { error } = await (supabase.from("mock_interview_access_codes") as unknown).insert({
     code: input.code,
     email: input.email,
     created_by: input.createdBy,
@@ -264,8 +264,8 @@ export async function insertSalaryAnalysisAccessCode(input: {
   email: string;
   createdBy?: string;
   expiresAt: string;
-}): Promise<{ error: any }> {
-  const { error } = await (supabase.from("salary_analysis_access_codes") as any).insert({
+}): Promise<{ error: unknown }> {
+  const { error } = await (supabase.from("salary_analysis_access_codes") as unknown).insert({
     code: input.code,
     email: input.email,
     created_by: input.createdBy,
@@ -274,8 +274,8 @@ export async function insertSalaryAnalysisAccessCode(input: {
   return { error };
 }
 
-// ─── Mock interview leads ─────────────────────────────────────────────────
-export async function listMockInterviewLeads(): Promise<any[]> {
+// â”€â”€â”€ Mock interview leads â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function listMockInterviewLeads(): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("mock_interviews")
     .select("*")
@@ -287,7 +287,7 @@ export async function listMockInterviewLeads(): Promise<any[]> {
 /* ---------------- Phase 10j.3: lead capture ---------------- */
 
 export async function insertCareerAssessment(payload: Record<string, unknown>): Promise<void> {
-  const { error } = await supabase.from("career_assessments").insert(payload as any);
+  const { error } = await supabase.from("career_assessments").insert(payload as unknown);
   if (error) throw error;
 }
 
@@ -303,7 +303,7 @@ export async function listActiveBannersForPlacement(placement: string) {
     .eq("placement", placement)
     .order("display_order", { ascending: true });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function listServiceHistoryByTalent(talentId: string) {
@@ -318,10 +318,10 @@ export async function listServiceHistoryByTalent(talentId: string) {
   if (salaryRes.error) throw salaryRes.error;
   if (portfolioRes.error) throw portfolioRes.error;
   return {
-    assessments: (assessmentsRes.data ?? []) as any[],
-    interviews: (interviewsRes.data ?? []) as any[],
-    salary: (salaryRes.data ?? []) as any[],
-    portfolio: (portfolioRes.data ?? []) as any[],
+    assessments: (assessmentsRes.data ?? []) as unknown[],
+    interviews: (interviewsRes.data ?? []) as unknown[],
+    salary: (salaryRes.data ?? []) as unknown[],
+    portfolio: (portfolioRes.data ?? []) as unknown[],
   };
 }
 
@@ -336,11 +336,11 @@ export async function getMockInterviewById(id: string) {
     .eq("id", id)
     .single();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
-export async function insertMockInterview(payload: Record<string, unknown>): Promise<{ error: any }> {
-  const { error } = await supabase.from("mock_interviews").insert(payload as any);
+export async function insertMockInterview(payload: Record<string, unknown>): Promise<{ error: unknown }> {
+  const { error } = await supabase.from("mock_interviews").insert(payload as unknown);
   return { error };
 }
 
@@ -368,8 +368,8 @@ export async function markAssessmentAccessCodeUsed(id: string): Promise<void> {
   if (error) throw error;
 }
 
-export async function insertSalaryAnalysis(payload: Record<string, unknown>): Promise<{ error: any }> {
-  const { error } = await supabase.from("salary_analyses").insert(payload as any);
+export async function insertSalaryAnalysis(payload: Record<string, unknown>): Promise<{ error: unknown }> {
+  const { error } = await supabase.from("salary_analyses").insert(payload as unknown);
   return { error };
 }
 
@@ -380,16 +380,16 @@ export async function countPortfolioRequests(): Promise<number> {
   return count ?? 0;
 }
 
-export async function insertPortfolioRequest(payload: Record<string, unknown>): Promise<{ error: any }> {
-  const { error } = await supabase.from("portfolio_requests").insert(payload as any);
+export async function insertPortfolioRequest(payload: Record<string, unknown>): Promise<{ error: unknown }> {
+  const { error } = await supabase.from("portfolio_requests").insert(payload as unknown);
   return { error };
 }
 
 export async function insertOrganizationWaitlist(payload: {
   email: string;
   company_name: string | null;
-}): Promise<{ error: any }> {
-  const { error } = await supabase.from("organization_waitlist").insert(payload as any);
+}): Promise<{ error: unknown }> {
+  const { error } = await supabase.from("organization_waitlist").insert(payload as unknown);
   return { error };
 }
 
@@ -401,7 +401,7 @@ export async function incrementBlogPostViews(postId: string): Promise<void> {
     .single();
   await supabase
     .from("blog_posts")
-    .update({ views: ((data as any)?.views || 0) + 1 })
+    .update({ views: ((data as unknown)?.views || 0) + 1 })
     .eq("id", postId);
 }
 
@@ -425,14 +425,14 @@ export async function listActiveProfessionCategoriesWithSlug() {
   return (data ?? []) as Array<{ id: string; name: string; slug: string }>;
 }
 
-// ─── Phase 10j.5d additions ────────────────────────────────────────────────
+// â”€â”€â”€ Phase 10j.5d additions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function insertContactLog(payload: {
   full_name: string;
   email: string;
   subject: string;
   message: string;
-}): Promise<{ error: any }> {
-  const { error } = await supabase.from("contacts").insert([payload as any]);
+}): Promise<{ error: unknown }> {
+  const { error } = await supabase.from("contacts").insert([payload as unknown]);
   return { error };
 }
 
@@ -443,17 +443,17 @@ export async function listBlogPostsByIds(ids: string[]) {
     .select("id, title, slug, featured_image")
     .in("id", ids);
   if (error) throw error;
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
-// ─── Phase 10j.5e: results-by-email helpers ────────────────────────────────
+// â”€â”€â”€ Phase 10j.5e: results-by-email helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function listCareerAssessmentsByEmail(email: string) {
   const { data, error } = await supabase
     .from("career_assessments")
     .select("id, created_at, percentage, readiness_level")
     .eq("email", email);
   if (error) throw error;
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
 export async function listMockInterviewsByEmail(email: string) {
@@ -462,7 +462,7 @@ export async function listMockInterviewsByEmail(email: string) {
     .select("id, created_at, selection_percentage, status, job_title")
     .eq("email", email);
   if (error) throw error;
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
 export async function listSalaryAnalysesByEmail(email: string) {
@@ -471,7 +471,7 @@ export async function listSalaryAnalysesByEmail(email: string) {
     .select("id, created_at, status, job_title")
     .eq("email", email);
   if (error) throw error;
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
 export async function listPortfolioRequestsByEmail(email: string) {
@@ -480,10 +480,10 @@ export async function listPortfolioRequestsByEmail(email: string) {
     .select("id, created_at, status")
     .eq("email", email);
   if (error) throw error;
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
-// ─── Phase 10j.5g3 ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Phase 10j.5g3 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getLatestCompletedSalaryAnalysisByEmail(email: string) {
   const { data, error } = await supabase
     .from("salary_analyses")
@@ -508,7 +508,7 @@ export async function getValidSalaryAccessCode(code: string, email: string) {
   return { data: data as { id: string } | null, error };
 }
 
-// ─── Phase 10j.5g4 ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Phase 10j.5g4 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getLatestCareerAssessmentByEmail(email: string) {
   const { data, error } = await supabase
     .from("career_assessments")
@@ -518,7 +518,7 @@ export async function getLatestCareerAssessmentByEmail(email: string) {
     .limit(1)
     .maybeSingle();
   if (error) throw error;
-  return data as any | null;
+  return data as unknown | null;
 }
 
 export async function getValidAssessmentAccessCode(code: string, email: string) {
@@ -542,7 +542,7 @@ export async function getLatestCompletedMockInterviewByEmail(email: string) {
     .limit(1)
     .maybeSingle();
   if (error) throw error;
-  return data as any | null;
+  return data as unknown | null;
 }
 
 export async function getValidMockInterviewAccessCode(code: string, email: string) {
@@ -557,7 +557,7 @@ export async function getValidMockInterviewAccessCode(code: string, email: strin
 }
 
 export async function updateMockInterview(id: string, patch: Record<string, unknown>): Promise<void> {
-  await supabase.from("mock_interviews").update(patch as any).eq("id", id);
+  await supabase.from("mock_interviews").update(patch as unknown).eq("id", id);
 }
 
 export async function getCareerAssessmentWithCategory(id: string) {
@@ -567,7 +567,7 @@ export async function getCareerAssessmentWithCategory(id: string) {
     .eq("id", id)
     .maybeSingle();
   if (error) throw error;
-  return data as any | null;
+  return data as unknown | null;
 }
 
 export async function listActiveProfessionCategoriesAll() {
@@ -577,7 +577,7 @@ export async function listActiveProfessionCategoriesAll() {
     .eq("is_active", true)
     .order("display_order");
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function listPublicProfessionTracks(limit = 8) {
@@ -591,7 +591,7 @@ export async function listPublicProfessionTracks(limit = 8) {
   return data || [];
 }
 
-// ─── Phase 10j.5k9: salary analysis leads ────────────────────────────────
+// â”€â”€â”€ Phase 10j.5k9: salary analysis leads â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function listSalaryAnalysisLeads() {
   const { data, error } = await supabase
     .from("salary_analyses")
@@ -601,10 +601,10 @@ export async function listSalaryAnalysisLeads() {
     )
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-// ─── Phase 10j.5k11: public blog + salary results helpers ────────────────
+// â”€â”€â”€ Phase 10j.5k11: public blog + salary results helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export interface BlogPostFilter {
   category?: string;
   search?: string;
@@ -623,7 +623,7 @@ export async function listPublishedBlogPosts(filter: BlogPostFilter = {}) {
   if (filter.limit) q = q.limit(filter.limit);
   const { data, error } = await q;
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function listPublishedBlogPostCards(filter: BlogPostFilter = {}) {
@@ -640,7 +640,7 @@ export async function listPublishedBlogPostCards(filter: BlogPostFilter = {}) {
   if (filter.limit) q = q.limit(filter.limit);
   const { data, error } = await q;
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function getPublishedBlogPostBySlug(slug: string) {
@@ -651,7 +651,7 @@ export async function getPublishedBlogPostBySlug(slug: string) {
     .eq("status", "published")
     .single();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function getPublishedBlogPostDetailBySlug(slug: string) {
@@ -664,7 +664,7 @@ export async function getPublishedBlogPostDetailBySlug(slug: string) {
     .eq("status", "published")
     .maybeSingle();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function updateBlogPostViewsAbsolute(postId: string, views: number): Promise<void> {
@@ -679,7 +679,7 @@ export async function listLatestPublishedBlogPostsLite(limit = 3) {
     .order("published_at", { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function getSalaryAnalysisWithCategory(id: string) {
@@ -689,7 +689,7 @@ export async function getSalaryAnalysisWithCategory(id: string) {
     .eq("id", id)
     .single();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function listPublishedCoursesByProfession(professionLineId: string, limit = 3) {
@@ -700,7 +700,7 @@ export async function listPublishedCoursesByProfession(professionLineId: string,
     .eq("is_published", true)
     .limit(limit);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function listPortfolioRequestsByEmailFull(email: string) {
@@ -710,10 +710,10 @@ export async function listPortfolioRequestsByEmailFull(email: string) {
     .eq("email", email.trim().toLowerCase())
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-// ─── Phase 10i.4: leaked component queries pulled into repo ────────────────
+// â”€â”€â”€ Phase 10i.4: leaked component queries pulled into repo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /** Paid, published content used by the Access Codes generator. */
 export async function listPublishedPaidContent() {
@@ -765,3 +765,5 @@ export async function getMarketingAnalyticsTelemetry(startISO: string, endISO: s
     topJobsRaw: topJobsDataRes.data ?? [],
   };
 }
+
+

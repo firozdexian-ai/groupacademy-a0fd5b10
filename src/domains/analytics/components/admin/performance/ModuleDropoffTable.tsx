@@ -1,5 +1,5 @@
-/**
- * Module Drop-off Analytics Table (Phase 10i — Hardened).
+﻿/**
+ * Module Drop-off Analytics Table (Phase 10i â€” Hardened).
  * Tracks pedagogical efficacy and drop-off markers across module sub-nodes.
  * Aligns with 2024 Professional SaaS UI/UX specifications.
  */
@@ -65,3 +65,4 @@ export default function ModuleDropoffTable({ modules }: Props) {
     </div>
   );
 }
+

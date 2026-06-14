@@ -1,4 +1,4 @@
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+﻿import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { useDocumentTelemetry, type IRDocument } from "../hooks/useDataRoom";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -51,7 +51,7 @@ export function DocumentTelemetryDrawer({
  <Card className="p-3 text-center">
  <Flame className="h-4 w-4 mx-auto text-orange-500" />
  <div className="text-2xl font-bold mt-1">{slideData.filter(s => s.dwell >= 300).length}</div>
- <div className="text-xs text-muted-foreground">Hot Slides (≥5m)</div>
+ <div className="text-xs text-muted-foreground">Hot Slides (â‰¥5m)</div>
  </Card>
  </div>
 
@@ -88,7 +88,7 @@ export function DocumentTelemetryDrawer({
  <div className="font-medium">{v.viewer_email ?? "Anonymous"}</div>
  <div className="text-xs text-muted-foreground">
  {formatDistanceToNow(new Date(v.started_at), { addSuffix: true })}
- {v.user_agent && ` · ${v.user_agent.split(" ")[0]}`}
+ {v.user_agent && ` Â· ${v.user_agent.split(" ")[0]}`}
  </div>
  </div>
  {v.completed && <Badge variant="outline" className="text-xs">Completed</Badge>}
@@ -99,3 +99,4 @@ export function DocumentTelemetryDrawer({
  </Sheet>
  );
 }
+

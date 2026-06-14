@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Bot, Briefcase, GraduationCap, UserPlus, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
@@ -50,7 +50,7 @@ export default function SchoolDetail() {
  const [submitting, setSubmitting] = useState(false);
 
  // Internal error logger
- const reportAnomaly = async (event: string, context: any) => {
+ const reportAnomaly = async (event: string, context: unknown) => {
  console.error(`[abroad] ${event}`, context);
  try {
  await adminSupportAssistant({ type: "school_detail_error", event, context });
@@ -112,7 +112,7 @@ export default function SchoolDetail() {
  toast.success("Connection request sent.");
  setOpenProfession(null);
  setMessage("");
- } catch (err: any) {
+ } catch (err: unknown) {
  await reportAnomaly("HandoffRequestError", { err });
  toast.error("Failed to send request.");
  } finally {
@@ -227,7 +227,7 @@ export default function SchoolDetail() {
  <Textarea
  value={message}
  onChange={(e) => setMessage(e.target.value)}
- placeholder="Tell them why you'd like to connect…"
+ placeholder="Tell them why you'd like to connectâ€¦"
  rows={4}
  className="rounded-xl"
  />
@@ -241,3 +241,5 @@ export default function SchoolDetail() {
  </div>
  );
 }
+
+

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+﻿import React, { useEffect, useRef } from "react";
 import { warmupDatabase } from "@/lib/databaseWarmup";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 
@@ -9,7 +9,7 @@ interface BootGateProps {
 /**
  * GroUp Academy: Non-Blocking Background Registry Hydration Wrapper (BootGate)
  * An authoritative non-blocking node initializing connection handshakes to eliminate cold starts on edge database clusters.
- * Version: Launch Candidate · Phase Z0 Hardened Engine Gate
+ * Version: Launch Candidate Â· Phase Z0 Hardened Engine Gate
  */
 export function BootGate({ children }: BootGateProps) {
   const isMountedRef = useRef<boolean>(true);
@@ -71,3 +71,4 @@ export function BootGate({ children }: BootGateProps) {
 }
 
 export default BootGate;
+

@@ -1,4 +1,4 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
+﻿import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -33,15 +33,15 @@ serve(async (req) => {
 
     if (assessmentError || !assessment) throw new Error("REGISTRY_NOT_FOUND");
 
-    const questions = (assessment.questions as any) || {};
+    const questions = (assessment.questions as unknown) || {};
     const mcqQuestions = questions.mcq_questions || [];
     const voiceQuestions = questions.voice_questions || [];
-    const answers = (assessment.answers as any) || {};
+    const answers = (assessment.answers as unknown) || {};
     const mcqAnswers = answers.mcq || answers;
 
     // PHASE 2: Deterministic MCQ Audit
     let mcqCorrect = 0;
-    const mcqResults = mcqQuestions.map((q: any, i: number) => {
+    const mcqResults = mcqQuestions.map((q: unknown, i: number) => {
       const userAnswer = mcqAnswers[q.id] ?? mcqAnswers[String(i)];
       const isCorrect = String(userAnswer) === String(q.correct_index);
       if (isCorrect) mcqCorrect++;
@@ -55,12 +55,12 @@ serve(async (req) => {
 
     if (voiceQuestions.length > 0) {
       const transcribedResponses = await Promise.all(
-        voiceQuestions.map(async (vq: any) => {
+        voiceQuestions.map(async (vq: unknown) => {
           const ans = answers[vq.id];
           let transcript = "[No response artifact found]";
 
           if (ans?.storagePath) {
-            // HUD: Generate short-lived signed URL for Whisper
+            // dashboard: Generate short-lived signed URL for Whisper
             const { data: urlData } = await supabaseAdmin.storage
               .from("assessment-audio")
               .createSignedUrl(ans.storagePath, 60);
@@ -83,7 +83,7 @@ serve(async (req) => {
         }),
       );
 
-      // PHASE 4: Qualitative AI Synthesis
+      // PHASE 4: Qualitative AI summary
       const evaluationPrompt = `
         Role: ${assessment.jobs?.title}
         Requirements: ${JSON.stringify(assessment.jobs?.requirements)}
@@ -114,7 +114,7 @@ serve(async (req) => {
       }
     }
 
-    // PHASE 5: Monotonic Final Synthesis
+    // PHASE 5: Monotonic Final summary
     const weight = voiceQuestions.length > 0 ? 0.5 : 1.0;
     const overallScore = Math.round(mcqScore * weight + voiceScore * (1 - weight));
 
@@ -125,7 +125,7 @@ serve(async (req) => {
       recommendation: overallScore >= 75 ? "Strong Hire" : overallScore >= 50 ? "Consider" : "Pass",
     };
 
-    // HUD: Update institutional assessment ledger
+    // dashboard: Update institutional assessment ledger
     await supabaseAdmin
       .from("job_assessments")
       .update({
@@ -139,11 +139,13 @@ serve(async (req) => {
     return new Response(JSON.stringify({ success: true, score: overallScore }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-  } catch (error: any) {
-    console.error("[Sentinel] FATAL_ANALYZER_ERROR:", error.message);
+  } catch (error: unknown) {
+    console.error("[guard] FATAL_ANALYZER_ERROR:", error.message);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 });
+
+

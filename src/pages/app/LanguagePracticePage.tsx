@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams } from "react-router-dom";
 import { aiLanguagePartner } from "@/domains/abroad/api/abroadApi";
 import { Card, CardContent } from "@/components/ui/card";
@@ -39,7 +39,7 @@ interface AIResponsePayload {
 /**
  * GroUp Academy: AI Language Partner Workspace (LanguagePracticePage)
  * Hardened responsive chat interface synchronizing multi-modal language feedback and tracking session history securely.
- * Version: Launch Candidate · Phase Z1 Production Contract Locked
+ * Version: Launch Candidate Â· Phase Z1 Production Contract Locked
  */
 export default function LanguagePracticePage() {
  const { code: languageCode = "en" } = useParams<{ code: string }>();
@@ -94,7 +94,7 @@ export default function LanguagePracticePage() {
  if (Array.isArray(data.corrections) && data.corrections.length) {
  setActiveCorrections((prev) => [...prev, ...(data.corrections as Correction[])]);
  }
- } catch (e: any) {
+ } catch (e: unknown) {
  toast.error(e.message || "Could not send message. Please try again.");
  } finally {
  setIsInferenceProcessing(false);
@@ -113,7 +113,7 @@ export default function LanguagePracticePage() {
 
  return (
  <div className={cn(PAGE_SHELL, "flex flex-col h-[calc(100vh-8rem)] max-w-3xl mx-auto")}>
- {/* HUD LEVEL 1: SESSION CONTEXT BAR */}
+ {/* dashboard LEVEL 1: SESSION CONTEXT BAR */}
  <Card className="m-4 p-3 flex items-center gap-3 rounded-lg border border-border/60 bg-card/40 shadow-none">
  <div className="font-bold uppercase tracking-wider text-xs flex-1 text-primary">
  Practice {languageCode.toUpperCase()}
@@ -140,7 +140,7 @@ export default function LanguagePracticePage() {
  </Button>
  </Card>
 
- {/* HUD LEVEL 2: MESSAGING LOG VIEWPORT */}
+ {/* dashboard LEVEL 2: MESSAGING LOG VIEWPORT */}
  <ScrollArea className="flex-1 px-4 block w-full" ref={scrollViewportRef}>
  <div className="space-y-4 pb-4">
  {conversationTurns.map((turn, index) => (
@@ -175,7 +175,7 @@ export default function LanguagePracticePage() {
  </div>
  </ScrollArea>
 
- {/* HUD LEVEL 3: CORRECTION LOGS OVERLAY */}
+ {/* dashboard LEVEL 3: CORRECTION LOGS OVERLAY */}
  {activeCorrections.length > 0 && (
  <Card className={cn(CARD, "mx-4 mb-2 p-3 max-h-40 overflow-y-auto border-amber-500/20 bg-amber-500/[0.02]")}>
  <div className="text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-2 flex items-center justify-between sticky top-0 bg-inherit pb-1">
@@ -187,7 +187,7 @@ export default function LanguagePracticePage() {
  {activeCorrections.slice(-3).map((item, idx) => (
  <div key={`correction-node-${idx}`} className="text-xs mb-3 last:mb-0 border-l-2 border-primary/20 pl-2">
  <span className="line-through text-destructive/80 font-medium">{item.original}</span>
- <span className="mx-2 text-primary font-bold">→</span>
+ <span className="mx-2 text-primary font-bold">â†’</span>
  <span className="text-emerald-700 font-bold">{item.corrected}</span>
  <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">{item.explanation}</p>
  </div>
@@ -195,7 +195,7 @@ export default function LanguagePracticePage() {
  </Card>
  )}
 
- {/* HUD LEVEL 4: INTERACTION INPUT CONTROL PANEL */}
+ {/* dashboard LEVEL 4: INTERACTION INPUT CONTROL PANEL */}
  <div className="p-3 border-t border-border/40 flex gap-2 sticky bottom-0 bg-background/95 backdrop-blur-sm z-20">
  <Input
  value={userTextInputStr}
@@ -217,3 +217,5 @@ export default function LanguagePracticePage() {
  </div>
  );
 }
+
+

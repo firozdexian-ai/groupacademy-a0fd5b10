@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Companies domain repository (Phase 10f).
  *
  * The single sanctioned caller of `supabase.from(...)` for companies-owned
@@ -42,7 +42,7 @@ export interface ContactRow {
   email: string | null;
   phone: string | null;
   created_at: string;
-  [key: string]: any;
+  [key: string]: unknown;
   company?: { name: string | null };
 }
 
@@ -106,13 +106,13 @@ export async function listCompaniesForAgentPicker(): Promise<Array<{ id: string;
   return (data ?? []) as Array<{ id: string; name: string; logo_url: string | null; industry: string | null }>;
 }
 
-export async function upsertCompany(payload: Record<string, any> & { name: string }): Promise<void> {
-  const { error } = await supabase.from("companies").upsert(payload as any);
+export async function upsertCompany(payload: Record<string, unknown> & { name: string }): Promise<void> {
+  const { error } = await supabase.from("companies").upsert(payload as unknown);
   if (error) throw error;
 }
 
-export async function insertCompany(payload: Record<string, any> & { name: string }): Promise<{ id: string }> {
-  const { data, error } = await supabase.from("companies").insert(payload as any).select("id").single();
+export async function insertCompany(payload: Record<string, unknown> & { name: string }): Promise<{ id: string }> {
+  const { data, error } = await supabase.from("companies").insert(payload as unknown).select("id").single();
   if (error) throw error;
   return data as { id: string };
 }
@@ -145,12 +145,12 @@ export async function listCompaniesByNames(names: string[]): Promise<Array<{ id:
 
 /** Bulk insert minimal company rows; returns id+name for cache mapping. */
 export async function insertCompaniesBulk(
-  payloads: Array<Record<string, any> & { name: string }>,
+  payloads: Array<Record<string, unknown> & { name: string }>,
 ): Promise<Array<{ id: string; name: string }>> {
   if (!payloads.length) return [];
   const { data, error } = await supabase
     .from("companies")
-    .insert(payloads as any)
+    .insert(payloads as unknown)
     .select("id, name");
   if (error) throw error;
   return (data ?? []) as Array<{ id: string; name: string }>;
@@ -183,13 +183,13 @@ export async function listContactsPaged(params: ListContactsPagedParams): Promis
   return { rows: (data ?? []) as ContactRow[], count: count ?? 0 };
 }
 
-export async function upsertContact(payload: Record<string, any> & { email: string }): Promise<void> {
-  const { error } = await supabase.from("contacts").upsert(payload as any);
+export async function upsertContact(payload: Record<string, unknown> & { email: string }): Promise<void> {
+  const { error } = await supabase.from("contacts").upsert(payload as unknown);
   if (error) throw error;
 }
 
-export async function insertContact(payload: Record<string, any>): Promise<void> {
-  const { error } = await supabase.from("contacts").insert(payload as any);
+export async function insertContact(payload: Record<string, unknown>): Promise<void> {
+  const { error } = await supabase.from("contacts").insert(payload as unknown);
   if (error) throw error;
 }
 
@@ -224,7 +224,7 @@ export async function logContactOutreach(payload: {
 
 // ---------- AI Operational Agents Swarm View ----------
 
-export async function listCompanyAgentsFull(): Promise<any[]> {
+export async function listCompanyAgentsFull(): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("company_agents")
     .select(`
@@ -237,7 +237,7 @@ export async function listCompanyAgentsFull(): Promise<any[]> {
   return data ?? [];
 }
 
-export async function listCompanyAgentLeads(): Promise<any[]> {
+export async function listCompanyAgentLeads(): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("company_agent_leads")
     .select("*")
@@ -246,13 +246,13 @@ export async function listCompanyAgentLeads(): Promise<any[]> {
   return data ?? [];
 }
 
-export async function insertAiAgent(payload: any): Promise<{ id: string }> {
+export async function insertAiAgent(payload: unknown): Promise<{ id: string }> {
   const { data, error } = await supabase.from("ai_agents").insert(payload).select().single();
   if (error) throw error;
   return data as { id: string };
 }
 
-export async function insertCompanyAgent(payload: any): Promise<void> {
+export async function insertCompanyAgent(payload: unknown): Promise<void> {
   const { error } = await supabase.from("company_agents").insert(payload);
   if (error) throw error;
 }
@@ -279,7 +279,7 @@ export async function deleteCompanyAgentById(id: string): Promise<void> {
 
 // ---------- Talent Information Access Unlocks ----------
 
-export async function listRecentContactUnlocks(limit = 500): Promise<any[]> {
+export async function listRecentContactUnlocks(limit = 500): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("talent_contact_unlocks")
     .select("*")
@@ -361,12 +361,12 @@ export async function getActiveCompanyMembershipWithName(userId: string): Promis
     .limit(1)
     .maybeSingle();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 // ---------- Gro10x B2B Product Infrastructure Interfaces ----------
 
-export async function listPendingCompanyPostDrafts(companyId: string, limit = 10): Promise<any[]> {
+export async function listPendingCompanyPostDrafts(companyId: string, limit = 10): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("company_post_drafts")
     .select("id, text_content, tags, agent_key, created_at")
@@ -378,7 +378,7 @@ export async function listPendingCompanyPostDrafts(companyId: string, limit = 10
   return data ?? [];
 }
 
-export async function listCompanyLeads(companyId: string): Promise<any[]> {
+export async function listCompanyLeads(companyId: string): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("company_leads")
     .select("id, name, email, phone, company_name, title, source, stage, value_usd, notes, next_step, offering_id, created_at")
@@ -388,17 +388,17 @@ export async function listCompanyLeads(companyId: string): Promise<any[]> {
   return data ?? [];
 }
 
-export async function insertCompanyLead(payload: Record<string, any>): Promise<void> {
-  const { error } = await supabase.from("company_leads").insert(payload as any);
+export async function insertCompanyLead(payload: Record<string, unknown>): Promise<void> {
+  const { error } = await supabase.from("company_leads").insert(payload as unknown);
   if (error) throw error;
 }
 
-export async function updateCompanyLead(id: string, patch: Record<string, any>): Promise<void> {
+export async function updateCompanyLead(id: string, patch: Record<string, unknown>): Promise<void> {
   const { error } = await supabase.from("company_leads").update(patch).eq("id", id);
   if (error) throw error;
 }
 
-export async function listCompanyLeadActivities(leadId: string): Promise<any[]> {
+export async function listCompanyLeadActivities(leadId: string): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("company_lead_activities")
     .select("id, activity_type, body, created_at")
@@ -408,12 +408,12 @@ export async function listCompanyLeadActivities(leadId: string): Promise<any[]> 
   return data ?? [];
 }
 
-export async function insertCompanyLeadActivity(payload: Record<string, any>): Promise<void> {
-  const { error } = await supabase.from("company_lead_activities").insert(payload as any);
+export async function insertCompanyLeadActivity(payload: Record<string, unknown>): Promise<void> {
+  const { error } = await supabase.from("company_lead_activities").insert(payload as unknown);
   if (error) throw error;
 }
 
-export async function listCompanyOfferings(companyId: string, activeOnly = false): Promise<any[]> {
+export async function listCompanyOfferings(companyId: string, activeOnly = false): Promise<unknown[]> {
   let q = supabase
     .from("company_offerings")
     .select("*")
@@ -428,12 +428,12 @@ export async function listCompanyOfferings(companyId: string, activeOnly = false
   return data ?? [];
 }
 
-export async function upsertCompanyOffering(payload: Record<string, any> & { id?: string }): Promise<void> {
+export async function upsertCompanyOffering(payload: Record<string, unknown> & { id?: string }): Promise<void> {
   if (payload.id) {
     const { error } = await supabase.from("company_offerings").update(payload).eq("id", payload.id);
     if (error) throw error;
   } else {
-    const { error } = await supabase.from("company_offerings").insert(payload as any);
+    const { error } = await supabase.from("company_offerings").insert(payload as unknown);
     if (error) throw error;
   }
 }
@@ -494,7 +494,7 @@ export async function listCompanyCreditTransactionsSince(companyId: string, sinc
     .limit(limit);
   if (error) throw error;
   
-  return (data ?? []).map((r: any) => ({
+  return (data ?? []).map((r: unknown) => ({
     ...r,
     amount: Number(r.amount),
     balance_after: Number(r.balance_after),
@@ -513,7 +513,7 @@ export async function getCompanyMemberRole(userId: string, companyId: string): P
   return data?.role ?? null;
 }
 
-export async function getCompanyPublicProfile(companyId: string): Promise<any | null> {
+export async function getCompanyPublicProfile(companyId: string): Promise<unknown | null> {
   const { data, error } = await supabase
     .from("companies")
     .select("id, name, tagline, about, logo_url, banner_url, website, country, slug, profile_completion, verification_tier")
@@ -523,7 +523,7 @@ export async function getCompanyPublicProfile(companyId: string): Promise<any | 
   return data ?? null;
 }
 
-export async function listActiveCompanyMembers(companyId: string): Promise<any[]> {
+export async function listActiveCompanyMembers(companyId: string): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("company_members")
     .select("user_id, role, status, invited_email")
@@ -533,12 +533,12 @@ export async function listActiveCompanyMembers(companyId: string): Promise<any[]
   return data ?? [];
 }
 
-export async function updateCompanyField(companyId: string, patch: Record<string, any>): Promise<{ error: any }> {
+export async function updateCompanyField(companyId: string, patch: Record<string, unknown>): Promise<{ error: unknown }> {
   const { error } = await supabase.from("companies").update(patch).eq("id", companyId);
   return { error };
 }
 
-export async function getCompanyPublicProfileBySlug(slug: string): Promise<{ data: any; error: any }> {
+export async function getCompanyPublicProfileBySlug(slug: string): Promise<{ data: unknown; error: unknown }> {
   const { data, error } = await supabase
     .from("companies")
     .select("id, name, tagline, about, logo_url, banner_url, website, country, slug")
@@ -555,7 +555,7 @@ export async function listActiveCompanyMemberUserIds(companyId: string, limit = 
     .eq("status", "active")
     .limit(limit);
   if (error) throw error;
-  return ((data ?? []) as any[]).map((r) => r.user_id).filter(Boolean);
+  return ((data ?? []) as unknown[]).map((r) => r.user_id).filter(Boolean);
 }
 
 export async function listCompanyShortlistsRecent(companyId: string, limit = 200): Promise<Array<{ talent_id: string; created_at: string }>> {
@@ -593,13 +593,13 @@ export async function getActiveMembershipWithCompanyName(userId: string): Promis
 
 // ---------- High-Performance Stored Procedures (RPC) Wrappers ----------
 
-export async function getCompaniesOverview(): Promise<any> {
+export async function getCompaniesOverview(): Promise<unknown> {
   const { data, error } = await supabase.rpc("get_companies_overview");
   if (error) throw error;
   return data;
 }
 
-export async function getIndustryRollup(): Promise<any[]> {
+export async function getIndustryRollup(): Promise<unknown[]> {
   const { data, error } = await supabase.rpc("get_industry_rollup");
   if (error) throw error;
   return data ?? [];
@@ -616,13 +616,13 @@ export async function getContactUnlocksSummary(): Promise<ContactUnlocksSummary>
   return (data ?? { total_unlocks: 0, total_credits: 0, last_7d: 0 }) as unknown as ContactUnlocksSummary;
 }
 
-export async function getCompanyDetail<T = any>(companyName: string): Promise<T> {
+export async function getCompanyDetail<T = unknown>(companyName: string): Promise<T> {
   const { data, error } = await supabase.rpc("get_company_detail", { p_company_name: companyName });
   if (error) throw error;
   return data as T;
 }
 
-export async function getCompaniesWithSignal<T = any>(args: { country?: string | null; limit: number }): Promise<T> {
+export async function getCompaniesWithSignal<T = unknown>(args: { country?: string | null; limit: number }): Promise<T> {
   const { data, error } = await supabase.rpc("get_companies_with_signal", {
     p_country: args.country ?? null,
     p_limit: args.limit,
@@ -630,3 +630,4 @@ export async function getCompaniesWithSignal<T = any>(args: { country?: string |
   if (error) throw error;
   return data as T;
 }
+

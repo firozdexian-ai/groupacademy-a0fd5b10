@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from "react";
+﻿import { useEffect, useState, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,7 @@ interface OrientationStageProps {
 /**
  * GroUp Academy: Core Orientation Ingress Node (OrientationStage)
  * An authoritative operational hub managing dynamic media stream tracking, video synchronization thresholds, and profile hydration triggers.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function OrientationStage({ resources = [], onComplete, isCompleted, fallbackVideoUrl }: OrientationStageProps) {
   const queryClient = useQueryClient();
@@ -100,7 +100,7 @@ export function OrientationStage({ resources = [], onComplete, isCompleted, fall
 
   return (
     <div className="space-y-5 text-left max-w-full w-full transform-gpu antialiased">
-      {/* HUD LEVEL 1: STAGE HEADER METADATA OVERVIEW */}
+      {/* dashboard LEVEL 1: STAGE HEADER METADATA OVERVIEW */}
       <div className="flex items-center justify-between gap-4 px-0.5 select-none w-full leading-none">
         <div className="space-y-1.5 text-left flex flex-col justify-center min-w-0 flex-1 leading-none">
           <h2 className="text-sm sm:text-base font-bold tracking-tight text-foreground uppercase tracking-wide flex items-center gap-2">
@@ -122,7 +122,7 @@ export function OrientationStage({ resources = [], onComplete, isCompleted, fall
         )}
       </div>
 
-      {/* HUD LEVEL 2: COMPONENT CORE DATA FRAME MATRIX AREA */}
+      {/* dashboard LEVEL 2: COMPONENT CORE DATA FRAME MATRIX AREA */}
       {!resources.length && !fallbackVideoUrl ? (
         <Card className="border border-dashed border-border/60 bg-card/40 backdrop-blur-md rounded-2xl p-6 text-center select-none w-full max-w-full flex flex-col justify-center items-center py-12 animate-in fade-in duration-300">
           <Zap className="h-6 w-6 text-primary/30 mb-3 animate-pulse stroke-[2.2]" />
@@ -221,7 +221,7 @@ export function OrientationStage({ resources = [], onComplete, isCompleted, fall
         </div>
       )}
 
-      {/* HUD LEVEL 3: TIMELINE TRANSACTION COMPLETION COMMAND ACTIONS BAR */}
+      {/* dashboard LEVEL 3: TIMELINE TRANSACTION COMPLETION COMMAND ACTIONS BAR */}
       {!isCompleted && (resources.length > 0 || fallbackVideoUrl) && (
         <div className="flex justify-end pt-3 border-t border-border/10 select-none w-full shrink-0">
           <Button
@@ -241,3 +241,4 @@ export function OrientationStage({ resources = [], onComplete, isCompleted, fall
     </div>
   );
 }
+

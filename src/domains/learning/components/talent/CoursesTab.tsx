@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useMemo } from "react";
+﻿import { useEffect, useState, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import {
@@ -60,7 +60,7 @@ const STATUS_LABEL: Record<string, string> = {
   cancelled: "Cancelled",
 };
 
-const filterOptions: { key: FilterKey; icon: any; label: string }[] = [
+const filterOptions: { key: FilterKey; icon: unknown; label: string }[] = [
   { key: "all", icon: Layers, label: "All Items" },
   { key: "courses", icon: BookOpen, label: "Courses" },
   { key: "live", icon: Calendar, label: "Live Classes" },
@@ -430,7 +430,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
     );
   };
 
-  const renderCompetitionCard = (compItem: any) => {
+  const renderCompetitionCard = (compItem: unknown) => {
     if (!compItem || !compItem.id) return null;
 
     return (
@@ -606,3 +606,5 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
     </div>
   );
 }
+
+

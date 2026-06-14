@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Jobs domain repository.
  *
  * Phase 10a: typed wrappers around `supabase.from(...)` for jobs-owned tables
@@ -63,9 +63,9 @@ export async function markApplicationMessagesRead(input: {
   if (error) throw error;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Job sharing helpers (used by gigs/JobSharing flow)
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function getActiveJobsForSharing() {
   const { data, error } = await supabase
@@ -89,23 +89,23 @@ export async function getJobShareClickCounts(
     .in("job_id", jobIds);
   if (error) throw error;
   const counts: Record<string, number> = {};
-  (data ?? []).forEach((row: any) => {
+  (data ?? []).forEach((row: unknown) => {
     if (row?.job_id) counts[row.job_id] = (counts[row.job_id] || 0) + 1;
   });
   return counts;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Access codes (assessment + job application)
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function insertAssessmentAccessCode(payload: {
   code: string;
   email: string;
   created_by?: string | null;
   expires_at?: string;
-}): Promise<{ error: any }> {
-  const { error } = await supabase.from("assessment_access_codes").insert(payload as any);
+}): Promise<{ error: unknown }> {
+  const { error } = await supabase.from("assessment_access_codes").insert(payload as unknown);
   return { error };
 }
 
@@ -113,14 +113,14 @@ export async function insertJobApplicationAccessCode(payload: {
   code: string;
   email: string;
   created_by?: string | null;
-}): Promise<{ error: any }> {
-  const { error } = await supabase.from("job_application_access_codes").insert(payload as any);
+}): Promise<{ error: unknown }> {
+  const { error } = await supabase.from("job_application_access_codes").insert(payload as unknown);
   return { error };
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Jobs CRUD (admin)
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export type AdminJobsStatusFilter =
   | "all"
@@ -141,7 +141,7 @@ export interface ListAdminJobsOpts {
 import { sanitizeIlike } from "@/lib/supabaseQuery";
 
 export async function listAdminJobs(opts: ListAdminJobsOpts = {}): Promise<{
-  rows: any[];
+  rows: unknown[];
   count: number;
 }> {
   const { columns = "*", search, status = "all", page = 1, pageSize = 10 } = opts;
@@ -168,10 +168,10 @@ export async function listAdminJobs(opts: ListAdminJobsOpts = {}): Promise<{
   const from = (page - 1) * pageSize;
   const { data, count, error } = await query.range(from, from + pageSize - 1);
   if (error) throw error;
-  return { rows: (data ?? []) as any[], count: count ?? 0 };
+  return { rows: (data ?? []) as unknown[], count: count ?? 0 };
 }
 
-export async function listPendingApprovalJobs(): Promise<any[]> {
+export async function listPendingApprovalJobs(): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("jobs")
     .select("id,title,company_name,location,is_active,is_featured,created_at")
@@ -179,34 +179,34 @@ export async function listPendingApprovalJobs(): Promise<any[]> {
     .order("created_at", { ascending: false })
     .limit(200);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-export async function getJobById(id: string): Promise<any | null> {
+export async function getJobById(id: string): Promise<unknown | null> {
   const { data, error } = await supabase.from("jobs").select("*").eq("id", id).single();
   if (error) throw error;
   return data;
 }
 
-export async function insertJob(payload: any): Promise<void> {
+export async function insertJob(payload: unknown): Promise<void> {
   const { created_at, updated_at, ...cleanPayload } = payload;
   const { error } = await supabase.from("jobs").insert(cleanPayload);
   if (error) throw error;
 }
 
-export async function insertJobsBulk(payloads: any[]): Promise<void> {
+export async function insertJobsBulk(payloads: unknown[]): Promise<void> {
   const cleanPayloads = payloads.map(({ created_at, updated_at, ...clean }) => clean);
-  const { error } = await supabase.from("jobs").insert(cleanPayloads as any);
+  const { error } = await supabase.from("jobs").insert(cleanPayloads as unknown);
   if (error) throw error;
 }
 
-export async function updateJob(id: string, patch: any): Promise<void> {
+export async function updateJob(id: string, patch: unknown): Promise<void> {
   const { created_at, updated_at, ...cleanPatch } = patch;
   const { error } = await supabase.from("jobs").update(cleanPatch).eq("id", id);
   if (error) throw error;
 }
 
-export async function updateJobsBulk(ids: string[], patch: any): Promise<void> {
+export async function updateJobsBulk(ids: string[], patch: unknown): Promise<void> {
   const { created_at, updated_at, ...cleanPatch } = patch;
   const { error } = await supabase.from("jobs").update(cleanPatch).in("id", ids);
   if (error) throw error;
@@ -236,7 +236,7 @@ export async function getJobEngagementCounts(
   jobIds.forEach((id) => (stats[id] = { clicks: 0, saves: 0, recommendations: 0 }));
   const [clicksRes, savesRes, recsRes] = await Promise.all([
     supabase.from("job_analytics").select("job_id").in("job_id", jobIds),
-    (supabase.from("saved_items") as any)
+    (supabase.from("saved_items") as unknown)
       .select("item_id")
       .eq("kind", "job")
       .in("item_id", jobIds),
@@ -254,9 +254,9 @@ export async function getJobEngagementCounts(
   return stats;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Applications (admin)
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function listActiveJobsLite(
   limit = 500,
@@ -268,7 +268,7 @@ export async function listActiveJobsLite(
     .order("created_at", { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data ?? []) as any;
+  return (data ?? []) as unknown;
 }
 
 export async function findJobIdsBySearch(search: string, limit = 200): Promise<string[]> {
@@ -280,7 +280,7 @@ export async function findJobIdsBySearch(search: string, limit = 200): Promise<s
     .or(`title.ilike.%${safe}%,company_name.ilike.%${safe}%`)
     .limit(limit);
   if (error) throw error;
-  return (data ?? []).map((j: any) => j.id);
+  return (data ?? []).map((j: unknown) => j.id);
 }
 
 export interface SearchAdminApplicationsOpts {
@@ -298,7 +298,7 @@ export interface SearchAdminApplicationsOpts {
 
 export async function searchAdminApplications(
   opts: SearchAdminApplicationsOpts,
-): Promise<{ rows: any[]; count: number }> {
+): Promise<{ rows: unknown[]; count: number }> {
   const {
     statusFilter = "all",
     sourceFilter = "all",
@@ -319,7 +319,7 @@ export async function searchAdminApplications(
     { count: "exact" },
   );
 
-  if (statusFilter !== "all") query = query.eq("application_status", statusFilter as any);
+  if (statusFilter !== "all") query = query.eq("application_status", statusFilter as unknown);
   if (sourceFilter !== "all") query = query.eq("source", sourceFilter);
   if (jobFilter !== "all") query = query.eq("job_id", jobFilter);
 
@@ -342,13 +342,13 @@ export async function searchAdminApplications(
   const from = (page - 1) * pageSize;
   const { data, count, error } = await query.range(from, from + pageSize - 1);
   if (error) throw error;
-  return { rows: (data ?? []) as any[], count: count ?? 0 };
+  return { rows: (data ?? []) as unknown[], count: count ?? 0 };
 }
 
 export async function updateApplicationStatus(id: string, status: string): Promise<void> {
   const { error } = await supabase
     .from("job_applications")
-    .update({ application_status: status as any })
+    .update({ application_status: status as unknown })
     .eq("id", id);
   if (error) throw error;
 }
@@ -361,20 +361,20 @@ export async function insertExternalJobApplication(payload: {
   external_notes: string | null;
   added_by: string | null;
 }): Promise<void> {
-  const { created_at, updated_at, ...cleanPayload } = payload as any;
+  const { created_at, updated_at, ...cleanPayload } = payload as unknown;
   const { error } = await supabase.from("job_applications").insert({
     ...cleanPayload,
     application_status: "submitted",
     delivery_status: "pending",
     is_paid: true,
     source: "external",
-  } as any);
+  } as unknown);
   if (error) throw error;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Channel promotion
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function listJobChannelPosts(jobId: string): Promise<Array<{ channel: string }>> {
   const { data, error } = await supabase
@@ -382,7 +382,7 @@ export async function listJobChannelPosts(jobId: string): Promise<Array<{ channe
     .select("channel")
     .eq("job_id", jobId);
   if (error) throw error;
-  return (data ?? []) as any;
+  return (data ?? []) as unknown;
 }
 
 export async function insertJobChannelPost(payload: {
@@ -391,14 +391,14 @@ export async function insertJobChannelPost(payload: {
   posted_by: string | null;
   caption: string | null;
 }): Promise<void> {
-  const { created_at, updated_at, ...cleanPayload } = payload as any;
-  const { error } = await supabase.from("job_channel_posts").insert(cleanPayload as any);
+  const { created_at, updated_at, ...cleanPayload } = payload as unknown;
+  const { error } = await supabase.from("job_channel_posts").insert(cleanPayload as unknown);
   if (error) throw error;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Active job locations (talent JobPreferencesSheet)
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function listActiveJobLocations(limit = 300): Promise<string[]> {
   const { data, error } = await supabase
@@ -408,15 +408,15 @@ export async function listActiveJobLocations(limit = 300): Promise<string[]> {
     .limit(limit);
   if (error) throw error;
   const locSet = new Set<string>(["Remote"]);
-  (data ?? []).forEach((j: any) => {
+  (data ?? []).forEach((j: unknown) => {
     if (j.location) locSet.add(String(j.location).trim());
   });
   return Array.from(locSet).slice(0, 15);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Jobs ATS graph (used by useJobsGraph)
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function getJobsGraphMaster() {
   const [jobsRes, appsRes, crmRes, assessRes, inviteRes] = await Promise.all([
@@ -463,30 +463,30 @@ export async function getJobsGraphMaster() {
   };
 }
 
-export async function upsertGraphRow(table: string, payload: any): Promise<void> {
+export async function upsertGraphRow(table: string, payload: unknown): Promise<void> {
   const { created_at, updated_at, ...cleanPayload } = payload;
   if (cleanPayload?.id) {
     const { id, ...patch } = cleanPayload;
-    const { error } = await supabase.from(table as any).update(patch).eq("id", id);
+    const { error } = await supabase.from(table as unknown).update(patch).eq("id", id);
     if (error) throw error;
   } else {
-    const { error } = await supabase.from(table as any).insert([cleanPayload]);
+    const { error } = await supabase.from(table as unknown).insert([cleanPayload]);
     if (error) throw error;
   }
 }
 
 export async function deleteGraphRow(table: string, id: string): Promise<void> {
-  const { error } = await supabase.from(table as any).delete().eq("id", id);
+  const { error } = await supabase.from(table as unknown).delete().eq("id", id);
   if (error) throw error;
 }
 
-export async function updateJobApplication(id: string, patch: Record<string, any>): Promise<void> {
+export async function updateJobApplication(id: string, patch: Record<string, unknown>): Promise<void> {
   const { created_at, updated_at, ...cleanPatch } = patch;
   const { error } = await supabase.from("job_applications").update(cleanPatch).eq("id", id);
   if (error) throw error;
 }
 
-// ─── Phase 10j.2 — tool_runs / offers / interviews ────────────────────────
+// â”€â”€â”€ Phase 10j.2 â€” tool_runs / offers / interviews â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function listToolRunsForUser(userId: string, limit = 5) {
   const { data, error } = await supabase
     .from("tool_runs")
@@ -502,7 +502,7 @@ export async function insertToolRun(payload: {
   user_id: string;
   tool_key: string;
   cost_credits: number;
-  payload?: Record<string, any>;
+  payload?: Record<string, unknown>;
   job_id?: string | null;
 }) {
   const { error } = await supabase.from("tool_runs").insert({
@@ -515,9 +515,9 @@ export async function insertToolRun(payload: {
   if (error) throw error;
 }
 
-export async function insertOffer(payload: Record<string, any>): Promise<string> {
+export async function insertOffer(payload: Record<string, unknown>): Promise<string> {
   const { created_at, updated_at, ...cleanPayload } = payload;
-  const { data, error } = await (supabase.from("offers") as any)
+  const { data, error } = await (supabase.from("offers") as unknown)
     .insert(cleanPayload)
     .select("id")
     .single();
@@ -526,13 +526,13 @@ export async function insertOffer(payload: Record<string, any>): Promise<string>
 }
 
 export async function updateOfferStatus(offerId: string, status: string): Promise<void> {
-  const { error } = await supabase.from("offers").update({ status: status as any }).eq("id", offerId);
+  const { error } = await supabase.from("offers").update({ status: status as unknown }).eq("id", offerId);
   if (error) throw error;
 }
 
-export async function insertInterview(payload: Record<string, any>): Promise<string> {
+export async function insertInterview(payload: Record<string, unknown>): Promise<string> {
   const { created_at, updated_at, ...cleanPayload } = payload;
-  const { data, error } = await (supabase.from("interviews") as any)
+  const { data, error } = await (supabase.from("interviews") as unknown)
     .insert(cleanPayload)
     .select("id")
     .single();
@@ -540,14 +540,14 @@ export async function insertInterview(payload: Record<string, any>): Promise<str
   return data.id as string;
 }
 
-export async function insertInterviewSlots(rows: Array<Record<string, any>>): Promise<void> {
+export async function insertInterviewSlots(rows: Array<Record<string, unknown>>): Promise<void> {
   if (!rows.length) return;
   const cleanRows = rows.map(({ created_at, updated_at, ...clean }) => clean);
-  const { error } = await (supabase.from("interview_slots") as any).insert(cleanRows);
+  const { error } = await (supabase.from("interview_slots") as unknown).insert(cleanRows);
   if (error) throw error;
 }
 
-// ─── Phase 10j.5d additions ────────────────────────────────────────────────
+// â”€â”€â”€ Phase 10j.5d additions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getInterviewById(id: string) {
   const { data, error } = await supabase
     .from("interviews")
@@ -555,7 +555,7 @@ export async function getInterviewById(id: string) {
     .eq("id", id)
     .maybeSingle();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function listInterviewSlots(interviewId: string) {
@@ -565,7 +565,7 @@ export async function listInterviewSlots(interviewId: string) {
     .eq("interview_id", interviewId)
     .order("starts_at");
   if (error) throw error;
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
 export async function listJobsByIdsBasic(ids: string[]) {
@@ -575,17 +575,17 @@ export async function listJobsByIdsBasic(ids: string[]) {
     .select("id, title, company_name, location")
     .in("id", ids);
   if (error) throw error;
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
-// ─── Phase 10j.5e: job assessment answers update ──────────────────────────
-export async function updateJobAssessment(id: string, patch: Record<string, any>): Promise<void> {
+// â”€â”€â”€ Phase 10j.5e: job assessment answers update â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function updateJobAssessment(id: string, patch: Record<string, unknown>): Promise<void> {
   const { created_at, updated_at, ...cleanPatch } = patch;
   const { error } = await supabase.from("job_assessments").update(cleanPatch).eq("id", id);
   if (error) throw error;
 }
 
-// ─── Phase 10j.6a: jobs/offers/interview RPC helpers ───────────────────────
+// â”€â”€â”€ Phase 10j.6a: jobs/offers/interview RPC helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getRemoteFriendlySummary() {
   const { data, error } = await supabase.rpc("get_remote_friendly_summary");
   if (error) throw error;
@@ -628,11 +628,11 @@ export async function confirmInterviewSlot(p_interview_id: string, p_slot_id: st
 export async function getEmployerJobsDashboard(p_company_id: string) {
   const { data, error } = await supabase.rpc("get_employer_jobs_dashboard", { p_company_id });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-// ─── Phase 10j.5g2: active jobs for a company ─────────────────────────────
-export async function listActiveJobsByCompanyId(companyId: string, limit = 10): Promise<any[]> {
+// â”€â”€â”€ Phase 10j.5g2: active jobs for a company â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function listActiveJobsByCompanyId(companyId: string, limit = 10): Promise<unknown[]> {
   const { data } = await supabase
     .from("jobs")
     .select("id, title, location, job_type, is_active, created_at")
@@ -640,10 +640,10 @@ export async function listActiveJobsByCompanyId(companyId: string, limit = 10): 
     .eq("is_active", true)
     .order("created_at", { ascending: false })
     .limit(limit);
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-export async function listActiveJobsByCompanyIdShort(companyId: string, limit = 10): Promise<any[]> {
+export async function listActiveJobsByCompanyIdShort(companyId: string, limit = 10): Promise<unknown[]> {
   const { data } = await supabase
     .from("jobs")
     .select("id, title, location, job_type")
@@ -651,16 +651,16 @@ export async function listActiveJobsByCompanyIdShort(companyId: string, limit = 
     .eq("is_active", true)
     .order("created_at", { ascending: false })
     .limit(limit);
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-// ─── Phase 10j.5k2: active jobs by status (for invite-to-apply dialogs) ───
+// â”€â”€â”€ Phase 10j.5k2: active jobs by status (for invite-to-apply dialogs) â”€â”€â”€
 export async function listJobsByCompanyAndStatus(
   companyId: string,
   status: string,
   limit = 50,
 ): Promise<Array<{ id: string; title: string }>> {
-  const { data, error } = await (supabase as any)
+  const { data, error } = await (supabase as unknown)
     .from("jobs")
     .select("id, title")
     .eq("company_id", companyId)
@@ -670,8 +670,8 @@ export async function listJobsByCompanyAndStatus(
   return (data ?? []) as Array<{ id: string; title: string }>;
 }
 
-// ─── Phase 10j.5g2: AppJobApplication helpers ─────────────────────────────
-export async function getJobForApplication(jobId: string): Promise<{ data: any; error: any }> {
+// â”€â”€â”€ Phase 10j.5g2: AppJobApplication helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function getJobForApplication(jobId: string): Promise<{ data: unknown; error: unknown }> {
   const { data, error } = await supabase
     .from("jobs")
     .select("id, title, company_name, company_logo_url, application_email, ai_assessment_enabled")
@@ -683,7 +683,7 @@ export async function getJobForApplication(jobId: string): Promise<{ data: any; 
 export async function getExistingTalentApplication(
   jobId: string,
   talentId: string,
-): Promise<any | null> {
+): Promise<unknown | null> {
   const { data } = await supabase
     .from("job_applications")
     .select(`id, job_assessments(id)`)
@@ -699,17 +699,17 @@ export async function insertTalentJobApplication(payload: {
   cover_letter: string;
   cv_url: string | null;
   delivery_status?: string;
-}): Promise<{ data: any; error: any }> {
-  const { created_at, updated_at, ...cleanPayload } = payload as any;
+}): Promise<{ data: unknown; error: unknown }> {
+  const { created_at, updated_at, ...cleanPayload } = payload as unknown;
   const { data, error } = await supabase
     .from("job_applications")
-    .insert({ ...cleanPayload, delivery_status: cleanPayload.delivery_status ?? "pending" } as any)
+    .insert({ ...cleanPayload, delivery_status: cleanPayload.delivery_status ?? "pending" } as unknown)
     .select("id")
     .single();
   return { data, error };
 }
 
-// ─── Phase 10j.5g3 ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Phase 10j.5g3 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function listTalentApplicationsWithJob(talentId: string) {
   const { data, error } = await supabase
     .from("job_applications")
@@ -724,7 +724,7 @@ export async function listTalentApplicationsWithJob(talentId: string) {
     .order("last_status_at", { ascending: false, nullsFirst: false })
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function getPublicActiveJobById(id: string) {
@@ -735,7 +735,7 @@ export async function getPublicActiveJobById(id: string) {
     .eq("is_active", true)
     .maybeSingle();
   if (error) throw error;
-  return data as any | null;
+  return data as unknown | null;
 }
 
 export interface PublicJobSearchFilters {
@@ -768,7 +768,7 @@ export async function searchPublicActiveJobs(
     q = q.or(`title.ilike.%${s}%,company_name.ilike.%${s}%`);
   }
   if (filters.jobTypes && filters.jobTypes.length) {
-    q = q.in("job_type", filters.jobTypes as any);
+    q = q.in("job_type", filters.jobTypes as unknown);
   }
   if (filters.sort === "hot") q = q.order("is_featured", { ascending: false });
   else if (filters.sort === "expiring") q = q.order("deadline", { ascending: true });
@@ -777,17 +777,17 @@ export async function searchPublicActiveJobs(
     .order("created_at", { ascending: false })
     .range(rangeFrom, rangeTo);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-// ─── Phase 10j.5g5 ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Phase 10j.5g5 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getJobTitleById(jobId: string): Promise<string | null> {
   const { data } = await supabase
     .from("jobs")
     .select("title")
     .eq("id", jobId)
     .maybeSingle();
-  return ((data as any)?.title as string | undefined) ?? null;
+  return ((data as unknown)?.title as string | undefined) ?? null;
 }
 
 export async function listRecentApplicationsWithJobMeta(limit = 200) {
@@ -797,7 +797,7 @@ export async function listRecentApplicationsWithJobMeta(limit = 200) {
     .order("created_at", { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function getApplicationOfferContext(applicationId: string) {
@@ -806,11 +806,11 @@ export async function getApplicationOfferContext(applicationId: string) {
     .select("talent_id, jobs!inner(title, company_id)")
     .eq("id", applicationId)
     .maybeSingle();
-  return data as any | null;
+  return data as unknown | null;
 }
 
-// ─── Phase 10j.5g6 ─────────────────────────────────────────────────────────
-export async function insertJobReturningId(payload: any): Promise<string> {
+// â”€â”€â”€ Phase 10j.5g6 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function insertJobReturningId(payload: unknown): Promise<string> {
   const { created_at, updated_at, ...cleanPayload } = payload;
   const { data, error } = await supabase
     .from("jobs")
@@ -821,7 +821,7 @@ export async function insertJobReturningId(payload: any): Promise<string> {
   return (data as { id: string } | null)?.id ?? "";
 }
 
-// ─── Phase 10j.5h5: ranked/hub/pipeline RPC wrappers ──────────────────────
+// â”€â”€â”€ Phase 10j.5h5: ranked/hub/pipeline RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getRankedJobsForTalent(args: {
   talentId: string;
   cursor: number | null;
@@ -833,7 +833,7 @@ export async function getRankedJobsForTalent(args: {
     _limit: args.limit,
   });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function getJobsHubDashboard(talentId: string | null) {
@@ -841,7 +841,7 @@ export async function getJobsHubDashboard(talentId: string | null) {
     _talent_id: talentId,
   });
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function getEmployerPipelineFull(args: {
@@ -855,14 +855,14 @@ export async function getEmployerPipelineFull(args: {
     p_limit: args.limit ?? 500,
   });
   if (error) throw error;
-  return (data ?? {}) as any;
+  return (data ?? {}) as unknown;
 }
 
-// ─── Phase 10j.5h8: discovery + admin RPC wrappers ────────────────────────
+// â”€â”€â”€ Phase 10j.5h8: discovery + admin RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getTrendingJobs(limit: number) {
   const { data, error } = await supabase.rpc("get_trending_jobs", { limit_n: limit });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function getJobsInField(args: { talentId: string; limit: number }) {
@@ -871,7 +871,7 @@ export async function getJobsInField(args: { talentId: string; limit: number }) 
     _limit: args.limit,
   });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function countJobsByType(country: string | null) {
@@ -883,7 +883,7 @@ export async function countJobsByType(country: string | null) {
 export async function getApplicationBuckets(userId: string) {
   const { data, error } = await supabase.rpc("get_application_buckets", { p_user_id: userId });
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function getOrCreateTalent(args: {
@@ -917,7 +917,7 @@ export async function awardGigCredits(args: { submissionId: string; adminNotes: 
 }
 
 // -----------------------------------------------------------------------------
-// Storage helpers (Phase 10j.5i) — job-assets (public), talent-cvs (signed)
+// Storage helpers (Phase 10j.5i) â€” job-assets (public), talent-cvs (signed)
 // -----------------------------------------------------------------------------
 
 export async function uploadJobAsset(
@@ -942,7 +942,7 @@ export async function uploadTalentCv(
   file: File,
   options?: { upsert?: boolean; contentType?: string },
 ): Promise<{ path: string }> {
-  // talent-cvs is private per security memory — no public URL exposure
+  // talent-cvs is private per security memory â€” no public URL exposure
   const { error } = await supabase.storage
     .from("talent-cvs")
     .upload(path, file, { upsert: options?.upsert ?? false, contentType: options?.contentType });
@@ -958,7 +958,7 @@ export async function createTalentCvSignedUrl(path: string, expiresInSeconds = 3
   return data.signedUrl;
 }
 
-// ─── Phase 10j.5k5: job_applications / job_invitations hook-backing ──────
+// â”€â”€â”€ Phase 10j.5k5: job_applications / job_invitations hook-backing â”€â”€â”€â”€â”€â”€
 export interface CachedJobMatchRow {
   ai_match_score: number | null;
   ai_match_rationale: string | null;
@@ -982,7 +982,7 @@ export async function getCachedJobMatchScore(
 export async function listTalentApplicationHistory(
   talentId: string,
   limit = 20,
-): Promise<any[]> {
+): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("job_applications")
     .select(
@@ -993,7 +993,7 @@ export async function listTalentApplicationHistory(
     .order("created_at", { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function insertJobInvitation(args: {
@@ -1003,7 +1003,7 @@ export async function insertJobInvitation(args: {
   note: string | null;
   invited_by: string;
 }): Promise<{ id: string }> {
-  const { created_at, updated_at, ...cleanArgs } = args as any;
+  const { created_at, updated_at, ...cleanArgs } = args as unknown;
   const { data, error } = await supabase
     .from("job_invitations")
     .insert(cleanArgs)
@@ -1013,7 +1013,7 @@ export async function insertJobInvitation(args: {
   return data as { id: string };
 }
 
-// ─── Phase 10j.5k9: pending submissions + related jobs ────────────────────
+// â”€â”€â”€ Phase 10j.5k9: pending submissions + related jobs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function listPendingJobSubmissions() {
   const { data, error } = await supabase
     .from("gig_submissions")
@@ -1022,7 +1022,7 @@ export async function listPendingJobSubmissions() {
     .eq("gigs.category", "job_posting")
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 const RELATED_JOB_FIELDS =
@@ -1037,7 +1037,7 @@ export async function listRelatedJobsByCompany(companyName: string, excludeId: s
     .eq("is_active", true)
     .limit(limit);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function listRelatedJobsByLocation(country: string, excludeIds: string[], limit = 6) {
@@ -1049,7 +1049,7 @@ export async function listRelatedJobsByLocation(country: string, excludeIds: str
     .not("id", "in", `(${excludeIds.join(",")})`)
     .limit(limit);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function listRelatedJobsFeatured(excludeIds: string[], limit = 6) {
@@ -1062,7 +1062,7 @@ export async function listRelatedJobsFeatured(excludeIds: string[], limit = 6) {
     .order("created_at", { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 /**
@@ -1109,7 +1109,7 @@ export async function updateApplicationAIScore(
 
 /** RPC: archive jobs past their deadline + inactive-stale jobs >90d. */
 export async function archiveExpiredJobs(): Promise<number> {
-  const { data, error } = await (supabase as any).rpc("archive_expired_jobs");
+  const { data, error } = await (supabase as unknown).rpc("archive_expired_jobs");
   if (error) throw error;
   return Number(data ?? 0);
 }
@@ -1125,19 +1125,19 @@ export async function listActiveJobsForOutreach(limit = 100) {
     .order("created_at", { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 /** Saved job ids for the ScoreMe picker. */
 export async function listSavedJobIdsForUser(userId: string, limit = 20): Promise<string[]> {
-  const { data, error } = await (supabase.from("saved_items") as any)
+  const { data, error } = await (supabase.from("saved_items") as unknown)
     .select("item_id")
     .eq("user_id", userId)
     .eq("item_type", "job")
     .order("created_at", { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return ((data ?? []) as any[]).map((r) => r.item_id).filter(Boolean);
+  return ((data ?? []) as unknown[]).map((r) => r.item_id).filter(Boolean);
 }
 
 export async function listJobsByIdsForPicker(ids: string[]) {
@@ -1169,14 +1169,14 @@ export async function listExistingJobSourceUrls(sourceUrls: string[]): Promise<s
     .select("source_url")
     .in("source_url", sourceUrls);
   if (error) throw error;
-  return ((data ?? []) as any[]).map((r) => r.source_url).filter(Boolean);
+  return ((data ?? []) as unknown[]).map((r) => r.source_url).filter(Boolean);
 }
 
 /** Assessment leads page for JobsAssessmentLeadsTab. */
 export async function listCareerAssessmentLeads(args: {
   page: number;
   pageSize: number;
-}): Promise<{ rows: any[]; count: number }> {
+}): Promise<{ rows: unknown[]; count: number }> {
   const { page, pageSize } = args;
   const { data, error, count } = await supabase
     .from("career_assessments")
@@ -1196,6 +1196,8 @@ export async function listCareerAssessmentLeads(args: {
     .order("created_at", { ascending: false })
     .range(page * pageSize, (page + 1) * pageSize - 1);
   if (error) throw error;
-  return { rows: (data ?? []) as any[], count: count ?? 0 };
+  return { rows: (data ?? []) as unknown[], count: count ?? 0 };
 }
+
+
 

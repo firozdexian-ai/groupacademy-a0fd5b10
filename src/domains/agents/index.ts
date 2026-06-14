@@ -1,10 +1,10 @@
-/**
- * Group Academy — Agents Domain Export Engine (Barrel)
+﻿/**
+ * Group Academy â€” Agents Domain Export Engine (Barrel)
  */
 export { AGENT_REGISTRY, AGENT_BY_ID, getAgent, AgentChatScreen } from "./registry";
 export type { AgentScope, AgentRegistryEntry } from "./registry";
 
-// ─── STAGE 1: EDGE NETWORK LAYER WRAPPERS (API) ───────────────────────────
+// â”€â”€â”€ STAGE 1: EDGE NETWORK LAYER WRAPPERS (API) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export {
   agentRuntime,
   aiGeneralChat,
@@ -17,7 +17,7 @@ export {
   triggerAgentPitch,
 } from "./api/agentsApi";
 
-// ─── STAGE 2: HARDENED POSTGRES INFRASTRUCTURE (REPO) ─────────────────────
+// â”€â”€â”€ STAGE 2: HARDENED POSTGRES INFRASTRUCTURE (REPO) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Exporting the full repository suite for clean component consumption
 export {
   updateAiAgent,
@@ -80,7 +80,7 @@ export {
   listTopActiveAgentsForQuickActions,
 } from "./repo/agentsRepo";
 
-// ─── STAGE 3: BOUND INTEGRATION SCHEMA TYPE DEFINITIONS ───────────────────
+// â”€â”€â”€ STAGE 3: BOUND INTEGRATION SCHEMA TYPE DEFINITIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export type {
   AgentRuntimeRequest,
   AgentRuntimeResponse,
@@ -102,3 +102,4 @@ export type {
   TriggerAgentPitchRequest,
   TriggerAgentPitchResponse,
 } from "@/edge/contracts/agents";
+

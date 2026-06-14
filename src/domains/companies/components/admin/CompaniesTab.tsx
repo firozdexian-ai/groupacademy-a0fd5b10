@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+﻿import { useState, useEffect, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   listCompaniesPaged,
@@ -168,7 +168,7 @@ export function CompaniesTab() {
   // Mutation: Upsert / Save
   const saveMutation = useMutation({
     mutationFn: async (values: CompanyFormValues) => {
-      const payload: Record<string, any> = {
+      const payload: Record<string, unknown> = {
         name: values.name.trim(),
         slug: values.slug.trim(),
         tagline: values.tagline.trim() || null,
@@ -185,9 +185,9 @@ export function CompaniesTab() {
 
       if (editingCompany) {
         payload.id = editingCompany.id;
-        await upsertCompany(payload as any);
+        await upsertCompany(payload as unknown);
       } else {
-        await insertCompany(payload as any);
+        await insertCompany(payload as unknown);
       }
     },
     onSuccess: () => {
@@ -195,7 +195,7 @@ export function CompaniesTab() {
       setIsFormOpen(false);
       refetchAll();
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast.error(`Operation failed: ${error.message}`);
     },
   });
@@ -210,7 +210,7 @@ export function CompaniesTab() {
       setDeleteTarget(null);
       refetchAll();
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast.error(`Delete failed: ${error.message}`);
     },
   });
@@ -340,7 +340,7 @@ export function CompaniesTab() {
               <SelectContent className="rounded-xl border">
                 <SelectItem value="all" className="font-semibold text-xs">All Industries</SelectItem>
                 <SelectItem value="none" className="font-semibold text-xs">Unassigned (None)</SelectItem>
-                {industryRollup.map((ind: any) => (
+                {industryRollup.map((ind: unknown) => (
                   <SelectItem key={ind.industry} value={ind.industry} className="font-semibold text-xs">
                     {ind.industry} ({ind.company_count})
                   </SelectItem>
@@ -413,7 +413,7 @@ export function CompaniesTab() {
                       )}
                     </TableCell>
                     <TableCell className="text-left text-xs font-semibold text-muted-foreground">
-                      {company.primary_email || "—"}
+                      {company.primary_email || "â€”"}
                     </TableCell>
                     <TableCell className="text-left">
                       {company.website ? (
@@ -426,7 +426,7 @@ export function CompaniesTab() {
                           Visit <ExternalLink className="h-3 w-3" />
                         </a>
                       ) : (
-                        <span className="text-xs text-muted-foreground/30">—</span>
+                        <span className="text-xs text-muted-foreground/30">â€”</span>
                       )}
                     </TableCell>
                     <TableCell className="text-center">
@@ -497,7 +497,7 @@ export function CompaniesTab() {
               </TableBody>
             </Table>
 
-            {/* Pagination HUD */}
+            {/* Pagination dashboard */}
             <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-5 border-t gap-4">
               <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                 Showing {from + 1} to {Math.min(from + ITEMS_PER_PAGE, companyData.count)} of {companyData.count} entries
@@ -802,3 +802,4 @@ export function CompaniesTab() {
 }
 
 export default CompaniesTab;
+

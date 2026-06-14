@@ -1,11 +1,11 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Authoritative Precision Parameter Tuning Hub (Slider)
  * Hardened WAI-ARIA compliant scalar slider securing structural layout heights and thumb boundary tracks from scaling jitters.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
@@ -23,12 +23,12 @@ const Slider = React.forwardRef<
       )}
       {...props}
     >
-      {/* HUD LEVEL 1: TRACK TIMING BASELINE STRUT */}
+      {/* dashboard LEVEL 1: TRACK TIMING BASELINE STRUT */}
       <SliderPrimitive.Track className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-muted/60 pointer-events-none">
         <SliderPrimitive.Range className="absolute h-full bg-primary transition-colors duration-150" />
       </SliderPrimitive.Track>
 
-      {/* HUD LEVEL 2: COMPOSITE SELECTION GRAB TARGET MATRIX */}
+      {/* dashboard LEVEL 2: COMPOSITE SELECTION GRAB TARGET MATRIX */}
       {valueArrayDataPayload.map((_, indexNum) => (
         <SliderPrimitive.Thumb
           key={`slider-thumb-node-index-${indexNum}`}
@@ -45,3 +45,4 @@ const Slider = React.forwardRef<
 Slider.displayName = "Slider_Core_Precision_Node";
 
 export { Slider };
+

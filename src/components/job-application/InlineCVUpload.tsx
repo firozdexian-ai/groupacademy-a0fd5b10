@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+﻿import { useState, useRef, useCallback, useEffect } from "react";
 import { uploadPortfolioFile } from "@/domains/profile/repo/profileRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { Button } from "@/components/ui/button";
@@ -12,15 +12,15 @@ import { parseCv } from "@/domains/jobs/api/jobsApi";
 /**
  * GroUp Academy: Intelligent CV Ingress Node (InlineCVUpload)
  * CTO Reference: Authoritative interface for CV artifact parsing and profile synchronization.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 
 interface ParsedCVData {
   full_name?: string;
   email?: string;
   phone?: string;
-  education?: any[];
-  experience?: any[];
+  education?: unknown[];
+  experience?: unknown[];
   skills?: string[];
 }
 
@@ -118,8 +118,8 @@ export function InlineCVUpload({ onUploadComplete }: { onUploadComplete?: () => 
       const { publicUrl } = await uploadPortfolioFile(filePath, file, { upsert: true });
 
       // Invoke centralized serverless cognitive computing synapse node for document extraction
-      let parseResult: any = null;
-      let parseError: any = null;
+      let parseResult: unknown = null;
+      let parseError: unknown = null;
       try {
         parseResult = await parseCv({ cvUrl: publicUrl });
       } catch (e) { parseError = e; }
@@ -140,8 +140,8 @@ export function InlineCVUpload({ onUploadComplete }: { onUploadComplete?: () => 
         await updateTalent({ cvUrl: publicUrl });
         toast.success("Resume uploaded successfully.");
       } else {
-        const parsed = parseResult.parsed as any;
-        const updatePayload: Record<string, any> = {
+        const parsed = parseResult.parsed as unknown;
+        const updatePayload: Record<string, unknown> = {
           cvUrl: publicUrl,
           cvParsedAt: new Date().toISOString(),
         };
@@ -155,15 +155,15 @@ export function InlineCVUpload({ onUploadComplete }: { onUploadComplete?: () => 
         }
         if (parsed.skills?.length && !talent.skills?.length) {
           updatePayload.skills = parsed.skills
-            .map((s: any) => {
+            .map((s: unknown) => {
               const nameVal = typeof s === "string" ? s : s?.name || "";
               return { name: nameVal.trim() };
             })
-            .filter((s: any) => s.name);
+            .filter((s: unknown) => s.name);
         }
 
-        if (parsed.experience?.length && (!talent.experience || (talent.experience as any[]).length === 0)) {
-          updatePayload.experience = parsed.experience.map((exp: any) => ({
+        if (parsed.experience?.length && (!talent.experience || (talent.experience as unknown[]).length === 0)) {
+          updatePayload.experience = parsed.experience.map((exp: unknown) => ({
             company: exp.company?.trim() || "Company",
             position: exp.position || exp.title?.trim() || "Role",
             startDate: exp.startDate || exp.duration || "",
@@ -172,8 +172,8 @@ export function InlineCVUpload({ onUploadComplete }: { onUploadComplete?: () => 
           }));
         }
 
-        if (parsed.education?.length && (!talent.education || (talent.education as any[]).length === 0)) {
-          updatePayload.education = parsed.education.map((edu: any) => ({
+        if (parsed.education?.length && (!talent.education || (talent.education as unknown[]).length === 0)) {
+          updatePayload.education = parsed.education.map((edu: unknown) => ({
             institution: edu.institution?.trim() || "Institution",
             degree: edu.degree?.trim() || "Degree",
             fieldOfStudy: edu.fieldOfStudy || edu.field || "",
@@ -192,7 +192,7 @@ export function InlineCVUpload({ onUploadComplete }: { onUploadComplete?: () => 
       setMessage("Upload Complete");
       setUploadSuccess(true);
       onUploadComplete?.();
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (telemetryIntervalRef.current) clearInterval(telemetryIntervalRef.current);
       const parsedMsg = err instanceof Error ? err.message : String(err);
 
@@ -363,3 +363,5 @@ export function InlineCVUpload({ onUploadComplete }: { onUploadComplete?: () => 
     </div>
   );
 }
+
+

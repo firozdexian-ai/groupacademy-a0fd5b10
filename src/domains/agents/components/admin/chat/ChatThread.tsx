@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Copy, RefreshCw, Send, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,13 +17,13 @@ interface ChatThreadProps {
 }
 
 /**
- * Group Academy — ChatThread UI Component
+ * Group Academy â€” ChatThread UI Component
  * Version: Phase 10j.5 Hardened
  * Purpose: Unified messenger interface for AI agent interactions.
  */
 export function ChatThread({ agentKey, onAfterSend }: ChatThreadProps) {
   const { data: agents = [] } = useAdminAgents();
-  const agent = agents.find((a: any) => a.key === agentKey) ?? ADMIN_AGENTS_BY_KEY[agentKey];
+  const agent = agents.find((a: unknown) => a.key === agentKey) ?? ADMIN_AGENTS_BY_KEY[agentKey];
 
   const { messages, loading, sending, send, clear, regenerate } = useAgentRuntimeThread(agentKey);
   const [input, setInput] = useState("");
@@ -53,7 +53,7 @@ export function ChatThread({ agentKey, onAfterSend }: ChatThreadProps) {
     try {
       await send(text);
       onAfterSend?.();
-    } catch (err: any) {
+    } catch (err: unknown) {
       trackError("chat-thread-submit-failure", { agentKey, error: err.message });
       toast({
         title: "Communication error",
@@ -196,3 +196,5 @@ export function ChatThread({ agentKey, onAfterSend }: ChatThreadProps) {
     </div>
   );
 }
+
+

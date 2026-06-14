@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Analytics Period Mathematics Utility (Phase 10i.2 - Hardened).
  * Generates bounded calendar date matrices for the Monthly and Quarterly dashboard pickers.
  * Fixes temporal range overlap bugs by enforcing sharp sub-millisecond clipping bounds.
@@ -117,3 +117,4 @@ export function parseToken(mode: PeriodMode, token: string | null): Period | nul
   if (!match) return null;
   return quarterPeriod(Number(match[1]), Number(match[2]) - 1);
 }
+

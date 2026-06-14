@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -53,7 +53,7 @@ export function GigMatchmakerTab() {
       <Card>
         <CardHeader className="pb-2"><CardTitle className="text-base flex items-center gap-2"><Sparkles className="w-4 h-4 text-primary" /> Average score by kind</CardTitle></CardHeader>
         <CardContent className="flex flex-wrap gap-2">
-          {Object.entries(funnel?.avgScore || {}).map(([k, v]: any) => (
+          {Object.entries(funnel?.avgScore || {}).map(([k, v]: unknown) => (
             <Badge key={k} variant="outline" className="text-sm">{k}: {(v.sum / v.n).toFixed(1)}</Badge>
           ))}
         </CardContent>
@@ -66,3 +66,5 @@ export function GigMatchmakerTab() {
     </div>
   );
 }
+
+

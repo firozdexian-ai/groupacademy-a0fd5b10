@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { SimpleAdminRegistry } from "@/platform/admin/ui/SimpleAdminRegistry";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -161,3 +161,4 @@ export default function PaymentInfraTab() {
     </div>
   );
 }
+

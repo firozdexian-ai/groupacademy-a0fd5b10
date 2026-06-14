@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+﻿import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { LucideIcon, TrendingUp, Activity, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -99,3 +99,4 @@ const StatsCard = ({ title, value, icon: Icon, trend, trendLabel, variant = "def
 };
 
 export default StatsCard;
+

@@ -1,11 +1,11 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as SeparatorPrimitive from "@radix-ui/react-separator";
 import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Technical Structural Delineator Primitive (Separator)
  * Hardened WAI-ARIA compliant layout divider providing crisp integer-pixel strokes and un-conflicted color composition grids.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const Separator = React.forwardRef<
   React.ElementRef<typeof SeparatorPrimitive.Root>,
@@ -29,3 +29,4 @@ const Separator = React.forwardRef<
 Separator.displayName = "Separator_Core_Delineator_Node";
 
 export { Separator };
+

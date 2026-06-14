@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+﻿import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -73,7 +73,7 @@ Deno.serve(async (req) => {
     const instanceId = credential.instance_id;
 
     // 3. Parse Telegram update
-    let update: any = null;
+    let update: unknown = null;
     try {
       update = await req.json();
     } catch (_) {
@@ -143,3 +143,5 @@ Deno.serve(async (req) => {
     );
   }
 });
+
+

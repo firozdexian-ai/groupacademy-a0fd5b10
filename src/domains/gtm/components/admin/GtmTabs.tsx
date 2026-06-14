@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useGtmGraph } from "./hooks/useGtmGraph";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,18 +33,18 @@ import { cn } from "@/lib/utils";
 import { ConfirmPurge } from "@/platform/admin/ui/ConfirmPurge";
 import { X } from "lucide-react";
 
-// ───────────────────────── Generic Registry Shell ─────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Generic Registry Shell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 type AccentColor = "primary" | "emerald" | "blue" | "amber";
 
 interface RegistryShellProps {
  title: string;
  description: string;
- icon: any;
- data: any[] | undefined;
+ icon: unknown;
+ data: unknown[] | undefined;
  isLoading: boolean;
  columns: string[];
- renderRow: (row: any) => React.ReactNode;
+ renderRow: (row: unknown) => React.ReactNode;
  onAdd: () => void;
  accentColor?: AccentColor;
 }
@@ -167,7 +167,7 @@ function RowActions({ onEdit, onDelete, label = "node" }: { onEdit: () => void; 
  );
 }
 
-// ───────────────────────── COUNTRIES ─────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COUNTRIES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export function GtmCountriesTab() {
  const {
@@ -175,7 +175,7 @@ export function GtmCountriesTab() {
  mutations: { upsertCountry, deleteCountry },
  } = useGtmGraph();
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ is_active: true, tier: "Tier 3" });
+ const [draft, setDraft] = useState<unknown>({ is_active: true, tier: "Tier 3" });
 
  const submit = async () => {
  await upsertCountry.mutateAsync(draft);
@@ -196,7 +196,7 @@ export function GtmCountriesTab() {
  setDraft({ is_active: true, tier: "Tier 3" });
  setOpen(true);
  }}
- renderRow={(row: any) => (
+ renderRow={(row: unknown) => (
  <TableRow key={row.id}>
  <TableCell className="font-mono font-black">{row.iso2}</TableCell>
  <TableCell className="font-bold">{row.name}</TableCell>
@@ -302,7 +302,7 @@ export function GtmCountriesTab() {
  );
 }
 
-// ───────────────────────── REGIONS / STATES ─────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ REGIONS / STATES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export function GtmStatesTab() {
  const {
@@ -310,7 +310,7 @@ export function GtmStatesTab() {
  mutations: { upsertRegion, deleteRegion },
  } = useGtmGraph();
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({});
+ const [draft, setDraft] = useState<unknown>({});
 
  const submit = async () => {
  await upsertRegion.mutateAsync(draft);
@@ -331,12 +331,12 @@ export function GtmStatesTab() {
  setDraft({});
  setOpen(true);
  }}
- renderRow={(row: any) => (
+ renderRow={(row: unknown) => (
  <TableRow key={row.id}>
  <TableCell className="font-bold">{row.name}</TableCell>
- <TableCell className="font-mono text-xs">{row.code || "—"}</TableCell>
+ <TableCell className="font-mono text-xs">{row.code || "â€”"}</TableCell>
  <TableCell className="text-sm">
- {gtmGraphQuery.data?.countries.find((c) => c.id === row.country_id)?.name || "—"}
+ {gtmGraphQuery.data?.countries.find((c) => c.id === row.country_id)?.name || "â€”"}
  </TableCell>
  <TableCell className="text-right">
  <RowActions
@@ -402,7 +402,7 @@ export function GtmStatesTab() {
  );
 }
 
-// ───────────────────────── CITIES ─────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CITIES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export function GtmCitiesTab() {
  const {
@@ -410,7 +410,7 @@ export function GtmCitiesTab() {
  mutations: { upsertCity, deleteCity },
  } = useGtmGraph();
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ is_active: true });
+ const [draft, setDraft] = useState<unknown>({ is_active: true });
 
  const submit = async () => {
  await upsertCity.mutateAsync(draft);
@@ -431,14 +431,14 @@ export function GtmCitiesTab() {
  setDraft({ is_active: true });
  setOpen(true);
  }}
- renderRow={(row: any) => {
+ renderRow={(row: unknown) => {
  const region = gtmGraphQuery.data?.regions.find((r) => r.id === row.region_id);
  const country = region ? gtmGraphQuery.data?.countries.find((c) => c.id === region.country_id) : null;
  return (
  <TableRow key={row.id}>
  <TableCell className="font-bold">{row.name}</TableCell>
  <TableCell className="text-sm">
- {region ? `${region.name} ${country ? `(${country.iso2})` : ""}` : "—"}
+ {region ? `${region.name} ${country ? `(${country.iso2})` : ""}` : "â€”"}
  </TableCell>
  <TableCell>
  <Badge
@@ -526,7 +526,7 @@ export function GtmCitiesTab() {
  );
 }
 
-// ───────────────────────── CLUSTERS ─────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CLUSTERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export function GtmClustersTab() {
  const {
@@ -534,7 +534,7 @@ export function GtmClustersTab() {
  mutations: { upsertCluster, deleteCluster },
  } = useGtmGraph();
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ countries: [], cities: [] });
+ const [draft, setDraft] = useState<unknown>({ countries: [], cities: [] });
 
  const submit = async () => {
  await upsertCluster.mutateAsync(draft);
@@ -555,11 +555,11 @@ export function GtmClustersTab() {
  setDraft({ countries: [], cities: [] });
  setOpen(true);
  }}
- renderRow={(row: any) => (
+ renderRow={(row: unknown) => (
  <TableRow key={row.id}>
  <TableCell className="font-bold">{row.name}</TableCell>
  <TableCell className="text-sm text-muted-foreground max-w-md truncate">
- {row.description || "—"}
+ {row.description || "â€”"}
  </TableCell>
  <TableCell>
  <div className="flex items-center gap-1.5 flex-wrap">
@@ -652,14 +652,14 @@ export function GtmClustersTab() {
  );
 }
 
-// ───────────────────────── CLUSTER COMPOSITION PICKERS ─────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CLUSTER COMPOSITION PICKERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function ClusterCountryPicker({
  countries,
  selected,
  onChange,
 }: {
- countries: any[];
+ countries: unknown[];
  selected: string[];
  onChange: (next: string[]) => void;
 }) {
@@ -685,7 +685,7 @@ function ClusterCountryPicker({
  variant="outline"
  className="font-mono text-[10px] gap-1 pr-1 border-amber-500/40"
  >
- {c.iso2} · {c.name}
+ {c.iso2} Â· {c.name}
  <button
  onClick={() => toggle(id)}
  className="hover:bg-destructive/20 rounded-sm p-0.5"
@@ -731,8 +731,8 @@ function ClusterCityPicker({
  selectedCities,
  onChange,
 }: {
- regions: any[];
- cities: any[];
+ regions: unknown[];
+ cities: unknown[];
  selectedCountries: string[];
  selectedCities: string[];
  onChange: (next: string[]) => void;
@@ -812,3 +812,5 @@ function ClusterCityPicker({
  </div>
  );
 }
+
+

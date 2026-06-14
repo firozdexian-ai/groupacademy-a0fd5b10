@@ -1,4 +1,4 @@
-// notify-stakeholder: Smart routing dispatcher.
+﻿// notify-stakeholder: Smart routing dispatcher.
 // Inputs: { agent_key?: string, audience_type: 'admin'|'talent'|'business'|'system',
 //           event_topic: string, message: string, title?: string, metadata?: object }
 //
@@ -7,7 +7,7 @@
 // global TELEGRAM_BOT_TOKEN / TELEGRAM_ADMIN_CHAT_ID for system alerts).
 //
 // Channels supported now: telegram. WhatsApp / Email are logged as TODO so the
-// dispatcher returns the full plan without failing — easy to extend later.
+// dispatcher returns the full plan without failing â€” easy to extend later.
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -29,7 +29,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    // Auth: accept any signed-in user — caller is usually agent-tool-execute
+    // Auth: accept unknown signed-in user â€” caller is usually agent-tool-execute
     // forwarding the original JWT, OR admin-agent-tools after RBAC check.
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) return j({ ok: false, error: "unauthorized" }, 401);
@@ -93,7 +93,7 @@ serve(async (req) => {
 
       // Lookup credentials: prefer rule.agent_key, fall back to incoming agent_key.
       const credAgent = (rule.agent_key as string | null) ?? agentKey;
-      let credentials: Record<string, any> = {};
+      let credentials: Record<string, unknown> = {};
       if (credAgent) {
         const { data: conn } = await admin
           .from("workforce_channel_connections")
@@ -103,7 +103,7 @@ serve(async (req) => {
           .eq("is_active", true)
           .maybeSingle();
         if (conn?.credentials && typeof conn.credentials === "object") {
-          credentials = conn.credentials as Record<string, any>;
+          credentials = conn.credentials as Record<string, unknown>;
         }
       }
 
@@ -120,7 +120,7 @@ serve(async (req) => {
           }
           const chatId = destId || GLOBAL_TG_CHAT;
           const text = (title ? `*${title}*\n` : "") +
-                       `${message}\n\n_topic: ${eventTopic} · audience: ${audienceType}_`;
+                       `${message}\n\n_topic: ${eventTopic} Â· audience: ${audienceType}_`;
           const r = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -136,7 +136,7 @@ serve(async (req) => {
           });
           if (!r.ok) console.error("[notify-stakeholder] telegram non-2xx", r.status, await r.text());
         } else if (provider === "whatsapp" || provider === "email" || provider === "linkedin" || provider === "instagram" || provider === "web_widget") {
-          // TODO: wire real providers — log and continue so the dispatcher
+          // TODO: wire real providers â€” log and continue so the dispatcher
           // returns a complete plan.
           console.log(`[notify-stakeholder] TODO provider=${provider} dest=${destId} agent=${credAgent}`);
           dispatchResults.push({ rule_id: rule.id, provider, destination: destId, ok: true, deferred: true });
@@ -149,7 +149,7 @@ serve(async (req) => {
       }
     }
 
-    // Telemetry — fire and forget
+    // Telemetry â€” fire and forget
     admin.from("notification_dispatch_log").insert({
       agent_key: agentKey,
       audience_type: audienceType,
@@ -161,7 +161,7 @@ serve(async (req) => {
       dispatched: dispatchResults.length,
       results: dispatchResults,
       fallback_used: fallbackUsed,
-    }).then(() => {}, (e: any) => console.log("[notify-stakeholder] log skipped:", e?.message));
+    }).then(() => {}, (e: unknown) => console.log("[notify-stakeholder] log skipped:", e?.message));
 
     return j({
       ok: true,
@@ -182,3 +182,5 @@ function j(b: unknown, status = 200) {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
+
+

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+﻿import { useState, useEffect, useCallback } from "react";
 import { talentRepo } from "@/domains/talent/repo/talentRepo";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
@@ -64,20 +64,20 @@ interface PortfolioRequest {
  custom_profession: string | null;
  cv_url: string | null;
  profile_data: {
- education?: any[];
- experience?: any[];
- skills?: any[];
- projects?: any[];
- achievements?: any[];
+ education?: unknown[];
+ experience?: unknown[];
+ skills?: unknown[];
+ projects?: unknown[];
+ achievements?: unknown[];
  } | null;
- certificates: any;
+ certificates: unknown;
  achievements: string | null;
  social_links: Record<string, string> | null;
  additional_notes: string | null;
  status: PortfolioStatus; // Strictly typed [cite: 40, 43]
  admin_notes: string | null;
  portfolio_url: string | null;
- portfolio_credentials: Record<string, any> | null;
+ portfolio_credentials: Record<string, unknown> | null;
  created_at: string;
  profession_category?: { name: string } | null;
 }
@@ -141,9 +141,9 @@ export default function PortfolioRequestsManager() {
  );
 
  if (result.error) throw result.error;
- setRequests((result.data as any) || []);
+ setRequests((result.data as unknown) || []);
  setTotalCount(result.count || 0);
- } catch (err: any) {
+ } catch (err: unknown) {
  console.error("Error loading portfolio requests:", err);
  setError(err.message || "Failed to load portfolio requests");
  toast.error("Failed to load requests");
@@ -174,7 +174,7 @@ export default function PortfolioRequestsManager() {
  if (!selectedRequest || !editStatus) return;
  setIsUpdating(true);
  try {
- const updates: any = {
+ const updates: unknown = {
  status: editStatus,
  admin_notes: editAdminNotes || null,
  portfolio_url: editPortfolioUrl || null,
@@ -190,7 +190,7 @@ export default function PortfolioRequestsManager() {
  toast.success("Request updated successfully");
  setIsDetailOpen(false);
  loadRequests();
- } catch (err: any) {
+ } catch (err: unknown) {
  toast.error("Failed to update request", { description: err.message });
  } finally {
  setIsUpdating(false);
@@ -209,12 +209,12 @@ export default function PortfolioRequestsManager() {
  <div className="flex flex-col sm:flex-row gap-4">
  <div className="relative flex-1">
  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
- <Input
- placeholder="Search by name, email, or phone..."
- value={searchQuery}
- onChange={(e) => setSearchQuery(e.target.value)}
- className="pl-9"
- />
+  <Input
+  placeholder="Search by name, email, or phone..."
+  value={searchQuery}
+  onChange={(e) => setSearchQuery(e.target.value)}
+  className="pl-9 h-12 rounded-xl bg-surface text-primary"
+  />
  </div>
  <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as PortfolioStatus | "all")}>
  <SelectTrigger className="w-full sm:w-[180px]">
@@ -293,12 +293,12 @@ export default function PortfolioRequestsManager() {
  <div className="flex gap-1">
  {request.cv_url && (
  <Badge variant="secondary" className="text-[10px]">
- 📄 CV
+ ðŸ“„ CV
  </Badge>
  )}
  {hasProfileData && (
  <Badge variant="secondary" className="text-[10px]">
- 📋 Profile
+ ðŸ“‹ Profile
  </Badge>
  )}
  </div>
@@ -522,3 +522,5 @@ export default function PortfolioRequestsManager() {
  </div>
  );
 }
+
+

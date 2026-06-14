@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+﻿import { useEffect, useState, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Bell, CheckCheck, Zap, ShieldCheck, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Realtime Telemetry Notification Dispatcher (NotificationDropdown)
  * An authoritative operational dropdown node handling candidate alert indexing and state cleanups.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function NotificationDropdown() {
   const queryClient = useQueryClient();
@@ -103,7 +103,7 @@ export function NotificationDropdown() {
         className="w-[360px] p-0 rounded-2xl border border-border/40 bg-card/60 backdrop-blur-3xl shadow-2xl overflow-hidden select-none sm:select-text text-left antialiased transform-gpu"
         sideOffset={10}
       >
-        {/* HUD LEVEL 1: TITLE HEADER SYNC RETAIN BAR */}
+        {/* dashboard LEVEL 1: TITLE HEADER SYNC RETAIN BAR */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-border/10 bg-muted/20 select-none leading-none w-full">
           <div className="flex items-center gap-2 min-w-0">
             <Zap className="h-4 w-4 text-primary fill-primary/5 stroke-[2.2] shrink-0" />
@@ -126,13 +126,13 @@ export function NotificationDropdown() {
           )}
         </div>
 
-        {/* HUD LEVEL 2: DYNAMIC CONTAINER SCROLL LEDGER STACK */}
+        {/* dashboard LEVEL 2: DYNAMIC CONTAINER SCROLL LEDGER STACK */}
         <ScrollArea className="max-h-[400px] w-full min-w-0 flex flex-col">
           {isLoading ? (
             <div className="p-12 text-center flex flex-col items-center justify-center gap-3 w-full select-none">
               <Loader2 className="h-5 w-5 border-none animate-spin text-primary stroke-[2.5]" />
               <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 animate-pulse leading-none">
-                Synchronizing Ledger Channels…
+                Synchronizing Ledger Channelsâ€¦
               </p>
             </div>
           ) : primaryIngress.length === 0 ? (
@@ -165,7 +165,7 @@ export function NotificationDropdown() {
           )}
         </ScrollArea>
 
-        {/* HUD LEVEL 3: ADMINISTRATIVE FULL INDEX AUDIT CONTROLS FOOTER */}
+        {/* dashboard LEVEL 3: ADMINISTRATIVE FULL INDEX AUDIT CONTROLS FOOTER */}
         {notifications.length > 0 && (
           <div className="p-3.5 bg-muted/20 border-t border-border/10 select-none w-full shrink-0">
             <Button
@@ -183,3 +183,4 @@ export function NotificationDropdown() {
     </Popover>
   );
 }
+

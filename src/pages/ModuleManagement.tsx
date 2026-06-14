@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+﻿import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   getContentBasic,
@@ -143,14 +143,14 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
         const ids = mods.map((m) => m.id);
         const resRows = await listModuleResourceModuleIdsForModules(ids);
         const counts: Record<string, number> = {};
-        (resRows || []).forEach((r: any) => {
+        (resRows || []).forEach((r: unknown) => {
           counts[r.module_id] = (counts[r.module_id] || 0) + 1;
         });
         setResourceCounts(counts);
       } else {
         setResourceCounts({});
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(`Failed to load modules: ${e.message ?? "unknown error"}`);
     } finally {
       setLoading(false);
@@ -164,7 +164,7 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
   const markUnsaved = (id: string) =>
     setSaveStates((prev) => ({ ...prev, [id]: prev[id] === "saving" ? prev[id] : "unsaved" }));
 
-  const updateField = (id: string, field: keyof CourseModule, value: any) => {
+  const updateField = (id: string, field: keyof CourseModule, value: unknown) => {
     setModules((prev) => prev.map((m) => (m.id === id ? { ...m, [field]: value } : m)));
     markUnsaved(id);
   };
@@ -182,7 +182,7 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
       });
       setModules((prev) => [...prev, data as CourseModule]);
       toast.success("Module created.");
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(`Could not create module: ${e.message}`);
     }
   };
@@ -200,7 +200,7 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
       });
       setSaveStates((prev) => ({ ...prev, [mod.id]: "saved" }));
       toast.success("Module saved.");
-    } catch (e: any) {
+    } catch (e: unknown) {
       setSaveStates((prev) => ({ ...prev, [mod.id]: "unsaved" }));
       toast.error(`Save failed: ${e.message}`);
     }
@@ -228,7 +228,7 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
       await bulkUpdateCourseModuleOrder(
         changed.map((m) => ({ id: m.id, display_order: m.display_order as number })),
       );
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error("Reorder failed; reloading.");
       loadModules();
     }
@@ -240,7 +240,7 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
       await deleteCourseModule(deleteId);
       setModules((prev) => prev.filter((m) => m.id !== deleteId));
       toast.success("Module deleted.");
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(`Delete failed: ${e.message}`);
     } finally {
       setDeleteId(null);
@@ -321,7 +321,7 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
         {loading ? (
           <div className="flex items-center justify-center py-20 text-muted-foreground">
             <Loader2 className="h-5 w-5 animate-spin mr-2" />
-            <span className="text-xs font-black uppercase tracking-widest">Loading modules…</span>
+            <span className="text-xs font-black uppercase tracking-widest">Loading modulesâ€¦</span>
           </div>
         ) : modules.length === 0 ? (
           <Card className="rounded-xl border-dashed border-border/60">
@@ -458,7 +458,7 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
                         <Input
                           value={mod.video_url ?? ""}
                           onChange={(e) => updateField(mod.id, "video_url", e.target.value)}
-                          placeholder="https://…"
+                          placeholder="https://â€¦"
                           className="rounded-xl"
                         />
                       </div>
@@ -637,3 +637,5 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
     </div>
   );
 }
+
+

@@ -1,14 +1,14 @@
-/**
+﻿/**
  * Typed wrappers around learning-domain edge functions (Phase 9f).
  *
  * Convention (locked in Phase 9b):
- *   - One async function per edge function — import by name.
+ *   - One async function per edge function â€” import by name.
  *   - No `*Api` const, no `<DOMAIN>_EDGE_FUNCTIONS` array.
  *   - Responses validated at runtime via `parseEdgeResponse`.
  *   - Failures throw `EdgeFunctionError`.
  *
  * Postgres RPCs (`get_tutor_mastery_context`, `get_track_progress`,
- * `org_learning_health`) are NOT wrapped here — call them via
+ * `org_learning_health`) are NOT wrapped here â€” call them via
  * `supabase.rpc()` directly from their owning hooks.
  */
 import { supabase } from "@/integrations/supabase/client";
@@ -321,3 +321,4 @@ export async function createInstructorJobFromBrief(
     data ?? {},
   );
 }
+

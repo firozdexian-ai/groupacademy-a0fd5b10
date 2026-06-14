@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Public surface of the profile domain (named exports only).
  */
 
@@ -58,3 +58,4 @@ export { CoverImageUpload } from "./components/talent/CoverImageUpload";
 export { ProfilePhotoUpload } from "./components/talent/ProfilePhotoUpload";
 export { ApplicationHistoryCard } from "./components/talent/ApplicationHistoryCard";
 export { ServiceHistoryCard } from "./components/talent/ServiceHistoryCard";
+

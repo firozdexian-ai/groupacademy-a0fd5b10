@@ -1,4 +1,4 @@
-import { adminContentAi } from "@/domains/ugc/api/ugcApi";
+﻿import { adminContentAi } from "@/domains/ugc/api/ugcApi";
 
 export type AIMode = "description" | "slug" | "image_prompt" | "outline" | "cover_image";
 
@@ -11,8 +11,10 @@ export interface AIContext {
   cover_prompt?: string;
 }
 
-export async function callContentAI<T = any>(mode: AIMode, context: AIContext): Promise<T> {
-  const data: any = await adminContentAi({ mode, context: context as unknown as Record<string, unknown> });
+export async function callContentAI<T = unknown>(mode: AIMode, context: AIContext): Promise<T> {
+  const data: unknown = await adminContentAi({ mode, context: context as unknown as Record<string, unknown> });
   if (data?.error) throw new Error(data.error);
   return data.result as T;
 }
+
+

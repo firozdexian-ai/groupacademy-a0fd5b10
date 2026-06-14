@@ -1,4 +1,4 @@
-/**
+﻿/**
  * GroUp Academy: Finance Domain Core API Module Entry (Barrel Router)
  * Centralizes named execution hooks and typed definitions for credit checkouts, webhook secrets, and payout disbursement routes.
  */
@@ -15,3 +15,4 @@ export type {
   RequestInstructorPayoutRequest,
   RequestInstructorPayoutResponse,
 } from "@/edge/contracts/finance";
+

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import { ReviewQueueRunner } from "@/domains/learning/components/talent/ReviewQu
 
 export default function LearningReview() {
   useEffect(() => {
-    document.title = "Review Queue · Spaced Repetition";
+    document.title = "Review Queue Â· Spaced Repetition";
     const meta = document.querySelector('meta[name="description"]');
     if (meta) {
       meta.setAttribute(
@@ -28,7 +28,7 @@ export default function LearningReview() {
           <div className="min-w-0">
             <h1 className="text-base font-bold truncate">Review Queue</h1>
             <p className="text-[11px] text-muted-foreground truncate">
-              Spaced repetition · keeps your skills sharp
+              Spaced repetition Â· keeps your skills sharp
             </p>
           </div>
         </div>
@@ -40,3 +40,4 @@ export default function LearningReview() {
     </div>
   );
 }
+

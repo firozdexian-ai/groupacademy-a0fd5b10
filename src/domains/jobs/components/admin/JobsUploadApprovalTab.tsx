@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listPendingApprovalJobs, updateJob, deleteJob } from "@/domains/jobs/repo/jobsRepo";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,7 @@ export default function JobsUploadApprovalTab() {
       toast.success("Approved & published");
       qc.invalidateQueries({ queryKey: ["jobs-pending-approval"] });
     },
-    onError: (e: any) => toast.error(e.message),
+    onError: (e: unknown) => toast.error(e.message),
   });
 
   const rejectJob = useMutation({
@@ -32,7 +32,7 @@ export default function JobsUploadApprovalTab() {
       toast.success("Job listing deleted");
       qc.invalidateQueries({ queryKey: ["jobs-pending-approval"] });
     },
-    onError: (e: any) => toast.error(e.message),
+    onError: (e: unknown) => toast.error(e.message),
   });
 
   const rows = list.data ?? [];
@@ -45,7 +45,7 @@ export default function JobsUploadApprovalTab() {
         </p>
       </div>
       {list.isLoading ? (
-        <p className="text-sm text-muted-foreground">Loading…</p>
+        <p className="text-sm text-muted-foreground">Loadingâ€¦</p>
       ) : rows.length === 0 ? (
         <Card className="p-8 text-center text-sm text-muted-foreground">No jobs awaiting approval.</Card>
       ) : (
@@ -58,7 +58,7 @@ export default function JobsUploadApprovalTab() {
                   <Badge variant="outline" className="text-[10px]">inactive</Badge>
                 </div>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  {j.company_name ?? "—"} · {j.location ?? ""}
+                  {j.company_name ?? "â€”"} Â· {j.location ?? ""}
                 </p>
               </div>
               <div className="flex gap-1">
@@ -82,3 +82,5 @@ export default function JobsUploadApprovalTab() {
     </div>
   );
 }
+
+

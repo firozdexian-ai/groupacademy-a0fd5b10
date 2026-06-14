@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+﻿import { useEffect, useState, useMemo } from "react";
 import { listEnrollmentsWithRelations } from "@/domains/learning/repo/learningRepo";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -42,7 +42,7 @@ interface Enrollment {
   };
 }
 
-const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
+const statusConfig: Record<string, { label: string; color: string; icon: unknown }> = {
   pending_payment: { label: "Payment Due", color: "bg-amber-500/10 text-amber-600", icon: Clock },
   active: { label: "Live Access", color: "bg-emerald-500/10 text-emerald-600", icon: CheckCircle2 },
   confirmed: { label: "Vetted", color: "bg-blue-500/10 text-blue-600", icon: CheckCircle2 },
@@ -66,13 +66,13 @@ export default function Enrollments() {
     setLoading(true);
     setLoadError(null);
     try {
-      const data = await withTimeout<any>(
+      const data = await withTimeout<unknown>(
         listEnrollmentsWithRelations(),
         TIMEOUTS.DEFAULT,
         "Connection timed out",
       );
       setEnrollments(data || []);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setLoadError(err.message);
       toast({ title: "Nexus Error", description: "Database synchronization failed.", variant: "destructive" });
     } finally {
@@ -256,3 +256,5 @@ export default function Enrollments() {
     </div>
   );
 }
+
+

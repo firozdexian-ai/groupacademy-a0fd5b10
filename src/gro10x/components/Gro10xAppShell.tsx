@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+﻿import { ReactNode } from "react";
 import { Outlet, useMatch } from "react-router-dom";
 import { Gro10xBottomNav } from "./Gro10xBottomNav";
 import { Gro10xTopBar } from "./Gro10xTopBar";
@@ -45,8 +45,9 @@ export function Gro10xAppShell({ children, hideBottomNav }: Props) {
         </div>
       )}
 
-      {/* Global ⌘K palette (mounted once for the whole shell) */}
+      {/* Global âŒ˜K palette (mounted once for the whole shell) */}
       <Gro10xCommandPalette />
     </div>
   );
 }
+

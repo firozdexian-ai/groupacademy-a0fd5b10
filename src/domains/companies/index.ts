@@ -1,6 +1,6 @@
-/**
+﻿/**
  * Companies Domain Workspace Entry Point (Public Surface)
- * Version: Launch Candidate · Phase Z0 Hardened (Code Freeze)
+ * Version: Launch Candidate Â· Phase Z0 Hardened (Code Freeze)
  * Infrastructure: Digital Workforce Connected Summary Map
  * 
  * Hard Architectural Note: 

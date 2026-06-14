@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+﻿import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_ANON_KEY")!,
       { global: { headers: { Authorization: authHeader } } },
     );
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await getCurrentUser();
     if (!user) return j({ error: "unauthorized" }, 401);
 
     const admin = createClient(
@@ -41,10 +41,10 @@ Deno.serve(async (req) => {
     if (!item) return j({ error: "item not found" }, 404);
 
     // Validate
-    if (item_type === "quiz" && Array.isArray((item as any).options) && payload.options?.length !== (item as any).options.length) {
+    if (item_type === "quiz" && Array.isArray((item as unknown).options) && payload.options?.length !== (item as unknown).options.length) {
       return j({ error: "option count mismatch" }, 422);
     }
-    if (item_type === "scenario" && Array.isArray((item as any).rubric) && payload.rubric?.length !== (item as any).rubric.length) {
+    if (item_type === "scenario" && Array.isArray((item as unknown).rubric) && payload.rubric?.length !== (item as unknown).rubric.length) {
       return j({ error: "rubric count mismatch" }, 422);
     }
 
@@ -86,3 +86,6 @@ function j(body: unknown, status = 200) {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
+
+
+

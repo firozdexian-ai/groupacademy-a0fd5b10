@@ -1,4 +1,4 @@
-import { Loader2 } from "lucide-react";
+﻿import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface InlineSpinnerProps {
@@ -33,3 +33,4 @@ export function InlineSpinner({ label, size = "md", className }: InlineSpinnerPr
 }
 
 export default InlineSpinner;
+

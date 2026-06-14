@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { listActiveCurrencyRates } from "@/domains/finance/repo/financeRepo";
 import type { CurrencyRate } from "@/lib/currency";
 
@@ -16,10 +16,10 @@ export function useCurrencyRates() {
     staleTime: 60 * 60 * 1000,
     gcTime: 24 * 60 * 60 * 1000,
     queryFn: async (): Promise<CurrencyRate[]> => {
-      let data: any[] = [];
+      let data: unknown[] = [];
       try {
         data = await listActiveCurrencyRates();
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] ANOMALY: currency_rates schema synchronization failure.", {
           code: error?.code,
           message: error?.message,
@@ -38,3 +38,5 @@ export function useCurrencyRates() {
     queryError: error,
   };
 }
+
+

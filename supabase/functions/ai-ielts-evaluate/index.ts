@@ -1,4 +1,4 @@
-// AI IELTS Evaluator — grades writing/speaking/reading/listening, returns 0-9 bands per criterion
+﻿// AI IELTS Evaluator â€” grades writing/speaking/reading/listening, returns 0-9 bands per criterion
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
       .eq("user_id", userId)
       .gte("created_at", `${today}T00:00:00Z`);
 
-    const usedFreeToday = (todayAttempts ?? []).some((a: any) => a.is_free_attempt);
+    const usedFreeToday = (todayAttempts ?? []).some((a: unknown) => a.is_free_attempt);
     const isFree = !usedFreeToday;
     const cost = isFree ? 0 : SECTION_COST[section];
 
@@ -80,7 +80,7 @@ Be specific, cite exact phrases, and recommend a concrete next step.`;
     const userContent = `Section: ${section}
 Prompt: ${promptText || "(generic)"}
 Response:
-${responseText || "(audio submission — transcript not available)"}`;
+${responseText || "(audio submission â€” transcript not available)"}`;
 
     const ai = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -100,7 +100,7 @@ ${responseText || "(audio submission — transcript not available)"}`;
       return json({ error: `ai_error_${ai.status}` }, 500);
     }
     const aiData = await ai.json();
-    let feedback: any = {};
+    let feedback: unknown = {};
     try { feedback = JSON.parse(aiData.choices?.[0]?.message?.content ?? "{}"); } catch { /**/ }
 
     const band = Number(feedback?.band_overall ?? 0) || null;
@@ -123,11 +123,13 @@ ${responseText || "(audio submission — transcript not available)"}`;
     if (insErr) return json({ error: insErr.message }, 500);
 
     return json({ ok: true, attempt_id: attempt.id, band, feedback, credits_spent: cost, was_free: isFree });
-  } catch (e: any) {
+  } catch (e: unknown) {
     return json({ error: e?.message ?? "unknown" }, 500);
   }
 });
 
-function json(b: any, status = 200) {
+function json(b: unknown, status = 200) {
   return new Response(JSON.stringify(b), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 }
+
+

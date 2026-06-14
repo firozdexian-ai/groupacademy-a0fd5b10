@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 
 /**
  * GroUp Academy: Viewport Intelligence Hook
@@ -22,7 +22,7 @@ export function useIsMobile() {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
     };
 
-    // HUD: REGISTER_VIEWPORT_LISTENERS
+    // dashboard: REGISTER_VIEWPORT_LISTENERS
     // Optimized for modern browsers with legacy fallback for older mobile clients
     if (typeof mql.addEventListener === "function") {
       mql.addEventListener("change", onChange);
@@ -48,3 +48,4 @@ export function useIsMobile() {
   // though 'undefined' is internally preserved until the first mount.
   return !!isMobile;
 }
+

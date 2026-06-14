@@ -1,4 +1,4 @@
-import { z } from 'zod';
+﻿import { z } from 'zod';
 
 // Auth validation schemas
 export const loginSchema = z.object({
@@ -53,3 +53,4 @@ export const whatsappUrlSchema = z.string().trim().refine(
   val => !val || /^https?:\/\/chat\.whatsapp\.com\/[a-zA-Z0-9]+/.test(val),
   { message: "Must be a valid WhatsApp group link (e.g., https://chat.whatsapp.com/...)" }
 );
+

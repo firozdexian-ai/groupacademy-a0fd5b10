@@ -1,4 +1,4 @@
-// Admin Company AI General — analytics + in-app messaging for registered
+﻿// Admin Company AI General â€” analytics + in-app messaging for registered
 // company-side users (Gro10x). Super-admin only.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { augmentLastUserMessage } from "../_shared/attachments.ts";
@@ -46,7 +46,7 @@ const TOOLS = [
 ];
 
 const SYSTEM = `You are the Company AI General operator console for Gro10x super admin.
-Always call tools — never invent stats. For send_in_app_message, restate count + body and ask for "yes send it".
+Always call tools â€” never invent stats. For send_in_app_message, restate count + body and ask for "yes send it".
 Be concise. Use markdown. Today: ${new Date().toISOString().slice(0, 10)}.`;
 
 Deno.serve(async (req) => {
@@ -68,7 +68,7 @@ Deno.serve(async (req) => {
     const admin = createClient(SUPA_URL, SERVICE_KEY);
     const { data: roleRows } = await admin
       .from("user_roles").select("role").eq("user_id", userData.user.id);
-    const roles = (roleRows ?? []).map((r: any) => r.role);
+    const roles = (roleRows ?? []).map((r: unknown) => r.role);
     if (!roles.includes("super_admin") && !roles.includes("admin")) {
       return json({ error: "forbidden" }, 403);
     }
@@ -76,7 +76,7 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const messages = body.messages ?? [];
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
-    const convo: any[] = [{ role: "system", content: SYSTEM }, ...messages];
+    const convo: unknown[] = [{ role: "system", content: SYSTEM }, ...messages];
     await augmentLastUserMessage(admin, convo, body.attachments);
 
     for (let step = 0; step < 5; step++) {
@@ -104,7 +104,7 @@ Deno.serve(async (req) => {
         convo.push(msg);
         for (const tc of msg.tool_calls) {
           const args = safeParse(tc.function?.arguments);
-          let toolResult: any = { error: "unknown tool" };
+          let toolResult: unknown = { error: "unknown tool" };
           try { toolResult = await runTool(admin, tc.function.name, args); }
           catch (e) { toolResult = { error: String(e) }; }
           convo.push({
@@ -133,7 +133,7 @@ Deno.serve(async (req) => {
   }
 });
 
-async function runTool(admin: any, name: string, args: any) {
+async function runTool(admin: unknown, name: string, args: unknown) {
   switch (name) {
     case "registered_company_users": {
       let q = admin.from("contacts").select("id", { head: true, count: "exact" })
@@ -153,12 +153,12 @@ async function runTool(admin: any, name: string, args: any) {
     case "send_in_app_message": {
       const ids: string[] = (args.user_ids ?? []).filter(Boolean);
       if (ids.length === 0) return { sent: 0 };
-      // Resolve user_ids → talent_ids when possible (notifications keyed by talent)
+      // Resolve user_ids â†’ talent_ids when possible (notifications keyed by talent)
       const { data: tRows } = await admin.from("talents")
         .select("id, user_id").in("user_id", ids);
       const map = new Map<string, string>();
       for (const r of tRows ?? []) if (r.user_id) map.set(r.user_id, r.id);
-      const rows: any[] = [];
+      const rows: unknown[] = [];
       for (const uid of ids) {
         const tid = map.get(uid);
         if (!tid) continue;
@@ -177,3 +177,5 @@ async function runTool(admin: any, name: string, args: any) {
     default: return { error: `unknown tool: ${name}` };
   }
 }
+
+

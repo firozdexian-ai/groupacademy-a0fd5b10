@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { getEmployerJobsDashboard } from "@/domains/jobs/repo/jobsRepo";
 
 export interface EmployerJobRow {
@@ -30,10 +30,12 @@ export function useEmployerJobsDashboard(companyId: string | null | undefined) {
     staleTime: 30_000,
     queryFn: async (): Promise<EmployerJobRow[]> => {
       const data = await getEmployerJobsDashboard(companyId!);
-      return (data as any[]).map((r) => ({
+      return (data as unknown[]).map((r) => ({
         ...r,
         applicant_count: Number(r.applicant_count ?? 0),
       })) as EmployerJobRow[];
     },
   });
 }
+
+

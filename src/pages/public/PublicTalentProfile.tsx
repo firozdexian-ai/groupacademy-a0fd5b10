@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams, Link } from "react-router-dom";
 import { getPublicTalentProfile } from "@/domains/profile/repo/profileRepo";
 import { Card, CardContent } from "@/components/ui/card";
@@ -30,13 +30,13 @@ const LEVEL_META: Record<string, { icon: React.ComponentType<{ className?: strin
 /**
  * Group Academy: Authoritative Public Talent Profile Mirror Node (PublicTalentProfile)
  * Hardened responsive identity page isolating OpenGraph context scripts and securing DOM nodes against side-effect memory leaks.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Locked
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Locked
  */
 export default function PublicTalentProfile() {
   const { handle: unverifiedRouteHandleStr } = useParams<{ handle: string }>();
 
   const [isPipelineResolving, setIsPipelineResolving] = React.useState<boolean>(true);
-  const [profileDataPayload, setProfileDataPayload] = React.useState<any>(null);
+  const [profileDataPayload, setProfileDataPayload] = React.useState<unknown>(null);
 
   // =========================================================================
   // LIFECYCLE SECTOR 1: ISOLATED RPC NETWORK FETCH AND DATA INTEGRITY
@@ -52,7 +52,7 @@ export default function PublicTalentProfile() {
 
     const executeProfileRegistryLookup = async () => {
       try {
-        const outputProfilePayload = await getPublicTalentProfile<any>(unverifiedRouteHandleStr);
+        const outputProfilePayload = await getPublicTalentProfile<unknown>(unverifiedRouteHandleStr);
 
         if (!isThreadActiveAndValid) return;
 
@@ -79,10 +79,10 @@ export default function PublicTalentProfile() {
     if (!profileDataPayload) return;
 
     const isolatedProfileNode = profileDataPayload;
-    const computedPageTitleStr = `${isolatedProfileNode.full_name} — Group Academy Profile Portfolio`;
+    const computedPageTitleStr = `${isolatedProfileNode.full_name} â€” Group Academy Profile Portfolio`;
     const computedDescriptionStr =
       isolatedProfileNode.bio ??
-      `${isolatedProfileNode.full_name} profile on Group Academy — verified development skills and curriculum mastery.`;
+      `${isolatedProfileNode.full_name} profile on Group Academy â€” verified development skills and curriculum mastery.`;
 
     // Step A: Stabilize standard window landmarks safely
     document.title = computedPageTitleStr;
@@ -140,14 +140,14 @@ export default function PublicTalentProfile() {
         : undefined,
       sameAs: [isolatedProfileNode.linkedin_url, isolatedProfileNode.portfolio_url].filter(Boolean),
       hasCredential: [
-        ...(isolatedProfileNode.credentials ?? []).map((credentialNodeItem: any) => ({
+        ...(isolatedProfileNode.credentials ?? []).map((credentialNodeItem: unknown) => ({
           "@type": "EducationalOccupationalCredential",
           name: credentialNodeItem.topic_tag.replace(/_/g, " ").toUpperCase(),
           credentialCategory: credentialNodeItem.level,
           recognizedBy: { "@type": "Organization", name: "Group Academy" },
           url: `${window.location.origin}/verify/skill/${credentialNodeItem.verify_code}`,
         })),
-        ...(isolatedProfileNode.tracks_completed ?? []).map((trackNodeItem: any) => ({
+        ...(isolatedProfileNode.tracks_completed ?? []).map((trackNodeItem: unknown) => ({
           "@type": "EducationalOccupationalCredential",
           name: trackNodeItem.track_title,
           credentialCategory: "track",
@@ -220,7 +220,7 @@ export default function PublicTalentProfile() {
 
   return (
     <div className="max-w-xl mx-auto px-4 py-4 space-y-4 pb-12 text-left antialiased block transform-gpu w-full">
-      {/* HUD LEVEL 1: PROFILE PRIMARY IDENTITY SHIELD HERO */}
+      {/* dashboard LEVEL 1: PROFILE PRIMARY IDENTITY SHIELD HERO */}
       <Card className="rounded-xl border border-border/60 bg-card/40 overflow-hidden shadow-none block w-full">
         {identityRecordNode.cover_image_url && (
           <div
@@ -313,7 +313,7 @@ export default function PublicTalentProfile() {
         </CardContent>
       </Card>
 
-      {/* HUD LEVEL 2: COMPOSITE COMPLETED ACADEMIC TRACK CURRICULUMS */}
+      {/* dashboard LEVEL 2: COMPOSITE COMPLETED ACADEMIC TRACK CURRICULUMS */}
       {identityRecordNode.show_credentials && identityRecordNode.tracks_completed?.length > 0 && (
         <Card className="rounded-xl border border-border/60 bg-card/40 shadow-none block w-full overflow-hidden">
           <CardContent className="p-4 space-y-3 block w-full leading-none">
@@ -322,7 +322,7 @@ export default function PublicTalentProfile() {
               <span>Completed Courses ({identityRecordNode.tracks_completed.length})</span>
             </h2>
             <ul className="space-y-2 p-0 m-0 block w-full list-none">
-              {identityRecordNode.tracks_completed.map((trackItemNode: any, structuralIdxNum: number) => (
+              {identityRecordNode.tracks_completed.map((trackItemNode: unknown, structuralIdxNum: number) => (
                 <li
                   key={`completed-track-node-row-${trackItemNode.track_title}-${structuralIdxNum}`}
                   className="flex items-center justify-between gap-3 rounded-lg border border-border/60 bg-background/30 p-2 leading-none block w-full"
@@ -366,7 +366,7 @@ export default function PublicTalentProfile() {
         </Card>
       )}
 
-      {/* HUD LEVEL 3: SHIELD VERIFIED PROFICIENCY MASTERY CREDENTIALS */}
+      {/* dashboard LEVEL 3: SHIELD VERIFIED PROFICIENCY MASTERY CREDENTIALS */}
       {identityRecordNode.show_credentials && identityRecordNode.credentials?.length > 0 && (
         <Card className="rounded-xl border border-border/60 bg-card/40 shadow-none block w-full overflow-hidden">
           <CardContent className="p-4 space-y-3 block w-full leading-none">
@@ -375,7 +375,7 @@ export default function PublicTalentProfile() {
               <span>Verified Skills ({identityRecordNode.credentials.length})</span>
             </h2>
             <div className="space-y-2 block w-full">
-              {identityRecordNode.credentials.map((skillNodeItem: any) => {
+              {identityRecordNode.credentials.map((skillNodeItem: unknown) => {
                 const targetLevelMetaMapObj = LEVEL_META[skillNodeItem.level] || LEVEL_META.foundational;
                 const SkillProficiencyIconNode = targetLevelMetaMapObj.icon;
 
@@ -396,7 +396,7 @@ export default function PublicTalentProfile() {
                           {skillNodeItem.topic_tag.replace(/_/g, " ")}
                         </p>
                         <p className="text-[10px] sm:text-[11px] font-medium opacity-70 truncate block select-text max-w-xs leading-none">
-                          {targetLevelMetaMapObj.label} · {skillNodeItem.course_title ?? "Cross-Course Framework"} ·{" "}
+                          {targetLevelMetaMapObj.label} Â· {skillNodeItem.course_title ?? "Cross-Course Framework"} Â·{" "}
                           <span className="font-mono font-bold tabular-nums">
                             {Math.round(Number(skillNodeItem.mastery_at_issue) * 100)}% Mastery
                           </span>
@@ -418,7 +418,7 @@ export default function PublicTalentProfile() {
         </Card>
       )}
 
-      {/* HUD LEVEL 4: LEARNING MASTERY MATRIX HISTOGRAM CHARTS */}
+      {/* dashboard LEVEL 4: LEARNING MASTERY MATRIX HISTOGRAM CHARTS */}
       {identityRecordNode.show_mastery &&
         identityRecordNode.mastery &&
         identityRecordNode.mastery.tracked_topics > 0 && (
@@ -452,12 +452,12 @@ export default function PublicTalentProfile() {
                     Top Strengths
                   </p>
                   <div className="flex flex-wrap gap-1.5 w-full block">
-                    {identityRecordNode.mastery.top_strengths.map((strengthNodeItem: any) => (
+                    {identityRecordNode.mastery.top_strengths.map((strengthNodeItem: unknown) => (
                       <span
                         key={`strength-vector-pill-${strengthNodeItem.topic_tag}`}
                         className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded font-mono text-[9px] font-extrabold uppercase tracking-wide bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 h-4.5 pt-1 leading-none shrink-0 select-text tabular-nums"
                       >
-                        {strengthNodeItem.topic_tag.replace(/_/g, " ")} ·{" "}
+                        {strengthNodeItem.topic_tag.replace(/_/g, " ")} Â·{" "}
                         {Math.round(Number(strengthNodeItem.mastery) * 100)}%
                       </span>
                     ))}
@@ -481,3 +481,5 @@ export default function PublicTalentProfile() {
     </div>
   );
 }
+
+

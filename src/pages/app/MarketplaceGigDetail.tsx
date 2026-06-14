@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -67,7 +67,7 @@ interface ReviewRecord {
 /**
  * GroUp Academy: Marketplace Mission Detail View (MarketplaceGigDetail)
  * Hardened responsive gateway orchestrating proposal submission, trust registry visualization, and contractual bonding.
- * Version: Launch Candidate · Phase Z1 Production Contract Sealed
+ * Version: Launch Candidate Â· Phase Z1 Production Contract Sealed
  */
 export default function MarketplaceGigDetail() {
  const { id: gigIdStr } = useParams<{ id: string }>();
@@ -126,7 +126,7 @@ export default function MarketplaceGigDetail() {
  if (error) throw error;
  toast.success("Proposal submitted.");
  queryClient.invalidateQueries({ queryKey: ["app-talent-marketplace-bid", gigIdStr] });
- } catch (e: any) {
+ } catch (e: unknown) {
  toast.error(e.message || "Couldn't submit your proposal.");
  } finally {
  setIsSubmitPending(false);
@@ -273,3 +273,5 @@ export default function MarketplaceGigDetail() {
  </div>
  );
 }
+
+

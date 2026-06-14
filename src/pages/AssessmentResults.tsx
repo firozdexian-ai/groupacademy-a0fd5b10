@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCareerAssessmentWithCategory } from "@/domains/marketing/repo/marketingRepo";
@@ -133,7 +133,7 @@ export default function AssessmentResults() {
   const analyzeMutation = useMutation({
     mutationFn: async (assessmentId: string) => {
       const data = await analyzeCareerAssessment({ assessmentId });
-      return (data as any)?.analysis as AIAnalysis;
+      return (data as unknown)?.analysis as AIAnalysis;
     },
     onSuccess: (newAnalysis) => {
       if (newAnalysis) {
@@ -158,7 +158,7 @@ export default function AssessmentResults() {
     }
   }, [assessment, isAnalyzing, hasAnalyzed, mutate]);
 
-  const shareText = `I scored ${assessment?.percentage}% on the Career Readiness Scorecard! 🎯 Check yours at GroUp Academy.`;
+  const shareText = `I scored ${assessment?.percentage}% on the Career Readiness Scorecard! ðŸŽ¯ Check yours at GroUp Academy.`;
   const shareUrl = window.location.href;
 
   const handleWhatsAppShare = () =>
@@ -460,3 +460,5 @@ export default function AssessmentResults() {
     </div>
   );
 }
+
+

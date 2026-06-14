@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { listVisibleVerificationAppeals } from "@/domains/gigs/repo/gigsRepo";
 import { Card, CardContent } from "@/components/ui/card";
@@ -33,7 +33,7 @@ const SKELETON_ITEMS_ROSTER = [1, 2, 3];
 /**
  * GroUp Academy: Gig Verification Dispute & Appeals Registry (GigAppeals)
  * Hardened responsive arbitration ledger listing automated verdicts and managing strict schema data validation paths.
- * Version: Launch Candidate · Phase Z1 Production Type Contract Sealed
+ * Version: Launch Candidate Â· Phase Z1 Production Type Contract Sealed
  */
 export default function GigAppeals() {
  // =========================================================================
@@ -50,7 +50,7 @@ export default function GigAppeals() {
 
  return (
  <div className="container mx-auto max-w-2xl px-4 py-6 space-y-4 pb-safe-bottom text-left antialiased block transform-gpu w-full">
- {/* HUD LEVEL 1: STRUCTURAL HUD CONTEXT BAR TITLES */}
+ {/* dashboard LEVEL 1: STRUCTURAL dashboard CONTEXT BAR TITLES */}
  <header className="space-y-1 block select-none pointer-events-none border-b border-border/10 pb-3 w-full shrink-0 leading-none">
  <div className="flex items-center gap-2 leading-none w-full block">
  <Scale className="h-4.5 w-4.5 text-primary stroke-[2.2] shrink-0" />
@@ -63,7 +63,7 @@ export default function GigAppeals() {
  </p>
  </header>
 
- {/* HUD LEVEL 2: CONDITIONAL CONTENT CONTAINER ROUTING CORES */}
+ {/* dashboard LEVEL 2: CONDITIONAL CONTENT CONTAINER ROUTING CORES */}
  {isLedgerCacheResolving ? (
  <div className="space-y-2.5 block w-full select-none pointer-events-none">
  {SKELETON_ITEMS_ROSTER.map((idxNum) => (
@@ -133,7 +133,7 @@ export default function GigAppeals() {
  {/* Relational Nested Component Gateways */}
  {appealItemNode.gig_verifications && (
  <div className="block w-full leading-none select-text border-t border-border/5 pt-3 mt-1 shrink-0">
- <VerificationVerdictCard verification={appealItemNode.gig_verifications as any} />
+ <VerificationVerdictCard verification={appealItemNode.gig_verifications as unknown} />
  </div>
  )}
 
@@ -160,3 +160,5 @@ export default function GigAppeals() {
  </div>
  );
 }
+
+

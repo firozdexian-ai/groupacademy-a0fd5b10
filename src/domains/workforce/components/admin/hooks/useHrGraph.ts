@@ -1,5 +1,5 @@
 /**
- * Institutional HR Graph Hook — Phase HR-Z1 Hardened, repo-backed in 10i.2
+ * Institutional HR Graph Hook â€” Phase HR-Z1 Hardened, repo-backed in 10i.2
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -42,7 +42,7 @@ export function useHrGraph() {
 
       const headcountByTeam: Record<string, number> = {};
       const headcountByGrade: Record<string, number> = {};
-      master.workforce.forEach((member: any) => {
+      master.workforce.forEach((member: unknown) => {
         if (member.team_id) headcountByTeam[member.team_id] = (headcountByTeam[member.team_id] || 0) + 1;
         if (member.grade_id) headcountByGrade[member.grade_id] = (headcountByGrade[member.grade_id] || 0) + 1;
       });
@@ -61,15 +61,15 @@ export function useHrGraph() {
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["hr_internal_graph"] });
 
-  const makeUpsert = (table: string, label: string) =>
+  const useMakeUpsert = (table: string, label: string) =>
     useMutation({
-      mutationFn: async (p: Record<string, any>) => upsertGraphRow(table, p),
+      mutationFn: async (p: Record<string, unknown>) => upsertGraphRow(table, p),
       onSuccess: () => {
         invalidate();
         toast.success(`${label} saved`);
       },
     });
-  const makeDelete = (table: string, label: string) =>
+  const useMakeDelete = (table: string, label: string) =>
     useMutation({
       mutationFn: async (id: string) => deleteGraphRow(table, id),
       onSuccess: () => {
@@ -78,14 +78,14 @@ export function useHrGraph() {
       },
     });
 
-  const upsertVertical = makeUpsert("hr_verticals", "Vertical Node");
-  const deleteVertical = makeDelete("hr_verticals", "Vertical Node");
-  const upsertFunction = makeUpsert("hr_functions", "Function Node");
-  const deleteFunction = makeDelete("hr_functions", "Function Node");
-  const upsertTeam = makeUpsert("hr_teams", "Team Node");
-  const deleteTeam = makeDelete("hr_teams", "Team Node");
-  const upsertGrade = makeUpsert("hr_grades", "Grade Node");
-  const deleteGrade = makeDelete("hr_grades", "Grade Node");
+  const upsertVertical = useMakeUpsert("hr_verticals", "Vertical Node");
+  const deleteVertical = useMakeDelete("hr_verticals", "Vertical Node");
+  const upsertFunction = useMakeUpsert("hr_functions", "Function Node");
+  const deleteFunction = useMakeDelete("hr_functions", "Function Node");
+  const upsertTeam = useMakeUpsert("hr_teams", "Team Node");
+  const deleteTeam = useMakeDelete("hr_teams", "Team Node");
+  const upsertGrade = useMakeUpsert("hr_grades", "Grade Node");
+  const deleteGrade = useMakeDelete("hr_grades", "Grade Node");
 
   const teamsQuery = { data: hrGraphQuery.data?.teams, isLoading: hrGraphQuery.isLoading };
   const gradesQuery = { data: hrGraphQuery.data?.grades, isLoading: hrGraphQuery.isLoading };
@@ -108,3 +108,5 @@ export function useHrGraph() {
     },
   };
 }
+
+

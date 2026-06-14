@@ -1,5 +1,5 @@
-/**
- * Phase 4.1 — AI item generation (MCQ / scenario) for instructor authoring.
+﻿/**
+ * Phase 4.1 â€” AI item generation (MCQ / scenario) for instructor authoring.
  * Debits instructor credits per call.
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
@@ -89,11 +89,11 @@ Deno.serve(async (req) => {
 
     const ai = await aiResp.json();
     const text = ai?.choices?.[0]?.message?.content ?? "{}";
-    let parsed: any = {};
+    let parsed: unknown = {};
     try { parsed = JSON.parse(text); } catch { parsed = { raw: text }; }
 
     return json({ ok: true, cost, items: parsed });
-  } catch (e: any) {
+  } catch (e: unknown) {
     return json({ error: e.message ?? String(e) }, 500);
   }
 });
@@ -104,3 +104,5 @@ function json(body: unknown, status = 200) {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
+
+

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+﻿import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTalent } from "@/hooks/useTalent";
@@ -27,7 +27,7 @@ interface ProfileCompletionPromptProps {
 /**
  * GroUp Academy: Profile Integrity & Completion Prompt Catalyst (ProfileCompletionPrompt)
  * An authoritative operational sandbox monitoring profile variable density and prompting sync workflows.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function ProfileCompletionPrompt({
   variant = "card",
@@ -367,3 +367,4 @@ export function ProfileCompletionPrompt({
     </Card>
   );
 }
+

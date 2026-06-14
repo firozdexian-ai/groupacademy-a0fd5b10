@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getStudyAbroadProgramById } from "@/domains/abroad/repo/abroadRepo";
@@ -56,7 +56,7 @@ export default function StudyAbroadDetail() {
  const { talent } = useTalent();
 
  // Internal error logger
- const reportAnomaly = async (event: string, context: any) => {
+ const reportAnomaly = async (event: string, context: unknown) => {
  console.error(`[abroad] ${event}`, context);
  try {
  await adminSupportAssistant({ type: "abroad_detail_error", event, context });
@@ -156,8 +156,8 @@ export default function StudyAbroadDetail() {
  <div className="grid grid-cols-2 gap-3">
  {[
  { icon: GraduationCap, label: "Degree", val: program.degree_type },
- { icon: Clock, label: "Duration", val: program.duration || "—" },
- { icon: DollarSign, label: "Tuition", val: program.tuition_range || "—" },
+ { icon: Clock, label: "Duration", val: program.duration || "â€”" },
+ { icon: DollarSign, label: "Tuition", val: program.tuition_range || "â€”" },
  {
  icon: Calendar,
  label: "Deadline",
@@ -239,3 +239,5 @@ export default function StudyAbroadDetail() {
  </div>
  );
 }
+
+

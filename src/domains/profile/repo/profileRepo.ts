@@ -1,5 +1,5 @@
-/**
- * GroUp Academy — Profile Domain Repository (Phase 10e)
+﻿/**
+ * GroUp Academy â€” Profile Domain Repository (Phase 10e)
  * Sole owner of `supabase.from(...)` table I/O for the profile domain.
  * Storage (`supabase.storage.from(...)`) and RPC paths intentionally remain in their callers.
  */
@@ -37,7 +37,7 @@ export async function listTalentLists(companyId: string) {
     .eq("company_id", companyId)
     .order("updated_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function listTalentListMembers(listId: string) {
@@ -47,7 +47,7 @@ export async function listTalentListMembers(listId: string) {
     .eq("list_id", listId)
     .order("added_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function createTalentList(input: {
@@ -99,7 +99,7 @@ export async function listTalentRelationships(companyId: string) {
     .eq("company_id", companyId)
     .order("updated_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function upsertTalentRelationship(input: {
@@ -142,7 +142,7 @@ export async function listAgentPitchLog(talentId: string, limit: number) {
     .order("created_at", { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export function subscribeToAgentPitchLog(talentId: string, onChange: () => void): () => void {
@@ -180,13 +180,13 @@ export interface IdentityDocRecord {
 
 export async function getLatestIdentityDoc(talentId: string): Promise<IdentityDocRecord | null> {
   const { data, error } = await supabase
-    .from("talent_id_documents" as any)
+    .from("talent_id_documents" as unknown)
     .select("*")
     .eq("talent_id", talentId)
     .order("created_at", { ascending: false })
     .limit(1);
   if (error) throw error;
-  return ((data as any[]) ?? [])[0] ?? null;
+  return ((data as unknown[]) ?? [])[0] ?? null;
 }
 
 export async function insertIdentityDoc(input: {
@@ -196,14 +196,14 @@ export async function insertIdentityDoc(input: {
   frontUrl: string;
   backUrl: string | null;
 }) {
-  const { error } = await supabase.from("talent_id_documents" as any).insert({
+  const { error } = await supabase.from("talent_id_documents" as unknown).insert({
     talent_id: input.talentId,
     user_id: input.userId,
     doc_type: input.docType,
     front_url: input.frontUrl,
     back_url: input.backUrl,
     status: "pending",
-  } as any);
+  } as unknown);
   if (error) throw error;
 }
 
@@ -213,13 +213,13 @@ export async function insertIdentityDoc(input: {
 
 export async function listPayoutAccounts(talentId: string) {
   const { data, error } = await supabase
-    .from("talent_payout_accounts" as any)
+    .from("talent_payout_accounts" as unknown)
     .select("*")
     .eq("talent_id", talentId)
     .order("is_primary", { ascending: false })
     .order("created_at", { ascending: true });
   if (error) throw error;
-  return ((data as any[]) ?? []) as any[];
+  return ((data as unknown[]) ?? []) as unknown[];
 }
 
 export async function insertPayoutAccount(input: {
@@ -231,7 +231,7 @@ export async function insertPayoutAccount(input: {
   bankName: string | null;
   isPrimary: boolean;
 }) {
-  const { error } = await supabase.from("talent_payout_accounts" as any).insert({
+  const { error } = await supabase.from("talent_payout_accounts" as unknown).insert({
     talent_id: input.talentId,
     user_id: input.userId,
     method: input.method,
@@ -239,24 +239,24 @@ export async function insertPayoutAccount(input: {
     account_number: input.accountNumber,
     bank_name: input.bankName,
     is_primary: input.isPrimary,
-  } as any);
+  } as unknown);
   if (error) throw error;
 }
 
 export async function setPayoutAccountPrimary(accountId: string) {
   const { error } = await supabase
-    .from("talent_payout_accounts" as any)
-    .update({ is_primary: true } as any)
+    .from("talent_payout_accounts" as unknown)
+    .update({ is_primary: true } as unknown)
     .eq("id", accountId);
   if (error) throw error;
 }
 
 export async function deletePayoutAccount(accountId: string) {
-  const { error } = await supabase.from("talent_payout_accounts" as any).delete().eq("id", accountId);
+  const { error } = await supabase.from("talent_payout_accounts" as unknown).delete().eq("id", accountId);
   if (error) throw error;
 }
 
-// ─── Phase 10j.2 — RBAC lookups ───────────────────────────────────────────
+// â”€â”€â”€ Phase 10j.2 â€” RBAC lookups â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function listUserRoles(userId: string): Promise<Array<{ role: string }>> {
   const { data, error } = await supabase.from("user_roles").select("role").eq("user_id", userId);
   if (error) throw error;
@@ -269,7 +269,7 @@ export async function listUserRolesSafe(userId: string): Promise<Array<{ role: s
 }
 
 // -----------------------------------------------------------------------------
-// Phase 10j.3b additions — onboarding & RBAC lookups
+// Phase 10j.3b additions â€” onboarding & RBAC lookups
 // -----------------------------------------------------------------------------
 
 import { supabase as _supabaseProfile } from "@/integrations/supabase/client";
@@ -361,20 +361,20 @@ export async function listActiveSchools(academyId?: string | null) {
   return (data ?? []) as Array<{ id: string; name: string; slug: string; description: string | null; icon: string | null; academy_id: string | null }>;
 }
 
-// ─── Phase 10j.5h6: public discovery & profile RPC wrappers ───────────────
-export async function getPublicTalentProfile<T = any>(handle: string): Promise<T | null> {
+// â”€â”€â”€ Phase 10j.5h6: public discovery & profile RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function getPublicTalentProfile<T = unknown>(handle: string): Promise<T | null> {
   const { data, error } = await supabase.rpc("get_public_talent_profile", { _handle: handle });
   if (error) throw error;
   return (data ?? null) as T | null;
 }
 
-export async function searchPublicTalents<T = any>(args: {
+export async function searchPublicTalents<T = unknown>(args: {
   filters: { keyword?: string; country?: string; skills?: string[] | null };
   limit: number;
   offset: number;
 }): Promise<T> {
   const { data, error } = await supabase.rpc("search_public_talents", {
-    p_filters: args.filters as any,
+    p_filters: args.filters as unknown,
     p_limit: args.limit,
     p_offset: args.offset,
   });
@@ -382,14 +382,14 @@ export async function searchPublicTalents<T = any>(args: {
   return (data ?? {}) as T;
 }
 
-export async function getTalentOutcomeSignal<T = any>(talentId: string): Promise<T> {
+export async function getTalentOutcomeSignal<T = unknown>(talentId: string): Promise<T> {
   const { data, error } = await supabase.rpc("get_talent_outcome_signal", { _talent_id: talentId });
   if (error) throw error;
   return (data ?? {}) as T;
 }
 
-// ─── Phase 10j.5h9 ────────────────────────────────────────────────────────
-export async function checkCvDuplicate<T = any>(args: { fingerprint: string; selfUserId: string }): Promise<T> {
+// â”€â”€â”€ Phase 10j.5h9 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function checkCvDuplicate<T = unknown>(args: { fingerprint: string; selfUserId: string }): Promise<T> {
   const { data, error } = await supabase.rpc("check_cv_duplicate", {
     _fingerprint: args.fingerprint,
     _self_user_id: args.selfUserId,
@@ -403,7 +403,7 @@ export async function provisionOrGetInstance(args: { clusterGeoId: string; funne
     "provision_or_get_instance" as never,
     { _cluster_geo_id: args.clusterGeoId, _funnel: args.funnel } as never,
   );
-  return { data, error } as { data: any; error: any };
+  return { data, error } as { data: unknown; error: unknown };
 }
 
 // -----------------------------------------------------------------------------
@@ -470,3 +470,5 @@ export async function removeFromBucket(bucket: string, paths: string[]): Promise
   const { error } = await supabase.storage.from(bucket).remove(paths);
   if (error) throw error;
 }
+
+

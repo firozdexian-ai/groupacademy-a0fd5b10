@@ -1,5 +1,5 @@
-/**
- * Finance domain — edge function contracts (Phase 9g + 9h).
+﻿/**
+ * Finance domain â€” edge function contracts (Phase 9g + 9h).
  */
 import { z } from "zod";
 
@@ -71,3 +71,4 @@ export const RequestInstructorPayoutResponseSchema = z
 export type RequestInstructorPayoutResponse = z.infer<
   typeof RequestInstructorPayoutResponseSchema
 >;
+

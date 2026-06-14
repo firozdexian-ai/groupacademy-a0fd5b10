@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -290,7 +290,7 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
  );
 }
 
-function ChannelNode({ icon: Icon, value, href }: { icon: any; value: string; href: string }) {
+function ChannelNode({ icon: Icon, value, href }: { icon: unknown; value: string; href: string }) {
  return (
  <a
  href={href}
@@ -307,7 +307,7 @@ function ChannelNode({ icon: Icon, value, href }: { icon: any; value: string; hr
  );
 }
 
-function SocialBadge({ icon: Icon, href, label }: { icon: any; href: string; label: string }) {
+function SocialBadge({ icon: Icon, href, label }: { icon: unknown; href: string; label: string }) {
  return (
  <a
  href={href}
@@ -322,3 +322,5 @@ function SocialBadge({ icon: Icon, href, label }: { icon: any; href: string; lab
  </a>
  );
 }
+
+

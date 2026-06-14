@@ -27,7 +27,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Mission Audit Ledger (MySubmissions)
  * CTO Reference: Authoritative node for tracking gig completion and viral reach tracking logs.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 
 const STATUS_CONFIG = {
@@ -58,14 +58,6 @@ export function MySubmissions({ talentId }: { talentId?: string }) {
     }
   }, [talentId]);
 
-  if (!talentId) {
-    trackError("MySubmissions panel mounted without a valid talent identity context reference.", {
-      component: "MySubmissions",
-      action: "null_pointer_assertion",
-    });
-    return null;
-  }
-
   // 1. REGISTRY_SYNC: Fetch comprehensive historical task submissions (staleTime 3 min configuration)
   const {
     data: submissions = [],
@@ -76,7 +68,7 @@ export function MySubmissions({ talentId }: { talentId?: string }) {
     enabled: !!talentId,
     staleTime: 1000 * 60 * 3,
     refetchOnWindowFocus: false,
-    queryFn: () => getMyGigSubmissions(talentId),
+    queryFn: () => getMyGigSubmissions(talentId || ""),
   });
 
   // 2. Referral Parameters Synchronization Query Node
@@ -84,14 +76,14 @@ export function MySubmissions({ talentId }: { talentId?: string }) {
     queryKey: ["talent-ref-code", talentId],
     enabled: !!talentId,
     staleTime: 1000 * 60 * 10,
-    queryFn: () => getTalentRefCode(talentId),
+    queryFn: () => getTalentRefCode(talentId || ""),
   });
 
   // TELEMETRY Matrix: Extract job codes safely to execute atomic batch count aggregation
   const jobShareIds =
     submissions
       ?.filter((s) => s?.gigs?.category === "job_sharing")
-      .map((s) => (s.submission_data as any)?.job_id)
+      .map((s) => (s.submission_data as unknown)?.job_id)
       .filter(Boolean) || [];
 
   // 3. Consolidated Real-Time Click Attribution Tracking Engine (Single-pass replacement for N+1 loops)
@@ -101,12 +93,12 @@ export function MySubmissions({ talentId }: { talentId?: string }) {
     refetchInterval: 30000, // Sync loop intervals preserved safely
     queryFn: async () => {
       try {
-        return await getJobShareClickCounts(talentId, jobShareIds);
+        return await getJobShareClickCounts(talentId || "", jobShareIds);
       } catch (loopErr) {
         trackError(loopErr, {
           component: "MySubmissions",
           action: "aggregate_consolidated_clicks_api",
-          talentId,
+          talentId: talentId || "",
         });
         return {};
       }
@@ -119,10 +111,18 @@ export function MySubmissions({ talentId }: { talentId?: string }) {
       trackError(subError, {
         component: "MySubmissions",
         action: "fetch_gig_submissions_registry",
-        talentId,
+        talentId: talentId || "",
       });
     }
   }, [subError, talentId]);
+
+  if (!talentId) {
+    trackError("MySubmissions panel mounted without a valid talent identity context reference.", {
+      component: "MySubmissions",
+      action: "null_pointer_assertion",
+    });
+    return null;
+  }
 
   // Global window environment helper guard
   const buildRefPathSafe = (id: string): string => {
@@ -155,13 +155,13 @@ export function MySubmissions({ talentId }: { talentId?: string }) {
 
   return (
     <div className="space-y-3 antialiased select-none sm:select-text w-full">
-      {submissions.map((sub: any) => {
+      {submissions.map((sub: unknown) => {
         if (!sub || !sub.id) return null;
 
         const config = STATUS_CONFIG[sub.status as keyof typeof STATUS_CONFIG] || STATUS_CONFIG.pending;
         const StatusIcon = config.icon;
         const isJobSharing = sub.gigs?.category === "job_sharing";
-        const jobId = (sub.submission_data as any)?.job_id;
+        const jobId = (sub.submission_data as unknown)?.job_id;
         const clicks = isJobSharing && jobId ? Number(clickCounts[jobId] || 0) : null;
 
         const CLICK_THRESHOLD = 10;
@@ -185,9 +185,9 @@ export function MySubmissions({ talentId }: { talentId?: string }) {
 
                 {/* Dynamic Title Resolution Header Element */}
                 <h4 className="font-bold text-xs sm:text-sm text-foreground/90 tracking-tight leading-tight truncate pr-1 select-all break-all">
-                  {(sub.submission_data as any)?.job_title ||
-                    (sub.submission_data as any)?.parsed_job?.title ||
-                    (sub.submission_data as any)?.title ||
+                  {(sub.submission_data as unknown)?.job_title ||
+                    (sub.submission_data as unknown)?.parsed_job?.title ||
+                    (sub.submission_data as unknown)?.title ||
                     "Untitled submission"}
                 </h4>
 
@@ -298,3 +298,5 @@ export function MySubmissions({ talentId }: { talentId?: string }) {
     </div>
   );
 }
+
+

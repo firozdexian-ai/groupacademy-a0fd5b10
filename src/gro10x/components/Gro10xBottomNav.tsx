@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+﻿import { NavLink } from "react-router-dom";
 import { MessageSquare, Newspaper, Building2, Activity, GraduationCap } from "lucide-react";
 import { useGro10xThreads } from "../hooks/useGro10xThreads";
 
@@ -58,3 +58,4 @@ export function Gro10xBottomNav() {
     </nav>
   );
 }
+

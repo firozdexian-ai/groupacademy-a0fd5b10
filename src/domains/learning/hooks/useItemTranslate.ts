@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { aiItemTranslate, aiItemTranslateApply } from "@/domains/learning/api/learningApi";
 import { toast } from "sonner";
@@ -26,8 +26,8 @@ export const SUPPORTED_TRANSLATION_LANGS = [
 export type TranslationDraft = {
   language_code: string;
   language_name: string;
-  source: any;
-  translated: any;
+  source: unknown;
+  translated: unknown;
 };
 
 /**
@@ -47,7 +47,7 @@ export function useItemTranslate() {
     }): Promise<TranslationDraft> => {
       setDraft(null); // Clear previous draft on new request
 
-      // HUD: INVOKING_AI_LOCALIZATION_AGENT
+      // dashboard: INVOKING_AI_LOCALIZATION_AGENT
       const data = await aiItemTranslate({
         item_id: input.item_id,
         item_type: input.item_type,
@@ -60,7 +60,7 @@ export function useItemTranslate() {
       setDraft(result);
       return result;
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       // Digital Workforce Anomaly Trigger:
       // Critical for monitoring translation timeouts or semantic localization failures.
       console.error("[Digital Workforce] ANOMALY: ai-item-translate execution failed.", {
@@ -77,10 +77,10 @@ export function useItemTranslate() {
       item_id: string;
       item_type: "quiz" | "scenario";
       language_code: string;
-      payload: any;
+      payload: unknown;
       source?: "ai" | "human";
     }) => {
-      // HUD: EXECUTING_LOCALIZATION_PERSISTENCE_handshake
+      // dashboard: EXECUTING_LOCALIZATION_PERSISTENCE_handshake
       const data = await aiItemTranslateApply({
         item_id: input.item_id,
         item_type: input.item_type,
@@ -98,7 +98,7 @@ export function useItemTranslate() {
       queryClient.invalidateQueries({ queryKey: ["item-analytics", variables.item_id] });
       toast.success(`Translation saved successfully (${variables.language_code})`);
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       console.error("[Digital Workforce] ANOMALY: ai-item-translate-apply mutation rejected.", err);
       toast.error(err.message ?? "Failed to save localized version.");
     },
@@ -114,3 +114,5 @@ export function useItemTranslate() {
     error: generateMutation.error || applyMutation.error,
   };
 }
+
+

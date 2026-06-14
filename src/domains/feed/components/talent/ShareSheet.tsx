@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Share2, Copy, Check, MessageCircle, Linkedin, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -130,7 +130,7 @@ export function ShareSheet({ title, url, description, postId }: ShareSheetProps)
         queryClient.invalidateQueries({ queryKey: ["feed-posts"] });
       }
       setOpen(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       trackEvent("share_native_web_api_aborted", { postId: postId, exceptionMessage: String(err) });
     }
   };
@@ -247,3 +247,4 @@ export function ShareSheet({ title, url, description, postId }: ShareSheetProps)
     </Sheet>
   );
 }
+

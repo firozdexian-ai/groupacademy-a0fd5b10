@@ -1,5 +1,5 @@
-/**
- * Global Broadcast Engine — Phase Z0 Hardened
+﻿/**
+ * Global Broadcast Engine â€” Phase Z0 Hardened
  * CTO Version: May 2026
  * Fixes: B7 (RPC Broadcast), P4 (Identity List Freshness & Surgical Targeting)
  */
@@ -24,9 +24,9 @@ import { InlineSpinner } from "@/components/common/InlineSpinner";
 const ITEMS_PER_PAGE = 10;
 
 export function NotificationsTab() {
- const [notifications, setNotifications] = useState<any[]>([]);
- const [talents, setTalents] = useState<any[]>([]);
- const [categories, setCategories] = useState<any[]>([]);
+ const [notifications, setNotifications] = useState<unknown[]>([]);
+ const [talents, setTalents] = useState<unknown[]>([]);
+ const [categories, setCategories] = useState<unknown[]>([]);
  const [isLoading, setIsLoading] = useState(true);
  const [page, setPage] = useState(1);
  const [totalCount, setTotalCount] = useState(0);
@@ -106,7 +106,7 @@ export function NotificationsTab() {
         if (queryError) throw queryError;
 
         if (categoryTalents && categoryTalents.length > 0) {
-          const rows = categoryTalents.map((t: any) => ({
+          const rows = categoryTalents.map((t: unknown) => ({
             talent_id: t.id,
             title: payload.title,
             message: payload.message,
@@ -228,7 +228,7 @@ export function NotificationsTab() {
  </Label>
             <Select
               value={targetType}
-              onValueChange={(v: any) => {
+              onValueChange={(v: unknown) => {
                 setTargetType(v);
                 setTargetId("");
               }}
@@ -289,11 +289,11 @@ export function NotificationsTab() {
  Payload Title
  </Label>
  <Input
- value={payload.title}
- onChange={(e) => setPayload({ ...payload, title: e.target.value })}
- placeholder="Headline..."
- className="rounded-xl border h-12 bg-muted/20 font-bold"
- />
+  value={payload.title}
+  onChange={(e) => setPayload({ ...payload, title: e.target.value })}
+  placeholder="Headline..."
+  className="rounded-xl border h-12 bg-surface text-primary font-bold"
+/>
  </div>
 
  <div className="space-y-2">
@@ -325,3 +325,5 @@ export function NotificationsTab() {
  </div>
  );
 }
+
+

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { resolveTalentEmailByPhoneVariants } from "@/domains/talent/repo/talentRepo";
@@ -51,7 +51,7 @@ export interface AuthState {
 function friendlyAuthError(msg: string): string {
   const m = (msg || "").toLowerCase();
   if (m.includes("invalid login")) return "Email or password is incorrect.";
-  if (m.includes("email not confirmed")) return "Please confirm your email — check your inbox for the link.";
+  if (m.includes("email not confirmed")) return "Please confirm your email â€” check your inbox for the link.";
   if (m.includes("user already registered")) return "An account with this email already exists. Try signing in.";
   if (m.includes("password") && m.includes("weak")) return "Choose a stronger password (at least 8 characters).";
   if (m.includes("rate limit")) return "Too many attempts. Please wait a moment and try again.";
@@ -75,7 +75,7 @@ export const useAuth = (): AuthState => {
     } = supabase.auth.onAuthStateChange((event, nextSession) => {
       if (!mounted.current) return;
 
-      // Refresh-token failure / explicit sign-out → wipe local state.
+      // Refresh-token failure / explicit sign-out â†’ wipe local state.
       if (event === "SIGNED_OUT" || (event === "TOKEN_REFRESHED" && !nextSession)) {
         setSession(null);
         setUser(null);
@@ -89,7 +89,7 @@ export const useAuth = (): AuthState => {
     // 2) Then hydrate the existing session.
     (async () => {
       try {
-        const { data, error } = await supabase.auth.getSession();
+        const { data, error } = await getCurrentSession();
         if (error) throw error;
         if (mounted.current) {
           setSession(data.session);
@@ -112,7 +112,7 @@ export const useAuth = (): AuthState => {
     };
   }, []);
 
-  /** Resolve phone → email so users can sign in by phone. */
+  /** Resolve phone â†’ email so users can sign in by phone. */
   const resolveIdentifier = async (phone: string): Promise<string | null> => {
     const cleanPhone = phone.replace(/[^\d+]/g, "");
     const variants = [cleanPhone, cleanPhone.startsWith("+") ? cleanPhone.substring(1) : `+${cleanPhone}`];
@@ -130,7 +130,7 @@ export const useAuth = (): AuthState => {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       toast.success("Welcome back.");
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(friendlyAuthError(err.message));
       throw err;
     }
@@ -173,9 +173,9 @@ export const useAuth = (): AuthState => {
       if (signUpError) throw signUpError;
       if (!authData.user) throw new Error("Could not create your account. Please try again.");
 
-      toast.success("Welcome — let's set up your profile.");
+      toast.success("Welcome â€” let's set up your profile.");
       return true;
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(friendlyAuthError(err.message));
       throw err;
     }
@@ -188,7 +188,7 @@ export const useAuth = (): AuthState => {
         extraParams: { prompt: "select_account" },
       });
       if (result.error) throw result.error;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("[useAuth] OAuth failed:", err);
       toast.error("Google sign-in failed. Please try again.");
       throw err;
@@ -207,7 +207,7 @@ export const useAuth = (): AuthState => {
         redirectTo: `${window.location.origin}/reset-password`,
       });
     } catch {
-      /* swallow — neutral response below */
+      /* swallow â€” neutral response below */
     }
     toast.success("If that email is registered, we've sent a reset link.");
   };
@@ -220,3 +220,6 @@ export const useAuth = (): AuthState => {
 
   return { user, session, isLoading, signIn, signUp, signInWithGoogle, signOut, resetPassword, updatePassword };
 };
+
+
+

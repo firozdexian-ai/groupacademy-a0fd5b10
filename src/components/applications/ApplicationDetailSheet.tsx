@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+﻿import { useState, useEffect, useMemo } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { createTalentCvSignedUrl } from "@/domains/jobs/repo/jobsRepo";
@@ -73,7 +73,7 @@ export function ApplicationDetailSheet({
     mutationFn: async (targetStatus: PipelineStatus): Promise<void> => {
       if (!application?.id) throw new Error("TRANSACTION_REJECTED: Application missing valid unique ID.");
 
-      // HUD: ATOMIC_PIPELINE_STATUS_TRANSITION_COMMITTED
+      // dashboard: ATOMIC_PIPELINE_STATUS_TRANSITION_COMMITTED
       await onMove(targetStatus);
     },
     onSuccess: (_, targetStatus) => {
@@ -85,7 +85,7 @@ export function ApplicationDetailSheet({
 
       onChanged();
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       // Digital Workforce Anomaly Trigger: Crucial for debugging recruiter write privilege rejections
       console.error("[Digital Workforce] ANOMALY: Pipeline status write operation rejected.", {
         applicationId: application?.id,
@@ -103,14 +103,14 @@ export function ApplicationDetailSheet({
     mutationFn: async (targetTextPayload: string): Promise<void> => {
       if (!application?.id) throw new Error("TRANSACTION_REJECTED: Context anchor dropped.");
 
-      // HUD: COMMITTING_INTERNAL_ASSESSMENT_NOTES_UPDATE
+      // dashboard: COMMITTING_INTERNAL_ASSESSMENT_NOTES_UPDATE
       await updateJobApplication(application.id, { external_notes: targetTextPayload.trim() });
     },
     onSuccess: () => {
       toast.success("Internal recruiter notes logged successfully.");
       void qc.invalidateQueries({ queryKey: ["employer-pipeline"] });
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       toast.error(err.message || "Failed to log assessment history notes.");
     },
   });
@@ -131,7 +131,7 @@ export function ApplicationDetailSheet({
     if (!calculatedSignedCvPath) return;
 
     try {
-      // HUD: REPROVISIONING_TEMPORARY_SIGNED_STORAGE_ACCESS_URL
+      // dashboard: REPROVISIONING_TEMPORARY_SIGNED_STORAGE_ACCESS_URL
       const signedUrl = await createTalentCvSignedUrl(calculatedSignedCvPath, 60 * 60).catch(
         () => null,
       );
@@ -141,7 +141,7 @@ export function ApplicationDetailSheet({
       }
 
       window.open(signedUrl, "_blank", "noopener,noreferrer");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("[Digital Workforce] FAULT: Secure CV allocation link dropped.", err.message);
       toast.error("Could not generate authorized CV down-link path.");
     }
@@ -220,7 +220,7 @@ export function ApplicationDetailSheet({
               </Badge>
               {typeof application.ai_match_score === "number" && (
                 <Badge variant="secondary" className="h-6 px-2.5 font-black bg-primary/10 text-primary text-[10px]">
-                  🔥 {application.ai_match_score}% Match Score
+                  ðŸ”¥ {application.ai_match_score}% Match Score
                 </Badge>
               )}
             </div>
@@ -338,3 +338,5 @@ export function ApplicationDetailSheet({
     </Sheet>
   );
 }
+
+

@@ -98,7 +98,7 @@ function matchProfessionCategory(text: string): string | null {
 function repairJSON(malformedJSON: string): string | null {
   let cleaned = malformedJSON;
   
-  // Remove any text outside the main JSON object
+  // Remove unknown text outside the main JSON object
   const firstBrace = cleaned.indexOf('{');
   const lastBrace = cleaned.lastIndexOf('}');
   if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
@@ -109,8 +109,8 @@ function repairJSON(malformedJSON: string): string | null {
   
   // Fix common array issues - remove stray text between array elements
   // This handles cases like: "text"\n   SomeRandomText",
-  cleaned = cleaned.replace(/"\s*\n\s*[^"\[\],{}\n:]+\s*"/g, '", "');
-  cleaned = cleaned.replace(/"\s*\n\s*[^"\[\],{}\n:]+\s*,/g, '",');
+  cleaned = cleaned.replace(/"\s*\n\s*[^"[],{}\n:]+\s*"/g, '", "');
+  cleaned = cleaned.replace(/"\s*\n\s*[^"[],{}\n:]+\s*,/g, '",');
   
   // Fix unclosed strings in arrays (missing closing quote before ])
   cleaned = cleaned.replace(/"\s*\n\s*\]/g, '"]');
@@ -258,7 +258,7 @@ serve(async (req) => {
     const isImageMode = !!imageUrl && !text;
     console.log(`Parsing job post for user ${user.id}, mode: ${isImageMode ? 'image' : 'text'}, ${isImageMode ? 'imageUrl: ' + imageUrl : 'text length: ' + text?.length}`);
 
-    const systemPrompt = `You are an expert job post parser. Extract structured information from job postings copied from social media (Facebook, LinkedIn, etc.) or websites.${isImageMode ? ' The job posting is provided as a screenshot image — read all visible text and extract the data.' : ''}
+    const systemPrompt = `You are an expert job post parser. Extract structured information from job postings copied from social media (Facebook, LinkedIn, etc.) or websites.${isImageMode ? ' The job posting is provided as a screenshot image â€” read all visible text and extract the data.' : ''}
 
 Important parsing rules:
 - Extract ALL responsibilities and put them in the description
@@ -269,8 +269,8 @@ Important parsing rules:
 - Extract application email/URL if provided
 - Extract company website if mentioned in the post`;
 
-    // Build user message content — multimodal if image, text-only otherwise
-    let userContent: any;
+    // Build user message content â€” multimodal if image, text-only otherwise
+    let userContent: unknown;
     if (isImageMode) {
       userContent = [
         { type: "text", text: "Extract all job posting information from this screenshot image using the extract_job_data function:" },
@@ -284,7 +284,7 @@ Important parsing rules:
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 90000);
 
-    let parsedData: any = null;
+    let parsedData: unknown = null;
     let parseAttempts = 0;
     const maxAttempts = 2;
 
@@ -437,3 +437,5 @@ Important parsing rules:
     });
   }
 });
+
+

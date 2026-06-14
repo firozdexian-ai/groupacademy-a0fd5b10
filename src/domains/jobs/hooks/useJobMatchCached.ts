@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { getCachedJobMatchScore } from "@/domains/jobs/repo/jobsRepo";
 
 /**
@@ -25,11 +25,11 @@ export function useJobMatchCached(jobId: string | undefined, talentId: string | 
     // Performance Baseline: 5-minute stability caching to protect database resources
     staleTime: 5 * 60 * 1000,
     queryFn: async (): Promise<JobMatchCache | null> => {
-      // HUD: EXECUTING_CACHED_MATCH_REGISTRY_SYNC
+      // dashboard: EXECUTING_CACHED_MATCH_REGISTRY_SYNC
       let data;
       try {
         data = await getCachedJobMatchScore(jobId!, talentId!);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: job_match_cached lookup failed.", {
           jobId,
           talentId,
@@ -48,3 +48,5 @@ export function useJobMatchCached(jobId: string | undefined, talentId: string | 
     },
   });
 }
+
+

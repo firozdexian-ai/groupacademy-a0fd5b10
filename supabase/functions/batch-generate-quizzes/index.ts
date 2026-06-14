@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+﻿import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -8,11 +8,11 @@ const corsHeaders = {
 };
 
 async function generateQuizzes(
-  modules: any[],
+  modules: unknown[],
   courseMap: Record<string, { title: string; programName: string }>,
-  supabase: any
+  supabase: unknown
 ): Promise<{ inserted: number; skipped: number }> {
-  const moduleList = modules.map((m: any, i: number) => {
+  const moduleList = modules.map((m: unknown, i: number) => {
     const course = courseMap[m.content_id] || { title: "Unknown", programName: "Unknown" };
     return `${i + 1}. Module ID: ${m.id}\n   Content ID: ${m.content_id}\n   Course: "${course.title}"\n   Program: "${course.programName}"\n   Module: "${m.title}"\n   Description: ${(m.description || "").slice(0, 300)}`;
   }).join("\n\n");
@@ -167,20 +167,20 @@ serve(async (req) => {
     const { school_id, batch_size = 3 } = await req.json();
     if (!school_id) throw new Error("school_id required");
 
-    // Get programs → courses → modules without quizzes
+    // Get programs â†’ courses â†’ modules without quizzes
     const { data: programs } = await supabase
       .from("profession_categories").select("id, name").eq("school_id", school_id);
     if (!programs?.length) return new Response(JSON.stringify({ inserted: 0, skipped: 0, remaining: 0, total: 0 }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
-    const programIds = programs.map((p: any) => p.id);
-    const programMap = Object.fromEntries(programs.map((p: any) => [p.id, p.name]));
+    const programIds = programs.map((p: unknown) => p.id);
+    const programMap = Object.fromEntries(programs.map((p: unknown) => [p.id, p.name]));
 
     const { data: courses } = await supabase
       .from("content").select("id, title, profession_line_id").in("profession_line_id", programIds);
     if (!courses?.length) return new Response(JSON.stringify({ inserted: 0, skipped: 0, remaining: 0, total: 0 }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
-    const courseIds = courses.map((c: any) => c.id);
-    const courseMap = Object.fromEntries(courses.map((c: any) => [c.id, { title: c.title, programName: programMap[c.profession_line_id] || "Unknown" }]));
+    const courseIds = courses.map((c: unknown) => c.id);
+    const courseMap = Object.fromEntries(courses.map((c: unknown) => [c.id, { title: c.title, programName: programMap[c.profession_line_id] || "Unknown" }]));
 
     // Get all modules
     const { data: allModules } = await supabase
@@ -190,9 +190,9 @@ serve(async (req) => {
     // Get modules that already have quizzes
     const { data: existingQuizModules } = await supabase
       .from("quiz_questions").select("module_id").in("content_id", courseIds);
-    const modulesWithQuizzes = new Set((existingQuizModules || []).map((q: any) => q.module_id));
+    const modulesWithQuizzes = new Set((existingQuizModules || []).map((q: unknown) => q.module_id));
 
-    const pendingModules = (allModules || []).filter((m: any) => !modulesWithQuizzes.has(m.id));
+    const pendingModules = (allModules || []).filter((m: unknown) => !modulesWithQuizzes.has(m.id));
     const batch = pendingModules.slice(0, batch_size);
 
     if (batch.length === 0) {
@@ -204,14 +204,14 @@ serve(async (req) => {
     // Fresh remaining count
     const { data: freshQuizModules } = await supabase
       .from("quiz_questions").select("module_id").in("content_id", courseIds);
-    const freshWithQuizzes = new Set((freshQuizModules || []).map((q: any) => q.module_id));
-    const freshRemaining = (allModules || []).filter((m: any) => !freshWithQuizzes.has(m.id)).length;
+    const freshWithQuizzes = new Set((freshQuizModules || []).map((q: unknown) => q.module_id));
+    const freshRemaining = (allModules || []).filter((m: unknown) => !freshWithQuizzes.has(m.id)).length;
 
     return new Response(
       JSON.stringify({ inserted: result.inserted, skipped: result.skipped, remaining: freshRemaining, total: totalAll }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("batch-generate-quizzes error:", e);
     const status = e?.status || 500;
     if (status === 429 || status === 402) {
@@ -220,3 +220,5 @@ serve(async (req) => {
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
+
+

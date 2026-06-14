@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Public surface of the talent domain's edge-function layer.
  */
 export {
@@ -11,3 +11,4 @@ export type {
   GenerateOutreachMessageRequest,
   GenerateOutreachMessageResponse,
 } from "@/edge/contracts/talent";
+

@@ -1,16 +1,16 @@
-/**
- * Group Academy — Career Abroad Domain Interface Engine (Barrel Export)
+﻿/**
+ * Group Academy â€” Career Abroad Domain Interface Engine (Barrel Export)
  * Version: Phase 10i.2 Hardened (Production Candidate Edition)
  * Purpose: Unified public API boundary exposing UI panels, network proxies, and graph hooks.
  * Constraints: Enforces clean domain-isolation; eliminates deep import backtracking.
  */
 
-// ─── Front-Facing UI Components ──────────────────────────────────────────
+// â”€â”€â”€ Front-Facing UI Components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export { RoadmapBuilderSheet } from "./components/talent/RoadmapBuilderSheet";
 export { RoadmapIntakeForm } from "./components/talent/RoadmapIntakeForm";
 export { RoadmapTimeline } from "./components/talent/RoadmapTimeline";
 
-// ─── Administration & Operator Workspace Tabs ─────────────────────────────
+// â”€â”€â”€ Administration & Operator Workspace Tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export { AbroadOverviewTab } from "./components/admin/AbroadOverviewTab";
 export { AbroadApplicationsTab } from "./components/admin/AbroadApplicationsTab";
 export { AbroadProgramsTab } from "./components/admin/AbroadProgramsTab";
@@ -20,7 +20,7 @@ export { AbroadIELTSPromptsTab } from "./components/admin/AbroadIELTSPromptsTab"
 export { AbroadIELTSResourcesTab } from "./components/admin/AbroadIELTSResourcesTab";
 export { AbroadLanguageLabTab } from "./components/admin/AbroadLanguageLabTab";
 
-// ─── Graph Query Hooks & Synchronizer Contexts ───────────────────────────
+// â”€â”€â”€ Graph Query Hooks & Synchronizer Contexts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export { useAbroadGraph } from "./components/admin/hooks/useAbroadGraph";
 export type {
   AbroadApplication,
@@ -31,7 +31,7 @@ export type {
   IeltsResource,
 } from "./components/admin/hooks/useAbroadGraph";
 
-// ─── Typed Edge Network Invocation Engines (API) ─────────────────────────
+// â”€â”€â”€ Typed Edge Network Invocation Engines (API) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export {
   aiDestinationAgent,
   aiIeltsEvaluate,
@@ -40,7 +40,7 @@ export {
   generateStudyRoadmap,
 } from "./api/abroadApi";
 
-// ─── Bound Integration Contract Types ────────────────────────────────────
+// â”€â”€â”€ Bound Integration Contract Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export type {
   AiDestinationAgentRequest,
   AiDestinationAgentResponse,
@@ -53,3 +53,4 @@ export type {
   GenerateStudyRoadmapRequest,
   GenerateStudyRoadmapResponse,
 } from "@/edge/contracts/abroad";
+

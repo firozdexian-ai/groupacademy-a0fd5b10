@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Generic CRUD registry for admin-only tables. Used by HR, GTM and similar
  * lightweight tabs to avoid duplicating the same dialog + list shape.
  */
@@ -40,7 +40,7 @@ export function SimpleAdminRegistry({
 }: Props) {
  const qc = useQueryClient();
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<Record<string, any>>({});
+ const [draft, setDraft] = useState<Record<string, unknown>>({});
 
  const listQ = useQuery({
  queryKey: [`admin-table:${table}`],
@@ -49,7 +49,7 @@ export function SimpleAdminRegistry({
 
  const create = useMutation({
  mutationFn: async () => {
- const payload: any = {};
+ const payload: unknown = {};
  for (const f of fields) {
  const v = draft[f.key];
  if (v === undefined || v === "") continue;
@@ -63,7 +63,7 @@ export function SimpleAdminRegistry({
  setDraft({});
  setOpen(false);
  },
- onError: (e: any) => toast.error(e.message),
+ onError: (e: unknown) => toast.error(e.message),
  });
 
  const remove = useMutation({
@@ -104,7 +104,7 @@ export function SimpleAdminRegistry({
  )
  ))}
  <Button disabled={!requiredOk || create.isPending} onClick={() => create.mutate()} className="w-full">
- {create.isPending ? "Saving…" : "Save"}
+ {create.isPending ? "Savingâ€¦" : "Save"}
  </Button>
  </div>
  </DialogContent>
@@ -112,7 +112,7 @@ export function SimpleAdminRegistry({
  </div>
 
  {listQ.isLoading ? (
- <p className="text-sm text-muted-foreground">Loading…</p>
+ <p className="text-sm text-muted-foreground">Loadingâ€¦</p>
  ) : rows.length === 0 ? (
  <Card className="p-8 text-center text-sm text-muted-foreground">No records yet.</Card>
  ) : (
@@ -141,3 +141,5 @@ export function SimpleAdminRegistry({
  </div>
  );
 }
+
+

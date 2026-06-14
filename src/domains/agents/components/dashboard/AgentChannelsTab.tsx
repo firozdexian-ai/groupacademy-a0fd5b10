@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { listAgentChannels } from "@/domains/agents/repo/agentsRepo";
@@ -8,14 +8,14 @@ import { cn } from "@/lib/utils";
 import { trackError } from "@/lib/errorTracking";
 
 /**
- * Group Academy — Career Guidance System: Agent Integration Channels Sub-Panel
+ * Group Academy â€” Career Guidance System: Agent Integration Channels Sub-Panel
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/command-center?tab=channels (System Infrastructure Dashboard View)
  * Operations Mode: High-performance channel routing registry mapping webhooks, endpoints, and chat vectors.
  */
 
 export function AgentChannelsTab() {
-  const [rows, setRows] = useState<any[]>([]);
+  const [rows, setRows] = useState<unknown[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export function AgentChannelsTab() {
           setIsLoading(false);
         }
       })
-      .catch((err: any) => {
+      .catch((err: unknown) => {
         trackError("agent-channels-tab-fetch-failure", { error: err?.message || String(err) });
         if (active) {
           setIsLoading(false);
@@ -127,3 +127,5 @@ export function AgentChannelsTab() {
 }
 
 export default AgentChannelsTab;
+
+

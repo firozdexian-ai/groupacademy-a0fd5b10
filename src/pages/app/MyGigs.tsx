@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getMyMarketplaceBidsAndContracts } from "@/domains/gigs/repo/gigsRepo";
 import { useTalent } from "@/hooks/useTalent";
@@ -38,7 +38,7 @@ interface ContractRecord {
 }
 
 /**
- * My Gigs — manage proposals, active contracts, and delivered work.
+ * My Gigs â€” manage proposals, active contracts, and delivered work.
  */
 export default function MyGigs() {
  const { talent } = useTalent();
@@ -121,3 +121,4 @@ export default function MyGigs() {
  </div>
  );
 }
+

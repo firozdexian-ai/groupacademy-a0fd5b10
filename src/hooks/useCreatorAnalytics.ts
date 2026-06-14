@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+﻿import { useQuery, useMutation } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import {
   getCreatorScorecard,
@@ -23,10 +23,10 @@ export interface CreatorScorecard {
     earned_credits: number;
   };
   growth_pct?: Record<string, number>;
-  current?: any;
-  previous?: any;
+  current?: unknown;
+  previous?: unknown;
   post_count?: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface PostInsightData {
@@ -34,11 +34,11 @@ export interface PostInsightData {
   shares_count?: number;
   hype_count?: number;
   engagement_rate?: number;
-  totals?: any;
+  totals?: unknown;
   credits_earned?: number;
-  daily?: any[];
-  top_hypers?: any[];
-  [key: string]: any;
+  daily?: unknown[];
+  top_hypers?: unknown[];
+  [key: string]: unknown;
 }
 
 /**
@@ -52,7 +52,7 @@ export function useCreatorScorecard(talentId?: string, days: number = 7) {
     queryFn: async (): Promise<CreatorScorecard> => {
       try {
         return (await getCreatorScorecard(talentId!, days)) as CreatorScorecard;
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: get_creator_scorecard transaction failed.", {
           talentId,
           error: error?.message,
@@ -71,10 +71,10 @@ export function useCreatorTopPosts(talentId?: string, days: number = 30, limit: 
     queryKey: ["creator-top-posts", talentId, days, limit],
     enabled: !!talentId,
     staleTime: 5 * 60 * 1000,
-    queryFn: async (): Promise<any[]> => {
+    queryFn: async (): Promise<unknown[]> => {
       try {
         return await getCreatorTopPosts(talentId!, days, limit);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: get_creator_top_posts transaction failed.", {
           talentId,
           error: error?.message,
@@ -96,7 +96,7 @@ export function usePostInsights(postId?: string, enabled: boolean = true) {
     queryFn: async (): Promise<PostInsightData> => {
       try {
         return (await getPostInsights(postId!)) as PostInsightData;
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: get_post_insights telemetry extraction failure.", {
           postId,
           error: error?.message,
@@ -130,7 +130,7 @@ export function useImpressionTracker(postId?: string, surface: string = "feed") 
             seenPosts.add(key);
 
             // Execute the impression collection pipeline cleanly via public schema bounds
-            (recordImpressionAsync(postId, surface) as any).then?.((res: any) => {
+            (recordImpressionAsync(postId, surface) as unknown).then?.((res: unknown) => {
               if (res?.error) {
                 console.error("[Digital Workforce] ANOMALY: record_impression background tracking failure.", {
                   postId,
@@ -162,7 +162,7 @@ export function useRecordShare() {
     mutationFn: async ({ postId, channel }: { postId: string; channel: string }) => {
       await recordShareRepo(postId, channel);
     },
-    onError: (err: any, variables) => {
+    onError: (err: unknown, variables) => {
       // Hardened: Replaces silent swallow protocols with explicit platform sensors logging
       console.error("[Digital Workforce] ANOMALY: record_share transaction failure.", {
         postId: variables.postId,
@@ -177,7 +177,9 @@ export function useRecordShare() {
 export async function recordShare(postId: string, channel: string) {
   try {
     await recordShareRepo(postId, channel);
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[Digital Workforce] ANOMALY: Stateless legacy recordShare swallowed a fault.", err?.message);
   }
 }
+
+

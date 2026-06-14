@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 export function ManagedProjectsTab() {
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<unknown[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export function ManagedProjectsTab() {
     })();
   }, []);
 
-  if (loading) return <div className="p-4 text-sm text-muted-foreground">Loading…</div>;
+  if (loading) return <div className="p-4 text-sm text-muted-foreground">Loadingâ€¦</div>;
   return (
     <div className="space-y-2">
       {projects.length === 0 && <Card className="p-6 text-sm text-center text-muted-foreground">No projects yet.</Card>}
@@ -32,7 +32,7 @@ export function ManagedProjectsTab() {
               <Badge variant="outline" className="capitalize">{p.status}</Badge>
             </div>
             <div className="text-xs text-muted-foreground">
-              Budget {p.budget_credits} · Bal {e?.balance_credits ?? 0} · Held {e?.held_credits ?? 0} · Released {e?.released_credits ?? 0} · Refunded {e?.refunded_credits ?? 0}
+              Budget {p.budget_credits} Â· Bal {e?.balance_credits ?? 0} Â· Held {e?.held_credits ?? 0} Â· Released {e?.released_credits ?? 0} Â· Refunded {e?.refunded_credits ?? 0}
             </div>
           </Card>
         );
@@ -40,3 +40,5 @@ export function ManagedProjectsTab() {
     </div>
   );
 }
+
+

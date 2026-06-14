@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { listRecommendedCoursesForProfession } from "@/domains/learning/repo/learningRepo";
 import { getMockInterviewById } from "@/domains/marketing/repo/marketingRepo";
@@ -93,7 +93,7 @@ export default function MockInterviewResults() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const [recommendedCourses, setRecommendedCourses] = useState<any[]>([]);
+  const [recommendedCourses, setRecommendedCourses] = useState<unknown[]>([]);
   const [loadingCourses, setLoadingCourses] = useState(false);
 
   useEffect(() => {
@@ -110,13 +110,13 @@ export default function MockInterviewResults() {
 
       setInterview({
         ...data,
-        questions: (data.questions as any) || [],
-        answers: (data.answers as any) || [],
-        ai_feedback: data.ai_feedback as any,
+        questions: (data.questions as unknown) || [],
+        answers: (data.answers as unknown) || [],
+        ai_feedback: data.ai_feedback as unknown,
       });
 
       if (data.profession_category_id) loadRecommendedCourses(data.profession_category_id);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setLoadError("Intel fetch failure. Node unreachable.");
     } finally {
       setLoading(false);
@@ -390,3 +390,5 @@ export default function MockInterviewResults() {
     </div>
   );
 }
+
+

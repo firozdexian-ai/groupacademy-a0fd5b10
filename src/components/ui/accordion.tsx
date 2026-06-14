@@ -1,17 +1,17 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { ChevronDown, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Analytical logging pass parameters integration hook helper
-function trackEvent(eventNameStr: string, contextualMetaBlock?: Record<string, any>) {
+function trackEvent(eventNameStr: string, contextualMetaBlock?: Record<string, unknown>) {
   // Analytical logging pipeline integration point
 }
 
 /**
  * GroUp Academy: Accessible Disclosure Node Framework (Accordion)
  * Hardened WAI-ARIA compliant layout isolating expandable text matrices.
- * Version: Launch Candidate · Phase Z0 Geometric Stability Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Stability Lock
  */
 const Accordion = AccordionPrimitive.Root;
 
@@ -78,3 +78,5 @@ const AccordionContent = React.forwardRef<
 AccordionContent.displayName = "AccordionContent";
 
 export { Accordion, AccordionItem, AccordionTrigger, AccordionContent };
+
+

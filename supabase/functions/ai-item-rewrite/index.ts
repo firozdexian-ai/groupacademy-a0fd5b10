@@ -1,5 +1,5 @@
-// AI item rewrite — phase 3.7
-// Loads a flagged quiz/scenario item, asks Lovable AI for 1–3 structured rewrites
+﻿// AI item rewrite â€” phase 3.7
+// Loads a flagged quiz/scenario item, asks Lovable AI for 1â€“3 structured rewrites
 // targeting the supplied flags, returns suggestions only (no DB write).
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
@@ -12,7 +12,7 @@ const json = (b: unknown, s = 200) =>
   new Response(JSON.stringify(b), { status: s, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
 const FLAG_GUIDANCE: Record<string, string> = {
-  low_p_value: "Item is too hard for the cohort (p<0.25). Simplify wording, remove ambiguity, or weaken distractors—do NOT change the assessed concept.",
+  low_p_value: "Item is too hard for the cohort (p<0.25). Simplify wording, remove ambiguity, or weaken distractorsâ€”do NOT change the assessed concept.",
   trivial: "Item is too easy (p>0.95). Increase difficulty by adding plausible distractors or a more nuanced stem.",
   miscalibrated: "Difficulty label does not match observed performance. Adjust difficulty label and/or distractors accordingly.",
   stale: "Item barely served. Refresh wording so it feels current and motivating; keep concept identical.",
@@ -42,7 +42,7 @@ Deno.serve(async (req) => {
     .from("user_roles").select("role").eq("user_id", userData.user.id).eq("role", "admin").maybeSingle();
   if (!roleData) return json({ error: "forbidden" }, 403);
 
-  let body: any = {};
+  let body: unknown = {};
   try { body = await req.json(); } catch { /* */ }
   const kind: "quiz" | "scenario" = body?.kind;
   const itemId: string = body?.item_id;
@@ -59,14 +59,14 @@ Deno.serve(async (req) => {
       .select("id,module_id,question,options,correct_index,explanation,difficulty,topic_tags,times_served,times_correct")
       .eq("id", itemId).maybeSingle();
     if (!item) return json({ error: "item_not_found" }, 404);
-    const pVal = (item as any).times_served > 0
-      ? ((item as any).times_correct / (item as any).times_served).toFixed(2) : "n/a";
+    const pVal = (item as unknown).times_served > 0
+      ? ((item as unknown).times_correct / (item as unknown).times_served).toFixed(2) : "n/a";
 
     const tools = [{
       type: "function",
       function: {
         name: "propose_quiz_rewrites",
-        description: "Return 1–3 rewritten quiz items.",
+        description: "Return 1â€“3 rewritten quiz items.",
         parameters: {
           type: "object",
           properties: {
@@ -112,7 +112,7 @@ Deno.serve(async (req) => {
     if (!aiResp.ok) return json({ error: "ai_error", detail: await aiResp.text() }, 502);
     const aiJson = await aiResp.json();
     const call = aiJson?.choices?.[0]?.message?.tool_calls?.[0];
-    let suggestions: any[] = [];
+    let suggestions: unknown[] = [];
     try { suggestions = JSON.parse(call?.function?.arguments ?? "{}").suggestions ?? []; } catch { /* */ }
     return json({ kind, item, flags, suggestions });
   }
@@ -128,13 +128,13 @@ Deno.serve(async (req) => {
     .from("talent_scenario_run").select("evaluation").eq("scenario_id", itemId).limit(200);
   let n = 0, sum = 0; const rubricAgg = new Map<string, { s: number; n: number }>();
   for (const r of runs ?? []) {
-    const ev = (r as any).evaluation ?? {};
+    const ev = (r as unknown).evaluation ?? {};
     const o = Number(ev?.overall_score ?? NaN);
     if (Number.isFinite(o)) { sum += o; n += 1; }
     const per = ev?.per_rubric ?? ev?.rubric_scores ?? {};
     if (per && typeof per === "object") {
       for (const [k, v] of Object.entries(per)) {
-        const num = Number((v as any)?.score ?? v);
+        const num = Number((v as unknown)?.score ?? v);
         if (!Number.isFinite(num)) continue;
         const c = rubricAgg.get(k) ?? { s: 0, n: 0 }; c.s += num; c.n += 1; rubricAgg.set(k, c);
       }
@@ -149,7 +149,7 @@ Deno.serve(async (req) => {
     type: "function",
     function: {
       name: "propose_scenario_rewrites",
-      description: "Return 1–3 rewritten scenarios.",
+      description: "Return 1â€“3 rewritten scenarios.",
       parameters: {
         type: "object",
         properties: {
@@ -206,7 +206,9 @@ Deno.serve(async (req) => {
   if (!aiResp.ok) return json({ error: "ai_error", detail: await aiResp.text() }, 502);
   const aiJson = await aiResp.json();
   const call = aiJson?.choices?.[0]?.message?.tool_calls?.[0];
-  let suggestions: any[] = [];
+  let suggestions: unknown[] = [];
   try { suggestions = JSON.parse(call?.function?.arguments ?? "{}").suggestions ?? []; } catch { /* */ }
   return json({ kind, item, flags, stats, suggestions });
 });
+
+

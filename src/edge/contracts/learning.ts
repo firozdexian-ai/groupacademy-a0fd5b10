@@ -1,13 +1,13 @@
-/**
- * Learning domain — edge function contracts (Phase 9f).
+﻿/**
+ * Learning domain â€” edge function contracts (Phase 9f).
  *
  * Per-function Request interface + Zod Response schema with
  * `.passthrough()`. Request shapes mirror real in-domain call sites;
- * any drift is documented in `.lovable/known-edge-contract-drift.md`.
+ * unknown drift is documented in `.lovable/known-edge-contract-drift.md`.
  *
  * Note: `get_tutor_mastery_context`, `get_track_progress`, and
  * `org_learning_health` are Postgres RPCs (called via `supabase.rpc()`),
- * not edge functions — they are intentionally NOT modeled here.
+ * not edge functions â€” they are intentionally NOT modeled here.
  */
 import { z } from "zod";
 
@@ -345,3 +345,5 @@ export const CreateInstructorJobFromBriefResponseSchema = z
 export type CreateInstructorJobFromBriefResponse = z.infer<
   typeof CreateInstructorJobFromBriefResponseSchema
 >;
+
+

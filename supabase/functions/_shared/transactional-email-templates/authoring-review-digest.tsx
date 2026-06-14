@@ -1,4 +1,4 @@
-import * as React from 'npm:react@18.3.1'
+﻿import * as React from 'npm:react@18.3.1'
 import {
   Body, Container, Head, Heading, Html, Preview, Section, Text,
 } from 'npm:@react-email/components@0.0.22'
@@ -41,12 +41,12 @@ const AuthoringReviewDigestEmail = ({
         <Section style={listBox}>
           {modules.map((m, i) => (
             <Text key={i} style={item}>
-              <strong>{m.title}</strong> — {m.flaggedQuiz} quiz · {m.flaggedScenarios} scenario
+              <strong>{m.title}</strong> â€” {m.flaggedQuiz} quiz Â· {m.flaggedScenarios} scenario
             </Text>
           ))}
         </Section>
         <Text style={text}>
-          Open the Module Manager → Analytics on each module to see exactly which items need editing.
+          Open the Module Manager â†’ Analytics on each module to see exactly which items need editing.
         </Text>
         <Text style={footer}>The {SITE_NAME} team</Text>
       </Container>
@@ -56,7 +56,7 @@ const AuthoringReviewDigestEmail = ({
 
 export const template = {
   component: AuthoringReviewDigestEmail,
-  subject: (d: Record<string, any>) =>
+  subject: (d: Record<string, unknown>) =>
     `${d.totalFlagged ?? 0} items need your review${d.courseTitle ? ` in ${d.courseTitle}` : ''}`,
   displayName: 'Authoring review digest',
   previewData: {
@@ -65,8 +65,8 @@ export const template = {
     totalFlagged: 7,
     modulesCount: 3,
     modules: [
-      { title: 'Module 1 — Listening', flaggedQuiz: 2, flaggedScenarios: 1 },
-      { title: 'Module 2 — Empathy', flaggedQuiz: 3, flaggedScenarios: 0 },
+      { title: 'Module 1 â€” Listening', flaggedQuiz: 2, flaggedScenarios: 1 },
+      { title: 'Module 2 â€” Empathy', flaggedQuiz: 3, flaggedScenarios: 0 },
     ],
   },
 } satisfies TemplateEntry
@@ -78,3 +78,5 @@ const text = { fontSize: '14px', color: '#333333', lineHeight: '1.6', margin: '0
 const listBox = { borderTop: '1px solid #eeeeee', borderBottom: '1px solid #eeeeee', padding: '12px 0', margin: '12px 0 18px' }
 const item = { fontSize: '13px', color: '#333333', margin: '6px 0' }
 const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+
+

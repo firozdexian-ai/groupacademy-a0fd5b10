@@ -1,5 +1,5 @@
-/**
- * Mission Control — Live Agent Inbox.
+﻿/**
+ * Mission Control â€” Live Agent Inbox.
  *
  * Unified two-pane view over `agent_threads` (canonical AI thread store).
  * Admins can pause an AI thread, take it over, and reply on the agent's
@@ -67,11 +67,11 @@ export default function AdminLiveInbox() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const adminName = useMemo(
-    () => (user?.user_metadata as any)?.full_name || user?.email?.split("@")[0] || "Admin",
+    () => (user?.user_metadata as unknown)?.full_name || user?.email?.split("@")[0] || "Admin",
     [user],
   );
 
-  // ── Threads: initial load + realtime ─────────────────────────────────────
+  // â”€â”€ Threads: initial load + realtime â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -85,7 +85,7 @@ export default function AdminLiveInbox() {
         .limit(PAGE_SIZE);
       if (!cancelled) {
         if (error) toast.error(`Failed to load threads: ${error.message}`);
-        setThreads(((data as any) || []) as Thread[]);
+        setThreads(((data as unknown) || []) as Thread[]);
         setLoadingThreads(false);
       }
     })();
@@ -98,7 +98,7 @@ export default function AdminLiveInbox() {
         (payload) => {
           setThreads((prev) => {
             if (payload.eventType === "DELETE") {
-              return prev.filter((t) => t.id !== (payload.old as any).id);
+              return prev.filter((t) => t.id !== (payload.old as unknown).id);
             }
             const row = payload.new as Thread;
             const idx = prev.findIndex((t) => t.id === row.id);
@@ -118,7 +118,7 @@ export default function AdminLiveInbox() {
     };
   }, []);
 
-  // ── Messages for active thread + realtime ────────────────────────────────
+  // â”€â”€ Messages for active thread + realtime â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   useEffect(() => {
     if (!activeId) {
       setMessages([]);
@@ -135,7 +135,7 @@ export default function AdminLiveInbox() {
         .limit(500);
       if (!cancelled) {
         if (error) toast.error(`Failed to load messages: ${error.message}`);
-        setMessages(((data as any) || []) as Message[]);
+        setMessages(((data as unknown) || []) as Message[]);
         setLoadingMsgs(false);
       }
     })();
@@ -185,7 +185,7 @@ export default function AdminLiveInbox() {
     [threads],
   );
 
-  // ── Takeover toggle ──────────────────────────────────────────────────────
+  // â”€â”€ Takeover toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const toggleTakeover = async (next: boolean) => {
     if (!active || !user) return;
     const patch = next
@@ -198,11 +198,11 @@ export default function AdminLiveInbox() {
       setThreads((ts) => ts.map((t) => (t.id === active.id ? prev : t)));
       toast.error(`Takeover failed: ${error.message}`);
     } else {
-      toast.success(next ? "AI paused — you're driving this thread" : "Returned thread to AI");
+      toast.success(next ? "AI paused â€” you're driving this thread" : "Returned thread to AI");
     }
   };
 
-  // ── Admin send ───────────────────────────────────────────────────────────
+  // â”€â”€ Admin send â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleSend = async (e: FormEvent) => {
     e.preventDefault();
     if (!active || !user || !draft.trim() || sending) return;
@@ -227,7 +227,7 @@ export default function AdminLiveInbox() {
     setSending(false);
   };
 
-  // ── Render ───────────────────────────────────────────────────────────────
+  // â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   return (
     <div className="h-screen flex flex-col bg-background">
       <header className="h-14 border-b border-border/40 px-6 flex items-center gap-3 bg-card/40 backdrop-blur flex-shrink-0">
@@ -235,13 +235,13 @@ export default function AdminLiveInbox() {
         <div className="flex-1">
           <div className="font-bold text-sm">Live Agent Inbox</div>
           <div className="text-[11px] text-muted-foreground">
-            {counts.total} threads · {counts.ai} AI · {counts.human} human
+            {counts.total} threads Â· {counts.ai} AI Â· {counts.human} human
           </div>
         </div>
       </header>
 
       <div className="flex-1 min-h-0 flex">
-        {/* LEFT — thread list */}
+        {/* LEFT â€” thread list */}
         <aside className="w-full md:w-[360px] border-r border-border/40 bg-card flex flex-col flex-shrink-0">
           <div className="p-3 flex gap-2 border-b border-border/30">
             {(["all", "ai", "human"] as const).map((k) => (
@@ -262,7 +262,7 @@ export default function AdminLiveInbox() {
           <ScrollArea className="flex-1">
             {loadingThreads ? (
               <div className="p-6 flex items-center justify-center text-muted-foreground text-sm">
-                <Loader2 className="h-4 w-4 animate-spin mr-2" /> Loading threads…
+                <Loader2 className="h-4 w-4 animate-spin mr-2" /> Loading threadsâ€¦
               </div>
             ) : filtered.length === 0 ? (
               <div className="p-6 text-center text-sm text-muted-foreground">
@@ -315,7 +315,7 @@ export default function AdminLiveInbox() {
           </ScrollArea>
         </aside>
 
-        {/* RIGHT — thread pane */}
+        {/* RIGHT â€” thread pane */}
         <main className="flex-1 min-w-0 flex flex-col">
           {!active ? (
             <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
@@ -329,8 +329,8 @@ export default function AdminLiveInbox() {
                     {active.title || `Thread ${active.id.slice(0, 8)}`}
                   </div>
                   <div className="text-[11px] text-muted-foreground truncate">
-                    {active.agent_key || "agent"} · subject {active.subject_kind || "—"} ·{" "}
-                    {active.subject_id?.slice(0, 8) || "—"}
+                    {active.agent_key || "agent"} Â· subject {active.subject_kind || "â€”"} Â·{" "}
+                    {active.subject_id?.slice(0, 8) || "â€”"}
                   </div>
                 </div>
                 <div className="flex items-center gap-3 flex-shrink-0">
@@ -350,7 +350,7 @@ export default function AdminLiveInbox() {
                 <div className="px-6 py-6 space-y-1">
                   {loadingMsgs ? (
                     <div className="flex items-center justify-center text-muted-foreground text-sm py-12">
-                      <Loader2 className="h-4 w-4 animate-spin mr-2" /> Loading messages…
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" /> Loading messagesâ€¦
                     </div>
                   ) : messages.length === 0 ? (
                     <div className="text-center text-sm text-muted-foreground py-12">
@@ -380,7 +380,7 @@ export default function AdminLiveInbox() {
                   className="border-t border-border/40 bg-card/40 p-4 flex items-center gap-2 flex-shrink-0"
                 >
                   <Input
-                    placeholder={`Reply as ${adminName}…`}
+                    placeholder={`Reply as ${adminName}â€¦`}
                     value={draft}
                     onChange={(e) => setDraft(e.target.value)}
                     disabled={sending}
@@ -413,3 +413,5 @@ export default function AdminLiveInbox() {
     </div>
   );
 }
+
+

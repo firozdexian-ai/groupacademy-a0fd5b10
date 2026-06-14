@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { getTalentOutcomeSignal } from "@/domains/profile/repo/profileRepo";
 
 /**
@@ -53,11 +53,11 @@ export function useTalentOutcomeSignal(talentId?: string | null) {
     // Performance Baseline: 60-second stability caching for recruiter evaluation feeds
     staleTime: 60 * 1000,
     queryFn: async (): Promise<TalentOutcomeSignal> => {
-      // HUD: INVOKING_TALENT_OUTCOME_SIGNAL_RPC_INGRESS
-      let data: any;
+      // dashboard: INVOKING_TALENT_OUTCOME_SIGNAL_RPC_INGRESS
+      let data: unknown;
       try {
-        data = await getTalentOutcomeSignal<any>(talentId!);
-      } catch (error: any) {
+        data = await getTalentOutcomeSignal<unknown>(talentId!);
+      } catch (error: unknown) {
         console.error("[Digital Workforce] ANOMALY: get_talent_outcome_signal RPC lookup failed.", {
           talentId,
           message: error?.message,
@@ -66,11 +66,11 @@ export function useTalentOutcomeSignal(talentId?: string | null) {
         throw error;
       }
 
-      const raw = (data as any) || {};
+      const raw = (data as unknown) || {};
 
       // Defensive Parsing: Map and normalize verified skill badges array
       const normalizedSkills: VerifiedSkillSignal[] = Array.isArray(raw.verified_skills)
-        ? raw.verified_skills.map((s: any) => ({
+        ? raw.verified_skills.map((s: unknown) => ({
             id: String(s?.id ?? ""),
             topic_tag: String(s?.topic_tag ?? "General Skill"),
             level: s?.level === "expert" || s?.level === "proficient" ? s.level : "foundational",
@@ -82,7 +82,7 @@ export function useTalentOutcomeSignal(talentId?: string | null) {
 
       // Defensive Parsing: Map and normalize completed tracks array
       const normalizedTracks: TrackCompletedSignal[] = Array.isArray(raw.tracks_completed)
-        ? raw.tracks_completed.map((t: any) => ({
+        ? raw.tracks_completed.map((t: unknown) => ({
             assignment_id: String(t?.assignment_id ?? ""),
             track_id: String(t?.track_id ?? ""),
             track_title: String(t?.track_title ?? "Curriculum Track"),
@@ -101,7 +101,7 @@ export function useTalentOutcomeSignal(talentId?: string | null) {
             tracked_topics: Number(raw.mastery_summary.tracked_topics ?? 0),
             avg_mastery: Number(raw.mastery_summary.avg_mastery ?? 0),
             strong_topics: Array.isArray(raw.mastery_summary.strong_topics)
-              ? raw.mastery_summary.strong_topics.map((st: any) => ({
+              ? raw.mastery_summary.strong_topics.map((st: unknown) => ({
                   topic_tag: String(st?.topic_tag ?? "General Tag"),
                   mastery: Number(st?.mastery ?? 0),
                 }))
@@ -110,7 +110,7 @@ export function useTalentOutcomeSignal(talentId?: string | null) {
           }
         : null;
 
-      // HUD: DATA_NORMALIZATION_VALIDATION_COMPLETED
+      // dashboard: DATA_NORMALIZATION_VALIDATION_COMPLETED
       return {
         verified_skills: normalizedSkills,
         tracks_completed: normalizedTracks,
@@ -128,3 +128,5 @@ export function useTalentOutcomeSignal(talentId?: string | null) {
     refresh: queryResult.refetch,
   };
 }
+
+

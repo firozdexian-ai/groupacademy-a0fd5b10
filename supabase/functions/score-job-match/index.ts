@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+﻿import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -108,13 +108,13 @@ Experience: ${JSON.stringify(talent.experience || [])}
 Education: ${JSON.stringify(talent.education || [])}
 CV Summary: ${talent.cv_text?.substring(0, 1000) || "No CV uploaded"}
 
-VERIFIED EVIDENCE (authoritative — earned via assessments and scenarios):
+VERIFIED EVIDENCE (authoritative â€” earned via assessments and scenarios):
 Mastery score: ${verifiedMatch.mastery_score}/100
 Mastery topics: ${JSON.stringify(verifiedMatch.mastery_topics || [])}
 Gap topics: ${JSON.stringify(verifiedMatch.gap_topics || [])}
 Verified credentials: ${JSON.stringify(verifiedMatch.verified_credentials || [])}
 
-Treat verified evidence as the strongest signal — boost overall_match if mastery_score is high, and prefer matched topics in skills_match. Mention earned credentials in the recommendation.
+Treat verified evidence as the strongest signal â€” boost overall_match if mastery_score is high, and prefer matched topics in skills_match. Mention earned credentials in the recommendation.
 
 Return only the JSON object, no markdown.`;
 
@@ -186,14 +186,14 @@ Return only the JSON object, no markdown.`;
     result.verified_match = verifiedMatch;
     result.outcome_signal = outcomeSignal ?? null;
 
-    // Verified-skill boost: if any verified skill (≥0.7 mastery) appears
+    // Verified-skill boost: if unknown verified skill (â‰¥0.7 mastery) appears
     // in matched skills, nudge overall_match upward (capped at 100).
     try {
       const verified: string[] = (
-        (outcomeSignal as any)?.verified_skills ?? []
+        (outcomeSignal as unknown)?.verified_skills ?? []
       )
-        .filter((s: any) => Number(s.mastery_at_issue ?? 0) >= 0.7)
-        .map((s: any) => String(s.topic_tag).toLowerCase());
+        .filter((s: unknown) => Number(s.mastery_at_issue ?? 0) >= 0.7)
+        .map((s: unknown) => String(s.topic_tag).toLowerCase());
       const matched: string[] = (result?.skills_match?.matched ?? []).map((s: string) =>
         String(s).toLowerCase(),
       );
@@ -224,3 +224,5 @@ Return only the JSON object, no markdown.`;
     );
   }
 });
+
+

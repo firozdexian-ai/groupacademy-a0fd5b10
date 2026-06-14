@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   listHrTargets,
@@ -42,7 +42,7 @@ export function HrTargetsTab() {
  const qc = useQueryClient();
  const { hrGraphQuery } = useHrGraph();
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ scope: "team" });
+ const [draft, setDraft] = useState<unknown>({ scope: "team" });
 
  const targetsQuery = useQuery({
    queryKey: ["hr_targets"],
@@ -55,7 +55,7 @@ export function HrTargetsTab() {
  });
 
  const upsertTarget = useMutation({
-   mutationFn: (payload: any) => upsertHrTarget(payload),
+   mutationFn: (payload: unknown) => upsertHrTarget(payload),
    onSuccess: () => {
      qc.invalidateQueries({ queryKey: ["hr_targets"] });
      toast.success("Targets saved");
@@ -94,9 +94,9 @@ export function HrTargetsTab() {
  color: "text-warning",
  };
  case "user": {
- const user = workforceQuery.data?.find((u: any) => u.id === id);
+ const user = workforceQuery.data?.find((u: unknown) => u.id === id);
  return {
- name: (user?.talents as any)?.full_name || "Unknown",
+ name: (user?.talents as unknown)?.full_name || "Unknown",
  icon: Users,
  color: "text-primary",
  };
@@ -127,9 +127,9 @@ export function HrTargetsTab() {
  </SelectItem>
  ));
  case "user":
- return workforceQuery.data?.map((u: any) => (
+ return workforceQuery.data?.map((u: unknown) => (
  <SelectItem key={u.id} value={u.id}>
- {(u.talents as any)?.full_name || "Unknown"}
+ {(u.talents as unknown)?.full_name || "Unknown"}
  </SelectItem>
  ));
  default:
@@ -201,7 +201,7 @@ export function HrTargetsTab() {
  </TableCell>
  </TableRow>
  ) : (
- targetsQuery.data?.map((t: any) => {
+ targetsQuery.data?.map((t: unknown) => {
  const scopeData = getScopeDetails(t.scope, t.scope_id);
  const ScopeIcon = scopeData.icon;
  return (
@@ -243,9 +243,9 @@ export function HrTargetsTab() {
  </TableCell>
  <TableCell>
  {t.incentive_amount ? (
- <span className="font-black text-success text-sm">₵{t.incentive_amount}</span>
+ <span className="font-black text-success text-sm">â‚µ{t.incentive_amount}</span>
  ) : (
- <span className="text-muted-foreground">—</span>
+ <span className="text-muted-foreground">â€”</span>
  )}
  </TableCell>
  <TableCell className="text-right pr-8">
@@ -364,7 +364,7 @@ export function HrTargetsTab() {
 
  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
  <div className="space-y-2">
- <Label className="text-[10px] font-black">Incentive Yield (₵)</Label>
+ <Label className="text-[10px] font-black">Incentive Yield (â‚µ)</Label>
  <Input
  type="number"
  value={draft.incentive_amount ?? ""}
@@ -416,3 +416,5 @@ export function HrTargetsTab() {
 }
 
 export default HrTargetsTab;
+
+

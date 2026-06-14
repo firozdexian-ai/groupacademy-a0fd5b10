@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo } from "react";
+﻿import { useEffect, useRef, useMemo } from "react";
 import { useRegisterSW } from "virtual:pwa-register/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,9 +9,9 @@ import { cn } from "@/lib/utils";
 const SENTINEL_UPDATE_INTERVAL_MS = 30 * 60 * 1000; // Authoritative 30-Minute Check Frequency
 
 /**
- * GroUp Academy: PWA Service Worker Neural Versioning Sentinel (PWAUpdatePrompt)
+ * GroUp Academy: PWA Service Worker Neural Versioning guard (PWAUpdatePrompt)
  * High-performance background worker lifecycle sync engine handling firmware lookups, state refreshes, and hot reloads.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function PWAUpdatePrompt() {
   const isMountedRef = useRef<boolean>(true);
@@ -96,13 +96,13 @@ export function PWAUpdatePrompt() {
       )}
     >
       <div className="relative rounded-xl border border-border/40 bg-card/95 backdrop-blur-xl p-4 sm:p-5 shadow-xl overflow-hidden text-left flex flex-col justify-center">
-        {/* HUD LEVEL 1: TOP PANEL TRACK HORIZON METRIC BEAM ACCENT LINE */}
+        {/* dashboard LEVEL 1: TOP PANEL TRACK HORIZON METRIC BEAM ACCENT LINE */}
         <div
           className="absolute top-0 left-0 w-full h-[1.5px] bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-40 pointer-events-none select-none"
           aria-hidden="true"
         />
 
-        {/* HUD LEVEL 2: COMPOSITE METADATA IDENTIFICATION CONTAINER DATA WRAPPER */}
+        {/* dashboard LEVEL 2: COMPOSITE METADATA IDENTIFICATION CONTAINER DATA WRAPPER */}
         <div className="flex items-center gap-3.5 w-full min-w-0">
           {/* COMPONENT: ROTATING STATE SYNC INDICATOR BADGE */}
           <div className="relative shrink-0 select-none pointer-events-none">
@@ -124,7 +124,7 @@ export function PWAUpdatePrompt() {
             </span>
           </div>
 
-          {/* HUD LEVEL 3: SYNC COMMIT DISPATCH TRIGGER ACTION BUTTON */}
+          {/* dashboard LEVEL 3: SYNC COMMIT DISPATCH TRIGGER ACTION BUTTON */}
           <Button
             size="sm"
             type="button"
@@ -137,12 +137,13 @@ export function PWAUpdatePrompt() {
           </Button>
         </div>
 
-        {/* HUD LEVEL 4: OVERLAY BOTTOM OMNIPRESENCE SHIELD RIBBON FOOTER */}
+        {/* dashboard LEVEL 4: OVERLAY BOTTOM OMNIPRESENCE SHIELD RIBBON FOOTER */}
         <div className="flex items-center justify-center gap-1.5 py-1 opacity-25 select-none pointer-events-none tracking-normal font-bold text-[8px] text-muted-foreground/50 font-mono leading-none shrink-0 uppercase w-full mt-3.5 border-t border-border/10 pt-2.5">
           <ShieldCheck className="h-3 w-3 stroke-[2.5]" />
-          <span>Platform Sentinel Ledger Update Matrix Sealed // Hot Reload Instantiated</span>
+          <span>Platform guard Ledger Update Matrix Sealed // Hot Reload Instantiated</span>
         </div>
       </div>
     </div>
   );
 }
+

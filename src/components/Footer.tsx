@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useMemo } from "react";
+﻿import { useEffect, useState, useRef, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Institutional Global Layout Anchor Gateway (Footer)
  * Authoritative terminal node orchestrating cross-platform routing links, license stamps, and index markers.
- * Version: Launch Candidate · Phase Z0 Hardened Global Anchor
+ * Version: Launch Candidate Â· Phase Z0 Hardened Global Anchor
  */
 export function Footer() {
   const navigate = useNavigate();
@@ -56,7 +56,7 @@ export function Footer() {
 
   return (
     <footer className="w-full mt-auto relative overflow-hidden border-t border-border/40 bg-card/40 backdrop-blur-md select-none text-left antialiased transform-gpu">
-      {/* ATMOSPHERIC HUD GLOW DECK BLOCK */}
+      {/* ATMOSPHERIC dashboard GLOW DECK BLOCK */}
       <div
         className="absolute -bottom-24 -left-24 h-64 w-64 bg-primary/[0.02] blur-[90px] rounded-full pointer-events-none select-none"
         aria-hidden="true"
@@ -182,7 +182,7 @@ export function Footer() {
           </div>
         </div>
 
-        {/* HUD LEVEL 3: TERMINAL COMPLIANCE LICENSE STATUS FOOTER STRIP */}
+        {/* dashboard LEVEL 3: TERMINAL COMPLIANCE LICENSE STATUS FOOTER STRIP */}
         <div className="border-t border-border/20 mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 w-full select-none text-left font-bold text-xs">
           <div className="flex items-center gap-3 min-w-0 text-left leading-none h-8">
             <div className="h-7 w-7 rounded bg-primary/10 border border-primary/5 text-primary flex items-center justify-center shrink-0 shadow-inner">
@@ -218,3 +218,4 @@ export function Footer() {
 }
 
 export default Footer;
+

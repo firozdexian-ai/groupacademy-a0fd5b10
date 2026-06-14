@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+﻿import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
 import {
   listNotifications,
@@ -43,7 +43,7 @@ export function useNotifications() {
     },
   });
 
-  // --- HUD: NEURAL_REALTIME_CDC_HANDSHAKE ---
+  // --- dashboard: NEURAL_REALTIME_CDC_HANDSHAKE ---
   useEffect(() => {
     if (!talentId) return;
 
@@ -59,7 +59,7 @@ export function useNotifications() {
         );
       },
       onDelete: (oldRow) => {
-        const targetId = (oldRow as any).id;
+        const targetId = (oldRow as unknown).id;
         qc.setQueryData<Notification[]>(queryKey, (old) => (old || []).filter((n) => n.id !== targetId));
       },
     });
@@ -79,13 +79,13 @@ export function useNotifications() {
       await qc.cancelQueries({ queryKey });
       const previous = qc.getQueryData<Notification[]>(queryKey);
 
-      // HUD: EXECUTING_OPTIMISTIC_READ_PATCH
+      // dashboard: EXECUTING_OPTIMISTIC_READ_PATCH
       qc.setQueryData<Notification[]>(queryKey, (old) =>
         (old || []).map((n) => (n.id === id ? { ...n, isRead: true, readAt: new Date().toISOString() } : n)),
       );
       return { previous };
     },
-    onError: (err: any, _, context) => {
+    onError: (err: unknown, _, context) => {
       if (context?.previous) qc.setQueryData(queryKey, context.previous);
       console.error("[Digital Workforce] ANOMALY: markAsRead transaction failure.", err);
     },
@@ -110,7 +110,7 @@ export function useNotifications() {
       );
       return { previous };
     },
-    onError: (err: any, _, context) => {
+    onError: (err: unknown, _, context) => {
       if (context?.previous) qc.setQueryData(queryKey, context.previous);
       console.error("[Digital Workforce] ANOMALY: markAllAsRead transaction failure.", err);
     },
@@ -131,7 +131,7 @@ export function useNotifications() {
       qc.setQueryData<Notification[]>(queryKey, (old) => (old || []).filter((n) => n.id !== id));
       return { previous };
     },
-    onError: (err: any, _, context) => {
+    onError: (err: unknown, _, context) => {
       if (context?.previous) qc.setQueryData(queryKey, context.previous);
       console.error("[Digital Workforce] ANOMALY: deleteNotification transaction failure.", err);
     },
@@ -153,3 +153,5 @@ export function useNotifications() {
     refresh: refetch,
   };
 }
+
+

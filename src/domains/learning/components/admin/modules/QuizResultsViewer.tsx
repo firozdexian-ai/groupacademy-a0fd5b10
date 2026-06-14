@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
  listQuizEnabledCourses,
@@ -72,7 +72,7 @@ export function QuizResultsViewer() {
  );
 
  return (data || []).map(
- (attempt: any): QuizAttempt => ({
+ (attempt: unknown): QuizAttempt => ({
  id: attempt.id,
  studentId: attempt.student_id,
  studentName: attempt.students?.full_name || "Unknown student",
@@ -315,7 +315,7 @@ export function QuizResultsViewer() {
  Attempt Forensics
  </DialogTitle>
  <DialogDescription className="text-sm font-medium text-muted-foreground/60 italic">
- {selectedAttempt?.studentName} •{" "}
+ {selectedAttempt?.studentName} â€¢{" "}
  {selectedAttempt && format(new Date(selectedAttempt.attemptedAt), "MMM d, yyyy HH:mm")}
  </DialogDescription>
  </div>
@@ -441,3 +441,5 @@ function DashboardLoadingSkeleton() {
  </div>
  );
 }
+
+

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useRef } from "react";
+﻿import React, { createContext, useContext, useMemo, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getTalentRowByUserId, updateTalentById } from "@/domains/talent/repo/talentRepo";
 import { User, Session } from "@supabase/supabase-js";
@@ -84,7 +84,7 @@ interface TalentContextValue {
 
 const TalentContext = createContext<TalentContextValue | undefined>(undefined);
 
-function mapRowToTalent(row: any): TalentProfile {
+function mapRowToTalent(row: unknown): TalentProfile {
   return {
     id: row.id,
     userId: row.user_id,
@@ -148,7 +148,7 @@ export function TalentProvider({ children }: { children: React.ReactNode }) {
     enabled: !!user?.id && !isAuthLoading,
     staleTime: 5 * 60 * 1000, // 5-minute profile structural residency baseline
     queryFn: async (): Promise<TalentProfile | null> => {
-      // HUD: EXECUTING_PROFILE_REGISTRY_INGRESS_SELECT
+      // dashboard: EXECUTING_PROFILE_REGISTRY_INGRESS_SELECT
       const data = await getTalentRowByUserId(user!.id);
       return data ? mapRowToTalent(data) : null;
     },
@@ -159,7 +159,7 @@ export function TalentProvider({ children }: { children: React.ReactNode }) {
     mutationFn: async (patch: Partial<TalentProfile>) => {
       if (!talent?.id) throw new Error("NO_ACTIVE_PROFILE");
 
-      const updateData: any = {};
+      const updateData: unknown = {};
       const mappings: Record<string, string> = {
         fullName: "full_name",
         phone: "phone",
@@ -198,14 +198,14 @@ export function TalentProvider({ children }: { children: React.ReactNode }) {
         if (mappings[key]) updateData[mappings[key]] = value;
       });
 
-      // HUD: COMMITTING_PROFILE_CHANGES_TRANSACTION
+      // dashboard: COMMITTING_PROFILE_CHANGES_TRANSACTION
       await updateTalentById(talent.id, updateData);
     },
     onMutate: async (patch) => {
       await qc.cancelQueries({ queryKey });
       const previous = qc.getQueryData<TalentProfile | null>(queryKey);
 
-      // HUD: APPLYING_OPTIMISTIC_CONTEXT_PATCH
+      // dashboard: APPLYING_OPTIMISTIC_CONTEXT_PATCH
       if (previous) {
         qc.setQueryData<TalentProfile | null>(queryKey, {
           ...previous,
@@ -214,7 +214,7 @@ export function TalentProvider({ children }: { children: React.ReactNode }) {
       }
       return { previous };
     },
-    onError: (err: any, _, context) => {
+    onError: (err: unknown, _, context) => {
       if (context?.previous) {
         qc.setQueryData(queryKey, context.previous);
       }
@@ -332,3 +332,5 @@ export function useRequiredTalent() {
   const { talent, isLoading, isAuthenticated } = useTalent();
   return { talent, isLoading, isAuthenticated, hasTalent: !!talent };
 }
+
+

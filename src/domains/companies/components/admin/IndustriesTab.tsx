@@ -1,5 +1,5 @@
 /**
- * Industry Sectors Management Terminal — Phase Z0 Hardened
+ * Industry Sectors Management Terminal â€” Phase Z0 Hardened
  * Version: 2024 Highly Professional SAAS UI
  * Fixes: A3 (Scaling Aggregates), A4 (Atomic Fusion), S1 (Rename Restoration)
  * Features: Restored Rename Protocol & Unassigned KPI
@@ -50,7 +50,7 @@ import { InlineSpinner } from "@/components/common/InlineSpinner";
 const ITEMS_PER_PAGE = 15;
 
 export function IndustriesTab() {
-  const [industries, setIndustries] = useState<any[]>([]);
+  const [industries, setIndustries] = useState<unknown[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
@@ -79,7 +79,7 @@ export function IndustriesTab() {
 
       setIndustries(rollupData || []);
       setUnassignedCount(unassignedCountVal);
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error("Could not load industry registry data. Please refresh.");
     } finally {
       setIsLoading(false);
@@ -98,10 +98,10 @@ export function IndustriesTab() {
     setIsRenaming(true);
     try {
       await renameCompanyIndustry(renameFrom, renameTo.trim());
-      toast.success(`Industry successfully renamed: "${renameFrom}" → "${renameTo}"`);
+      toast.success(`Industry successfully renamed: "${renameFrom}" â†’ "${renameTo}"`);
       setRenameDialogOpen(false);
       loadRegistry();
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error("Could not complete rename: " + err.message);
     } finally {
       setIsRenaming(false);
@@ -121,7 +121,7 @@ export function IndustriesTab() {
       setMergeDialogOpen(false);
       setSelected(new Set());
       loadRegistry();
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error("Merge error encountered: " + err.message);
     } finally {
       setIsMerging(false);
@@ -134,7 +134,11 @@ export function IndustriesTab() {
 
   const toggleSelect = (industry: string) => {
     const next = new Set(selected);
-    selected.has(industry) ? next.delete(industry) : next.add(industry);
+    if (selected.has(industry)) {
+      next.delete(industry);
+    } else {
+      next.add(industry);
+    }
     setSelected(next);
   };
 
@@ -168,7 +172,7 @@ export function IndustriesTab() {
         </div>
       </div>
 
-      {/* KPI HUD */}
+      {/* KPI dashboard */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <MetricTile
           label="Active Industry Sectors"
@@ -376,7 +380,7 @@ export function IndustriesTab() {
   );
 }
 
-function MetricTile({ label, value, icon: Icon, color, bg }: any) {
+function MetricTile({ label, value, icon: Icon, color, bg }: unknown) {
   return (
     <Card className="rounded-2xl border border-border/60 bg-card p-6 text-left group hover:border-primary/30 transition-all shadow-sm relative overflow-hidden">
       <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
@@ -402,3 +406,4 @@ function MetricTile({ label, value, icon: Icon, color, bg }: any) {
     </Card>
   );
 }
+

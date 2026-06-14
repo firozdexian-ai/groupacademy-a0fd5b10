@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
  listPublishedCourses,
@@ -35,7 +35,7 @@ import { QuizResultsViewer } from "./modules/QuizResultsViewer";
 /**
  * Platform Logic: Academic Progression Terminal (Learner Progress)
  * High-fidelity orchestrator for tracking learner velocity and course completion telemetry.
- * 2026 Standard: Executive Logic geometry with reinforced aggregation guards.
+ * 2026 Standard:  geometry with reinforced aggregation guards.
  */
 
 interface CourseStats {
@@ -77,7 +77,7 @@ export function LearningProgressTab() {
  const data = await listEnrollmentStatsRaw(selectedCourse);
 
  const statsMap = new Map<string, CourseStats>();
- (data || []).forEach((enrollment: any) => {
+ (data || []).forEach((enrollment: unknown) => {
 
  const contentId = enrollment.content_id;
  const content = enrollment.content;
@@ -114,7 +114,7 @@ export function LearningProgressTab() {
 
  return (data || []).map(
 
- (enrollment: any): LearnerDetail => ({
+ (enrollment: unknown): LearnerDetail => ({
  enrollmentId: enrollment.id,
  talentId: enrollment.talent_id,
  talentName: enrollment.talents?.full_name || "NULL_ENTITY",
@@ -425,7 +425,7 @@ export function LearningProgressTab() {
  <DialogHeader>
  <DialogTitle className="text-xl font-semibold font-medium text-accent flex items-center gap-2">
  <ClipboardCheck className="h-5 w-5" /> Quiz Results
- {selectedEnrollment && <span className="text-xs text-muted-foreground"> — {selectedEnrollment.talentName}</span>}
+ {selectedEnrollment && <span className="text-xs text-muted-foreground"> â€” {selectedEnrollment.talentName}</span>}
  </DialogTitle>
  <DialogDescription className="text-sm text-muted-foreground">
  Per-learner quiz attempts and outcomes.
@@ -453,3 +453,5 @@ function DashboardLoadingSkeleton() {
 }
 
 export default LearningProgressTab;
+
+

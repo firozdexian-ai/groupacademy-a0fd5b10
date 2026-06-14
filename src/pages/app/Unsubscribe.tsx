@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,7 @@ export default function Unsubscribe() {
  const [processing, setProcessing] = useState(false);
 
  // Digital Workforce Anomaly Protocol[cite: 6]
- const reportAnomaly = async (event: string, context: any) => {
+ const reportAnomaly = async (event: string, context: unknown) => {
  console.error(`[Digital Workforce Anomaly] ${event}`, context);
  await adminSupportAssistant({ type: "unsubscribe_error", event, context });
  };
@@ -116,3 +116,5 @@ export default function Unsubscribe() {
  </div>
  );
 }
+
+

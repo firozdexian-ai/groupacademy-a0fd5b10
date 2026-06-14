@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { trackServiceClick } from "@/domains/analytics/repo/analyticsRepo";
 import { Coins, Sparkles, Zap, History, Target } from "lucide-react";
@@ -39,7 +39,7 @@ const CAREER_SERVICES: ServiceCardData[] = [
  },
  {
  id: "MOCK_INTERVIEW",
- title: "Interview Synthesis",
+ title: "Interview summary",
  description: "Practice high-fidelity AI-driven scenarios",
  icon: Zap,
  href: "/app/services/mock-interview",
@@ -79,7 +79,7 @@ export default function ServicesHub() {
  const [showPurchaseSheet, setShowPurchaseSheet] = useState(false);
 
  // Digital Workforce Anomaly Protocol[cite: 6]
- const reportAnomalyToAdmin = async (event: string, context: any) => {
+ const reportAnomalyToAdmin = async (event: string, context: unknown) => {
  console.error(`[Digital Workforce Anomaly] ${event}`, context);
  await adminSupportAssistant({ type: "services_hub_error", event, context });
  };
@@ -223,3 +223,5 @@ export default function ServicesHub() {
  </div>
  );
 }
+
+

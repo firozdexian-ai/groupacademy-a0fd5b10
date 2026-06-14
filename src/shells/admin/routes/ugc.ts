@@ -1,6 +1,6 @@
-import React from "react";
+﻿import React from "react";
 
-export const ROUTES: Record<string, React.LazyExoticComponent<any>> = {
+export const ROUTES: Record<string, React.LazyExoticComponent<unknown>> = {
   all: React.lazy(() => import("@/domains/ugc/components/admin/UgcVideosTab")),
   "ugc-videos": React.lazy(() => import("@/domains/ugc/components/admin/UgcVideosTab")),
   "ugc-overview": React.lazy(() => import("@/domains/ugc/components/admin/UgcOverviewTab")),
@@ -17,3 +17,5 @@ export const TITLES: Record<string, string> = {
   "ugc-feed": "Social feed",
   "ugc-competitions": "Competitions",
 };
+
+

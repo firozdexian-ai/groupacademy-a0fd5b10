@@ -1,4 +1,4 @@
-// Resource-type taxonomy used across all gig surfaces (Platform Tasks, Projects, Build Academy).
+﻿// Resource-type taxonomy used across all gig surfaces (Platform Tasks, Projects, Build Academy).
 // Replaces school faculties as the user-facing axis so academy work and freelance projects
 // flow through the same pipeline.
 
@@ -11,7 +11,7 @@ export const GIG_CATEGORIES = [
   { value: "practice",    label: "Practice & Exercises",    icon: "dumbbell",  blurb: "Worksheets, labs, exercises" },
   { value: "web_tech",    label: "Web & Tech",              icon: "code",      blurb: "Embeds, code samples, automations" },
   { value: "audio",       label: "Audio & Podcast",         icon: "mic",       blurb: "Audio summaries, podcast edits" },
-  { value: "translation", label: "Translation & Localization", icon: "languages", blurb: "BN ↔ EN translation of resources" },
+  { value: "translation", label: "Translation & Localization", icon: "languages", blurb: "BN â†” EN translation of resources" },
 ] as const;
 
 export type GigCategory = (typeof GIG_CATEGORIES)[number]["value"];
@@ -33,3 +33,4 @@ export function categoryFromResourceType(rt?: string | null): GigCategory {
   if (["translation","localization"].includes(v))                  return "translation";
   return "writing";
 }
+

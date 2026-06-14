@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/lib/auth";
@@ -52,7 +52,7 @@ export default function Quiz() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [course, setCourse] = useState<any>(null);
+  const [course, setCourse] = useState<unknown>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -84,7 +84,7 @@ export default function Quiz() {
       setStudentId(student.id);
 
       // 2. Fetch Course Context
-      let courseData: any;
+      let courseData: unknown;
       try {
         courseData = await getContentBySlugMaybe(slug!);
       } catch {
@@ -109,8 +109,8 @@ export default function Quiz() {
 
       // 4. Fetch Logic Nodes (Questions)
       const questionsData = await listQuizQuestionsByContentOrdered(courseData.id);
-      if (questionsData) setQuestions(questionsData as any);
-    } catch (error: any) {
+      if (questionsData) setQuestions(questionsData as unknown);
+    } catch (error: unknown) {
       setLoadError(error.message || "Logic Fetch Failed");
     } finally {
       setLoading(false);
@@ -142,10 +142,10 @@ export default function Quiz() {
         score: correctCount,
         total_questions: questions.length,
         passed: isPassed,
-        answers: answers as any, // Cast to Json-compatible type
+        answers: answers as unknown, // Cast to Json-compatible type
       };
 
-      await insertQuizAttempt(attemptData as any);
+      await insertQuizAttempt(attemptData as unknown);
 
       if (isPassed && enrollmentId) {
         await updateEnrollmentRow(enrollmentId, {
@@ -382,3 +382,5 @@ export default function Quiz() {
     setAnswers((prev) => ({ ...prev, [id]: val }));
   }
 }
+
+

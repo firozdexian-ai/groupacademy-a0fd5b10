@@ -15,7 +15,7 @@ interface Props {
   gigId: string;
   gigKind?: "marketplace" | "quick";
   initialDraft?: string;
-  onAccept: (improved: { text: string; rationale: string; proof_links: any[] }) => void;
+  onAccept: (improved: { text: string; rationale: string; proof_links: unknown[] }) => void;
 }
 
 /**
@@ -32,7 +32,7 @@ export function BidCoachDialog({
   onAccept,
 }: Props) {
   const [draft, setDraft] = useState(initialDraft);
-  const [improved, setImproved] = useState<any | null>(null);
+  const [improved, setImproved] = useState<unknown | null>(null);
   const [loading, setLoading] = useState(false);
 
   // Synchronize incoming proposal workspace text modifications cleanly safely
@@ -62,14 +62,9 @@ export function BidCoachDialog({
 
     try {
       // Direct RPC execution route mapping over the decentralized serverless client
-      let data: any;
-      try {
-        data = await aiBidCoach({ gig_id: gigId, gig_kind: gigKind, draft_text: draft.trim() });
-      } catch (edgeError) {
-        throw edgeError;
-      }
+      const data = await aiBidCoach({ gig_id: gigId, gig_kind: gigKind, draft_text: draft.trim() });
 
-      const parsedData = data as any;
+      const parsedData = data as unknown;
 
       // 1. Boundary Condition: Intercept structural billing edge limits gracefully
       if (parsedData?.error === "rate_limited") {
@@ -86,7 +81,7 @@ export function BidCoachDialog({
 
       setImproved(parsedData);
       trackEvent("bid_coach_generation_success", { gigId, outLength: parsedData?.improved_text?.length });
-    } catch (err: any) {
+    } catch (err: unknown) {
       const exceptionMessage = err instanceof Error ? err.message : String(err);
 
       // 2. Telemetry Ingestion: Forward processing exceptions to the administrative logs
@@ -163,7 +158,7 @@ export function BidCoachDialog({
             {loading ? (
               <>
                 <Loader2 className="w-3.5 h-3.5 animate-spin stroke-[2.5]" />
-                <span>Analyzing Competency Logs…</span>
+                <span>Analyzing Competency Logsâ€¦</span>
               </>
             ) : (
               <>
@@ -258,3 +253,5 @@ export function BidCoachDialog({
     </Dialog>
   );
 }
+
+

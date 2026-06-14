@@ -1,11 +1,11 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
 import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Tactile Mobile Bottom Sheet Enclosure Protocol (Drawer)
  * Hardened gesture-driven overlay container optimizing mobile layout boundaries and stabilizing tactile drag tracks.
- * Version: Launch Candidate · Phase Z0 Dynamic Calculation Hardened
+ * Version: Launch Candidate Â· Phase Z0 Dynamic Calculation Hardened
  */
 const Drawer = ({ shouldScaleBackground = true, ...props }: React.ComponentProps<typeof DrawerPrimitive.Root>) => (
   <DrawerPrimitive.Root shouldScaleBackground={shouldScaleBackground} {...props} />
@@ -44,7 +44,7 @@ const DrawerContent = React.forwardRef<
       )}
       {...props}
     >
-      {/* HUD LEVEL 1: STRUCTURAL GESTURE INDICATOR HINGE DRAG TRACK HANDLE */}
+      {/* dashboard LEVEL 1: STRUCTURAL GESTURE INDICATOR HINGE DRAG TRACK HANDLE */}
       <div
         className="mx-auto mt-3 h-1 w-10 rounded-full bg-muted/40 shrink-0 pointer-events-none select-none"
         aria-hidden="true"
@@ -116,3 +116,4 @@ export {
   DrawerTitle,
   DrawerDescription,
 };
+

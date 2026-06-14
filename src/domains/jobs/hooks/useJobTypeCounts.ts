@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { countJobsByType } from "@/domains/jobs/repo/jobsRepo";
 
 /**
@@ -18,11 +18,11 @@ export function useJobTypeCounts(country?: string | null) {
     // Performance Baseline: 5-minute stability caching for macro metrics
     staleTime: 5 * 60 * 1000,
     queryFn: async (): Promise<Record<string, number>> => {
-      // HUD: EXECUTING_JOB_SEGMENT_AGGREGATION_SYNC
+      // dashboard: EXECUTING_JOB_SEGMENT_AGGREGATION_SYNC
       let data: Array<{ job_type: string; cnt: string | number }>;
       try {
         data = await countJobsByType(country || null);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] ANOMALY: count_jobs_by_type RPC handshake failed.", {
           country: country || "GLOBAL",
           error: error?.message,
@@ -41,3 +41,5 @@ export function useJobTypeCounts(country?: string | null) {
     },
   });
 }
+
+

@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+﻿import { useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { listServiceHistoryByTalent } from "@/domains/marketing/repo/marketingRepo";
 
@@ -42,7 +42,7 @@ export function useServiceHistory(talentId?: string | null): UseServiceHistoryRe
     enabled: !!talentId,
     staleTime: 60 * 1000, // 1-minute structural cache baseline to defend database thresholds
     queryFn: async (): Promise<ServiceHistoryItem[]> => {
-      let assessments: any[] = [], interviews: any[] = [], salary: any[] = [], portfolio: any[] = [];
+      let assessments: unknown[] = [], interviews: unknown[] = [], salary: unknown[] = [], portfolio: unknown[] = [];
       try {
         const bundle = await listServiceHistoryByTalent(talentId!);
         assessments = bundle.assessments;
@@ -106,12 +106,12 @@ export function useServiceHistory(talentId?: string | null): UseServiceHistoryRe
         });
       });
 
-      // HUD: CHRONOLOGICAL_TEMPORAL_REORDERING
+      // dashboard: CHRONOLOGICAL_TEMPORAL_REORDERING
       return aggregatedItems.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     },
   });
 
-  // --- HUD: SERVICE_TELEMETRY_CALCULATION ---
+  // --- dashboard: SERVICE_TELEMETRY_CALCULATION ---
   const getUsageCount = useCallback(
     (serviceType: string): number => {
       const typeMap: Record<string, ServiceHistoryItem["type"]> = {
@@ -133,3 +133,5 @@ export function useServiceHistory(talentId?: string | null): UseServiceHistoryRe
     getUsageCount,
   };
 }
+
+

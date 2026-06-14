@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from "react";
+﻿import { useEffect, useState, useMemo, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -51,7 +51,7 @@ export interface AssessStageProps {
 /**
  * GroUp Academy: Adaptive Knowledge Validation Engine Node (AssessStage)
  * An authoritative operational gatekeeper testing skill-node mastery and persisting verification scores.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function AssessStage({
   contentId,
@@ -92,12 +92,12 @@ export function AssessStage({
       try {
         const adaptive = await learnerAdaptiveSample({ module_id: moduleId, count: 10 });
 
-        if ((adaptive as any)?.items?.length) {
+        if ((adaptive as unknown)?.items?.length) {
           const alphabetLetters = ["A", "B", "C", "D"] as const;
-          trackEvent("assessment_adaptive_sampler_success", { count: (adaptive as any).items.length });
+          trackEvent("assessment_adaptive_sampler_success", { count: (adaptive as unknown).items.length });
 
           return (
-            (adaptive as any).items as Array<{
+            (adaptive as unknown).items as Array<{
               id: string;
               question: string;
               options: unknown;
@@ -197,7 +197,7 @@ export function AssessStage({
 
         toast.success("Verification metrics logged cleanly into trajectory history.", { id: toastId });
         trackEvent("assessment_submission_persisted_success");
-      } catch (err: any) {
+      } catch (err: unknown) {
         const exceptionMsg = err instanceof Error ? err.message : String(err);
         trackError(exceptionMsg, {
           component: "AssessStage",
@@ -217,7 +217,7 @@ export function AssessStage({
         <CardContent className="p-12 flex flex-col items-center justify-center gap-3 text-center w-full">
           <Loader2 className="h-5 w-5 animate-spin text-primary stroke-[2.5]" />
           <p className="text-xs font-bold text-muted-foreground/80 uppercase tracking-wider pl-0.5 animate-pulse">
-            Assembling Knowledge Verification Matrix…
+            Assembling Knowledge Verification Matrixâ€¦
           </p>
         </CardContent>
       </Card>
@@ -253,7 +253,7 @@ export function AssessStage({
 
   return (
     <div className="space-y-5 text-left max-w-full w-full transform-gpu antialiased">
-      {/* HUD LEVEL 1: ASSESSMENT CALIBRATION HEADER */}
+      {/* dashboard LEVEL 1: ASSESSMENT CALIBRATION HEADER */}
       <div className="flex items-center justify-between gap-4 px-0.5 select-none w-full leading-none">
         <div className="space-y-1.5 text-left flex flex-col justify-center min-w-0 flex-1">
           <h2 className="text-sm sm:text-base font-bold tracking-tight text-foreground uppercase tracking-wide flex items-center gap-2">
@@ -276,7 +276,7 @@ export function AssessStage({
       </div>
 
       {submitted ? (
-        /* COMPONENT MATRIX: RESULTS GRAPHIC HUD DASHBOARD */
+        /* COMPONENT MATRIX: RESULTS GRAPHIC dashboard DASHBOARD */
         <div className="space-y-4 text-left w-full animate-in fade-in duration-300">
           <Card
             className={cn(
@@ -339,7 +339,7 @@ export function AssessStage({
             )}
           </div>
 
-          {/* HUD SUB-TRACK LAYER: RATIONALE AUDIT EXPLANATIONS FLOW */}
+          {/* dashboard SUB-TRACK LAYER: RATIONALE AUDIT EXPLANATIONS FLOW */}
           {showExplanations && (
             <div className="space-y-2 w-full min-w-0 animate-in slide-in-from-top-2 duration-200">
               {questions.map((questionRecord, idx) => {
@@ -533,3 +533,5 @@ export function AssessStage({
     </div>
   );
 }
+
+

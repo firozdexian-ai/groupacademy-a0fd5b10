@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useLearningGraph } from "./hooks/useLearningGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,7 @@ export function LearningEnrollmentsTab() {
  } = useLearningGraph();
  const { data, isLoading } = learningGraphQuery;
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ status: "active" });
+ const [draft, setDraft] = useState<unknown>({ status: "active" });
 
  return (
  <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
@@ -234,3 +234,5 @@ export function LearningEnrollmentsTab() {
 }
 
 export default LearningEnrollmentsTab;
+
+

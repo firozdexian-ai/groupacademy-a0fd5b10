@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo, useCallback } from "react";
+﻿import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -131,7 +131,7 @@ export function AIChatPanel({
       const accessToken = await getAccessToken();
       if (!accessToken) throw new Error("AUTH_SYNC_REQUIRED");
 
-      // HUD: EXECUTING_AI_INSTRUCTOR_STREAM_HANDSHAKE
+      // dashboard: EXECUTING_AI_INSTRUCTOR_STREAM_HANDSHAKE
       const response = await fetch(CHAT_ENDPOINT, {
         method: "POST",
         headers: {
@@ -158,7 +158,7 @@ export function AIChatPanel({
       if (!response.ok || !response.body) throw new Error("NEURAL_LINK_FAULT: Connection dropped endpoint side.");
 
       return response.body;
-    } catch (error: any) {
+    } catch (error: unknown) {
       clearTimeout(timeoutId);
       if (error.name === "AbortError") throw new Error("SYNC_TIMEOUT: Latency baseline breached.");
       throw error;
@@ -197,7 +197,7 @@ export function AIChatPanel({
 
       setMessages((prev) => [...prev, { id: assistantMsgId, role: "assistant", content: "" }]);
 
-      // HUD: EXECUTING_REACTIVE_CHUNK_ITERATION_LOOP
+      // dashboard: EXECUTING_REACTIVE_CHUNK_ITERATION_LOOP
       while (true) {
         const { done, value } = await streamReader.read();
         if (done) break;
@@ -233,7 +233,7 @@ export function AIChatPanel({
           }
         }
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       setLastError(error.message || "Uplink connection fault.");
       toast.error(error.message || "Uplink connection fault.");
 
@@ -257,7 +257,7 @@ export function AIChatPanel({
         className,
       )}
     >
-      {/* HUD: BAR_HEADER_SYNC */}
+      {/* dashboard: BAR_HEADER_SYNC */}
       <div className="flex items-center justify-between p-5 border-b-2 border-border/10 bg-muted/5 backdrop-blur-xl">
         <div className="flex items-center gap-4">
           <div className="relative">
@@ -302,7 +302,7 @@ export function AIChatPanel({
               <div className="mt-6 max-w-[280px] flex items-start gap-2 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 px-3 py-2 text-left">
                 <ShieldCheck className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" />
                 <p className="text-[11px] text-foreground/80 italic leading-snug">
-                  Tutor knows your progress — weak topics, credentials, and items due for review.
+                  Tutor knows your progress â€” weak topics, credentials, and items due for review.
                 </p>
                 <button
                   type="button"
@@ -407,7 +407,7 @@ export function AIChatPanel({
         )}
       </ScrollArea>
 
-      {/* HUD: INPUT_COMMAND_COMPOSER */}
+      {/* dashboard: INPUT_COMMAND_COMPOSER */}
       <form onSubmit={(e) => void handleMessageIngress(e)} className="p-6 border-t-2 border-border/10 bg-muted/5">
         <div className="relative flex items-end gap-3 bg-background/50 border-2 border-border/40 p-2 rounded-[24px] focus-within:border-primary/40 transition-all shadow-inner">
           <Textarea
@@ -440,3 +440,5 @@ export function AIChatPanel({
     </div>
   );
 }
+
+

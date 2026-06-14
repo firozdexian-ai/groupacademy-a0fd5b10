@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { publishGigFromDraft } from "@/domains/gigs/repo/gigsRepo";
@@ -38,14 +38,14 @@ export default function NewGigWizard() {
  const [draft, setDraft] = useState<GigDraft | null>(null);
 
  // Admin notifier: in production this invokes the admin-gig-ops agent.
- const notifyAdminAgent = async (message: string, context: any) => {
+ const notifyAdminAgent = async (message: string, context: unknown) => {
  console.log("[gigs] admin notify:", message, context);
  };
 
  const scope = useMutation({
  mutationFn: async (payload: { brief_id?: string; raw_ask?: string }) => {
  const data = await aiGigScoper(payload);
- if ((data as any)?.error) throw new Error((data as any).error);
+ if ((data as unknown)?.error) throw new Error((data as unknown).error);
  return data as unknown as { brief: GigBrief; draft: GigDraft };
  },
  onSuccess: (data) => {
@@ -190,3 +190,5 @@ export default function NewGigWizard() {
  </div>
  );
 }
+
+

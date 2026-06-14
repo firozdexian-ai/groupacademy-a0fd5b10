@@ -1,5 +1,5 @@
-/**
- * Talent Pool — Refactored for Phase Z0
+﻿/**
+ * Talent Pool â€” Refactored for Phase Z0
  * CTO Version: May 2026
  * Fixes: P3 (Accurate Outreach Count), P2 (Layout Deduplication)
  */
@@ -54,13 +54,13 @@ import { extractFirstName, cn } from "@/lib/utils";
 const ITEMS_PER_PAGE = 10;
 
 export function TalentPoolTab() {
-  const [talents, setTalents] = useState<any[]>([]);
+  const [talents, setTalents] = useState<unknown[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [countryFilter, setCountryFilter] = useState("all");
-  const [selectedTalent, setSelectedTalent] = useState<any | null>(null);
+  const [selectedTalent, setSelectedTalent] = useState<unknown | null>(null);
 
   const loadTalents = useCallback(async () => {
     setIsLoading(true);
@@ -85,7 +85,7 @@ export function TalentPoolTab() {
     loadTalents();
   }, [loadTalents]);
 
-  const handleOutreach = async (talent: any, product: OutreachProduct, channel: "whatsapp" | "email" | "linkedin") => {
+  const handleOutreach = async (talent: unknown, product: OutreachProduct, channel: "whatsapp" | "email" | "linkedin") => {
     const firstName = extractFirstName(talent.full_name);
     if (channel === "whatsapp" && talent.phone)
       window.open(getOutreachWhatsAppLink(talent.phone, product, firstName, talent.country || undefined), "_blank");
@@ -135,7 +135,7 @@ export function TalentPoolTab() {
                 placeholder="Search node IDs, names, or handles..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-10 rounded-xl border-2 pl-12 font-bold uppercase text-[10px] tracking-widest bg-muted/10"
+                className="pl-9 h-12 rounded-xl bg-surface text-primary"
               />
             </div>
             <Select value={countryFilter} onValueChange={setCountryFilter}>
@@ -144,7 +144,7 @@ export function TalentPoolTab() {
               </SelectTrigger>
               <SelectContent className="rounded-2xl border-2">
                 <SelectItem value="all" className="font-bold text-[10px]">
-                  🌍 ALL MARKETS
+                  ðŸŒ ALL MARKETS
                 </SelectItem>
                 {COUNTRIES_WITH_PHONE.map((c) => (
                   <SelectItem key={c.code} value={c.name} className="font-bold text-[10px]">
@@ -273,7 +273,7 @@ export function TalentPoolTab() {
 }
 
 // Sub-components: OutreachDropdown remains consistent with platform standards...
-function OutreachDropdown({ talent, onOutreach, onView }: any) {
+function OutreachDropdown({ talent, onOutreach, onView }: unknown) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -297,19 +297,19 @@ function OutreachDropdown({ talent, onOutreach, onView }: any) {
         </DropdownMenuItem>
         <DropdownMenuSeparator className="my-2" />
         <p className="text-[9px] font-semibold text-muted-foreground/60 px-3 py-2 uppercase italic">Active Deployment</p>
-        <OutreachItem icon={Hand} label="Global Welcome" onClick={(c: any) => onOutreach(talent, "welcome", c)} />
-        <OutreachItem icon={Bot} label="AI Expertise" onClick={(c: any) => onOutreach(talent, "ai_agent", c)} />
+        <OutreachItem icon={Hand} label="Global Welcome" onClick={(c: unknown) => onOutreach(talent, "welcome", c)} />
+        <OutreachItem icon={Bot} label="AI Expertise" onClick={(c: unknown) => onOutreach(talent, "ai_agent", c)} />
         <OutreachItem
           icon={Briefcase}
           label="Digital Portfolio"
-          onClick={(c: any) => onOutreach(talent, "portfolio", c)}
+          onClick={(c: unknown) => onOutreach(talent, "portfolio", c)}
         />
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
 
-function OutreachItem({ icon: Icon, label, onClick }: any) {
+function OutreachItem({ icon: Icon, label, onClick }: unknown) {
   return (
     <div className="flex items-center px-3 py-1.5 text-[10px] font-semibold uppercase italic rounded-xl hover:bg-muted/50 transition-colors">
       <Icon className="h-4 w-4 mr-3 text-muted-foreground/50" />
@@ -330,3 +330,5 @@ function OutreachItem({ icon: Icon, label, onClick }: any) {
     </div>
   );
 }
+
+

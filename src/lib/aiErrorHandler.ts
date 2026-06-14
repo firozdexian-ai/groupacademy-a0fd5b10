@@ -1,5 +1,5 @@
-/**
- * GroUp Academy: Neural Exception Sentinel
+﻿/**
+ * GroUp Academy: Neural Exception guard
  * CTO Reference: Authoritative utility for graceful AI service degradation.
  * Logic: Implements bimodal diagnostic mapping and talent-friendly suggestions.
  */
@@ -14,10 +14,10 @@ export interface AIErrorResult {
  * PHASE: Semantic_Error_Translation
  * Transforms raw service faults into pedagogical suggestions.
  */
-export function handleAIError(error: any, statusCode?: number): AIErrorResult {
+export function handleAIError(error: unknown, statusCode?: number): AIErrorResult {
   const errorMessage = error?.message?.toLowerCase() || "";
 
-  // HUD: Fiscal_Quota_Audit (402 Payment Required)
+  // dashboard: Fiscal_Quota_Audit (402 Payment Required)
   if (
     statusCode === 402 ||
     errorMessage.includes("quota") ||
@@ -31,7 +31,7 @@ export function handleAIError(error: any, statusCode?: number): AIErrorResult {
     };
   }
 
-  // HUD: Concurrency_Backoff (429 Too Many Requests)
+  // dashboard: Concurrency_Backoff (429 Too Many Requests)
   if (statusCode === 429 || errorMessage.includes("rate limit")) {
     return {
       message: "High neural traffic detected.",
@@ -40,7 +40,7 @@ export function handleAIError(error: any, statusCode?: number): AIErrorResult {
     };
   }
 
-  // HUD: Latency_Threshold_Fault
+  // dashboard: Latency_Threshold_Fault
   if (errorMessage.includes("timeout") || error?.name === "AbortError") {
     return {
       message: "Neural handshake timed out.",
@@ -49,7 +49,7 @@ export function handleAIError(error: any, statusCode?: number): AIErrorResult {
     };
   }
 
-  // HUD: Institutional_Infrastructure_Fault (5xx)
+  // dashboard: Institutional_Infrastructure_Fault (5xx)
   if (statusCode && statusCode >= 500 && statusCode <= 504) {
     return {
       message: "AI services are currently undergoing maintenance.",
@@ -58,7 +58,7 @@ export function handleAIError(error: any, statusCode?: number): AIErrorResult {
     };
   }
 
-  // HUD: Network_Ingress_Issue
+  // dashboard: Network_Ingress_Issue
   if (errorMessage.includes("network") || errorMessage.includes("failed to fetch")) {
     return {
       message: "Network transmission fault.",
@@ -67,7 +67,7 @@ export function handleAIError(error: any, statusCode?: number): AIErrorResult {
     };
   }
 
-  // HUD: Default_Fallback_Protocol
+  // dashboard: Default_Fallback_Protocol
   return {
     message: error?.message || "An unexpected neural fault occurred.",
     suggestion: "System suggests a manual retry.",
@@ -92,3 +92,5 @@ export function isAIServiceError(response: Response | null): boolean {
   if (!response) return false;
   return response.status === 402 || response.status === 429 || response.status >= 500;
 }
+
+

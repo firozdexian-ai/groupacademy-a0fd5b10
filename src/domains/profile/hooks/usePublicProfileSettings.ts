@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { claimPublicHandle } from "@/domains/profile/api/profileApi";
 import { getPublicProfileSettings, updatePublicProfileSettings } from "@/domains/profile/repo/profileRepo";
 import { useTalent } from "@/hooks/useTalent";
@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 
 /**
- * GroUp Academy: Identity & Privacy Sentinel (V5.6.0)
+ * GroUp Academy: Identity & Privacy guard (V5.6.0)
  * CTO Reference: Authoritative controller managing recruitment profile visibility grids.
  * Architecture: Digital Workforce enabled - logs identity and handle collision dropouts to Admin OS.
  * Phase: Z0 Code Freeze Hardened (May 2026 Launch Edition).
@@ -58,7 +58,7 @@ export function usePublicProfileSettings() {
       void qc.invalidateQueries({ queryKey });
       toast.success("Visibility settings updated.");
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       toast.error(err.message || "Failed to update visibility settings.");
     },
   });
@@ -66,11 +66,11 @@ export function usePublicProfileSettings() {
   // --- ACTION: PUBLIC_HANDLE_EDGE_MUTATION ---
   const claimHandle = useMutation({
     mutationFn: async (handle: string): Promise<{ handle: string }> => {
-      // HUD: INVOKING_HANDLE_CLAIM_EDGE_ORCHESTRATOR
+      // dashboard: INVOKING_HANDLE_CLAIM_EDGE_ORCHESTRATOR
       let res: { error?: string; message?: string; handle?: string };
       try {
         res = await claimPublicHandle({ handle });
-      } catch (error: any) {
+      } catch (error: unknown) {
         // Digital Workforce Anomaly Trigger: Essential for catching routing or gateway timeouts
         console.error("[Digital Workforce] ANOMALY: claim-public-handle infrastructure failure.", {
           talentId: talent?.id,
@@ -89,7 +89,7 @@ export function usePublicProfileSettings() {
       void qc.invalidateQueries({ queryKey });
       toast.success(`Handle claimed successfully: @${data.handle}`);
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       console.warn("[Digital Workforce] ANOMALY: Custom slug reservation denied due to validation logic.", err.message);
       toast.error(err.message || "This handle is already taken. Please try another one.");
     },
@@ -101,3 +101,5 @@ export function usePublicProfileSettings() {
     claimHandle,
   };
 }
+
+

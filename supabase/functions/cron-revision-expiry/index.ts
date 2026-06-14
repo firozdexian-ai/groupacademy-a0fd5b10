@@ -1,4 +1,4 @@
-// Cron daily: expire revision requests past due_at, fire trust event.
+﻿// Cron daily: expire revision requests past due_at, fire trust event.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -29,3 +29,4 @@ Deno.serve(async (req) => {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 });
+

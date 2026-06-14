@@ -1,4 +1,4 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+﻿import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ClipboardList, Briefcase, MessageSquare, TrendingUp, Folder } from "lucide-react";
 import { LeadHunterManager } from "./leads/LeadHunterManager";
 import { MockInterviewLeadsManager } from "./leads/MockInterviewLeadsManager";
@@ -77,3 +77,4 @@ export function LeadsActivitiesTab() {
 }
 
 export default LeadsActivitiesTab;
+

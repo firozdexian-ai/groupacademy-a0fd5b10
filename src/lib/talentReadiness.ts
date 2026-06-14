@@ -1,4 +1,4 @@
-// Mirrors the logic of the auto_set_talent_public_visibility() Postgres trigger.
+﻿// Mirrors the logic of the auto_set_talent_public_visibility() Postgres trigger.
 // Source of truth: supabase/migrations/20260508054712_*.sql
 import type { TalentProfile } from "@/contexts/TalentContext";
 
@@ -34,3 +34,4 @@ export function computeReadiness(t: Partial<TalentProfile> | null | undefined): 
     missing: checks.filter((c) => !c.ok),
   };
 }
+

@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { listIrMetricsSnapshots, upsertIrMetricsSnapshot } from "@/domains/ir/repo/irRepo";
 import { toast } from "sonner";
@@ -68,7 +68,7 @@ export function useUnitEconomics() {
     queryKey,
     staleTime: 60 * 1000, // 1-minute tracking caching baseline for investor data panels
     queryFn: async (): Promise<IRSnapshot[]> => {
-      let data: any[] = [];
+      let data: unknown[] = [];
       try {
         data = await listIrMetricsSnapshots(12);
       } catch (error) {
@@ -76,7 +76,7 @@ export function useUnitEconomics() {
         throw error;
       }
 
-      return (data || []).map((row: any) => ({
+      return (data || []).map((row: unknown) => ({
         id: String(row.id),
         snapshot_date: String(row.snapshot_date),
         mrr_usd: row.mrr_usd !== null ? Number(row.mrr_usd) : null,
@@ -107,7 +107,7 @@ export function useUnitEconomics() {
     mutationFn: async (input: Partial<IRSnapshot> & { snapshot_date: string }): Promise<void> => {
       try {
         await upsertIrMetricsSnapshot(input);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] ANOMALY: ir_metrics_snapshots record update rejected.", {
           snapshotDate: input.snapshot_date,
           message: error.message,
@@ -173,3 +173,5 @@ export function useUnitEconomics() {
     upsertSnapshot,
   };
 }
+
+

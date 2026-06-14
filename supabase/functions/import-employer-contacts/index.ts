@@ -1,4 +1,4 @@
-// Bulk import employer contacts from CSV (admin only) — v2
+﻿// Bulk import employer contacts from CSV (admin only) â€” v2
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -209,3 +209,4 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: (e as Error).message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
+

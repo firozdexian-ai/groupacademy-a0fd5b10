@@ -1,4 +1,4 @@
-/**
+﻿/**
  * GroUp Academy: Algorithmic Match Distribution Engine (V5.6.0)
  * CTO Reference: High-performance infinite scroller tracking keyset-paginated jobs.
  * Architecture: Digital Workforce enabled - streams pipeline exceptions to Admin OS.
@@ -41,14 +41,14 @@ export function useRankedJobs(talentId: string | undefined) {
     queryFn: async (context): Promise<RankedJob[]> => {
       const { pageParam } = context;
 
-      let data: any[];
+      let data: unknown[];
       try {
         data = await getRankedJobsForTalent({
           talentId: talentId!,
           cursor: pageParam,
           limit: PAGE_SIZE,
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         // Digital Workforce: Route data drops directly to platform telemetry layers
         trackError(error, {
           component: "useRankedJobs",
@@ -60,7 +60,7 @@ export function useRankedJobs(talentId: string | undefined) {
       }
 
       // Hardened Data Normalization Layer: Prevents layout breaking from schema shifts
-      return (data || []).map((row: any) => {
+      return (data || []).map((row: unknown) => {
         const rawJob = row.job || {};
 
         // Defensive reconstruction of JobCardData mapping specs
@@ -103,3 +103,5 @@ export function useRankedJobs(talentId: string | undefined) {
     },
   });
 }
+
+

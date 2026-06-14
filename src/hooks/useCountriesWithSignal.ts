@@ -1,8 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { getCountriesWithSignal } from "@/domains/jobs/repo/jobsRepo";
 
 /**
- * Geographic job market signal — country-level counts, top cities, and top employers.
+ * Geographic job market signal â€” country-level counts, top cities, and top employers.
  */
 
 export interface CountryWithSignal {
@@ -21,7 +21,7 @@ export function useCountriesWithSignal(limit = 50) {
       try {
         const data = await getCountriesWithSignal(limit);
         return (data ?? []) as CountryWithSignal[];
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[countries] get_countries_with_signal failed", {
           limit,
           error: error?.message,
@@ -32,3 +32,5 @@ export function useCountriesWithSignal(limit = 50) {
     },
   });
 }
+
+

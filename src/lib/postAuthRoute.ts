@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Account-type-aware post-auth routing.
  * Used by Index, Auth pages, and Gro10x signup so each user type lands in
  * the right surface (talent feed, Gro10x B2B inbox, or admin dashboard).
@@ -25,7 +25,8 @@ export function resolvePostAuthRoute(
   returnTo?: string | null,
 ): string | null {
   if (returnTo && !returnTo.includes("/auth")) return returnTo;
-  // Don't guess while account type is still resolving — caller should wait.
+  // Don't guess while account type is still resolving â€” caller should wait.
   if (type === "unknown") return null;
   return getDefaultRouteFor(type);
 }
+

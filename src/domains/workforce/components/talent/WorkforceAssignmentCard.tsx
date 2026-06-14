@@ -1,5 +1,5 @@
-/**
- * Talent Shell — Workforce Assignment Card (W-8)
+﻿/**
+ * Talent Shell â€” Workforce Assignment Card (W-8)
  * Displays the logged-in talent's HR placement: team, grade, role, vertical, status.
  */
 import { useQuery } from "@tanstack/react-query";
@@ -40,7 +40,7 @@ export function WorkforceAssignmentCard({ talentId }: { talentId: string }) {
   const func_     = assignment.hr_teams?.hr_functions?.name;
   const vertical  = assignment.hr_teams?.hr_functions?.hr_verticals?.name;
   const grade     = assignment.hr_grades
-    ? `L${assignment.hr_grades.level} · ${assignment.hr_grades.name}`
+    ? `L${assignment.hr_grades.level} Â· ${assignment.hr_grades.name}`
     : null;
   const role      = ROLE_LABELS[assignment.role_type] || assignment.role_type;
 
@@ -95,7 +95,7 @@ export function WorkforceAssignmentCard({ talentId }: { talentId: string }) {
   );
 }
 
-function Chip({ icon: Icon, label }: { icon: any; label: string }) {
+function Chip({ icon: Icon, label }: { icon: unknown; label: string }) {
   return (
     <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/5 border border-white/5">
       <Icon className="h-3 w-3 text-slate-400 shrink-0" />
@@ -103,3 +103,5 @@ function Chip({ icon: Icon, label }: { icon: any; label: string }) {
     </div>
   );
 }
+
+

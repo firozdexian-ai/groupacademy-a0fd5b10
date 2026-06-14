@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+﻿import { useMemo } from "react";
 import { formatDistanceToNow, isValid } from "date-fns";
 import { Coins, ArrowRight, MessageCircle, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { trackError } from "@/lib/errorTracking";
 
 /**
- * Group Academy — Career Guidance System: Agent Messaging Ledger Row
+ * Group Academy â€” Career Guidance System: Agent Messaging Ledger Row
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/chat (Sidebar Agent List Panel Surface)
  * Operations Mode: Automated Efficiency high-performance row tracking active interactions.
@@ -59,7 +59,7 @@ export function AgentListItem({
 
     try {
       return formatDistanceToNow(resolvedDate, { addSuffix: true });
-    } catch (err: any) {
+    } catch (err: unknown) {
       trackError("agent-list-item-temporal-sync-failure", { error: err.message, lastMessageTime });
       return null;
     }
@@ -165,3 +165,5 @@ export function AgentListItem({
 }
 
 export default AgentListItem;
+
+

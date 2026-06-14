@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -74,7 +74,7 @@ export function HypeButton({
 
       // Synchronize client balance states instantly across available viewports
       queryClient.invalidateQueries({ queryKey: ["credits-balance"] });
-    } catch (err: any) {
+    } catch (err: unknown) {
       const parsedMessage = err instanceof Error ? err.message : String(err);
 
       trackError(parsedMessage, {
@@ -120,3 +120,4 @@ export function HypeButton({
     </Button>
   );
 }
+

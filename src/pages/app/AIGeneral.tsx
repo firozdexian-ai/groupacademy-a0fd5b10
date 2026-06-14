@@ -19,7 +19,7 @@ interface ChatMessage {
 /**
  * GroUp Academy: Technical Neural Concierge Interface (AIGeneral)
  * Hardened fixed-viewport chat platform anchoring fluid streaming threads and insulating lifecycle scroll parameters.
- * Version: Launch Candidate · Phase Z1 Viewport Containment Locked
+ * Version: Launch Candidate Â· Phase Z1 Viewport Containment Locked
  */
 export default function AIGeneral() {
  const [urlSearchParamsMap] = useSearchParams();
@@ -51,20 +51,18 @@ export default function AIGeneral() {
  // LIFECYCLE SECTOR 1: HARDWARE-ACCELERATED ANIMATION SCROLL ANCHORING
  // =========================================================================
  React.useEffect(() => {
- let frameworkAnimationFrameRequestToken: number;
+   const executeSymmetricScrollRepositioning = () => {
+     if (viewportScrollAnchorRef.current) {
+       viewportScrollAnchorRef.current.scrollIntoView({ behavior: "smooth" });
+     }
+   };
 
- const executeSymmetricScrollRepositioning = () => {
- if (viewportScrollAnchorRef.current) {
- viewportScrollAnchorRef.current.scrollIntoView({ behavior: "smooth" });
- }
- };
+   // Replace loose timeouts with a hardware-synced requestAnimationFrame pipeline
+   const frameworkAnimationFrameRequestToken = requestAnimationFrame(executeSymmetricScrollRepositioning);
 
- // Replace loose timeouts with a hardware-synced requestAnimationFrame pipeline
- frameworkAnimationFrameRequestToken = requestAnimationFrame(executeSymmetricScrollRepositioning);
-
- return () => {
- cancelAnimationFrame(frameworkAnimationFrameRequestToken);
- };
+   return () => {
+     cancelAnimationFrame(frameworkAnimationFrameRequestToken);
+   };
  }, [typedMessagesRoster.length, isStreaming]);
 
  // =========================================================================
@@ -90,7 +88,7 @@ export default function AIGeneral() {
 
  return (
  <div className="max-w-4xl mx-auto h-[calc(100vh-145px)] md:h-[calc(100vh-80px)] flex flex-col bg-background overflow-hidden md:border-x border-border/40 shadow-none text-left antialiased transform-gpu w-full">
- {/* HUD LEVEL 1: APP SHELL HUD HEADER IDENTITY CONTEXT */}
+ {/* dashboard LEVEL 1: APP SHELL dashboard HEADER IDENTITY CONTEXT */}
  <header className="flex items-center justify-between py-3.5 px-4 border-b border-border/40 bg-card shrink-0 z-20 select-none">
  <div className="flex items-center gap-3.5 min-w-0">
  <Button
@@ -122,7 +120,7 @@ export default function AIGeneral() {
  <div className="h-1 w-1 rounded-full bg-current animate-ping" />
  <span>Uplink Active</span>
  </span>
- <span className="opacity-20 select-none">•</span>
+ <span className="opacity-20 select-none">â€¢</span>
  <span className="flex items-center gap-1">
  <Zap className="h-3 w-3 stroke-[2]" />
  <span>Standard Tier</span>
@@ -141,7 +139,7 @@ export default function AIGeneral() {
  </Button>
  </header>
 
- {/* HUD LEVEL 2: DYNAMIC CHAT STREAM CONTEXT DISPATCH VIEWPORT */}
+ {/* dashboard LEVEL 2: DYNAMIC CHAT STREAM CONTEXT DISPATCH VIEWPORT */}
  <main className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 space-y-6 scrollbar-none transform-gpu block w-full">
  {isLoading && typedMessagesRoster.length === 0 && (
  <div className="flex flex-col items-center justify-center h-full space-y-3 select-none pointer-events-none">
@@ -247,7 +245,7 @@ export default function AIGeneral() {
  <div ref={viewportScrollAnchorRef} className="h-2 block shrink-0 select-none pointer-events-none" />
  </main>
 
- {/* HUD LEVEL 3: INPUT OPERATIONAL TEXT CONSOLE PANEL */}
+ {/* dashboard LEVEL 3: INPUT OPERATIONAL TEXT CONSOLE PANEL */}
  <footer className="shrink-0 border-t border-border/40 bg-card p-4 select-none">
  <form
  onSubmit={handleMessageDispatchSequence}
@@ -275,3 +273,4 @@ export default function AIGeneral() {
  </div>
  );
 }
+

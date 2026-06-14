@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -64,10 +64,11 @@ export function UploadDocumentDialog({ open, onOpenChange }: { open: boolean; on
  <DialogFooter>
  <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
  <Button onClick={submit} disabled={!file || !title || uploadDocument.isPending}>
- {uploadDocument.isPending ? "Uploading…" : "Upload"}
+ {uploadDocument.isPending ? "Uploadingâ€¦" : "Upload"}
  </Button>
  </DialogFooter>
  </DialogContent>
  </Dialog>
  );
 }
+

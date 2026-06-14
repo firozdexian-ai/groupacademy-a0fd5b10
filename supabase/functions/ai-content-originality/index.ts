@@ -59,7 +59,9 @@ Deno.serve(async (req) => {
         const c = j?.choices?.[0]?.message?.content || "";
         const m = c.match(/\{[\s\S]*\}/);
         if (m) aiLikelihood = JSON.parse(m[0]).ai_likelihood ?? 0;
-      } catch (_) {}
+      } catch (_) {
+        // Intentionally empty
+      }
     }
     return new Response(JSON.stringify({ overlap: maxOverlap, ai_likelihood: aiLikelihood, flags: [
       ...(maxOverlap > 0.4 ? ["plagiarism_suspected"] : []),
@@ -69,3 +71,4 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: corsHeaders });
   }
 });
+

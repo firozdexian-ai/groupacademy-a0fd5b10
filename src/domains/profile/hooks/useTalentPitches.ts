@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
 import { listAgentPitchLog, subscribeToAgentPitchLog } from "@/domains/profile/repo/profileRepo";
 import { useTalent } from "@/hooks/useTalent";
@@ -35,7 +35,7 @@ export function useTalentPitches(limit = 20) {
     staleTime: 15 * 1000,
     queryFn: async (): Promise<TalentPitch[]> => {
       const rows = await listAgentPitchLog(talentId!, limit);
-      return rows.map((row: any) => ({
+      return rows.map((row: unknown) => ({
         id: String(row.id),
         company_id: String(row.company_id),
         message: String(row.message ?? ""),
@@ -61,4 +61,6 @@ export function useTalentPitches(limit = 20) {
     refresh: refetch,
   };
 }
+
+
 

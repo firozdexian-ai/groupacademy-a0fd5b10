@@ -1,11 +1,11 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as ProgressPrimitive from "@radix-ui/react-progress";
 import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Authoritative Logic Progression Telemetry Node (Progress)
  * Hardened WAI-ARIA compliant bar protecting alignment variables against input array overflows.
- * Version: Launch Candidate · Phase Z0 Calculation Boundary Locked
+ * Version: Launch Candidate Â· Phase Z0 Calculation Boundary Locked
  */
 const Progress = React.forwardRef<
   React.ElementRef<typeof ProgressPrimitive.Root>,
@@ -40,3 +40,4 @@ const Progress = React.forwardRef<
 Progress.displayName = "Progress_Core_Progression_Node";
 
 export { Progress };
+

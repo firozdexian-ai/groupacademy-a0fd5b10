@@ -1,4 +1,4 @@
-import { lazy, type ComponentType, type LazyExoticComponent } from "react";
+﻿import { lazy, type ComponentType, type LazyExoticComponent } from "react";
 import { AI_AGENTS, type AIAgent, getAgentById } from "@/lib/constants/agents";
 import { ADMIN_AGENTS, ADMIN_AGENTS_BY_KEY, type AdminAgent } from "@/lib/adminAgents";
 import {
@@ -26,7 +26,7 @@ export interface AgentRegistryEntry {
   /** Primary database runtime or background edge function handling execution. */
   edge: string;
   /** Optional lazy-loaded component block for handling custom dedicated screens. */
-  ui?: LazyExoticComponent<ComponentType<any>>;
+  ui?: LazyExoticComponent<ComponentType<unknown>>;
 }
 
 /**
@@ -76,3 +76,5 @@ export {
   getGro10xAgentMeta,
 };
 export type { AIAgent, AdminAgent, Gro10xAgent };
+
+

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * GroUp Academy: Admin Scope Intelligence
  */
 import { useQuery } from "@tanstack/react-query";
@@ -67,3 +67,4 @@ export function useAdminScope() {
     isLoading: authLoading || (!!user?.id && query.isLoading),
   };
 }
+

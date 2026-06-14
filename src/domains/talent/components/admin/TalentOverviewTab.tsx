@@ -1,5 +1,5 @@
-/**
- * Global CRM Command Center — Phase Z0 Hardened
+﻿/**
+ * Global CRM Command Center â€” Phase Z0 Hardened
  * CTO Version: May 2026
  * Fixes: P2 (RPC Adoption)
  * Restored: Aisha Funnel Telemetry & Triple-Bar Breakdowns
@@ -36,7 +36,7 @@ export function TalentOverviewTab() {
 
 
       // Restore: Aisha Funnel Data (Capturing the conversion flow)
-      const aishaCount = (filter?: (q: any) => any) => talentRepo.countAishaConversations(filter);
+      const aishaCount = (filter?: (q: unknown) => unknown) => talentRepo.countAishaConversations(filter);
 
       const [started, emailCaptured, completedSignup] = await Promise.all([
         aishaCount(),
@@ -162,7 +162,7 @@ export function TalentOverviewTab() {
             </h3>
           </CardHeader>
           <div className="flex-1 overflow-y-auto p-4 max-h-[420px] space-y-2">
-            {data.recent.map((r: any) => (
+            {data.recent.map((r: unknown) => (
               <div
                 key={r.id}
                 className="flex items-center justify-between p-4 rounded-2xl hover:bg-muted/40 transition-all border-2 border-transparent hover:border-border/40 group"
@@ -173,7 +173,7 @@ export function TalentOverviewTab() {
                   </div>
                   <div className="text-[10px] font-bold text-muted-foreground truncate flex items-center gap-2 mt-1">
                     <span>{r.country || "Global"}</span>
-                    <span>·</span>
+                    <span>Â·</span>
                     <Badge
                       variant="outline"
                       className="px-2 py-0 h-4 text-[8px] font-semibold bg-success/10 text-success border-none"
@@ -197,7 +197,7 @@ export function TalentOverviewTab() {
   );
 }
 
-function MetricTile({ label, value, icon: Icon, color, bg }: any) {
+function MetricTile({ label, value, icon: Icon, color, bg }: unknown) {
   return (
     <Card className="rounded-2xl border border-border/60 bg-card p-6 text-left group hover:border-primary/30 transition-all shadow-xl">
       <div className="flex items-center gap-5">
@@ -219,7 +219,7 @@ function MetricTile({ label, value, icon: Icon, color, bg }: any) {
   );
 }
 
-function FunnelRow({ label, value, max, color }: any) {
+function FunnelRow({ label, value, max, color }: unknown) {
   const pct = Math.round((value / (max || 1)) * 100);
   return (
     <div className="space-y-2">
@@ -239,8 +239,8 @@ function FunnelRow({ label, value, max, color }: any) {
   );
 }
 
-function BarBreakdown({ title, icon: Icon, data, color }: any) {
-  const max = Math.max(1, ...data.map((d: any) => d.value));
+function BarBreakdown({ title, icon: Icon, data, color }: unknown) {
+  const max = Math.max(1, ...data.map((d: unknown) => d.value));
   const gradient = color === "blue" ? "from-primary to-accent" : "from-accent to-accent";
 
   return (
@@ -249,7 +249,7 @@ function BarBreakdown({ title, icon: Icon, data, color }: any) {
         <Icon className="h-4 w-4 text-primary" /> {title}
       </h3>
       <div className="space-y-4">
-        {data.map((d: any) => (
+        {data.map((d: unknown) => (
           <div key={d.label} className="space-y-1.5 group">
             <div className="flex justify-between items-end text-sm">
               <span className="font-semibold uppercase text-[10px] tracking-widest text-muted-foreground truncate pr-4">
@@ -272,3 +272,5 @@ function BarBreakdown({ title, icon: Icon, data, color }: any) {
     </Card>
   );
 }
+
+

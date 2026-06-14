@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+﻿import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import {
   fetchFeedRecommendationPage,
@@ -84,7 +84,7 @@ async function fetchFeedPage(olderThan?: string): Promise<{ items: FeedItem[]; n
 
   const items: FeedItem[] = [];
 
-  coursesRes.data?.forEach((c: any) => {
+  coursesRes.data?.forEach((c: unknown) => {
     const ytThumb = c.youtube_url ? getYoutubeThumbnail(c.youtube_url) : null;
     items.push({
       id: c.id,
@@ -99,7 +99,7 @@ async function fetchFeedPage(olderThan?: string): Promise<{ items: FeedItem[]; n
     });
   });
 
-  blogsRes.data?.forEach((b: any) => {
+  blogsRes.data?.forEach((b: unknown) => {
     items.push({
       id: b.id,
       type: "blog",
@@ -115,7 +115,7 @@ async function fetchFeedPage(olderThan?: string): Promise<{ items: FeedItem[]; n
 
   // Collect unique author IDs for batch profile hydration queries
   const authorIds = Array.from(
-    new Set((postsRes.data || []).map((p: any) => p.author_user_id).filter(Boolean)),
+    new Set((postsRes.data || []).map((p: unknown) => p.author_user_id).filter(Boolean)),
   );
   const authorMeta = new Map<string, { country?: string; profession?: string }>();
   if (authorIds.length > 0) {
@@ -125,7 +125,7 @@ async function fetchFeedPage(olderThan?: string): Promise<{ items: FeedItem[]; n
     );
   }
 
-  postsRes.data?.forEach((p: any) => {
+  postsRes.data?.forEach((p: unknown) => {
     const meta = p.author_user_id ? authorMeta.get(p.author_user_id) : undefined;
     items.push({
       id: p.id,
@@ -210,7 +210,7 @@ export function useFeedRecommendations() {
   );
 
   const talentCountry = talent?.country;
-  const talentProfession = (talent as any)?.customProfession || (talent as any)?.custom_profession;
+  const talentProfession = (talent as unknown)?.customProfession || (talent as unknown)?.custom_profession;
 
   // Select stable random advice insights once per workflow instantiation session
   const insightsRef = useRef<string[]>(undefined);
@@ -267,8 +267,9 @@ export function useFeedRecommendations() {
     },
     markNotInterested: (itemId: string) => {
       setDismissedIds((prev) => new Set([...prev, itemId]));
-      toast({ title: "Got it — we'll show less like this" });
+      toast({ title: "Got it â€” we'll show less like this" });
     },
     hasGeneratedOnce: true,
   };
 }
+

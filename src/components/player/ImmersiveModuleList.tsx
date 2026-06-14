@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+﻿import { useEffect, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -31,7 +31,7 @@ interface ImmersiveModuleListProps {
 /**
  * GroUp Academy: Immersive Modular Curriculum Progression Ledger (ImmersiveModuleList)
  * An authoritative operational pipeline executing linear trajectory enforcement, locking validations, and telemetry logs.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function ImmersiveModuleList({
   modules = [],
@@ -119,7 +119,7 @@ export function ImmersiveModuleList({
 
   return (
     <Card className="w-full h-full text-left rounded-xl border border-border/40 bg-card/40 backdrop-blur-md shadow-sm antialiased flex flex-col transform-gpu overflow-hidden">
-      {/* HUD LEVEL 1: TITLE BANNER TRACK PANEL CONTROLS */}
+      {/* dashboard LEVEL 1: TITLE BANNER TRACK PANEL CONTROLS */}
       <CardHeader className="p-4 select-none border-b border-border/10 bg-muted/20 shrink-0 w-full">
         <CardTitle className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-2 w-full leading-none">
           <Zap className="h-4 w-4 text-primary fill-primary/5 stroke-[2.2] shrink-0 animate-pulse" />
@@ -127,7 +127,7 @@ export function ImmersiveModuleList({
         </CardTitle>
       </CardHeader>
 
-      {/* HUD LEVEL 2: IMMERSIVE SCROLL AREA SCROLL LEDGER PANEL */}
+      {/* dashboard LEVEL 2: IMMERSIVE SCROLL AREA SCROLL LEDGER PANEL */}
       <CardContent className="p-0 flex-1 overflow-hidden w-full">
         <ScrollArea className="h-full w-full">
           <div className="p-4 space-y-2.5 w-full min-w-0 flex flex-col font-bold text-xs tracking-tight">
@@ -224,3 +224,4 @@ export function ImmersiveModuleList({
     </Card>
   );
 }
+

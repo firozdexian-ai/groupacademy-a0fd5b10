@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+﻿import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { insertCareerAssessment } from "@/domains/marketing/repo/marketingRepo";
@@ -33,7 +33,7 @@ interface LeadCaptureFormProps {
   email: string;
   categoryId: string;
   categoryName: string;
-  answers: Record<string, any>;
+  answers: Record<string, unknown>;
   onComplete: () => void;
   onBack: () => void;
 }
@@ -117,7 +117,7 @@ export function LeadCaptureForm({
       const generatedNodeUuid = crypto.randomUUID();
       const unifiedContactVector = String(formData.countryCode + formData.phone).trim();
 
-      // HUD: COMMITTING_CAREER_ASSESSMENT_RECORD_PERSISTENCE
+      // dashboard: COMMITTING_CAREER_ASSESSMENT_RECORD_PERSISTENCE
       await insertCareerAssessment({
         id: generatedNodeUuid,
         user_id: user?.id || null,
@@ -147,10 +147,10 @@ export function LeadCaptureForm({
         qc.invalidateQueries({ queryKey: ["talent-profile"] }),
       ]);
 
-      // HUD: PROGRAMMATIC_VIEWPORT_ROUTING
+      // dashboard: PROGRAMMATIC_VIEWPORT_ROUTING
       navigate(`/assessment-results/${nodeId}`);
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       // Digital Workforce Anomaly Trigger: Crucial for trapping registration database collisions
       console.error("[Digital Workforce] ANOMALY: Assessment registry capture operation rejected.", {
         categoryId,
@@ -384,3 +384,5 @@ export function LeadCaptureForm({
     </div>
   );
 }
+
+

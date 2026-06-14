@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   listActiveProfessionCategoriesBasic,
@@ -43,7 +43,7 @@ import { cn } from "@/lib/utils";
 // Experience Protocols for 2026
 type Step = "personal" | "cv" | "certificates" | "social" | "review";
 
-const steps: { id: Step; label: string; icon: any }[] = [
+const steps: { id: Step; label: string; icon: unknown }[] = [
   { id: "personal", label: "Identity", icon: User },
   { id: "cv", label: "Artifacts", icon: FileText },
   { id: "certificates", label: "Evidence", icon: Award },
@@ -62,10 +62,10 @@ function PortfolioRequestContent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [requestId, setRequestId] = useState<string>("");
-  const [professionCategories, setProfessionCategories] = useState<any[]>([]);
+  const [professionCategories, setProfessionCategories] = useState<unknown[]>([]);
   const [portfolioCount, setPortfolioCount] = useState<number | null>(null);
 
-  const [formData, setFormData] = useState<any>({
+  const [formData, setFormData] = useState<unknown>({
     fullName: "",
     email: "",
     phone: "",
@@ -89,7 +89,7 @@ function PortfolioRequestContent() {
       const backup = localStorage.getItem("portfolio_request_draft");
       if (backup) {
         try {
-          setFormData((prev: any) => ({ ...prev, ...JSON.parse(backup) }));
+          setFormData((prev: unknown) => ({ ...prev, ...JSON.parse(backup) }));
         } catch (e) {
           console.error("Cache purge required.");
         }
@@ -101,7 +101,7 @@ function PortfolioRequestContent() {
   // Sync state with Talent Profile
   useEffect(() => {
     if (talent) {
-      setFormData((prev: any) => ({
+      setFormData((prev: unknown) => ({
         ...prev,
         fullName: prev.fullName || talent.fullName || "",
         email: prev.email || talent.email || "",
@@ -147,7 +147,7 @@ function PortfolioRequestContent() {
       setRequestId(tempId);
       setIsSuccess(true);
       toast({ title: "Request Logged", description: "Identity verified and queued." });
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast({ title: "Engineering Fault", description: e.message, variant: "destructive" });
     } finally {
       setIsSubmitting(false);
@@ -208,7 +208,7 @@ function PortfolioRequestContent() {
             </div>
           </header>
 
-          {/* Stepper HUD */}
+          {/* Stepper dashboard */}
           <nav className="grid grid-cols-5 gap-3">
             {steps.map((s, i) => (
               <div key={s.id} className="space-y-3">
@@ -423,3 +423,5 @@ export default function PortfolioRequest() {
     </AuthGate>
   );
 }
+
+

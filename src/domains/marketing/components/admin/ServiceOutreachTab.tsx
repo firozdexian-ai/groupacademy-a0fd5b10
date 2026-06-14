@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+﻿import { useState, useEffect, useCallback } from "react";
 import { listServiceShareLogs, recordServiceShare } from "@/domains/marketing/repo/marketingRepo";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -173,8 +173,8 @@ export function ServiceOutreachTab() {
 
  const templates = selectedService
  ? {
- english: `🚀 [ GroUp Academy ]\n\nService: ${selectedService.title}\nInsight: ${selectedService.description}\n\nInitialize here: ${getShareLink(selectedService, activeTab)}\n\n#career #AI #futureofwork`,
- bangla: `📢 [ গ্রুআপ একাডেমি ]\n\nসার্ভিস: ${selectedService.title}\nবিবরণ: ${selectedService.description}\n\nলিংক: ${getShareLink(selectedService, activeTab)}\n\n#career #success #bangladesh`,
+ english: `ðŸš€ [ GroUp Academy ]\n\nService: ${selectedService.title}\nInsight: ${selectedService.description}\n\nInitialize here: ${getShareLink(selectedService, activeTab)}\n\n#career #AI #futureofwork`,
+ bangla: `ðŸ“¢ [ à¦—à§à¦°à§à¦†à¦ª à¦à¦•à¦¾à¦¡à§‡à¦®à¦¿ ]\n\nà¦¸à¦¾à¦°à§à¦­à¦¿à¦¸: ${selectedService.title}\nà¦¬à¦¿à¦¬à¦°à¦£: ${selectedService.description}\n\nà¦²à¦¿à¦‚à¦•: ${getShareLink(selectedService, activeTab)}\n\n#career #success #bangladesh`,
  }
  : { english: "", bangla: "" };
 
@@ -440,3 +440,4 @@ export function ServiceOutreachTab() {
 }
 
 export default ServiceOutreachTab;
+

@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+﻿import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 
 const corsHeaders = {
@@ -83,7 +83,7 @@ serve(async (req) => {
       userPrompt = `Please enhance these work experience descriptions for a ${profession || "professional"} role.
       
       Input Data:
-      ${JSON.stringify(experience.map((exp: any, i: number) => ({ index: i, role: exp.title, task: exp.description })))}
+      ${JSON.stringify(experience.map((exp: unknown, i: number) => ({ index: i, role: exp.title, task: exp.description })))}
       
       Return strictly a JSON object: { "0": "New Description...", "1": "New Description..." }`;
     }
@@ -102,7 +102,7 @@ serve(async (req) => {
       const skillsList = Array.isArray(skills)
         ? skills
             .slice(0, 10)
-            .map((s: any) => (typeof s === "string" ? s : s.name))
+            .map((s: unknown) => (typeof s === "string" ? s : s.name))
             .join(", ")
         : "";
 
@@ -164,7 +164,7 @@ serve(async (req) => {
         const enhancedMap = JSON.parse(cleanJson);
 
         // Reconstruct the experience array
-        const enhancedExperience = requestData.experience.map((exp: any, i: number) => ({
+        const enhancedExperience = requestData.experience.map((exp: unknown, i: number) => ({
           ...exp,
           description: enhancedMap[i] || exp.description, // Fallback to original if AI missed one
         }));
@@ -195,3 +195,5 @@ serve(async (req) => {
     });
   }
 });
+
+

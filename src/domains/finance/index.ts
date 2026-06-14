@@ -1,4 +1,4 @@
-/**
+﻿/**
  * GroUp Academy: Finance Domain Central Module Entry (Barrel Index)
  * Centralizes re-exports for admin billing consoles, consumer credit widgets, infrastructure states, and data query hooks.
  */
@@ -30,3 +30,4 @@ export { ServiceUsageBadge } from "./components/talent/ServiceUsageBadge";
 export * from "./hooks/useCredits";
 export * from "./hooks/useCreditPurchase";
 export * from "./hooks/usePaymentConfig";
+

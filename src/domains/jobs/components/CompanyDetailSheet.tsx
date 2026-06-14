@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -30,7 +30,7 @@ const TYPE_LABEL: Record<string, string> = {
 };
 
 /**
- * Company detail sheet — slide-up panel with company info, job-type / location chips, and open roles.
+ * Company detail sheet â€” slide-up panel with company info, job-type / location chips, and open roles.
  */
 export function CompanyDetailSheet({ companyName, open, onOpenChange }: Props) {
   const navigate = useNavigate();
@@ -223,7 +223,7 @@ export function CompanyDetailSheet({ companyName, open, onOpenChange }: Props) {
               </p>
             ) : (
               <div className="space-y-2 w-full">
-                {jobs.map((jobItem: any) => {
+                {jobs.map((jobItem: unknown) => {
                   if (!jobItem || !jobItem.id) return null;
                   return (
                     <JobCard
@@ -251,3 +251,5 @@ export function CompanyDetailSheet({ companyName, open, onOpenChange }: Props) {
     </Sheet>
   );
 }
+
+

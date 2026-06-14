@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getTalentAvailability, upsertTalentAvailability } from "@/domains/gigs/repo/gigsRepo";
 import { useTalent } from "@/hooks/useTalent";
@@ -22,7 +22,7 @@ interface AvailabilityData {
 /**
  * GroUp Academy: Community Consensus Node (AvailabilityWidget)
  * CTO Reference: High-fidelity workforce tracking component managing talent match capacities.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function AvailabilityWidget() {
   const { talent } = useTalent();
@@ -64,7 +64,7 @@ export function AvailabilityWidget() {
   // 4. Hardened Data Mutation Engine (useMutation transition replacing local boolean states)
   const mutation = useMutation({
     mutationFn: async (payload: AvailabilityData) => {
-      await upsertTalentAvailability(payload as any);
+      await upsertTalentAvailability(payload as unknown);
       return payload;
     },
     onSuccess: (variables) => {
@@ -78,7 +78,7 @@ export function AvailabilityWidget() {
       queryClient.invalidateQueries({ queryKey: ["talent-availability", talent?.id] });
       toast.success("Gig availability records updated successfully");
     },
-    onError: (mutationErr: any) => {
+    onError: (mutationErr: unknown) => {
       const parsedMsg = mutationErr instanceof Error ? mutationErr.message : String(mutationErr);
 
       trackError(parsedMsg, {
@@ -205,7 +205,7 @@ export function AvailabilityWidget() {
           {isSaving ? (
             <>
               <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-              <span>Saving Configurations…</span>
+              <span>Saving Configurationsâ€¦</span>
             </>
           ) : (
             <span>Commit Capacity Changes</span>
@@ -215,3 +215,5 @@ export function AvailabilityWidget() {
     </Card>
   );
 }
+
+

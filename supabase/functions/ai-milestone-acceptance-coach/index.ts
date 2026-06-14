@@ -1,4 +1,4 @@
-// Reads a milestone and returns a clear "what done looks like" brief for the talent.
+﻿// Reads a milestone and returns a clear "what done looks like" brief for the talent.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
       }),
     });
     const json = await r.json();
-    let payload: any = {};
+    let payload: unknown = {};
     try { payload = JSON.parse(json?.choices?.[0]?.message?.content || "{}"); } catch { /* */ }
     return new Response(JSON.stringify(payload), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -48,3 +48,5 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: corsHeaders });
   }
 });
+
+

@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+﻿import { useEffect, useState, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
@@ -99,7 +99,7 @@ export function ScoreMeJobPicker({ open, onOpenChange }: Props) {
           setJobs(out);
           trackEvent("score_me_job_picker_load_success", { count: out.length });
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         trackError(err, {
           component: "ScoreMeJobPicker",
           action: "load_jobs",
@@ -241,4 +241,6 @@ export function ScoreMeJobPicker({ open, onOpenChange }: Props) {
     </Sheet>
   );
 }
+
+
 

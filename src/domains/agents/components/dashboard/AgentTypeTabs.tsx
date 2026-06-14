@@ -1,4 +1,4 @@
-import { Users, Sparkles, Building2, UserPlus } from "lucide-react";
+﻿import { Users, Sparkles, Building2, UserPlus } from "lucide-react";
 import { AgentListTab } from "./AgentListTab";
 
 /**
@@ -44,3 +44,4 @@ export const AgentsUGCTab = () => (
     emptyHint="No user-generated agent entries submitted yet. Creator sandbox suite schedules deployment in v2."
   />
 );
+

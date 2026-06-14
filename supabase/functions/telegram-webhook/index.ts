@@ -39,7 +39,7 @@ serve(async (req) => {
       .single();
 
     if (fetchError || !request || request.status !== "pending") {
-      await sendTelegramEdit(chatId, messageId, `⚠️ This request has already been processed or does not exist.`);
+      await sendTelegramEdit(chatId, messageId, "⚠️ This request has already been processed or does not exist.");
       return new Response("OK");
     }
 
@@ -65,7 +65,7 @@ serve(async (req) => {
       await sendTelegramEdit(
         chatId,
         messageId,
-        `✅ *APPROVED*\n\n৳${request.amount_bdt || "N/A"} verified.\n${request.requested_credits} credits added.\nTrxID: \`${request.trx_id}\`\n\n${verification}`,
+        `âœ… *APPROVED*\n\nà§³${request.amount_bdt || "N/A"} verified.\n${request.requested_credits} credits added.\nTrxID: \`${request.trx_id}\`\n\n${verification}`,
       );
     } else if (action === "reject") {
       // Mark as Rejected
@@ -77,7 +77,7 @@ serve(async (req) => {
       await sendTelegramEdit(
         chatId,
         messageId,
-        `❌ *REJECTED*\n\nPayment request for TrxID \`${request.trx_id}\` was rejected. No credits were issued.`,
+        `âŒ *REJECTED*\n\nPayment request for TrxID \`${request.trx_id}\` was rejected. No credits were issued.`,
       );
     }
 
@@ -92,7 +92,7 @@ serve(async (req) => {
     }
 
     return new Response("OK");
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Telegram Webhook Error:", error.message);
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
@@ -118,7 +118,7 @@ async function sendTelegramEdit(chatId: number, messageId: number, text: string)
 
 // Self-verification: confirm balance bumped, audit_log row created, ledger row created
 async function runApprovalVerification(
-  supabase: any,
+  supabase: unknown,
   talentId: string,
   expectedDelta: number,
 ): Promise<string> {
@@ -145,13 +145,15 @@ async function runApprovalVerification(
     const txOk = lastTx && Number(lastTx.amount) === Number(expectedDelta);
 
     const lines = [
-      `🔍 *Auto-Verification*`,
-      `• Balance: *${balance}* (updated ${credits?.updated_at?.slice(11, 19) || "?"} UTC)`,
-      `• Audit log: ${auditOk ? "✅ row recorded" : "❌ no row"}`,
-      `• Ledger: ${txOk ? `✅ +${lastTx.amount} (after=${lastTx.balance_after})` : "❌ ledger mismatch"}`,
+      `ðŸ” *Auto-Verification*`,
+      `â€¢ Balance: *${balance}* (updated ${credits?.updated_at?.slice(11, 19) || "?"} UTC)`,
+      `â€¢ Audit log: ${auditOk ? "âœ… row recorded" : "âŒ no row"}`,
+      `â€¢ Ledger: ${txOk ? `âœ… +${lastTx.amount} (after=${lastTx.balance_after})` : "âŒ ledger mismatch"}`,
     ];
     return lines.join("\n");
-  } catch (e: any) {
-    return `🔍 *Auto-Verification* failed: ${e.message}`;
+  } catch (e: unknown) {
+    return `ðŸ” *Auto-Verification* failed: ${e.message}`;
   }
 }
+
+

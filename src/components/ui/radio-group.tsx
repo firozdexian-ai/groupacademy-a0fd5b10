@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import { Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Authoritative Decision Matrix Selection Node (RadioGroup)
  * Hardened mutually exclusive selection group protecting inline data layouts from layout shifting and border distortions.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const RadioGroup = React.forwardRef<
   React.ElementRef<typeof RadioGroupPrimitive.Root>,
@@ -35,7 +35,7 @@ const RadioGroupItem = React.forwardRef<
       )}
       {...props}
     >
-      {/* HUD LEVEL 1: ACCESSIBLE ACTIVE SELECTION STATE DOT RING INDICATOR */}
+      {/* dashboard LEVEL 1: ACCESSIBLE ACTIVE SELECTION STATE DOT RING INDICATOR */}
       <RadioGroupPrimitive.Indicator className="flex items-center justify-center animate-in zoom-in-75 fade-in duration-100 select-none pointer-events-none leading-none shrink-0">
         <Circle className="h-2 w-2 fill-primary text-primary stroke-none shrink-0" />
       </RadioGroupPrimitive.Indicator>
@@ -45,3 +45,4 @@ const RadioGroupItem = React.forwardRef<
 RadioGroupItem.displayName = "RadioGroup_Core_Item_Node";
 
 export { RadioGroup, RadioGroupItem };
+

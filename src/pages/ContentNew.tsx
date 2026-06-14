@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { insertContent } from "@/domains/learning/repo/learningRepo";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,7 @@ const ContentNew = () => {
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
-    content_type: "recorded_course" as any,
+    content_type: "recorded_course" as unknown,
     description: "",
     price: 0,
     youtube_url: "",
@@ -75,7 +75,7 @@ const ContentNew = () => {
 
       toast.success("Content created");
       navigate("/dashboard");
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error(error.message || "Failed to create content");
     } finally {
       setIsLoading(false);
@@ -349,3 +349,5 @@ const ContentNew = () => {
 };
 
 export default ContentNew;
+
+

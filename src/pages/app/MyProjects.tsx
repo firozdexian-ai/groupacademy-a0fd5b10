@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getTalentProjectWorkload } from "@/domains/gigs/repo/gigsRepo";
@@ -34,7 +34,7 @@ interface ProjectMilestoneAgg {
 /**
  * GroUp Academy: Talent Project Workload Ledger (MyProjects)
  * Hardened responsive milestone tracker.
- * Version: Launch Candidate · Phase Z1 Production Contract Locked
+ * Version: Launch Candidate Â· Phase Z1 Production Contract Locked
  */
 export default function MyProjects() {
  const { talent } = useTalent();
@@ -110,3 +110,4 @@ export default function MyProjects() {
  </div>
  );
 }
+

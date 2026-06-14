@@ -1,4 +1,4 @@
-import jsPDF from "jspdf";
+﻿import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
 interface ReportData {
@@ -40,3 +40,4 @@ export async function generateReportCardPDF(data: ReportData) {
   // Download
   pdf.save(filename);
 }
+

@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -50,7 +50,7 @@ interface DatabaseMessageRow {
 /**
  * GroUp Academy: AI Study Abroad Destination Advisor Interface (DestinationAgentPage)
  * Hardened conversation workspace orchestrating secure agent queries, tracking timeline histories, and anchoring scroll parameters.
- * Version: Launch Candidate · Phase Z1 Integration Stability Locked
+ * Version: Launch Candidate Â· Phase Z1 Integration Stability Locked
  */
 export default function DestinationAgentPage() {
  const { country: unverifiedCountryParamStr } = useParams<{ country: string }>();
@@ -162,7 +162,7 @@ export default function DestinationAgentPage() {
  { role: "assistant", content: String(edgeFunctionResponsePayload.message) },
  ]);
  }
- } catch (fatalInferenceException: any) {
+ } catch (fatalInferenceException: unknown) {
  toast.error(fatalInferenceException.message || "Connection error. Please try again.");
  } finally {
  setIsAIEngineProcessing(false);
@@ -205,10 +205,10 @@ export default function DestinationAgentPage() {
 
  return (
  <div className="flex flex-col h-[calc(100vh-8rem)] max-w-3xl mx-auto text-left antialiased transform-gpu w-full">
- {/* HUD LEVEL 1: DESTINATION HUD TOP SUMMARY CAP SPEC MATRIX HEADER */}
+ {/* dashboard LEVEL 1: DESTINATION dashboard TOP SUMMARY CAP SPEC MATRIX HEADER */}
  <Card className="m-4 p-3.5 rounded-lg border border-border/60 bg-card/40 flex items-center gap-3.5 select-none shrink-0 shadow-none overflow-hidden">
  <div className="text-3xl pointer-events-none shrink-0" role="img" aria-hidden="true">
- {destinationAgentMetadata.flag_emoji || "🌐"}
+ {destinationAgentMetadata.flag_emoji || "ðŸŒ"}
  </div>
  <div className="flex-1 min-w-0 leading-none space-y-1 block">
  <div className="text-xs sm:text-sm font-bold uppercase tracking-wide text-foreground truncate block select-text pt-0.5">
@@ -234,7 +234,7 @@ export default function DestinationAgentPage() {
  </div>
  </Card>
 
- {/* HUD LEVEL 2: IMMERSIVE STREAM MESSAGING LOGS SCRIP LAUNCH CHANNELS */}
+ {/* dashboard LEVEL 2: IMMERSIVE STREAM MESSAGING LOGS SCRIP LAUNCH CHANNELS */}
  <ScrollArea className="flex-1 px-4 block w-full overflow-y-auto" ref={scrollContainerViewportRef}>
  <div className="space-y-3 block w-full pb-4">
  {chatMessagesList.length === 0 && (
@@ -260,9 +260,9 @@ export default function DestinationAgentPage() {
  <ul className="space-y-1 block font-sans select-text tracking-normal">
  {availableProgramsCollection.slice(0, 5).map((programItem) => (
  <li key={`available-program-row-node-${programItem.id}`} className="truncate block">
- <span>•</span>{" "}
+ <span>â€¢</span>{" "}
  <span className="text-foreground/70 font-bold">{programItem.university_name}</span>{" "}
- <span>—</span> <span className="italic">{programItem.program_name}</span>
+ <span>â€”</span> <span className="italic">{programItem.program_name}</span>
  </li>
  ))}
  </ul>
@@ -313,7 +313,7 @@ export default function DestinationAgentPage() {
  </div>
  </ScrollArea>
 
- {/* HUD LEVEL 3: ADMINISTRATIVE INTERACTION FIELD ENTRY CONTROL PANEL BAR */}
+ {/* dashboard LEVEL 3: ADMINISTRATIVE INTERACTION FIELD ENTRY CONTROL PANEL BAR */}
  <div className="p-3 border-t border-border/60 flex gap-2.5 sticky bottom-0 bg-background select-none leading-none w-full shrink-0 items-center z-10">
  <Input
  type="text"
@@ -413,3 +413,5 @@ function CtaMessageRenderer({ content, defaultCountry = "US" }: { content: strin
     </div>
   );
 }
+
+

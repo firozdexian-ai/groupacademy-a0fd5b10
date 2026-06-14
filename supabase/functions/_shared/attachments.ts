@@ -1,4 +1,4 @@
-// Shared attachment loader for admin chat agents.
+﻿// Shared attachment loader for admin chat agents.
 // Reads body.attachments (admin-chat-attachments bucket) and produces:
 //   - imageParts: OpenAI/Gemini-compatible image_url content parts
 //   - textBlocks: extracted plain text snippets to inject into the prompt
@@ -87,13 +87,13 @@ export async function loadAttachments(
           ? ab.slice(0, MAX_TEXT_BYTES_PER_FILE)
           : ab;
         const text = new TextDecoder("utf-8", { fatal: false }).decode(slice);
-        const trimmed = text.length > 8000 ? text.slice(0, 8000) + "\n…(truncated)" : text;
+        const trimmed = text.length > 8000 ? text.slice(0, 8000) + "\nâ€¦(truncated)" : text;
         textBlocks.push(`[Attached file: ${att.name} (${att.mime})]\n${trimmed}`);
         totalText += trimmed.length;
         continue;
       }
 
-      // Unknown binary (PDF, DOCX, etc.) — provide a signed URL the model can
+      // Unknown binary (PDF, DOCX, etc.) â€” provide a signed URL the model can
       // reference but cannot fetch. Lightweight extraction libraries don't run
       // reliably in Deno edge runtime, so we surface metadata only for now.
       const { data: signed } = await supabase.storage
@@ -102,7 +102,7 @@ export async function loadAttachments(
       textBlocks.push(
         `[Attached file: ${att.name} (${att.mime}, ${(att.size / 1024).toFixed(
           1,
-        )} KB)] — binary file; download URL: ${signed?.signedUrl ?? "(unavailable)"}`,
+        )} KB)] â€” binary file; download URL: ${signed?.signedUrl ?? "(unavailable)"}`,
       );
     } catch (e) {
       console.warn("attachment load failed", att.path, e);
@@ -114,11 +114,11 @@ export async function loadAttachments(
 
 /**
  * Mutates the last user message in `convo` to include image content parts
- * and prepends a system note with extracted text blocks (if any).
+ * and prepends a system note with extracted text blocks (if unknown).
  */
 export async function augmentLastUserMessage(
   supabase: SupabaseClient,
-  convo: any[],
+  convo: unknown[],
   attachments: RawAttachment[] | undefined,
 ): Promise<void> {
   const loaded = await loadAttachments(supabase, attachments);
@@ -133,12 +133,12 @@ export async function augmentLastUserMessage(
         ? original
         : Array.isArray(original)
           ? original
-              .filter((p: any) => p?.type === "text")
-              .map((p: any) => p.text)
+              .filter((p: unknown) => p?.type === "text")
+              .map((p: unknown) => p.text)
               .join("\n")
           : "";
 
-    const parts: any[] = [];
+    const parts: unknown[] = [];
     if (textPart) parts.push({ type: "text", text: textPart });
     for (const ip of loaded.imageParts) parts.push(ip);
 
@@ -158,3 +158,5 @@ export async function augmentLastUserMessage(
     });
   }
 }
+
+

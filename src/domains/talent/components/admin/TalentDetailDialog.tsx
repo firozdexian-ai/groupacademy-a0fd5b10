@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -36,7 +36,7 @@ import { cn } from "@/lib/utils";
 interface TalentDetailDialogProps {
  open: boolean;
  onOpenChange: (open: boolean) => void;
- talent?: any;
+ talent?: unknown;
  talentEmail?: string;
  talentName?: string;
 }
@@ -180,8 +180,8 @@ export const TalentDetailDialog = ({
  <Globe className="h-4 w-4" /> Contact info
  </h3>
  <div className="grid gap-4">
- <InfoCard label="Email" value={displayTalent.email || "—"} />
- <InfoCard label="Phone" value={displayTalent.phone || "—"} />
+ <InfoCard label="Email" value={displayTalent.email || "â€”"} />
+ <InfoCard label="Phone" value={displayTalent.phone || "â€”"} />
  <div className="bg-muted/20 p-5 rounded-xl border border-border/40">
  <p className="text-[9px] text-muted-foreground/40 uppercase font-semibold tracking-widest">
  Location
@@ -336,7 +336,7 @@ function InfoCard({ label, value }: { label: string; value: string }) {
  );
 }
 
-function StatMetric({ label, value, icon: Icon }: { label: string; value: string | number; icon: any }) {
+function StatMetric({ label, value, icon: Icon }: { label: string; value: string | number; icon: unknown }) {
  return (
  <div className="bg-card border border-border/60 rounded-2xl p-6 text-center space-y-3 shadow-sm group hover:border-primary/40 transition-all">
  <div className="mx-auto w-12 h-12 flex items-center justify-center bg-muted/50 rounded-2xl text-primary border border-white/5 shadow-inner group-hover:rotate-6 transition-transform">
@@ -349,3 +349,5 @@ function StatMetric({ label, value, icon: Icon }: { label: string; value: string
  </div>
  );
 }
+
+

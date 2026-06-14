@@ -1,4 +1,4 @@
-import { corsHeaders } from "https://esm.sh/@supabase/supabase-js@2.95.0/cors";
+﻿import { corsHeaders } from "https://esm.sh/@supabase/supabase-js@2.95.0/cors";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.95.0";
 
 /**
@@ -30,7 +30,7 @@ Deno.serve(async (req) => {
       { global: { headers: { Authorization: authHeader } } },
     );
 
-    const { data: { user }, error: userErr } = await supabase.auth.getUser();
+    const { data: { user }, error: userErr } = await getCurrentUser();
     if (userErr || !user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
@@ -73,7 +73,7 @@ Deno.serve(async (req) => {
 
     const systemPrompt = `You are a career coach drafting application answers.
 Use ONLY facts from the candidate's profile. If a fact is not in the profile, write a generic but professional answer.
-Keep answers 80-180 words, first person, specific, and free of clichés.
+Keep answers 80-180 words, first person, specific, and free of clichÃ©s.
 Return STRICT JSON: {"answers":[{"question":"...","answer":"..."}]}`;
 
     const userPrompt = `Candidate profile:\n${profileSummary}\n\nJob context: ${body.jobContext || "(none)"}\n\nQuestions (one per line):\n${body.questions}`;
@@ -120,3 +120,5 @@ Return STRICT JSON: {"answers":[{"question":"...","answer":"..."}]}`;
     });
   }
 });
+
+

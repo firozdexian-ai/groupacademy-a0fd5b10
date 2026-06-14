@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -11,7 +11,7 @@ import {
 import { useTalent } from "@/hooks/useTalent";
 
 /**
- * GroUp Academy: Messaging & Agent Thread Sentinel (V5.6.0)
+ * GroUp Academy: Messaging & Agent Thread guard (V5.6.0)
  * CTO Reference: Authoritative controller for real-time conversational sync.
  * Architecture: Digital Workforce enabled - logs communication drops to Admin OS.
  * Phase: Z0 Code Freeze Hardened (May 2026).
@@ -50,10 +50,10 @@ export function useMessageThreads() {
     enabled: !!talentId,
     staleTime: 30000, // 30s consistency boundary
     queryFn: async (): Promise<MessageThread[]> => {
-      // HUD: INITIALIZING_SYSTEM_THREAD_HANDSHAKE
+      // dashboard: INITIALIZING_SYSTEM_THREAD_HANDSHAKE
       await ensureSystemThread(talentId);
 
-      let rows: any[];
+      let rows: unknown[];
       try {
         rows = await listMessageThreadsByTalent(talentId);
       } catch (error) {
@@ -61,26 +61,26 @@ export function useMessageThreads() {
         throw error;
       }
 
-      // HUD: AGENT_METADATA_ENRICHMENT
+      // dashboard: AGENT_METADATA_ENRICHMENT
       const agentKeys = Array.from(
         new Set((rows || []).filter((r) => r.thread_type === "agent" && r.agent_key).map((r) => r.agent_key as string)),
       );
 
-      let agentMeta: Record<string, { name: string; avatar_url: string | null; color: string | null }> = {};
+      const agentMeta: Record<string, { name: string; avatar_url: string | null; color: string | null }> = {};
 
       if (agentKeys.length) {
         const agents = await listAiAgentsByKeys(agentKeys);
-        (agents || []).forEach((a: any) => {
+        (agents || []).forEach((a: unknown) => {
           agentMeta[a.agent_key] = { name: a.name, avatar_url: a.avatar_url, color: a.color };
         });
       }
 
-      // HUD: PEER_METADATA_ENRICHMENT
+      // dashboard: PEER_METADATA_ENRICHMENT
       const peerTalentIds = Array.from(
         new Set((rows || []).filter((r) => r.thread_type === "peer" && r.peer_talent_id).map((r) => r.peer_talent_id as string)),
       );
 
-      let peerMeta: Record<string, { name: string; avatar_url: string | null }> = {};
+      const peerMeta: Record<string, { name: string; avatar_url: string | null }> = {};
 
       if (peerTalentIds.length) {
         const { data: peers, error: peerError } = await supabase
@@ -95,7 +95,7 @@ export function useMessageThreads() {
         }
       }
 
-      return (rows || []).map((r: any) => {
+      return (rows || []).map((r: unknown) => {
         let agentName = "System Notification";
         let agentAvatarUrl: string | null = null;
         let agentColor: string | null = null;
@@ -123,7 +123,7 @@ export function useMessageThreads() {
     },
   });
 
-  // --- HUD: REALTIME_CDC_SYNCHRONIZER ---
+  // --- dashboard: REALTIME_CDC_SYNCHRONIZER ---
   useEffect(() => {
     if (!talentId) return;
 
@@ -146,7 +146,7 @@ export function useMessageThreads() {
   // --- ACTION: THREAD_RESOLUTION_MUTATION ---
   const markThreadRead = useCallback(
     async (threadId: string) => {
-      // HUD: ATOMIC_UNREAD_COUNT_RESET
+      // dashboard: ATOMIC_UNREAD_COUNT_RESET
       const { error } = await resetThreadUnread(threadId);
 
       if (error) {
@@ -154,7 +154,7 @@ export function useMessageThreads() {
         return;
       }
 
-      // HUD: OPTIMISTIC_CACHE_PATCHING
+      // dashboard: OPTIMISTIC_CACHE_PATCHING
       qc.setQueryData(queryKey, (old: MessageThread[] | undefined) =>
         old?.map((t) => (t.id === threadId ? { ...t, unread_count: 0 } : t)),
       );
@@ -175,3 +175,5 @@ export function useMessageThreads() {
     totalUnread,
   };
 }
+
+

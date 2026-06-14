@@ -1,4 +1,4 @@
-import { useEffect, Component, ReactNode, ErrorInfo } from "react";
+﻿import { useEffect, Component, ReactNode, ErrorInfo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Map, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,13 +11,13 @@ import { PAGE_SHELL, PAGE_TITLE, PAGE_SUBTITLE, CARD } from "@/lib/uiTokens";
 /**
  * Platform Logic: Study Abroad Roadmap Terminal
  * High-fidelity orchestrator for roadmap artifact ingestion.
- * 2026 Standard: Executive Logic geometry with reinforced error telemetry.
+ * 2026 Standard:  geometry with reinforced error telemetry.
  */
 export default function StudyAbroadRoadmap() {
   const navigate = useNavigate();
 
   // Internal error logger aligned with Digital Workforce architecture
-  const reportAnomaly = async (event: string, context: any) => {
+  const reportAnomaly = async (event: string, context: unknown) => {
     console.error(`[abroad] ${event}`, context);
     try {
       await adminSupportAssistant({
@@ -109,3 +109,5 @@ class ReactErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryStat
     return this.props.children;
   }
 }
+
+

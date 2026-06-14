@@ -1,4 +1,4 @@
-// Review queue: returns SM-2 due topics for the learner across all modules,
+﻿// Review queue: returns SM-2 due topics for the learner across all modules,
 // each paired with sampled quiz items biased toward that topic.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 
@@ -78,7 +78,7 @@ Deno.serve(async (req) => {
     const {
       data: { user },
       error: userErr,
-    } = await supabase.auth.getUser();
+    } = await getCurrentUser();
     if (userErr || !user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
@@ -175,7 +175,7 @@ Deno.serve(async (req) => {
     }
 
     // 4. For each due topic, sample items biased toward the topic_tag.
-    //    Scenario-sourced topics skip quiz sampling — the UI re-runs the scenario.
+    //    Scenario-sourced topics skip quiz sampling â€” the UI re-runs the scenario.
     const topics: ReviewTopic[] = due.map((d) => {
       const source: "quiz" | "scenario" = d.last_source === "scenario" ? "scenario" : "quiz";
       let items: Omit<PoolItem, "module_id">[] = [];
@@ -232,3 +232,5 @@ Deno.serve(async (req) => {
     );
   }
 });
+
+

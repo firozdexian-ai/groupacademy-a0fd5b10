@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { refreshGigMatches, shortlistMatch, listRecommendedGigBidders } from "@/domains/gigs/repo/gigsRepo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,7 +20,7 @@ interface BidderMatch {
   id: string;
   talent_id: string;
   score: number;
-  signals: any;
+  signals: unknown;
   why_text: string | null;
   status: string;
   talents?: {
@@ -53,7 +53,7 @@ export function RecommendedBiddersPanel({ gigId, gigKind = "marketplace" }: Prop
     queryFn: async () => {
       // Execute explicit criterion lookup while fetching nested profile details in a single pass
       const data = await listRecommendedGigBidders(gigId, gigKind, 5);
-      return (data || []) as any[];
+      return (data || []) as unknown[];
     },
   });
 
@@ -85,7 +85,7 @@ export function RecommendedBiddersPanel({ gigId, gigKind = "marketplace" }: Prop
       queryClient.invalidateQueries({ queryKey: ["recommended-bidders", gigId, gigKind] });
       queryClient.invalidateQueries({ queryKey: ["feed-posts"] });
     },
-    onError: (mutationErr: any) => {
+    onError: (mutationErr: unknown) => {
       trackError(mutationErr, {
         component: "RecommendedBiddersPanel",
         action: "refresh_gig_matches_mutation",
@@ -111,7 +111,7 @@ export function RecommendedBiddersPanel({ gigId, gigKind = "marketplace" }: Prop
       queryClient.invalidateQueries({ queryKey: ["recommended-bidders", gigId, gigKind] });
       queryClient.invalidateQueries({ queryKey: ["feed-posts"] });
     },
-    onError: (mutationErr: any, matchId) => {
+    onError: (mutationErr: unknown, matchId) => {
       trackError(mutationErr, {
         component: "RecommendedBiddersPanel",
         action: "shortlist_match_mutation",
@@ -251,3 +251,4 @@ export function RecommendedBiddersPanel({ gigId, gigKind = "marketplace" }: Prop
     </Card>
   );
 }
+

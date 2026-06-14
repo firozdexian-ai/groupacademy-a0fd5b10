@@ -1,11 +1,11 @@
-/**
+﻿/**
  * Compact circular ring + label showing a company's profile completion %
  * and verification tier badge. Lives on the Gro10x Company Page header.
  */
 import { ShieldCheck, ShieldAlert, BadgeCheck } from "lucide-react";
 
 interface Props {
-  completion: number; // 0–100
+  completion: number; // 0â€“100
   tier: "unverified" | "self_completed" | "verified";
 }
 
@@ -52,3 +52,4 @@ export function CompletionRing({ completion, tier }: Props) {
     </div>
   );
 }
+

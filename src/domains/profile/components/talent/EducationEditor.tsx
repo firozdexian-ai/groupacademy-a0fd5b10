@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+﻿import { useEffect, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,7 @@ interface EducationEditorProps {
 /**
  * GroUp Academy: Academic Credentials Registry Editor (EducationEditor)
  * An authoritative operational sandbox managing structural candidate qualification records.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function EducationEditor({ education = [], onChange }: EducationEditorProps) {
   const queryClient = useQueryClient();
@@ -121,7 +121,7 @@ export function EducationEditor({ education = [], onChange }: EducationEditorPro
 
   return (
     <div className="space-y-4 text-left max-w-full w-full transform-gpu antialiased">
-      {/* HUD LEVEL 1: TOP PANEL TRACK HEADING CONTROLS BLOCK */}
+      {/* dashboard LEVEL 1: TOP PANEL TRACK HEADING CONTROLS BLOCK */}
       <div className="flex items-center justify-between gap-4 px-0.5 select-none w-full leading-none">
         <div className="space-y-1.5 text-left flex flex-col justify-center min-w-0 flex-1 leading-none">
           <Label className="text-sm sm:text-base font-bold text-foreground uppercase tracking-wide flex items-center gap-2 leading-none block truncate">
@@ -145,7 +145,7 @@ export function EducationEditor({ education = [], onChange }: EducationEditorPro
         </Button>
       </div>
 
-      {/* HUD LEVEL 2: DIRECTORY CORE SELECTION RENDER MATRIX */}
+      {/* dashboard LEVEL 2: DIRECTORY CORE SELECTION RENDER MATRIX */}
       {safeEducationEntriesList.length === 0 ? (
         /* COLD START COLD INVITATION ACTION FRAME */
         <div
@@ -294,7 +294,7 @@ export function EducationEditor({ education = [], onChange }: EducationEditorPro
         </div>
       )}
 
-      {/* HUD LEVEL 3: RECTILINEAR OVERLAY BOTTOM METRIC LOG OMNIPRESENCE SHIELD */}
+      {/* dashboard LEVEL 3: RECTILINEAR OVERLAY BOTTOM METRIC LOG OMNIPRESENCE SHIELD */}
       <div className="mt-6 flex items-center justify-center gap-1.5 py-2.5 border-t border-border/10 select-none shadow-none pointer-events-none tracking-normal font-bold text-[9px] text-muted-foreground/40 font-mono leading-none shrink-0 uppercase w-full">
         <Zap className="h-3.5 w-3.5 text-warning fill-warning/10 stroke-[2.2] shrink-0 animate-pulse" />
         <span>Education history helps customize your profile</span>
@@ -302,3 +302,4 @@ export function EducationEditor({ education = [], onChange }: EducationEditorPro
     </div>
   );
 }
+

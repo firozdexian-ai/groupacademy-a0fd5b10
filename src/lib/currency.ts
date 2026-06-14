@@ -1,9 +1,9 @@
-/**
- * Currency formatting helpers — USD is the base unit across the platform.
+﻿/**
+ * Currency formatting helpers â€” USD is the base unit across the platform.
  *
  * Founder/admin views call `formatUSD()` (USD only).
  * Talent + company views call `formatMoney()` which appends a localized equivalent
- *   like "$5.00 (≈ ৳550)" based on the user's country.
+ *   like "$5.00 (â‰ˆ à§³550)" based on the user's country.
  *
  * Rates are loaded once from `public.currency_rates` via `useCurrencyRates()`.
  */
@@ -40,24 +40,24 @@ export function rateForCountry(country: string | null | undefined, rates: Curren
 
 export function formatLocal(usdAmount: number, rate: CurrencyRate): string {
   const local = usdAmount * rate.usd_rate;
-  // No decimals for high-rate currencies (IDR, VND, KRW, JPY); 0 for any > 100, 2 otherwise.
+  // No decimals for high-rate currencies (IDR, VND, KRW, JPY); 0 for unknown > 100, 2 otherwise.
   const fd = rate.usd_rate > 100 ? 0 : local < 10 ? 2 : 0;
   return `${rate.symbol}${local.toLocaleString("en-US", { minimumFractionDigits: fd, maximumFractionDigits: fd })}`;
 }
 
 /**
- * Returns "$5.00 (≈ ৳550)" for talent/company users.
+ * Returns "$5.00 (â‰ˆ à§³550)" for talent/company users.
  * If country has no matching rate (or is USD), returns just the USD form.
  */
 export function formatMoney(usdAmount: number, country: string | null | undefined, rates: CurrencyRate[]): string {
   const usd = formatUSD(usdAmount);
   const rate = rateForCountry(country, rates);
   if (!rate || rate.code === "USD") return usd;
-  return `${usd} (≈ ${formatLocal(usdAmount, rate)})`;
+  return `${usd} (â‰ˆ ${formatLocal(usdAmount, rate)})`;
 }
 
 /**
- * Credit ↔ USD conversion. Standardized at $1 = 1 credit (founder economy)
+ * Credit â†” USD conversion. Standardized at $1 = 1 credit (founder economy)
  * for the new USD-base era. Legacy memory mentions 1 credit = 2 BDT (~ $0.018);
  * that older rule applied only to the talent-side BDT pricing surface and is
  * superseded for new B2B/admin surfaces. Keep one constant so future repricing
@@ -74,3 +74,5 @@ export function usdToCredits(usd: number): number {
 }
 
 export { FALLBACK_RATE };
+
+

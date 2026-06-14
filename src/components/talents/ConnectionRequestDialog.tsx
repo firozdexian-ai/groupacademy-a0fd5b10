@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useMemo } from "react";
+﻿import { useEffect, useState, useRef, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
@@ -26,7 +26,7 @@ interface ConnectionRequestDialogProps {
 /**
  * GroUp Academy: Escrowed Token Connection Request Terminal (ConnectionRequestDialog)
  * An authoritative operational sandbox managing connection requests, dynamic credit cost pricing queries, and escrow locks.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function ConnectionRequestDialog({
   open,
@@ -62,7 +62,7 @@ export function ConnectionRequestDialog({
           trackEvent("connection_price_hydrated", { recipientId, computedCost: normalizedPriceNum });
         }
       })
-      .catch((rpcPriceError: any) => {
+      .catch((rpcPriceError: unknown) => {
         trackError(rpcPriceError, {
           component: "ConnectionRequestDialog",
           action: "fetch_connection_price",
@@ -108,7 +108,7 @@ export function ConnectionRequestDialog({
         onSent?.();
         onOpenChange(false);
       }
-    } catch (caughtPipelineExceptionErr: any) {
+    } catch (caughtPipelineExceptionErr: unknown) {
       const formattedExceptionMsgStr =
         caughtPipelineExceptionErr instanceof Error
           ? caughtPipelineExceptionErr.message
@@ -144,7 +144,7 @@ export function ConnectionRequestDialog({
       }}
     >
       <DialogContent className="sm:max-w-md rounded-xl border border-border/40 bg-card/95 backdrop-blur-xl shadow-2xl p-5 sm:p-6 text-left antialiased overflow-hidden transform-gpu select-none sm:select-text flex flex-col justify-center">
-        {/* HUD LEVEL 1: TOP PANEL TRACK HEADING CONTAINER */}
+        {/* dashboard LEVEL 1: TOP PANEL TRACK HEADING CONTAINER */}
         <DialogHeader className="mb-3 text-left select-none shrink-0 leading-none w-full">
           <div className="flex items-center gap-2.5 leading-none w-full">
             <div className="h-7 w-7 rounded-lg bg-primary/10 border border-primary/5 text-primary flex items-center justify-center shrink-0 shadow-inner">
@@ -159,12 +159,12 @@ export function ConnectionRequestDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {/* HUD LEVEL 2: DYNAMIC ESCROW METRIC CONTEXT BLOCKS */}
+        {/* dashboard LEVEL 2: DYNAMIC ESCROW METRIC CONTEXT BLOCKS */}
         <div className="space-y-4 w-full min-w-0 font-bold text-xs tracking-tight text-foreground/90">
           <p className="text-[11px] font-semibold text-muted-foreground/70 leading-normal block select-text pr-0.5">
             Connecting with {recipientName} requires{" "}
             <strong className="text-foreground font-mono bg-muted/40 px-1 py-0.5 rounded shadow-xs">
-              {price !== null ? `${price} credits` : "… calculating"}
+              {price !== null ? `${price} credits` : "â€¦ calculating"}
             </strong>.
             {" "}When they accept, 70% of the credits will go directly to {safeRecipientFirstNameStr}, and 30% goes to the platform. If the request is declined or expires after 14 days, your credits will be fully refunded to your balance.
           </p>
@@ -178,7 +178,7 @@ export function ConnectionRequestDialog({
           </div>
         </div>
 
-        {/* HUD LEVEL 3: FOOTER DISPATCH ACTION STRIP CONTROL BUTTON ROW */}
+        {/* dashboard LEVEL 3: FOOTER DISPATCH ACTION STRIP CONTROL BUTTON ROW */}
         <DialogFooter className="mt-5 gap-2.5 sm:gap-0 select-none border-t border-border/10 pt-4 w-full shrink-0 flex items-center justify-end font-bold text-xs">
           <Button
             variant="ghost"
@@ -199,18 +199,18 @@ export function ConnectionRequestDialog({
             {sending ? (
               <>
                 <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                <span>Sending…</span>
+                <span>Sendingâ€¦</span>
               </>
             ) : (
               <>
                 <ShieldCheck className="h-4 w-4 stroke-[2.5]" />
-                <span>Send ({price ?? "…"} credits)</span>
+                <span>Send ({price ?? "â€¦"} credits)</span>
               </>
             )}
           </Button>
         </DialogFooter>
 
-        {/* HUD LEVEL 4: RECTILINEAR OVERLAY BOTTOM METRIC LOG OMNIPRESENCE SHIELD */}
+        {/* dashboard LEVEL 4: RECTILINEAR OVERLAY BOTTOM METRIC LOG OMNIPRESENCE SHIELD */}
         <div className="shrink-0 pt-2 mt-4 border-t border-border/10 select-none shadow-none pointer-events-none tracking-normal font-bold text-[9px] text-muted-foreground/40 font-mono leading-none uppercase w-full flex items-center justify-center gap-1.5 h-6">
           <Zap className="h-3.5 w-3.5 text-amber-500 fill-amber-500/10 stroke-[2.2] shrink-0 animate-pulse" />
           <span>Secured request using credits</span>
@@ -219,3 +219,5 @@ export function ConnectionRequestDialog({
     </Dialog>
   );
 }
+
+

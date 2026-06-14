@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useAbroadGraph } from "./hooks/useAbroadGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy — Abroad Group Tab: Academic Programs Catalog
+ * Group Academy â€” Abroad Group Tab: Academic Programs Catalog
  * Version: Phase 10i.2 Hardened (Production Candidate Edition)
  * Surface: /dashboard?tab=programs (Admin Command Center Surface)
  * Operations Mode: Human-in-the-loop program placement manager mapping university slots.
@@ -27,7 +27,7 @@ export function AbroadProgramsTab() {
 
   const { data, isLoading } = abroadGraphQuery;
   const [open, setOpen] = useState(false);
-  const [draft, setDraft] = useState<any>({ status: "active" });
+  const [draft, setDraft] = useState<unknown>({ status: "active" });
 
   const handleOpenChange = (nextOpenState: boolean) => {
     if (upsertProgram.isPending) return;
@@ -250,3 +250,5 @@ export function AbroadProgramsTab() {
 }
 
 export default AbroadProgramsTab;
+
+

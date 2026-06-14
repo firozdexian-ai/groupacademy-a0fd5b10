@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useJobsGraph } from "./hooks/useJobsGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -118,7 +118,7 @@ export function JobsKanbanPipelineTab() {
                       </p>
                     </div>
                   ) : (
-                    columnApps.map((app: any) => (
+                    columnApps.map((app: unknown) => (
                       <Card
                         key={app.id}
                         onClick={() => {
@@ -181,3 +181,5 @@ export function JobsKanbanPipelineTab() {
 }
 
 export default JobsKanbanPipelineTab;
+
+

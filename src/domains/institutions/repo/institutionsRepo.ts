@@ -1,27 +1,27 @@
-/**
+﻿/**
  * Institutions domain repository (Phase 10i.2).
  */
 import { supabase } from "@/integrations/supabase/client";
 
-export async function upsertGraphRow(table: string, payload: any): Promise<void> {
+export async function upsertGraphRow(table: string, payload: unknown): Promise<void> {
   const { created_at, updated_at, ...cleanPayload } = payload;
   if (cleanPayload?.id) {
     const { id, ...patch } = cleanPayload;
-    const { error } = await supabase.from(table as any).update(patch).eq("id", id);
+    const { error } = await supabase.from(table as unknown).update(patch).eq("id", id);
     if (error) throw error;
   } else {
-    const { error } = await supabase.from(table as any).insert([cleanPayload]);
+    const { error } = await supabase.from(table as unknown).insert([cleanPayload]);
     if (error) throw error;
   }
 }
 
 export async function deleteGraphRow(table: string, id: string): Promise<void> {
-  const { error } = await supabase.from(table as any).delete().eq("id", id);
+  const { error } = await supabase.from(table as unknown).delete().eq("id", id);
   if (error) throw error;
 }
 
-// ─── Institution types taxonomy ────────────────────────────────────────────
-export async function listInstitutionTypes(): Promise<any[]> {
+// â”€â”€â”€ Institution types taxonomy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function listInstitutionTypes(): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("institution_types")
     .select("*")
@@ -30,7 +30,7 @@ export async function listInstitutionTypes(): Promise<any[]> {
   return data ?? [];
 }
 
-// ─── Institutions overview ────────────────────────────────────────────────
+// â”€â”€â”€ Institutions overview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getInstitutionsOverviewStats() {
   const [institutions, talents, programs, events] = await Promise.all([
     supabase.from("institutions").select("*", { count: "exact", head: true }),
@@ -55,30 +55,30 @@ export async function getInstitutionsOverviewStats() {
   };
 }
 
-// ─── Stakeholder Registry (institutions / partner_organizations) ──────────
-export async function listStakeholders(table: "institutions" | "partner_organizations"): Promise<any[]> {
+// â”€â”€â”€ Stakeholder Registry (institutions / partner_organizations) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function listStakeholders(table: "institutions" | "partner_organizations"): Promise<unknown[]> {
   const { data, error } = await supabase
-    .from(table as any)
+    .from(table as unknown)
     .select("*")
     .order("name", { ascending: true });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-export async function getInstitutionRollups(): Promise<Record<string, any>> {
-  const { data, error } = await supabase.rpc("get_institution_rollups" as any);
+export async function getInstitutionRollups(): Promise<Record<string, unknown>> {
+  const { data, error } = await supabase.rpc("get_institution_rollups" as unknown);
   if (error) throw error;
-  return (data ?? []).reduce((acc: any, curr: any) => {
+  return (data ?? []).reduce((acc: unknown, curr: unknown) => {
     acc[curr.institution_id] = curr;
     return acc;
-  }, {} as Record<string, any>);
+  }, {} as Record<string, unknown>);
 }
 
-// ─── Institution Child Registry helpers ───────────────────────────────────
+// â”€â”€â”€ Institution Child Registry helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function listInstitutionsMin(): Promise<Array<{ id: string; name: string }>> {
   const { data, error } = await supabase.from("institutions").select("id,name").order("name");
   if (error) throw error;
-  return (data ?? []) as any;
+  return (data ?? []) as unknown;
 }
 
 export async function listInstitutionClubsByInstitution(institutionId: string): Promise<Array<{ id: string; name: string }>> {
@@ -86,7 +86,7 @@ export async function listInstitutionClubsByInstitution(institutionId: string): 
     .from("institution_clubs")
     .select("id, name")
     .eq("institution_id", institutionId);
-  return (data ?? []) as any;
+  return (data ?? []) as unknown;
 }
 
 export interface ListInstitutionChildOpts {
@@ -95,12 +95,12 @@ export interface ListInstitutionChildOpts {
   eventTab: "upcoming" | "past";
 }
 
-export async function listInstitutionChildRows(opts: ListInstitutionChildOpts): Promise<any[]> {
+export async function listInstitutionChildRows(opts: ListInstitutionChildOpts): Promise<unknown[]> {
   let query;
   if (opts.table === "institution_representatives") {
     query = supabase.from("institution_representatives").select("*, club:institution_clubs(id, name)");
   } else {
-    query = supabase.from(opts.table as any).select("*");
+    query = supabase.from(opts.table as unknown).select("*");
   }
 
   if (opts.instFilter !== "all") query = query.eq("institution_id", opts.instFilter);
@@ -117,5 +117,7 @@ export async function listInstitutionChildRows(opts: ListInstitutionChildOpts): 
 
   const { data, error } = await query;
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
+
+

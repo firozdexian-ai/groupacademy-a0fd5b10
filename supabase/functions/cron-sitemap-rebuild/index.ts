@@ -1,4 +1,4 @@
-// Rebuilds public/sitemap-discovery.xml entries (returns XML string; cached in storage).
+﻿// Rebuilds public/sitemap-discovery.xml entries (returns XML string; cached in storage).
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
 
@@ -24,3 +24,4 @@ Deno.serve(async (req) => {
   const { data: pub } = admin.storage.from("discovery-og").getPublicUrl("sitemap-discovery.xml");
   return new Response(JSON.stringify({ ok: true, url: pub.publicUrl, count: items.length }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
 });
+

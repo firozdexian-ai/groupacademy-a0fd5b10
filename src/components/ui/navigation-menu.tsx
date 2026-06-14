@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 import { cva } from "class-variance-authority";
 import { ChevronDown } from "lucide-react";
@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Authoritative Architecture Gateway Interface Terminal (NavigationMenu)
  * Hardened asynchronous navigation menu engine isolating multi-tier panels with seamless runtime transformations.
- * Version: Launch Candidate · Phase Z0 Viewport Synchronization Lock
+ * Version: Launch Candidate Â· Phase Z0 Viewport Synchronization Lock
  */
 const NavigationMenu = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Root>,
@@ -121,3 +121,4 @@ export {
   NavigationMenuIndicator,
   NavigationMenuViewport,
 };
+

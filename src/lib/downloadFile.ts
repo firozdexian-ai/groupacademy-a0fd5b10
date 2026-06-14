@@ -1,4 +1,4 @@
-import { toast } from "sonner";
+﻿import { toast } from "sonner";
 
 /**
  * GroUp Academy: Institutional File Ingress Node
@@ -8,7 +8,7 @@ import { toast } from "sonner";
 
 export async function downloadFile(url: string, filename?: string): Promise<void> {
   try {
-    // HUD: Filename_Registry_Audit
+    // dashboard: Filename_Registry_Audit
     const extractedFilename = filename || extractFilenameFromUrl(url) || "academy_artifact";
 
     toast.loading("Synchronizing artifact...", { id: "file-download" });
@@ -24,7 +24,7 @@ export async function downloadFile(url: string, filename?: string): Promise<void
     const blob = await response.blob();
     const blobUrl = URL.createObjectURL(blob);
 
-    // HUD: Virtual_Anchor_Handshake
+    // dashboard: Virtual_Anchor_Handshake
     const link = document.createElement("a");
     link.href = blobUrl;
     link.download = extractedFilename;
@@ -46,7 +46,7 @@ export async function downloadFile(url: string, filename?: string): Promise<void
 }
 
 /**
- * HUD: Filename Extraction & Decoding
+ * dashboard: Filename Extraction & Decoding
  * Decouples filename artifacts from complex storage URI segments.
  */
 function extractFilenameFromUrl(url: string): string | null {
@@ -60,7 +60,7 @@ function extractFilenameFromUrl(url: string): string | null {
 }
 
 /**
- * HUD: Safe Viewport Handshake
+ * dashboard: Safe Viewport Handshake
  * Opens artifacts in a new viewport with pop-up diagnostic tracking.
  */
 export function openFileInNewTab(url: string): void {
@@ -70,3 +70,4 @@ export function openFileInNewTab(url: string): void {
     toast.warning("Handshake Blocked: Please authorize pop-ups or use the direct Download action.");
   }
 }
+

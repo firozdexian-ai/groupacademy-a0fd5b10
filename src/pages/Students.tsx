@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { listStudentsWithEnrollments } from "@/domains/learning/repo/learningRepo";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -75,8 +75,8 @@ export default function Students() {
         TIMEOUTS.DEFAULT,
         "Registry handshake timed out.",
       );
-      setStudents((data || []) as any);
-    } catch (err: any) {
+      setStudents((data || []) as unknown);
+    } catch (err: unknown) {
       setError(err.message || "Logic Fetch Error");
       toast({ title: "Sync Fault", description: err.message, variant: "destructive" });
     } finally {
@@ -140,7 +140,7 @@ export default function Students() {
           </Button>
         </header>
 
-        {/* Filter HUD */}
+        {/* Filter dashboard */}
         <Card className="rounded-[32px] border-border/40 shadow-sm bg-card/50 backdrop-blur-xl overflow-hidden">
           <CardContent className="p-6 flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1 group">
@@ -230,7 +230,7 @@ export default function Students() {
                         </div>
                       </div>
 
-                      {/* Enrollment HUD */}
+                      {/* Enrollment dashboard */}
                       <div className="p-8 flex-1 bg-muted/20">
                         <div className="flex items-center justify-between mb-6">
                           <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">
@@ -311,3 +311,5 @@ export default function Students() {
     </div>
   );
 }
+
+

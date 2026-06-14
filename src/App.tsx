@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+﻿import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -34,7 +34,7 @@ function DestinationGate() {
   );
 }
 
-// Shell + guards (eager — small, used everywhere)
+// Shell + guards (eager â€” small, used everywhere)
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { TalentAppShell } from "./layouts/TalentAppShell";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
@@ -318,7 +318,7 @@ export default function App() {
                   <Route path="/webinar/:slug" element={<WebinarLanding />} />
                   <Route path="/services" element={<PublicServices />} />
                   <Route path="/career-services" element={<PublicServices />} />
-                  {/* Legacy B2B routes — redirect to the unified Gro10x funnel */}
+                  {/* Legacy B2B routes â€” redirect to the unified Gro10x funnel */}
                   <Route path="/for-companies" element={<Navigate to="/gro10x" replace />} />
                   <Route path="/for-companies/signup" element={<Navigate to="/gro10x/auth" replace />} />
                   <Route path="/for-companies/apply" element={<Navigate to="/gro10x/auth" replace />} />
@@ -335,7 +335,7 @@ export default function App() {
                   <Route path="/ir/view/:token" element={<IRDocumentViewer />} />
                   <Route path="/t/:handle" element={<PublicTalentProfile />} />
 
-                  {/* Phase 5.6 — public discovery */}
+                  {/* Phase 5.6 â€” public discovery */}
                   <Route path="/agents" element={<PublicAgentsIndex />} />
                   <Route path="/explore/agents" element={<PublicAgentsIndex />} />
                   <Route path="/projects" element={<PublicProjectsIndex />} />
@@ -363,7 +363,7 @@ export default function App() {
                   <Route path="/salary-analysis/processing/:id" element={<SalaryAnalysisProcessing />} />
                   <Route path="/salary-analysis/results/:id" element={<SalaryAnalysisResults />} />
 
-                  {/* Unsubscribe (public — no auth required) */}
+                  {/* Unsubscribe (public â€” no auth required) */}
                   <Route path="/unsubscribe" element={<Unsubscribe />} />
 
                   {/* Redirects */}
@@ -414,7 +414,7 @@ export default function App() {
                       </ProtectedRoute>
                     }
                   />
-                  {/* Legacy company portal — redirect to Gro10x */}
+                  {/* Legacy company portal â€” redirect to Gro10x */}
                   <Route path="/company" element={<Navigate to="/gro10x" replace />} />
                   <Route path="/company/*" element={<Navigate to="/gro10x" replace />} />
                   <Route path="/students" element={<ProtectedRoute requireAdmin><Students /></ProtectedRoute>} />
@@ -582,3 +582,4 @@ export default function App() {
     </ErrorBoundary>
   );
 }
+

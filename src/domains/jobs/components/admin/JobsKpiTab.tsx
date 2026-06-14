@@ -1,4 +1,4 @@
-import { useJobsGraph } from "./hooks/useJobsGraph";
+﻿import { useJobsGraph } from "./hooks/useJobsGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Activity, TrendingUp, Users, Target, Crosshair } from "lucide-react";
@@ -69,7 +69,7 @@ export function JobsKpiTab() {
   );
 }
 
-function KpiCard({ title, value, subtitle, icon: Icon, color, bg }: any) {
+function KpiCard({ title, value, subtitle, icon: Icon, color, bg }: unknown) {
   return (
     <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden relative group">
       <div
@@ -99,3 +99,5 @@ function KpiCard({ title, value, subtitle, icon: Icon, color, bg }: any) {
 }
 
 export default JobsKpiTab;
+
+

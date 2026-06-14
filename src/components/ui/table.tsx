@@ -1,10 +1,10 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Authoritative Registry Ledger Protocol Matrix (Table)
  * Hardened atomic data sheet ensuring zero visual row jitters and insulating cell portals from overflow clipping.
- * Version: Launch Candidate · Phase Z0 Tabular Geometric Lock
+ * Version: Launch Candidate Â· Phase Z0 Tabular Geometric Lock
  */
 const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
   ({ className, ...props }, ref) => (
@@ -111,3 +111,4 @@ const TableCaption = React.forwardRef<HTMLTableCaptionElement, React.HTMLAttribu
 TableCaption.displayName = "Table_Core_Caption_Node";
 
 export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption };
+

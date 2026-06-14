@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Technical Command Node & Navigation Matrix Shell (Command)
  * Hardened operational search interface built on top of cmdk to handle rapid layout indexing.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const Command = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,
@@ -25,7 +25,7 @@ const Command = React.forwardRef<
 ));
 Command.displayName = "Command_Core_Matrix_Node";
 
-interface CommandDialogProps extends DialogProps {}
+type CommandDialogProps = DialogProps;
 
 const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
   return (
@@ -163,3 +163,4 @@ export {
   CommandShortcut,
   CommandSeparator,
 };
+

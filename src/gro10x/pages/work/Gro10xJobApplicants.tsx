@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getJobTitleById } from "@/domains/jobs/repo/jobsRepo";
 import { useAuth } from "@/hooks/useAuth";
@@ -50,3 +50,4 @@ export default function Gro10xJobApplicants() {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useMemo } from "react";
+﻿import { useEffect, useRef, useState, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ interface Scenario {
   id: string;
   title: string;
   scenario_prompt: string;
-  rubric: any[];
+  rubric: unknown[];
 }
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -34,7 +34,7 @@ export function ModuleScenarioRunner({ moduleId, onComplete }: { moduleId: strin
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [evalResult, setEvalResult] = useState<any | null>(null);
+  const [evalResult, setEvalResult] = useState<unknown | null>(null);
   const [evaluating, setEvaluating] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -59,11 +59,11 @@ export function ModuleScenarioRunner({ moduleId, onComplete }: { moduleId: strin
         }
 
         if (isMounted) {
-          setScenario((data as any).scenario);
+          setScenario((data as unknown).scenario);
           setLoading(false);
-          trackEvent("simulation_scenario_draw_success", { moduleId, scenarioId: (data as any).scenario?.id });
+          trackEvent("simulation_scenario_draw_success", { moduleId, scenarioId: (data as unknown).scenario?.id });
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         const parsedExceptionMsg = err instanceof Error ? err.message : String(err);
 
         trackError(parsedExceptionMsg, {
@@ -183,7 +183,7 @@ export function ModuleScenarioRunner({ moduleId, onComplete }: { moduleId: strin
           }
         }
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       const parsedExceptionMsg = err instanceof Error ? err.message : String(err);
 
       trackError(parsedExceptionMsg, {
@@ -229,7 +229,7 @@ export function ModuleScenarioRunner({ moduleId, onComplete }: { moduleId: strin
         throw new Error(evalData.error);
       }
 
-      setEvalResult((evalData as any).evaluation);
+      setEvalResult((evalData as unknown).evaluation);
 
       // Synchronize index cache parameters across workspace tabs cleanly
       queryClient.invalidateQueries({ queryKey: ["module-analytics", moduleId] });
@@ -240,7 +240,7 @@ export function ModuleScenarioRunner({ moduleId, onComplete }: { moduleId: strin
       trackEvent("simulation_scenario_evaluation_success", { scenarioId: scenario.id, runId: activeRunIdToken });
 
       if (onComplete) onComplete();
-    } catch (err: any) {
+    } catch (err: unknown) {
       const parsedExceptionMsg = err instanceof Error ? err.message : String(err);
 
       trackError(parsedExceptionMsg, {
@@ -276,12 +276,12 @@ export function ModuleScenarioRunner({ moduleId, onComplete }: { moduleId: strin
     const overallPct = Math.round(isV1 ? Number(evalResult.overall ?? 0) * 100 : Number(evalResult.overall_score ?? 0));
 
     const normalizedReportItems: Array<{ label: string; pct: number; notes?: string }> = isV1
-      ? (evalResult.topics ?? []).map((t: any) => ({
+      ? (evalResult.topics ?? []).map((t: unknown) => ({
           label: String(t.tag ?? "Skill").replace(/_/g, " "),
           pct: Math.round(Number(t.score ?? 0) * 100),
           notes: t.notes,
         }))
-      : (evalResult.criteria ?? []).map((c: any) => ({
+      : (evalResult.criteria ?? []).map((c: unknown) => ({
           label: String(c.criterion ?? "Evaluation Criterion"),
           pct: Math.round(Number(c.score ?? 0)),
           notes: c.feedback,
@@ -452,3 +452,5 @@ export function ModuleScenarioRunner({ moduleId, onComplete }: { moduleId: strin
     </Card>
   );
 }
+
+

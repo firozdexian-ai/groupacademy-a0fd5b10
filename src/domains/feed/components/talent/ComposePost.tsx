@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+﻿import { useState, useRef, useEffect } from "react";
 import { Send, X, Loader2, Hash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -66,7 +66,7 @@ export function ComposePost({ onPostCreated }: ComposePostProps) {
     if (!trimmed || !talent?.id) return;
 
     setIsSubmitting(true);
-    const toastId = toast.loading("Publishing to community feed…");
+    const toastId = toast.loading("Publishing to community feedâ€¦");
 
     trackEvent("feed_post_submission_attempt", {
       talentId: talent.id,
@@ -95,7 +95,7 @@ export function ComposePost({ onPostCreated }: ComposePostProps) {
 
       handleReset();
       onPostCreated();
-    } catch (err: any) {
+    } catch (err: unknown) {
       trackError(err instanceof Error ? err : String(err), {
         component: "ComposePost",
         action: "submit_database_mutation",
@@ -167,7 +167,7 @@ export function ComposePost({ onPostCreated }: ComposePostProps) {
                     ref={textareaRef}
                     value={text}
                     onChange={(e) => setText(e.target.value.slice(0, MAX_LENGTH))}
-                    placeholder="Share an update with your community…"
+                    placeholder="Share an update with your communityâ€¦"
                     className="min-h-[110px] w-full resize-none border-0 bg-transparent p-0 text-sm focus-visible:ring-0 placeholder:text-muted-foreground/60 text-foreground leading-relaxed selection:bg-primary/20"
                   />
 
@@ -273,3 +273,4 @@ export function ComposePost({ onPostCreated }: ComposePostProps) {
     </TooltipProvider>
   );
 }
+

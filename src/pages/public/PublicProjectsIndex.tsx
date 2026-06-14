@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { Link } from "react-router-dom";
 import { getPublicProjects } from "@/domains/ugc/repo/ugcRepo";
 import { setHead } from "@/lib/setHead";
@@ -47,7 +47,7 @@ function useDebounce<TValue>(inputValue: TValue, precisionDelayMs = 300): TValue
 /**
  * GroUp Academy: Technical Project Showcase Register Matrix (PublicProjectsIndex)
  * Hardened responsive listing directory implementing query debouncing and neutralizing input race conditions.
- * Version: Launch Candidate · Phase Z0 Throttle & Lifecycle Hardened
+ * Version: Launch Candidate Â· Phase Z0 Throttle & Lifecycle Hardened
  */
 export default function PublicProjectsIndex() {
   const [rawSearchQueryInput, setRawSearchQueryInput] = React.useState<string>("");
@@ -78,7 +78,7 @@ export default function PublicProjectsIndex() {
 
         // Apply synchronized metadata metrics inside the data pipeline resolution thread to prevent shifts
         setHead({
-          title: "Projects · GroUp Academy",
+          title: "Projects Â· GroUp Academy",
           description:
             "Browse projects and case studies from teams on GroUp Academy.",
           canonical: "https://groupacademy.online/projects",
@@ -105,7 +105,7 @@ export default function PublicProjectsIndex() {
 
   return (
     <div className="min-h-screen bg-background text-foreground antialiased selection:bg-primary/10 block text-left transform-gpu w-full">
-      {/* HUD LEVEL 1: APP SHELL TOP BAR DIRECTORY */}
+      {/* dashboard LEVEL 1: APP SHELL TOP BAR DIRECTORY */}
       <header className="border-b border-border/40 bg-card/10 block w-full select-none">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 h-14 flex items-center justify-between leading-none w-full">
           <Link
@@ -133,7 +133,7 @@ export default function PublicProjectsIndex() {
         </div>
       </header>
 
-      {/* HUD LEVEL 2: REGISTRY ENTRY CONTROL SECTOR */}
+      {/* dashboard LEVEL 2: REGISTRY ENTRY CONTROL SECTOR */}
       <main className="mx-auto max-w-6xl px-4 sm:px-6 py-6 sm:py-8 block w-full">
         <div className="space-y-1 block leading-none select-none pointer-events-none border-b border-border/10 pb-4 w-full shrink-0">
           <h1 className="text-xl sm:text-2xl font-bold uppercase tracking-wide text-foreground leading-none pt-0.5">
@@ -156,7 +156,7 @@ export default function PublicProjectsIndex() {
           />
         </div>
 
-        {/* HUD LEVEL 3: GRID RESOLUTION SWITCH VIEWPORTS */}
+        {/* dashboard LEVEL 3: GRID RESOLUTION SWITCH VIEWPORTS */}
         {isDataLayerResolving ? (
           <div
             role="status"
@@ -244,3 +244,4 @@ export default function PublicProjectsIndex() {
     </div>
   );
 }
+

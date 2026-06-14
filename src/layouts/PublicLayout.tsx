@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -84,7 +84,7 @@ export function PublicLayout({ children }: PublicLayoutProps) {
               <img src={logoIcon} alt="GroUp" className="w-10 h-10 grayscale opacity-40" />
               <div className="space-y-1">
                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                  © 2026 GroUp Academy. Patent Pending.
+                  Â© 2026 GroUp Academy. Patent Pending.
                 </p>
                 <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-tighter italic opacity-60">
                   Career Intelligence Verified
@@ -111,3 +111,4 @@ export function PublicLayout({ children }: PublicLayoutProps) {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useAbroadGraph } from "./hooks/useAbroadGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { trackError } from "@/lib/errorTracking";
 
 /**
- * Group Academy — Career Abroad: IELTS Resources Management Tab
+ * Group Academy â€” Career Abroad: IELTS Resources Management Tab
  * Version: Phase 10i.2 Hardened (Production Candidate Edition)
  * Surface: /dashboard?tab=ielts-resources (Admin Command Center Surface)[cite: 2, 4]
  * Operations Mode: Automated Efficiency catalog manager backing language prep tracks[cite: 4].
@@ -28,7 +28,7 @@ export function AbroadIELTSResourcesTab() {
 
   const { data, isLoading } = abroadGraphQuery;
   const [open, setOpen] = useState(false);
-  const [draft, setDraft] = useState<any>({ status: "active", resource_type: "pdf" });
+  const [draft, setDraft] = useState<unknown>({ status: "active", resource_type: "pdf" });
 
   const handleOpenChange = (nextOpenState: boolean) => {
     if (upsertIeltsResource.isPending) return;
@@ -268,3 +268,5 @@ export function AbroadIELTSResourcesTab() {
 }
 
 export default AbroadIELTSResourcesTab;
+
+

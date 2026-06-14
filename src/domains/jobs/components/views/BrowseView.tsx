@@ -1,5 +1,5 @@
-/**
- * Jobs Section Browse Layout Core — Phase INST-Z2 Hardened
+﻿/**
+ * Jobs Section Browse Layout Core â€” Phase INST-Z2 Hardened
  * CTO Version: June 2026
  * Fixes: Resolved missing GraduationCap icon reference, standardized component mapping paths
  * Rules: Retains all structural fields, action mutations, and navigation hooks natively.
@@ -36,11 +36,11 @@ interface Props {
     in_field?: JobCardData[];
     type_counts?: Record<string, number>;
   };
-  talent?: any;
+  talent?: unknown;
 }
 
 // Maps static contextual icons cleanly to job type slugs
-const JOB_TYPE_ICONS: Record<string, React.ComponentType<any>> = {
+const JOB_TYPE_ICONS: Record<string, React.ComponentType<unknown>> = {
   full_time: Clock,
   remote: Globe,
   internship: GraduationCap,
@@ -333,3 +333,5 @@ export function BrowseView({ dashboard, talent }: Props) {
     </div>
   );
 }
+
+

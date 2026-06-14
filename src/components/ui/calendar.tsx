@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { DayPicker } from "react-day-picker";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -9,7 +9,7 @@ export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 /**
  * GroUp Academy: Authoritative Temporal Scheduling Matrix Node (Calendar)
  * Hardened calendar terminal ensuring pixel-perfect scheduling layouts and full compatibility with react-day-picker v9+.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 function Calendar({ className, classNames, showOutsideDays = true, ...props }: CalendarProps) {
   return (
@@ -71,3 +71,4 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
 Calendar.displayName = "Calendar_Core_Scheduling_Node";
 
 export { Calendar };
+

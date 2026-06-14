@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -34,7 +34,7 @@ interface MockAttemptRecord {
 /**
  * GroUp Academy: IELTS Mock Examination Result Dossier (IELTSResults)
  * Hardened responsive viewer isolating AI band scoring metrics, criteria feedback, and structural progress indicators.
- * Version: Launch Candidate · Phase Z1 Production Contract Locked
+ * Version: Launch Candidate Â· Phase Z1 Production Contract Locked
  */
 export default function IELTSResults() {
  const { id: unverifiedAttemptIdStr } = useParams<{ id: string }>();
@@ -79,7 +79,7 @@ export default function IELTSResults() {
 
  return (
  <div className="max-w-2xl mx-auto px-4 py-6 space-y-5 antialiased block transform-gpu w-full pb-32">
- {/* HUD LEVEL 1: RESULT SUMMARY HEADER HUD */}
+ {/* dashboard LEVEL 1: RESULT SUMMARY HEADER dashboard */}
  <header className="flex items-center justify-between gap-4 border-b border-border/10 pb-4 w-full shrink-0 select-none leading-none">
  <div className="block leading-none">
  <p className="font-mono text-sm font-medium text-muted-foreground/50 uppercase tracking-wide block leading-none pb-1">
@@ -90,11 +90,11 @@ export default function IELTSResults() {
  </h1>
  </div>
  <Badge className="font-mono text-base font-black uppercase px-3 h-9 rounded-lg border border-primary/20 bg-primary/5 text-primary shadow-3xs tracking-tighter shrink-0 select-none pointer-events-none">
- BAND {activeAttemptNode.ai_band_score !== null ? Number(activeAttemptNode.ai_band_score).toFixed(1) : "—"}
+ BAND {activeAttemptNode.ai_band_score !== null ? Number(activeAttemptNode.ai_band_score).toFixed(1) : "â€”"}
  </Badge>
  </header>
 
- {/* HUD LEVEL 2: CRITERIA METRICS EVALUATION MATRIX */}
+ {/* dashboard LEVEL 2: CRITERIA METRICS EVALUATION MATRIX */}
  {feedbackDataPayload.criteria && (
  <div className="space-y-2 block w-full">
  {Object.entries(feedbackDataPayload.criteria).map(([criterionKeyStr, criterionDataNode]) => (
@@ -123,7 +123,7 @@ export default function IELTSResults() {
  </div>
  )}
 
- {/* HUD LEVEL 3: PERFORMANCE STRENGTHS AND GROWTH OPPORTUNITIES */}
+ {/* dashboard LEVEL 3: PERFORMANCE STRENGTHS AND GROWTH OPPORTUNITIES */}
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full block">
  {Array.isArray(feedbackDataPayload.strengths) && feedbackDataPayload.strengths.length > 0 && (
  <section className="space-y-2 block w-full">
@@ -156,7 +156,7 @@ export default function IELTSResults() {
  )}
  </div>
 
- {/* HUD LEVEL 4: NEXT ACTION EXECUTION PROTOCOL */}
+ {/* dashboard LEVEL 4: NEXT ACTION EXECUTION PROTOCOL */}
  {feedbackDataPayload.next_action && (
  <Card className="rounded-lg border border-primary/30 bg-primary/[0.02] shadow-none overflow-hidden block w-full">
  <CardContent className="p-4 space-y-1 block w-full leading-none">
@@ -172,3 +172,4 @@ export default function IELTSResults() {
  </div>
  );
 }
+

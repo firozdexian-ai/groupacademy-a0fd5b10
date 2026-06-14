@@ -1,7 +1,7 @@
-/**
+﻿/**
  * GroUp Academy: Study Abroad & Mobility Hub (StudyAbroadView)
  * CTO Reference: Primary surface for university shortlisting and agentic guidance.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 import { useNavigate } from "react-router-dom";
 import { Globe, Sparkles, GraduationCap, ArrowRight } from "lucide-react";
@@ -60,3 +60,4 @@ export function StudyAbroadView() {
     </div>
   );
 }
+

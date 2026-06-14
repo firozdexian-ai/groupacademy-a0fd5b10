@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useActiveCompany } from "@/gro10x/hooks/useActiveCompany";
 import {
   useCompanyTracks,
@@ -44,7 +44,7 @@ export function OpsTracksTab() {
       </div>
 
       {isLoading ? (
-        <p className="text-xs text-muted-foreground">Loading…</p>
+        <p className="text-xs text-muted-foreground">Loadingâ€¦</p>
       ) : !tracks || tracks.length === 0 ? (
         <div className={`${GRO10X_PANEL} border border-background/10 rounded-2xl p-6 text-center`}>
           <BookOpen className="h-6 w-6 mx-auto text-muted-foreground" />
@@ -79,7 +79,7 @@ export function OpsTracksTab() {
               await createTrack.mutateAsync({ ...input, owner_kind: "company", company_id: companyId });
               toast.success("Track created");
               setComposing(false);
-            } catch (e: any) {
+            } catch (e: unknown) {
               toast.error(e?.message ?? "Failed to create");
             }
           }}
@@ -106,7 +106,7 @@ function TrackCard({
   const addItem = useAddTrackItem();
   const removeItem = useRemoveTrackItem();
   const { data: catalog } = useB2BCatalog();
-  const used = new Set((items ?? []).map((i: any) => i.content_id));
+  const used = new Set((items ?? []).map((i: unknown) => i.content_id));
 
   return (
     <li className={`${GRO10X_PANEL} border border-background/10 rounded-2xl overflow-hidden`}>
@@ -117,7 +117,7 @@ function TrackCard({
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium truncate">{track.title}</p>
           <p className="text-[10px] text-muted-foreground mt-0.5">
-            {track.is_sequential ? "Sequential" : "Open"} · {track.is_published ? "Published" : "Draft"}
+            {track.is_sequential ? "Sequential" : "Open"} Â· {track.is_published ? "Published" : "Draft"}
           </p>
         </div>
         {isAdmin && (
@@ -141,7 +141,7 @@ function TrackCard({
             <p className="text-xs text-muted-foreground">No courses yet.</p>
           ) : (
             <ul className="space-y-1">
-              {(items as any[]).map((it, idx) => (
+              {(items as unknown[]).map((it, idx) => (
                 <li key={it.id} className="flex items-center gap-2 text-xs bg-background/[0.02] rounded-lg px-2 py-1.5">
                   <span className="text-muted-foreground w-5">{idx + 1}.</span>
                   <span className="flex-1 truncate">{it.content?.title ?? "Course"}</span>
@@ -164,9 +164,9 @@ function TrackCard({
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Add a course</p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-1 max-h-48 overflow-y-auto">
                 {(catalog ?? [])
-                  .filter((c: any) => !used.has(c.id))
+                  .filter((c: unknown) => !used.has(c.id))
                   .slice(0, 30)
-                  .map((c: any) => (
+                  .map((c: unknown) => (
                     <button
                       key={c.id}
                       onClick={() =>
@@ -246,3 +246,5 @@ function NewTrackSheet({
     </div>
   );
 }
+
+

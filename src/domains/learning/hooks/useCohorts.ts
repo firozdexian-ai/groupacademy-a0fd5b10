@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   upsertCohort,
   upsertCourseSession,
@@ -24,7 +24,7 @@ export interface CohortSaveInput {
   name: string;
   starts_on?: string;
   ends_on?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface SessionSaveInput {
@@ -32,7 +32,7 @@ export interface SessionSaveInput {
   cohort_id: string;
   title: string;
   scheduled_date: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
@@ -47,7 +47,7 @@ export function useCohorts(contentId?: string) {
       if (!contentId) return [];
       try {
         return await listCohortsByContent(contentId);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: cohorts taxonomy synchronization failure.", {
           contentId,
           message: error?.message,
@@ -70,7 +70,7 @@ export function useCohort(cohortId?: string) {
     queryFn: async () => {
       try {
         return await getCohortDetail(cohortId!);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: cohort relational node hydration failure.", {
           cohortId,
           message: error?.message,
@@ -92,10 +92,10 @@ export function useCohortHealth(cohortId?: string) {
     enabled: !!cohortId,
     staleTime: 60000, // Light-speed 60s window for real-time risk alerts
     queryFn: async () => {
-      let results: any;
+      let results: unknown;
       try {
         results = await getCohortHealth(cohortId!);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] ANOMALY: cohort health aggregator calculation dropout.", {
           cohortId,
           message: error?.message,
@@ -107,7 +107,7 @@ export function useCohortHealth(cohortId?: string) {
       // AUTOMATED NUDGE: Detect at-risk performance levels immediately at data sync layer
       if (results && results.health_status === "critical") {
         console.warn(
-          `[learning] Cohort ${cohortId} health critical — notifying admin.`,
+          `[learning] Cohort ${cohortId} health critical â€” notifying admin.`,
         );
       }
 
@@ -128,7 +128,7 @@ export function useCohortSessions(cohortId?: string) {
     queryFn: async () => {
       try {
         return await listCohortSessions(cohortId!);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: course_sessions registry stream failure.", {
           cohortId,
           message: error?.message,
@@ -155,7 +155,7 @@ export function useUpcomingSessions(limit = 6) {
       try {
         const { upcomingSessionsForUser } = await import("@/domains/learning/repo/learningRepo");
         return await upcomingSessionsForUser({ userId: user.id, limit });
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: user upcoming_sessions index fault.", {
           userId: user.id,
           message: error?.message,
@@ -177,7 +177,7 @@ export function useMarkAttendance() {
     mutationFn: async (sessionId: string) => {
       try {
         await markSessionAttendance(sessionId);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] ANOMALY: user attendance logging handshake rejected.", {
           sessionId,
           message: error?.message,
@@ -206,7 +206,7 @@ export function useInstructorAttendance(sessionId?: string) {
     queryFn: async () => {
       try {
         return await getInstructorSessionAttendance(sessionId!);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: instructor_session_attendance evaluation error.", {
           sessionId,
           message: error?.message,
@@ -226,12 +226,12 @@ export function useSaveSession() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (input: SessionSaveInput) => {
-      await upsertCourseSession(input as any);
+      await upsertCourseSession(input as unknown);
     },
     onSuccess: (_, vars) => {
       qc.invalidateQueries({ queryKey: ["cohort-sessions", vars.cohort_id] });
     },
-    onError: (err: any, vars) => {
+    onError: (err: unknown, vars) => {
       console.error("[Digital Workforce] ANOMALY: course_session database persist failure.", {
         cohortId: vars.cohort_id,
         message: err.message,
@@ -247,12 +247,12 @@ export function useSaveCohort() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (input: CohortSaveInput) => {
-      await upsertCohort(input as any);
+      await upsertCohort(input as unknown);
     },
     onSuccess: (_, vars) => {
       qc.invalidateQueries({ queryKey: ["cohorts", vars.content_id] });
     },
-    onError: (err: any, vars) => {
+    onError: (err: unknown, vars) => {
       console.error("[Digital Workforce] ANOMALY: cohort database persist failure.", {
         contentId: vars.content_id,
         message: err.message,
@@ -260,3 +260,5 @@ export function useSaveCohort() {
     },
   });
 }
+
+

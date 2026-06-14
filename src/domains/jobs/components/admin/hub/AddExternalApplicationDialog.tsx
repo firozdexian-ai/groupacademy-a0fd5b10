@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { getCurrentUserId } from "@/lib/auth";
 import { uploadTalentCv, createTalentCvSignedUrl } from "@/domains/jobs/repo/jobsRepo";
 import { parseCv } from "@/domains/jobs/api/jobsApi";
@@ -109,7 +109,7 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
  const body: Record<string, unknown> = cvFile
  ? { cvUrl: publicUrl, serviceType: "external_application" }
  : { cvText, serviceType: "external_application" };
- const parseData: any = await parseCv(body);
+ const parseData: unknown = await parseCv(body);
 
  const parsed = parseData?.parsed || parseData?.cv_data || parseData;
  setName(parsed?.name || parsed?.full_name || "");
@@ -122,7 +122,7 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
  toast.success("Intelligence Extracted", { id: toastId });
  setStep("review");
  if (parsed?.email) checkTalentExists(parsed.email);
- } catch (err: any) {
+ } catch (err: unknown) {
  toast.error("Extraction Fault: " + err.message, { id: toastId });
  } finally {
  setParsing(false);
@@ -163,7 +163,7 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
  toast.success("Saved");
  handleClose(false);
  onCreated?.();
- } catch (err: any) {
+ } catch (err: unknown) {
  toast.error("Save Fault: " + err.message);
  } finally {
  setSaving(false);
@@ -205,7 +205,7 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
  <SelectContent className="rounded-xl border">
  {jobs.map((j) => (
  <SelectItem key={j.id} value={j.id} className="font-bold text-[10px] uppercase">
- {j.title} — {j.company_name}
+ {j.title} â€” {j.company_name}
  </SelectItem>
  ))}
  </SelectContent>
@@ -345,7 +345,7 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
  );
 }
 
-function FieldNode({ label, value, onChange, type = "text" }: any) {
+function FieldNode({ label, value, onChange, type = "text" }: unknown) {
  return (
  <div className="space-y-2">
  <Label className="text-[10px] font-semibold uppercase text-primary italic ml-2">{label}</Label>
@@ -358,3 +358,5 @@ function FieldNode({ label, value, onChange, type = "text" }: any) {
  </div>
  );
 }
+
+

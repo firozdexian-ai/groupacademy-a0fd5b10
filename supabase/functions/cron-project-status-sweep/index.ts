@@ -1,4 +1,4 @@
-// Sweeps milestone/project statuses and emits notifications.
+﻿// Sweeps milestone/project statuses and emits notifications.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
 
@@ -29,3 +29,4 @@ Deno.serve(async (req) => {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 });
+

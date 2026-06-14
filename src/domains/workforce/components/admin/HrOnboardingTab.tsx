@@ -1,5 +1,5 @@
-/**
- * HR Onboarding Registry — Phase HR-Z1 Hardened
+﻿/**
+ * HR Onboarding Registry â€” Phase HR-Z1 Hardened
  * CTO Version: May 2026
  * Fixes: W9 (Overdue/Status Grouping), W4 (Relation Mapping)
  * Features: Multi-tab Operational View, Institutional Analytics
@@ -47,7 +47,7 @@ import { format, isPast, isToday } from "date-fns";
 export function HrOnboardingTab() {
  const qc = useQueryClient();
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ status: "pending" });
+ const [draft, setDraft] = useState<unknown>({ status: "pending" });
  const [activeTab, setActiveTab] = useState<"pending" | "overdue" | "completed">("pending");
 
  const { data, isLoading } = useQuery({
@@ -58,7 +58,7 @@ export function HrOnboardingTab() {
  const { tasks, workforce } = await getHrOnboardingMaster();
 
  const userMap = new Map<string, string>();
- workforce.forEach((w: any) => {
+ workforce.forEach((w: unknown) => {
  const name = w.talents?.full_name || "Unknown Agent";
  if (w.talent_id) userMap.set(w.talent_id, name);
  if (w.user_id) userMap.set(w.user_id, name);
@@ -69,7 +69,7 @@ export function HrOnboardingTab() {
  });
 
  const upsertTask = useMutation({
- mutationFn: async (payload: any) => {
+ mutationFn: async (payload: unknown) => {
  await upsertGraphRow("hr_onboarding_tasks", payload);
  },
  onSuccess: () => {
@@ -192,7 +192,7 @@ export function HrOnboardingTab() {
  </TableCell>
  </TableRow>
  ) : (
- filteredTasks.map((t: any) => (
+ filteredTasks.map((t: unknown) => (
  <TableRow key={t.id} className="group hover:bg-primary/[0.02] transition-colors">
  <TableCell className="py-6 pl-8">
  <div className="flex items-center gap-3">
@@ -345,8 +345,8 @@ export function HrOnboardingTab() {
  );
 }
 
-function TabBtn({ label, count, active, onClick, color }: any) {
- const colors: any = {
+function TabBtn({ label, count, active, onClick, color }: unknown) {
+ const colors: unknown = {
  amber: "text-warning bg-warning/10 border-warning/20",
  rose: "text-destructive bg-destructive/10 border-destructive/20",
  emerald: "text-success bg-success/10 border-success/20",
@@ -373,3 +373,5 @@ function TabBtn({ label, count, active, onClick, color }: any) {
 }
 
 export default HrOnboardingTab;
+
+

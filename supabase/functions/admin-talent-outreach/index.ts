@@ -1,4 +1,4 @@
-// Admin Talent Outreach Agent — operator console for inviting uploaded talents
+﻿// Admin Talent Outreach Agent â€” operator console for inviting uploaded talents
 // (CV / batch / gig sources) who haven't yet claimed an account.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { augmentLastUserMessage } from "../_shared/attachments.ts";
@@ -65,7 +65,7 @@ const TOOLS = [
 
 const SYSTEM = `You are the Talent Outreach operator console for GroUp Academy super admin.
 Your job is to help the admin invite uploaded-but-unregistered talents to claim their profile.
-Always CALL TOOLS for any number; never invent stats.
+Always CALL TOOLS for unknown number; never invent stats.
 Before calling send_invite, restate the recipient count and the subject/message and ask the
 operator to say "yes send it". Be concise. Use markdown. Today: ${new Date().toISOString().slice(0, 10)}.`;
 
@@ -90,7 +90,7 @@ Deno.serve(async (req) => {
     const admin = createClient(SUPA_URL, SERVICE_KEY);
     const { data: roleRows } = await admin
       .from("user_roles").select("role").eq("user_id", userData.user.id);
-    const roles = (roleRows ?? []).map((r: any) => r.role);
+    const roles = (roleRows ?? []).map((r: unknown) => r.role);
     if (!roles.includes("super_admin") && !roles.includes("admin")) {
       return json({ error: "forbidden" }, 403);
     }
@@ -99,7 +99,7 @@ Deno.serve(async (req) => {
     const messages = body.messages ?? [];
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
 
-    const convo: any[] = [{ role: "system", content: SYSTEM }, ...messages];
+    const convo: unknown[] = [{ role: "system", content: SYSTEM }, ...messages];
     await augmentLastUserMessage(admin, convo, body.attachments);
 
     for (let step = 0; step < 5; step++) {
@@ -127,7 +127,7 @@ Deno.serve(async (req) => {
         convo.push(msg);
         for (const tc of msg.tool_calls) {
           const args = safeParse(tc.function?.arguments);
-          let toolResult: any = { error: "unknown tool" };
+          let toolResult: unknown = { error: "unknown tool" };
           try {
             toolResult = await runTool(admin, tc.function.name, args, userData.user.id);
           } catch (e) {
@@ -162,7 +162,7 @@ Deno.serve(async (req) => {
   }
 });
 
-async function runTool(admin: any, name: string, args: any, actorId: string) {
+async function runTool(admin: unknown, name: string, args: unknown, actorId: string) {
   switch (name) {
     case "outreach_queue_status": {
       const totals = await admin
@@ -215,7 +215,7 @@ async function runTool(admin: any, name: string, args: any, actorId: string) {
       const { data: talents } = await admin.from("talents")
         .select("id, email, full_name").in("id", ids);
       let sent = 0; let skipped = 0;
-      const logs: any[] = [];
+      const logs: unknown[] = [];
       for (const t of talents ?? []) {
         if (!t.email) { skipped++; continue; }
         try {
@@ -252,3 +252,5 @@ async function runTool(admin: any, name: string, args: any, actorId: string) {
       return { error: `unknown tool: ${name}` };
   }
 }
+
+

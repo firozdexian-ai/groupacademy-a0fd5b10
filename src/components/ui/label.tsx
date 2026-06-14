@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Authoritative Metadata Text Association Protocol (Label)
  * Hardened WAI-ARIA compliant tracking label providing robust peer-disabled indicators and zero layout shifts.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const labelVariants = cva(
   "text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wide leading-none select-none text-muted-foreground/80 transition-colors duration-150 transform-gpu antialiased peer-disabled:cursor-not-allowed peer-disabled:opacity-20 peer-focus:text-primary pointer-events-none block text-left pt-0.5 pb-0.5",
@@ -34,3 +34,4 @@ const Label = React.forwardRef<
 Label.displayName = "Label_Core_Metadata_Node";
 
 export { Label, labelVariants };
+

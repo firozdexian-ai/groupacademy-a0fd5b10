@@ -1,4 +1,4 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
+﻿import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
@@ -254,7 +254,7 @@ const PROFESSION_CATEGORIES = [
   { id: "b4038064-ec0f-4814-a966-ca4c9984bca2", name: "Other", keywords: [] },
 ];
 
-function matchProfessionCategory(parsedData: any): string | null {
+function matchProfessionCategory(parsedData: unknown): string | null {
   const textToSearch = JSON.stringify(parsedData).toLowerCase();
 
   for (const category of PROFESSION_CATEGORIES) {
@@ -402,7 +402,7 @@ Rules:
 - Always return valid JSON even if extraction is partial. Never refuse.`;
 
     // Build message for AI - use Gemini's native PDF support via file content type
-    let userMessage: any;
+    let userMessage: unknown;
     if (pdfBase64) {
       userMessage = {
         role: "user",
@@ -559,3 +559,5 @@ Rules:
     });
   }
 });
+
+

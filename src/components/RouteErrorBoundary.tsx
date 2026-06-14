@@ -1,4 +1,4 @@
-import { Component, type ReactNode } from "react";
+﻿import { Component, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ interface State {
 }
 
 /**
- * RouteErrorBoundary — production safety net.
+ * RouteErrorBoundary â€” production safety net.
  *
  * Wrap each top-level route element with this boundary so a single broken
  * component cannot blank the entire shell. Renders a polished fallback card
@@ -33,7 +33,7 @@ export class RouteErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, info: { componentStack: string }) {
     // Keep this single console.error so the platform error pipeline catches it.
-    // eslint-disable-next-line no-console
+     
     console.error("[RouteErrorBoundary]", error, info.componentStack);
   }
 
@@ -58,7 +58,7 @@ export class RouteErrorBoundary extends Component<Props, State> {
               <h1 className="text-lg font-semibold">Something went wrong</h1>
               <p className="text-sm text-muted-foreground">
                 This screen hit an unexpected error. The rest of the app is still
-                fine — try reloading, or head back to a known-good page.
+                fine â€” try reloading, or head back to a known-good page.
               </p>
             </div>
             <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
@@ -87,3 +87,4 @@ export class RouteErrorBoundary extends Component<Props, State> {
 }
 
 export default RouteErrorBoundary;
+

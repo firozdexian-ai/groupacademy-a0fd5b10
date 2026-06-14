@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { recordMatchEvent, matchGigsForTalent } from "@/domains/gigs/repo/gigsRepo";
 import { useTalent } from "@/hooks/useTalent";
@@ -60,7 +60,7 @@ export function GigForYouTab() {
       // Clear precise query keys dynamically across user viewport boundaries
       queryClient.invalidateQueries({ queryKey: ["gig-matches-for-you", talent?.id] });
     },
-    onError: (mutationErr: any) => {
+    onError: (mutationErr: unknown) => {
       trackError(mutationErr, {
         component: "GigForYouTab",
         action: "dismiss_gig_match_mutation",
@@ -73,7 +73,7 @@ export function GigForYouTab() {
   useEffect(() => {
     if (!matches || matches.length === 0) return;
 
-    const offeredMatches = matches.filter((m: any) => m && m.status === "offered").slice(0, 10);
+    const offeredMatches = matches.filter((m: unknown) => m && m.status === "offered").slice(0, 10);
 
     if (offeredMatches.length === 0) return;
 
@@ -151,7 +151,7 @@ export function GigForYouTab() {
 
   return (
     <div className="space-y-3 w-full antialiased select-none">
-      {matches.map((matchItem: any) => {
+      {matches.map((matchItem: unknown) => {
         if (!matchItem || !matchItem.match_id) return null;
 
         const rewardValue = matchItem.credits != null ? Number(matchItem.credits) : null;
@@ -255,3 +255,5 @@ export function GigForYouTab() {
     </div>
   );
 }
+
+

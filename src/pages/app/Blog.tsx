@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { listPublishedBlogPostCards } from "@/domains/marketing/repo/marketingRepo";
@@ -42,7 +42,7 @@ const SKELETON_ITEMS_ROSTER = [1, 2, 3];
 /**
  * GroUp Academy: Authoritative Knowledge Insights Registry (Blog)
  * Hardened responsive content discovery panel securing search input debounces and neutralizing CLS visual shift jitters.
- * Version: Launch Candidate · Phase Z1 Production Type Contract Sealed
+ * Version: Launch Candidate Â· Phase Z1 Production Type Contract Sealed
  */
 export default function Blog() {
  const navigateHook = useNavigate();
@@ -97,7 +97,7 @@ export default function Blog() {
  <div
  className={cn(PAGE_SHELL_WIDE, "max-w-4xl mx-auto space-y-5 text-left antialiased block transform-gpu w-full")}
  >
- {/* HUD LEVEL 1: HUB STICKY NAV RECONCILIATION COMMAND HEADER */}
+ {/* dashboard LEVEL 1: HUB STICKY NAV RECONCILIATION COMMAND HEADER */}
  <div className="block select-none leading-none w-full shrink-0">
  <Button
  type="button"
@@ -110,7 +110,7 @@ export default function Blog() {
  </Button>
  </div>
 
- {/* HUD LEVEL 2: DIRECTORY INDEX PLATFORM HEADER */}
+ {/* dashboard LEVEL 2: DIRECTORY INDEX PLATFORM HEADER */}
  <header className="space-y-1 block select-none pointer-events-none border-b border-border/10 pb-3 w-full shrink-0 leading-none">
  <div className="flex items-center gap-2 leading-none w-full block">
  <FileText className="h-4.5 w-4.5 text-primary stroke-[2.2] shrink-0" />
@@ -133,7 +133,7 @@ export default function Blog() {
  </p>
  </header>
 
- {/* HUD LEVEL 3: LIVE TEXT ENTRY FILTER BOARD */}
+ {/* dashboard LEVEL 3: LIVE TEXT ENTRY FILTER BOARD */}
  <div className="relative w-full block shrink-0">
  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 stroke-[2.2] select-none pointer-events-none" />
  <Input
@@ -145,7 +145,7 @@ export default function Blog() {
  />
  </div>
 
- {/* HUD LEVEL 4: TAB SECTION CONTROL CONTROL FOR WRAPPED SELECTIONS */}
+ {/* dashboard LEVEL 4: TAB SECTION CONTROL CONTROL FOR WRAPPED SELECTIONS */}
  <div className="flex flex-wrap gap-1.5 select-none leading-none block w-full shrink-0">
  {CATEGORIES_DIRECTORY.map((categoryKeyStr) => {
  const isCategoryActiveFlag = selectedCategoryFilter === categoryKeyStr;
@@ -168,7 +168,7 @@ export default function Blog() {
  })}
  </div>
 
- {/* HUD LEVEL 5: DATA ARCHIVE CONDITIONAL GRID COMPILERS */}
+ {/* dashboard LEVEL 5: DATA ARCHIVE CONDITIONAL GRID COMPILERS */}
  {isRegistryCacheResolving ? (
  <div className="space-y-2.5 block w-full select-none pointer-events-none">
  {SKELETON_ITEMS_ROSTER.map((idxNum) => (
@@ -265,3 +265,4 @@ export default function Blog() {
  </div>
  );
 }
+

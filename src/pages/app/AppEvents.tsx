@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Authoritative Webinars & Broadcasters Directory Shell (AppEvents)
  * Hardened operational directory wrapping semantic components and protecting viewport rows from layout shifts.
- * Version: Launch Candidate · Phase Z1 Structure Token Locked
+ * Version: Launch Candidate Â· Phase Z1 Structure Token Locked
  */
 export default function AppEvents() {
  const executeNavigationHook = useNavigate();
@@ -25,7 +25,7 @@ export default function AppEvents() {
 
  return (
  <div className={cn(PAGE_SHELL, "text-left antialiased block transform-gpu w-full space-y-4")}>
- {/* HUD LEVEL 1: ADMINISTRATIVE HUBS BACKWARD NAVIGATION */}
+ {/* dashboard LEVEL 1: ADMINISTRATIVE HUBS BACKWARD NAVIGATION */}
  <div className="block select-none leading-none w-full shrink-0">
  <Button
  type="button"
@@ -39,7 +39,7 @@ export default function AppEvents() {
  </Button>
  </div>
 
- {/* HUD LEVEL 2: COMPOSITE PROFILE CONTEXT DESKTOP HEADER */}
+ {/* dashboard LEVEL 2: COMPOSITE PROFILE CONTEXT DESKTOP HEADER */}
  <header className="px-1 select-none pointer-events-none block leading-none w-full shrink-0 space-y-1">
  <h1
  className={cn(
@@ -56,10 +56,11 @@ export default function AppEvents() {
  </p>
  </header>
 
- {/* HUD LEVEL 3: DYNAMIC SUB-COMPONENT PANEL DISPATCH MANIFEST */}
+ {/* dashboard LEVEL 3: DYNAMIC SUB-COMPONENT PANEL DISPATCH MANIFEST */}
  <main className="min-h-[60vh] block w-full pt-1">
  <EventsTab />
  </main>
  </div>
  );
 }
+

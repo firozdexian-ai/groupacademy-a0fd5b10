@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Demand Signals Admin Widget (B6 Implementation).
  * Aggregates feature_waitlist registrations to rank deferred surfaces by market demand.
  * Adheres to 2024 Professional SaaS UI guidelines and channels query issues to telemetry.
@@ -95,7 +95,7 @@ export function DemandSignalsTab() {
     queryKey: ["admin-feature-waitlist-signals"],
     queryFn: async () => {
       const { data: signalData, error: queryError } = await supabase
-        .from("feature_waitlist" as any)
+        .from("feature_waitlist" as unknown)
         .select("feature_key, user_id, email, created_at")
         .order("created_at", { ascending: false })
         .limit(5000);
@@ -218,3 +218,5 @@ export function DemandSignalsTab() {
 }
 
 export default DemandSignalsTab;
+
+

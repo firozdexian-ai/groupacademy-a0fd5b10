@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { getJobsHubDashboard } from "@/domains/jobs/repo/jobsRepo";
 import type { JobCardData } from "@/domains/jobs/components/JobCard";
 import type { CompanyWithSignal } from "@/domains/companies/hooks/useCompaniesWithSignal";
@@ -33,10 +33,10 @@ export function useJobsHubDashboard(talentId: string | undefined) {
     queryKey: ["jobs-hub-dashboard", talentId ?? null],
     staleTime: 3 * 60 * 1000,
     queryFn: async (): Promise<JobsHubDashboard> => {
-      let data: any;
+      let data: unknown;
       try {
         data = await getJobsHubDashboard(talentId ?? null);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[jobs-hub] get_jobs_hub_dashboard failed", {
           talentId,
           error: error?.message,
@@ -58,3 +58,5 @@ export function useJobsHubDashboard(talentId: string | undefined) {
     },
   });
 }
+
+

@@ -1,11 +1,11 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as HoverCardPrimitive from "@radix-ui/react-hover-card";
 import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Contextual Intel Disclosure Overlay Interface (HoverCard)
  * Hardened non-interruptive informational card isolating auxiliary preview data blocks with seamless viewport boundaries.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const HoverCard = HoverCardPrimitive.Root;
 
@@ -32,3 +32,4 @@ const HoverCardContent = React.forwardRef<
 HoverCardContent.displayName = "HoverCard_Core_Content_Node";
 
 export { HoverCard, HoverCardTrigger, HoverCardContent };
+

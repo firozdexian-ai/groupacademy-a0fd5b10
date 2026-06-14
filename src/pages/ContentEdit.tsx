@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import CourseSessionsManager from "@/domains/learning/components/admin/sessions/CourseSessionsManager";
@@ -69,7 +69,7 @@ export default function ContentEdit() {
     title: "",
     slug: "",
     description: "",
-    content_type: "recorded_course" as any,
+    content_type: "recorded_course" as unknown,
     price: "",
     currency: "USD",
     credit_cost: null as number | null,
@@ -97,7 +97,7 @@ export default function ContentEdit() {
   const loadModuleStats = async () => {
     if (!id) return;
     const modules = await listCourseModuleSummariesForContent(id);
-    const moduleIds = modules.map((m: any) => m.id);
+    const moduleIds = modules.map((m: unknown) => m.id);
     const resources = await listModuleResourceLinksForModules(moduleIds);
 
     const moduleHasResource = new Set<string>();
@@ -145,7 +145,7 @@ export default function ContentEdit() {
       const sCount = await countCourseSessionsForContent(id!);
       setSessionCount(sCount);
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({ title: "Load Error", description: error.message, variant: "destructive" });
       navigate("/dashboard");
     } finally {
@@ -178,7 +178,7 @@ export default function ContentEdit() {
       toast({ title: "Success", description: "Academy record synchronized." });
       navigate("/dashboard");
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({ title: "Update Failed", description: error.message, variant: "destructive" });
     } finally {
       setSaving(false);
@@ -267,7 +267,7 @@ export default function ContentEdit() {
                       onClick={() => setAiCoverOpen(true)}
                       className="h-7 px-2 text-sm font-medium tracking-widest gap-1 rounded-lg border-primary/30 text-primary hover:bg-primary/10"
                     >
-                      ✨ AI cover
+                      âœ¨ AI cover
                     </Button>
                   </div>
                 </div>
@@ -582,7 +582,7 @@ export default function ContentEdit() {
             {id && (
               <ContentReadinessChecklist
                 contentId={id}
-                formData={formData as any}
+                formData={formData as unknown}
                 moduleStats={moduleStats || undefined}
                 moduleAudit={moduleAudit}
                 sessionCount={sessionCount}
@@ -657,3 +657,5 @@ export default function ContentEdit() {
     </div>
   );
 }
+
+

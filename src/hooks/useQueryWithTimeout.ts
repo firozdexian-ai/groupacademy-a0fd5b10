@@ -1,4 +1,4 @@
-import { useQuery, type UseQueryOptions, type UseQueryResult } from "@tanstack/react-query";
+﻿import { useQuery, type UseQueryOptions, type UseQueryResult } from "@tanstack/react-query";
 
 /**
  * GroUp Academy: Neural Transaction Guard (V5.6.0)
@@ -23,7 +23,7 @@ export function useQueryWithTimeout<TData = unknown, TError = Error>({
   timeout = DEFAULT_TIMEOUT,
   ...options
 }: QueryWithTimeoutOptions<TData, TError>): UseQueryResult<TData, TError> {
-  // HUD: NEURAL_WRAPPED_EXECUTOR_V5
+  // dashboard: NEURAL_WRAPPED_EXECUTOR_V5
   const wrappedQueryFn = async (context: { signal: AbortSignal }): Promise<TData> => {
     const { signal: rqSignal } = context;
 
@@ -43,7 +43,7 @@ export function useQueryWithTimeout<TData = unknown, TError = Error>({
     try {
       // Race the underlying query execution logic straight against our absolute boundary timer
       return await Promise.race([queryFn(rqSignal), timeoutPromise]);
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Differentiate between intentional client abort actions and automated gateway timeouts
       if (err?.name === "AbortError" || rqSignal.aborted) {
         throw err;
@@ -75,7 +75,7 @@ export function useQueryWithTimeout<TData = unknown, TError = Error>({
 
 /**
  * PHASE: Async_Race_Sentinel
- * Wraps any promise context with an absolute hard-stop network timeout.
+ * Wraps unknown promise context with an absolute hard-stop network timeout.
  */
 export async function withTimeout<T>(
   promise: Promise<T>,
@@ -108,3 +108,5 @@ export function isTimeoutError(error: unknown): boolean {
       error.message.includes("THRESHOLD_ERROR"))
   );
 }
+
+

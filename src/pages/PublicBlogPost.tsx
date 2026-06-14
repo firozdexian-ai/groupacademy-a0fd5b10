@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+﻿import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { incrementBlogPostViews, getPublishedBlogPostBySlug } from "@/domains/marketing/repo/marketingRepo";
 import { useTheme } from "next-themes";
@@ -325,7 +325,7 @@ export default function PublicBlogPost() {
         <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8 text-[10px] font-black uppercase tracking-tight text-muted-foreground">
           <div className="flex items-center gap-3">
             <img src={logoIcon} className="h-6 w-6 grayscale opacity-40" alt="Logo" />
-            <span>© 2026 GroUp Academy</span>
+            <span>Â© 2026 GroUp Academy</span>
           </div>
           <nav className="flex gap-8">
             {["home", "courses", "blog"].map((link) => (
@@ -343,3 +343,4 @@ export default function PublicBlogPost() {
     </div>
   );
 }
+

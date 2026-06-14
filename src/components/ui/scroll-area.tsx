@@ -1,11 +1,11 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
 import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Authoritative Fluid Containment Overlay System (ScrollArea)
  * Hardened responsive viewport controller protecting layout elements from flex-box collapse and track collisions.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const ScrollArea = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.Root>,
@@ -42,7 +42,7 @@ const ScrollBar = React.forwardRef<
     )}
     {...props}
   >
-    {/* HUD LEVEL 1: ACCESSIBLE GRAB TRACK SECTOR THUMB THREAD */}
+    {/* dashboard LEVEL 1: ACCESSIBLE GRAB TRACK SECTOR THUMB THREAD */}
     <ScrollAreaPrimitive.ScrollAreaThumb
       className={cn(
         "relative flex-1 rounded-full bg-border/40 transition-colors duration-150 transform-gpu shrink-0 block",
@@ -55,3 +55,4 @@ const ScrollBar = React.forwardRef<
 ScrollBar.displayName = "ScrollArea_Core_Track_Node";
 
 export { ScrollArea, ScrollBar };
+

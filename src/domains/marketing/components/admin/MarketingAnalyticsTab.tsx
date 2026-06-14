@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { getMarketingAnalyticsTelemetry } from "@/domains/marketing/repo/marketingRepo";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -97,7 +97,7 @@ export function MarketingAnalyticsTab() {
       const { jobClicks, jobShares, contentClicks, contentShares, topJobsRaw } =
         await getMarketingAnalyticsTelemetry(startDate.toISOString(), endDate.toISOString());
 
-      const aggregate = (arr: any[], field: string): AnalyticsRecord[] => {
+      const aggregate = (arr: unknown[], field: string): AnalyticsRecord[] => {
         const counts = arr.reduce(
           (acc, item) => {
             const val = item[field] || "Direct/Organic";
@@ -111,7 +111,7 @@ export function MarketingAnalyticsTab() {
           .sort((a, b) => b.count - a.count);
       };
 
-      const jobPulseMap = (topJobsRaw || []).reduce((acc: Record<string, TopJobRecord>, item: any) => {
+      const jobPulseMap = (topJobsRaw || []).reduce((acc: Record<string, TopJobRecord>, item: unknown) => {
         if (item.jobs) {
           const id = item.jobs.id;
           if (!acc[id]) acc[id] = { id, title: item.jobs.title, company_name: item.jobs.company_name, clicks: 0 };
@@ -451,7 +451,7 @@ function SummaryBadgeRow({ totalClicks, totalShares }: { totalClicks: number; to
   );
 }
 
-function ChartCard({ title, sub, children }: any) {
+function ChartCard({ title, sub, children }: unknown) {
   return (
     <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
       <CardHeader className="p-8 border-b border-border/10 bg-muted/10 text-left">
@@ -463,7 +463,7 @@ function ChartCard({ title, sub, children }: any) {
   );
 }
 
-function SourceBarChart({ data, color }: { data: any[]; color: string }) {
+function SourceBarChart({ data, color }: { data: unknown[]; color: string }) {
   return (
     <ResponsiveContainer width="100%" height={250}>
       <BarChart data={data} layout="vertical" margin={{ left: 20 }}>
@@ -507,7 +507,7 @@ function SourcePieChart({ data }: { data: { name: string; value: number }[] }) {
   );
 }
 
-function MetricTile({ label, value, icon: Icon, color, bg }: any) {
+function MetricTile({ label, value, icon: Icon, color, bg }: unknown) {
   return (
     <Card className="rounded-2xl border border-border/60 bg-card backdrop-blur-sm shadow-xl overflow-hidden hover:border-primary/30 transition-all group">
       <CardContent className="p-6 flex items-center gap-5">
@@ -533,7 +533,7 @@ function MetricTile({ label, value, icon: Icon, color, bg }: any) {
   );
 }
 
-function PulseBar({ label, value, max, color }: any) {
+function PulseBar({ label, value, max, color }: unknown) {
   const percentage = Math.min(Math.round((value / max) * 100), 100);
   return (
     <div className="space-y-2">
@@ -565,3 +565,5 @@ function DashboardLoadingSkeleton() {
 }
 
 export default MarketingAnalyticsTab;
+
+

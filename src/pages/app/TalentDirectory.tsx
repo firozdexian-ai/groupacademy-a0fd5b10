@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+﻿import { useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -48,7 +48,7 @@ export default function TalentDirectory() {
  const [boosting, setBoosting] = useState(false);
 
  // Internal error logger
- const reportAnomaly = async (event: string, context: any) => {
+ const reportAnomaly = async (event: string, context: unknown) => {
  console.error(`[app] ${event}`, context);
  await adminSupportAssistant({ type: "talent_directory_error", event, context });
  };
@@ -68,15 +68,15 @@ export default function TalentDirectory() {
  ]);
 
  // Merge Logic
- const settingsMap = new Map((s || []).map((i: any) => [i.talent_id, i]));
- const volMap = new Map((v || []).map((i: any) => [i.talent_id, Number(i.volume || 0)]));
+ const settingsMap = new Map((s || []).map((i: unknown) => [i.talent_id, i]));
+ const volMap = new Map((v || []).map((i: unknown) => [i.talent_id, Number(i.volume || 0)]));
  const hypeMap = new Map<string, number>();
- (h || []).forEach((i: any) =>
+ (h || []).forEach((i: unknown) =>
  hypeMap.set(i.recipient_talent_id, (hypeMap.get(i.recipient_talent_id) || 0) + 1),
  );
 
- let merged: TalentRow[] = (data || []).map((t: any) => {
- const setting = settingsMap.get(t.id) as any;
+ let merged: TalentRow[] = (data || []).map((t: unknown) => {
+ const setting = settingsMap.get(t.id) as unknown;
  return {
  ...t,
  inbox_unlocked: Boolean(setting?.unlocked),
@@ -123,7 +123,7 @@ export default function TalentDirectory() {
     </div>
     {me?.id && (
       <Button onClick={boost} disabled={boosting} className="rounded-xl">
-        <Rocket className="h-4 w-4 mr-2" /> Pin Profile · 100 credits
+        <Rocket className="h-4 w-4 mr-2" /> Pin Profile Â· 100 credits
       </Button>
     )}
  </header>
@@ -132,7 +132,7 @@ export default function TalentDirectory() {
     <div className="relative">
       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
       <Input
-        placeholder="Search members…"
+        placeholder="Search membersâ€¦"
         value={q}
         onChange={(e) => setQ(e.target.value)}
         className="pl-9 rounded-xl"
@@ -194,3 +194,5 @@ export default function TalentDirectory() {
  </div>
  );
 }
+
+

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * GroUp Academy: Stakeholder Capital Registry (InvestorsManager)
  * CTO Version: May 2026 (Phase IR-Z0 Hardened)
  * Fixes: B3 (Search Logic Restoration), P5 (Type Safety), Visual Unification
@@ -121,7 +121,7 @@ export function InvestorsManager() {
 
  const saveMutation = useMutation({
  mutationFn: async () => {
- const payload: any = {
+ const payload: unknown = {
  vc_firm_id: formData.vc_firm_id || null,
  full_name: formData.full_name,
  title: formData.title || null,
@@ -144,7 +144,7 @@ export function InvestorsManager() {
  resetForm();
  queryClient.invalidateQueries({ queryKey: ["ir-investors"] });
  },
- onError: (error: any) => toast.error("Transmission Fault: " + error.message),
+ onError: (error: unknown) => toast.error("Transmission Fault: " + error.message),
  });
 
  const deleteMutation = useMutation({
@@ -154,7 +154,7 @@ export function InvestorsManager() {
  setDeleteConfirmId(null);
  queryClient.invalidateQueries({ queryKey: ["ir-investors"] });
  },
- onError: (error: any) => toast.error("Termination Fault: " + error.message),
+ onError: (error: unknown) => toast.error("Termination Fault: " + error.message),
  });
 
  const resetForm = () => {
@@ -244,7 +244,7 @@ export function InvestorsManager() {
  </SelectTrigger>
  <SelectContent className="rounded-xl border">
  <SelectItem value="all" className="font-bold text-[10px] text-primary">
- 🌍 ALL AUTHORITIES
+ ðŸŒ ALL AUTHORITIES
  </SelectItem>
  {vcFirms?.map((firm) => (
  <SelectItem key={firm.id} value={firm.id} className="font-bold text-[10px]">
@@ -315,7 +315,7 @@ export function InvestorsManager() {
  {investor.full_name}
  </p>
  <p className="text-[9px] font-bold text-muted-foreground/80 mt-1 truncate max-w-[250px]">
- {investor.title || "—"}
+ {investor.title || "â€”"}
  </p>
  </TableCell>
  <TableCell className="text-left min-w-[150px]">
@@ -623,3 +623,5 @@ export function InvestorsManager() {
  </div>
  );
 }
+
+

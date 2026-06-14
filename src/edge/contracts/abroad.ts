@@ -1,9 +1,9 @@
-/**
- * Abroad domain — edge function contracts (Phase 9e).
+﻿/**
+ * Abroad domain â€” edge function contracts (Phase 9e).
  *
  * Mirrors the talent/agents/jobs convention: per-function Request type
  * (plain interface) + Zod Response schema with `.passthrough()`. Request
- * shapes preserve runtime behavior of current call sites; any drift is
+ * shapes preserve runtime behavior of current call sites; unknown drift is
  * documented in `.lovable/known-edge-contract-drift.md`.
  */
 import { z } from "zod";
@@ -132,3 +132,5 @@ export const AiIeltsEvaluateResponseSchema = z
 export type AiIeltsEvaluateResponse = z.infer<
   typeof AiIeltsEvaluateResponseSchema
 >;
+
+

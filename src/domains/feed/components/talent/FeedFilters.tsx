@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import {
   Globe,
   MapPin,
@@ -48,7 +48,7 @@ const TYPE_DEFS: Record<Exclude<FeedFilterType, "all">, { label: string; icon: L
 };
 
 /**
- * FeedFilters — A clean horizontal action row providing community discovery channels 
+ * FeedFilters â€” A clean horizontal action row providing community discovery channels 
  * and localized scoping segments for the feed.
  */
 export function FeedFilters({ filters, onChange, counts }: FeedFiltersProps) {
@@ -56,7 +56,7 @@ export function FeedFilters({ filters, onChange, counts }: FeedFiltersProps) {
   const { talent } = useTalent();
 
   const country = talent?.country;
-  const profession = (talent as any)?.customProfession || (talent as any)?.custom_profession;
+  const profession = (talent as unknown)?.customProfession || (talent as unknown)?.custom_profession;
 
   // Validate profile demographics and log non-canonical layouts cleanly in the background
   useEffect(() => {
@@ -244,3 +244,4 @@ export function FeedFilters({ filters, onChange, counts }: FeedFiltersProps) {
     </div>
   );
 }
+

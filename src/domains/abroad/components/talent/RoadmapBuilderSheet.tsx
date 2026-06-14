@@ -1,4 +1,4 @@
-import { useState, ReactNode } from "react";
+﻿import { useState, ReactNode } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,7 @@ export function RoadmapBuilderSheet({ countryCode, children }: RoadmapBuilderShe
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Study Abroad Roadmap standard value peg is 100 credits ($2.00 USD / ৳200 BDT)[cite: 5]
+  // Study Abroad Roadmap standard value peg is 100 credits ($2.00 USD / à§³200 BDT)[cite: 5]
   const ROADMAP_CREDIT_COST = 100;
 
   // Immutable Requirements: Intact data structures matching the database public schema
@@ -108,7 +108,7 @@ export function RoadmapBuilderSheet({ countryCode, children }: RoadmapBuilderShe
       setOpen(false);
       window.location.assign(`/app/abroad/roadmap/${data.roadmap_id}`);
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       const msg = err.message || "";
 
       if (msg.includes("INSUFFICIENT_CREDITS") || msg.includes("LEDGER_MUTATION_DENIED")) {
@@ -189,7 +189,7 @@ export function RoadmapBuilderSheet({ countryCode, children }: RoadmapBuilderShe
               disabled={isPending}
               className="w-full h-10 border rounded-md px-3 bg-background font-normal shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50"
               value={form.degree_level}
-              onChange={(e) => handleFormChange("degree_level", e.target.value as any)}
+              onChange={(e) => handleFormChange("degree_level", e.target.value as unknown)}
             >
               <option value="bachelors">Bachelor's</option>
               <option value="masters">Master's</option>
@@ -213,7 +213,7 @@ export function RoadmapBuilderSheet({ countryCode, children }: RoadmapBuilderShe
               disabled={isPending}
               className="w-full h-10 border rounded-md px-3 bg-background font-normal shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50"
               value={form.budget_level}
-              onChange={(e) => handleFormChange("budget_level", e.target.value as any)}
+              onChange={(e) => handleFormChange("budget_level", e.target.value as unknown)}
             >
               <option value="low">Low</option>
               <option value="medium">Medium</option>
@@ -264,7 +264,7 @@ export function RoadmapBuilderSheet({ countryCode, children }: RoadmapBuilderShe
               className="w-full h-11 font-semibold tracking-wide transition-all shadow-md active:scale-[0.99] disabled:cursor-not-allowed"
             >
               {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isPending ? "Building your roadmap…" : `Generate roadmap (${ROADMAP_CREDIT_COST} credits)`}
+              {isPending ? "Building your roadmapâ€¦" : `Generate roadmap (${ROADMAP_CREDIT_COST} credits)`}
             </Button>
           </div>
         </div>
@@ -272,3 +272,5 @@ export function RoadmapBuilderSheet({ countryCode, children }: RoadmapBuilderShe
     </Sheet>
   );
 }
+
+

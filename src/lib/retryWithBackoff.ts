@@ -1,4 +1,4 @@
-export type RetryOptions = {
+﻿export type RetryOptions = {
   retries?: number;
   baseDelayMs?: number;
   maxDelayMs?: number;
@@ -37,3 +37,4 @@ export async function retryWithBackoff<T>(
 
   throw lastError instanceof Error ? lastError : new Error("Request failed");
 }
+

@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import {
   listDiscussionThreads,
@@ -33,7 +33,7 @@ export type CourseBrief = {
   id: string;
   title: string;
   summary: string | null;
-  syllabus: any;
+  syllabus: unknown;
   mode: CourseBriefMode;
   language: string;
   duration_weeks: number | null;
@@ -41,7 +41,7 @@ export type CourseBrief = {
   budget_amount: number | null;
   budget_currency: string;
   revenue_share_pct: number;
-  required_skills: any;
+  required_skills: unknown;
   status: "draft" | "open" | "filled" | "archived" | "closed";
   content_id: string | null;
   instructor_job_id: string | null;
@@ -72,7 +72,7 @@ export function useDiscussionThreads(cohortId?: string) {
     queryFn: async () => {
       try {
         return await listDiscussionThreads(cohortId!);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: discussion_threads selection failure.", {
           cohortId,
           message: error.message,
@@ -100,7 +100,7 @@ export function useThread(threadId?: string) {
     queryFn: async () => {
       try {
         return await getDiscussionThreadWithPosts(threadId!);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: thread detail payload selection error.", {
           threadId,
           message: error.message,
@@ -124,7 +124,7 @@ export function useCreateThread() {
       void qc.invalidateQueries({ queryKey: ["threads", variables.cohort_id] });
       toast.success("Discussion topic created successfully.");
     },
-    onError: (err: any, variables) => {
+    onError: (err: unknown, variables) => {
       console.error("[Digital Workforce] ANOMALY: discussion_threads thread creation failure.", {
         authorId: user?.id,
         cohortId: variables.cohort_id,
@@ -147,7 +147,7 @@ export function useReplyToThread() {
     onSuccess: (_, variables) => {
       void qc.invalidateQueries({ queryKey: ["thread", variables.thread_id] });
     },
-    onError: (err: any, variables) => {
+    onError: (err: unknown, variables) => {
       console.error("[Digital Workforce] ANOMALY: discussion_posts comment insert failed.", {
         authorId: user?.id,
         threadId: variables.thread_id,
@@ -179,7 +179,7 @@ export function useLessonQuestions(contentId?: string, itemId?: string) {
     queryFn: async () => {
       try {
         return await listLessonQuestions(contentId!, itemId);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: lesson_questions index stream failure.", {
           contentId,
           itemId,
@@ -210,7 +210,7 @@ export function useAskQuestion() {
       void qc.invalidateQueries({ queryKey: ["qna", variables.content_id, variables.item_id] });
       toast.success("Question enqueued into lesson timeline.");
     },
-    onError: (err: any, variables) => {
+    onError: (err: unknown, variables) => {
       console.error("[Digital Workforce] ANOMALY: lesson_questions insert transaction rejected.", {
         studentId: user?.id,
         contentId: variables.content_id,
@@ -238,7 +238,7 @@ export function useAnswerQuestion() {
       void qc.invalidateQueries({ queryKey: ["qna", variables.content_id, variables.item_id] });
       toast.success("Answer transmitted safely.");
     },
-    onError: (err: any, variables) => {
+    onError: (err: unknown, variables) => {
       console.error("[Digital Workforce] ANOMALY: lesson_answers creation fault node.", {
         authorId: user?.id,
         questionId: variables.question_id,
@@ -260,7 +260,7 @@ export function useAcceptAnswer() {
       void qc.invalidateQueries({ queryKey: ["qna"] });
       toast.success("Resolution selected: Answer marked as accepted.");
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       console.error("[Digital Workforce] ANOMALY: accept_lesson_answer RPC trigger error.", { message: err.message });
       toast.error("Failed to mark answer as accepted.");
     },
@@ -281,7 +281,7 @@ export function useReviewQueue() {
     queryFn: async () => {
       try {
         return await listReviewQueueForReviewer(user!.id);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: review_assignments registry sync failure.", {
           reviewerId: user?.id,
           message: error.message,
@@ -300,7 +300,7 @@ export function useSubmission(id?: string) {
     queryFn: async () => {
       try {
         return await getSubmissionWithReviews(id!);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: submission detail sync dropout.", { id, message: error.message });
         throw error;
       }
@@ -313,7 +313,7 @@ export function useSubmitReview() {
   const { user } = useAuth();
 
   return useMutation({
-    mutationFn: async (input: { submission_id: string; rubric: any[]; score: number; comments?: string }) => {
+    mutationFn: async (input: { submission_id: string; rubric: unknown[]; score: number; comments?: string }) => {
       if (!user?.id) throw new Error("AUTH_SYNC_REQUIRED: Identity verification failed.");
       await upsertSubmissionReview({
         submission_id: input.submission_id,
@@ -328,7 +328,7 @@ export function useSubmitReview() {
       void qc.invalidateQueries({ queryKey: ["review-queue", user?.id] });
       toast.success("Evaluation submitted safely into verification ledger.");
     },
-    onError: (err: any, variables) => {
+    onError: (err: unknown, variables) => {
       console.error("[Digital Workforce] ANOMALY: submission_reviews transaction insertion rejected.", {
         reviewerId: user?.id,
         submissionId: variables.submission_id,
@@ -350,7 +350,7 @@ export function useReportContent() {
     onSuccess: () => {
       toast.success("Flag logged: Content submitted to safety operations board.");
     },
-    onError: (err: any, variables) => {
+    onError: (err: unknown, variables) => {
       console.error("[Digital Workforce] ANOMALY: content_reports table processing failure.", {
         reporterId: user?.id,
         scope: variables.scope,
@@ -361,3 +361,5 @@ export function useReportContent() {
     },
   });
 }
+
+

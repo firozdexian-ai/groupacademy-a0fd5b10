@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Realtime Notification Ledger Row Entry Node (NotificationItem)
  * An authoritative layout wrapper orchestrating candidate alert dispatches, telemetry logs, and state sanitization.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 
 interface NotificationItemProps {
@@ -32,6 +32,12 @@ export function NotificationItem({ notification, onMarkAsRead, onDelete, onClose
 
   const Icon = getNotificationIcon(notification.icon, notification.type);
   const iconColorClass = getNotificationColor(notification.type);
+
+  // Safe Memoized Normalization Pass: Eliminate string layout fracture risks down typography layers
+  const normalizedDisplayTitle = useMemo(() => {
+    const rawFallbackedStringTitle = notification?.title || "SYSTEM_ALIGNED_ALERT_NODE";
+    return rawFallbackedStringTitle.trim().replace(/\s+/g, "_");
+  }, [notification?.title]);
 
   // Monitor single entry notifications item impressions safely via metrics parameters
   useEffect(() => {
@@ -91,12 +97,6 @@ export function NotificationItem({ notification, onMarkAsRead, onDelete, onClose
     }
   };
 
-  // Safe Memoized Normalization Pass: Eliminate string layout fracture risks down typography layers
-  const normalizedDisplayTitle = useMemo(() => {
-    const rawFallbackedStringTitle = notification.title || "SYSTEM_ALIGNED_ALERT_NODE";
-    return rawFallbackedStringTitle.trim().replace(/\s+/g, "_");
-  }, [notification.title]);
-
   const isAgenticAlertNode = isAgenticNotification(notification.type);
 
   return (
@@ -109,7 +109,7 @@ export function NotificationItem({ notification, onMarkAsRead, onDelete, onClose
           : "bg-primary/[0.025] dark:bg-primary/[0.005] border-primary hover:bg-primary/[0.05] animate-in fade-in slide-in-from-left-1 duration-200",
       )}
     >
-      {/* HUD ICON FRAME CORE SHIELD LAYER */}
+      {/* dashboard ICON FRAME CORE SHIELD LAYER */}
       <div
         className={cn(
           "flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center border transition-transform duration-500 transform group-hover:scale-105 shadow-sm select-none",
@@ -180,3 +180,4 @@ export function NotificationItem({ notification, onMarkAsRead, onDelete, onClose
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-// learner-scenario-evaluate (2.5.b)
+﻿// learner-scenario-evaluate (2.5.b)
 // Scores a finished scenario run via Lovable AI and writes the structured
 // evaluation JSON to talent_scenario_run.evaluation. Subsequent skill-profile
 // updates are handled by the trigger added in 2.5.c.
@@ -93,14 +93,14 @@ function buildSystemPrompt(rubric: unknown, topicTags: string[]) {
   const rubricText =
     rubric && Array.isArray(rubric) && rubric.length > 0
       ? JSON.stringify(rubric, null, 2)
-      : "(no explicit rubric — use general professional communication and the topic tags as criteria)";
+      : "(no explicit rubric â€” use general professional communication and the topic tags as criteria)";
   return `You are an expert instructional evaluator. You score a learner's performance in a role-play scenario against a fixed rubric.
 
 Rubric:
 ${rubricText}
 
 Topic tags expected in the response (score every one of these, even if 0):
-${topicTags.length ? topicTags.join(", ") : "(none — invent up to 3 topic tags from the rubric)"}
+${topicTags.length ? topicTags.join(", ") : "(none â€” invent up to 3 topic tags from the rubric)"}
 
 Rules:
 - Score each topic strictly between 0 (no evidence / wrong) and 1 (perfect).
@@ -112,7 +112,7 @@ Rules:
 function flattenConversation(conv: unknown): string {
   if (!Array.isArray(conv)) return "";
   return conv
-    .map((m: any) => {
+    .map((m: unknown) => {
       const role = (m?.role ?? "user").toString();
       const content =
         typeof m?.content === "string"
@@ -159,7 +159,7 @@ async function callEvaluator(
     return { error: "Evaluator returned no structured output", status: 502 };
   }
 
-  let args: any;
+  let args: unknown;
   try {
     args = JSON.parse(toolCall.function.arguments);
   } catch (e) {
@@ -172,8 +172,8 @@ async function callEvaluator(
   }
 
   const topics: TopicScore[] = args.topics
-    .filter((t: any) => t && typeof t.tag === "string")
-    .map((t: any) => ({
+    .filter((t: unknown) => t && typeof t.tag === "string")
+    .map((t: unknown) => ({
       tag: String(t.tag),
       score: clamp01(t.score),
       weight: typeof t.weight === "number" && t.weight >= 0 ? t.weight : 1,
@@ -287,7 +287,7 @@ Deno.serve(async (req) => {
   if (topicTags.length > 0) {
     const allowed = new Set(topicTags);
     const kept = finalTopics.filter((t) => allowed.has(t.tag));
-    // Backfill any missing rubric tag with a 0 baseline so the EWMA trigger
+    // Backfill unknown missing rubric tag with a 0 baseline so the EWMA trigger
     // sees a signal for every expected topic.
     const seen = new Set(kept.map((t) => t.tag));
     for (const tag of topicTags) {
@@ -316,7 +316,7 @@ Deno.serve(async (req) => {
     return json(500, { error: updateErr.message });
   }
 
-  // Auto-issue skill credentials for any topics that just crossed thresholds.
+  // Auto-issue skill credentials for unknown topics that just crossed thresholds.
   // Fire-and-forget; errors are logged but never fail the evaluation response.
   try {
     for (const t of finalTopics) {
@@ -326,7 +326,7 @@ Deno.serve(async (req) => {
           _module_id: run.module_id,
           _topic_tag: t.tag,
         })
-        .then(({ error }: any) => {
+        .then(({ error }: unknown) => {
           if (error) console.error("issue_skill_credential failed", t.tag, error);
         });
     }
@@ -336,3 +336,5 @@ Deno.serve(async (req) => {
 
   return json(200, { evaluation, cached: false });
 });
+
+

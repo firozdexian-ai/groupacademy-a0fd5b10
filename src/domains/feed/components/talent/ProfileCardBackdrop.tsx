@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { listActiveProfileCardThemes } from "@/domains/feed/repo/feedRepo";
 import { trackError, trackEvent } from "@/lib/errorTracking";
@@ -42,7 +42,7 @@ export function ProfileCardBackdrop({ onTextColor }: Props) {
       const now = Date.now();
 
       // Extract current active theme based on active date rules
-      const active = (data || []).find((t: any) => {
+      const active = (data || []).find((t: unknown) => {
         try {
           const startOk = !t.start_at || new Date(t.start_at).getTime() <= now;
           const endOk = !t.end_at || new Date(t.end_at).getTime() >= now;
@@ -143,3 +143,4 @@ export function ProfileCardBackdrop({ onTextColor }: Props) {
     </div>
   );
 }
+

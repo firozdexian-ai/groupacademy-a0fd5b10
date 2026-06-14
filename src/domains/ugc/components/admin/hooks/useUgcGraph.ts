@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   getUgcGraphMaster,
@@ -62,7 +62,7 @@ export interface UgcCompetition {
   start_date: string | null;
   end_date: string | null;
   submission_deadline: string | null;
-  prizes: any;
+  prizes: unknown;
   max_participants: number | null;
   created_at: string;
 }
@@ -127,7 +127,7 @@ export function useUgcGraph() {
   const fail = (verb: string) => (e: Error) => toast.error(`${verb} failed: ${e.message}`);
 
   const upsertVideo = useMutation({
-    mutationFn: (payload: any) => upsertUgcVideo(payload),
+    mutationFn: (payload: unknown) => upsertUgcVideo(payload),
     onSuccess: okSync("Video"),
     onError: fail("Video sync"),
   });
@@ -138,7 +138,7 @@ export function useUgcGraph() {
   });
 
   const upsertBlog = useMutation({
-    mutationFn: (payload: any) => upsertUgcBlog(payload),
+    mutationFn: (payload: unknown) => upsertUgcBlog(payload),
     onSuccess: okSync("Article"),
     onError: fail("Article sync"),
   });
@@ -149,7 +149,7 @@ export function useUgcGraph() {
   });
 
   const upsertFeedPost = useMutation({
-    mutationFn: (payload: any) => upsertUgcFeedPost(payload),
+    mutationFn: (payload: unknown) => upsertUgcFeedPost(payload),
     onSuccess: okSync("Post"),
     onError: fail("Post sync"),
   });
@@ -160,7 +160,7 @@ export function useUgcGraph() {
   });
 
   const upsertCompetition = useMutation({
-    mutationFn: (payload: any) => upsertUgcCompetition(payload),
+    mutationFn: (payload: unknown) => upsertUgcCompetition(payload),
     onSuccess: okSync("Tournament"),
     onError: fail("Tournament sync"),
   });
@@ -193,3 +193,5 @@ export function useUgcGraph() {
     },
   };
 }
+
+

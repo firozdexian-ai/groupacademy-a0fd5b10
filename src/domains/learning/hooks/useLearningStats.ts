@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import {
   listActiveTalentEnrollmentsWithModules,
   countCompletedEnrollments,
@@ -7,7 +7,7 @@ import {
 import { useTalent } from "@/hooks/useTalent";
 
 /**
- * GroUp Academy: Pedagogical Telemetry Sentinel (V5.6.0)
+ * GroUp Academy: Pedagogical Telemetry guard (V5.6.0)
  * CTO Reference: Unified analytical controller tracking gamified metrics and streaks.
  * Architecture: Digital Workforce enabled - streams lookup errors directly to Admin OS.
  * Phase: Z0 Code Freeze Hardened (May 2026 Launch Variant).
@@ -57,7 +57,7 @@ export interface LearningStats {
 }
 
 /**
- * HUD: STREAK_ALGORITHM
+ * dashboard: STREAK_ALGORITHM
  * Logic: Analyzes activity records to compile consecutive daily participation streaks.
  * Hardened to prevent client timezone desynchronization.
  */
@@ -89,7 +89,7 @@ function calculateStreak(activities: LearningActivity[]): number {
   }
 
   let streak = 0;
-  let expectedDate = new Date(sortedDates[0]);
+  const expectedDate = new Date(sortedDates[0]);
 
   for (const dateStr of sortedDates) {
     const currentActDate = new Date(dateStr);
@@ -120,8 +120,8 @@ export function useLearningStats(): LearningStats {
     enabled: !!talent?.id,
     staleTime: 45000, // 45s analytics hydration window
     queryFn: async (): Promise<ActiveEnrollment[]> => {
-      // HUD: CORE_SINGLE_ROUNDTRIP_RELATIONAL_SELECT
-      let data: any[];
+      // dashboard: CORE_SINGLE_ROUNDTRIP_RELATIONAL_SELECT
+      let data: unknown[];
       try {
         data = await listActiveTalentEnrollmentsWithModules(talent!.id, 10);
       } catch (error) {
@@ -130,7 +130,7 @@ export function useLearningStats(): LearningStats {
       }
 
       // Format nested structure to conform strictly to target frontend interface definitions
-      return (data || []).map((row: any) => {
+      return (data || []).map((row: unknown) => {
         const contentRaw = row.content;
         let mappedModules: CourseModule[] = [];
 
@@ -197,7 +197,7 @@ export function useLearningStats(): LearningStats {
   });
 
   // --------------------------------------------------------
-  // HUD: METRIC COMPILATION SUMMARY PACK
+  // dashboard: METRIC COMPILATION SUMMARY PACK
   // --------------------------------------------------------
   const currentStreak = calculateStreak(activities);
   const totalMinutes = activities.reduce((sum, act) => sum + (act.minutes_learned || 0), 0);
@@ -213,3 +213,5 @@ export function useLearningStats(): LearningStats {
     isLoading: enrollmentsLoading,
   };
 }
+
+

@@ -1,4 +1,4 @@
-// admin-agent-tools — Phase D1 unified handler for the four admin AI tools:
+﻿// admin-agent-tools â€” Phase D1 unified handler for the four admin AI tools:
 //   approve_payout, reject_payout, force_run_matchmaker, award_credits
 //
 // Strict RBAC: requires authenticated user with `admin` or `super_admin` role.
@@ -21,7 +21,7 @@ const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
 // ---------- Per-tool schemas (Phase Z0 hardening) ----------
 // Loose-by-default: only enforce types the downstream RPCs absolutely need.
-// Relying on uuid() at the wrapper layer was over-strict — RPCs already
+// Relying on uuid() at the wrapper layer was over-strict â€” RPCs already
 // validate ids and return clean errors that the LLM can self-correct on.
 const idLike = z.string().min(1);
 const AdminSchemas: Record<string, z.ZodTypeAny> = {
@@ -71,7 +71,7 @@ const AdminSchemas: Record<string, z.ZodTypeAny> = {
     message: z.string().min(2),
     type: z.string().optional(),
     link: z.string().optional().nullable(),
-    metadata: z.record(z.any()).optional(),
+    metadata: z.record(z.unknown()).optional(),
   }).passthrough(),
   notify_stakeholder: z.object({
     audience_type: z.enum(["admin", "talent", "business", "system"]),
@@ -79,7 +79,7 @@ const AdminSchemas: Record<string, z.ZodTypeAny> = {
     message: z.string().min(2),
     title: z.string().optional().nullable(),
     agent_key: z.string().optional().nullable(),
-    metadata: z.record(z.any()).optional(),
+    metadata: z.record(z.unknown()).optional(),
   }).passthrough(),
 };
 
@@ -101,7 +101,7 @@ serve(async (req) => {
 
     const { data: roleRows } = await admin
       .from("user_roles").select("role").eq("user_id", uid);
-    const roles = (roleRows ?? []).map((r: any) => r.role);
+    const roles = (roleRows ?? []).map((r: unknown) => r.role);
     if (!roles.includes("admin") && !roles.includes("super_admin")) {
       return j({ ok: false, error: "forbidden_admin_only" }, 403);
     }
@@ -111,7 +111,7 @@ serve(async (req) => {
     // wrapped { tool_key, ...input } shape for direct invocation.
     const toolKey: string = String(body.tool_key ?? body._tool_key ?? "").trim();
 
-    // The dispatcher does NOT pass tool_key — infer from URL header instead.
+    // The dispatcher does NOT pass tool_key â€” infer from URL header instead.
     // Fallback: dispatch by which keys are present in the body.
     const dispatch = toolKey || inferTool(body);
     if (!dispatch) return j({ ok: false, error: "unknown_admin_tool" }, 400);
@@ -128,7 +128,7 @@ serve(async (req) => {
       case "approve_payout": {
         const requestId = body.request_id;
         if (!requestId) return j({ ok: false, error: "request_id_required" }, 400);
-        // RPC enforces admin again — defense in depth.
+        // RPC enforces admin again â€” defense in depth.
         const { data, error } = await userClient.rpc("process_instructor_payout", {
           _request_id: requestId,
           _action: "approve",
@@ -177,7 +177,7 @@ serve(async (req) => {
           body: JSON.stringify({ gig_id: body.gig_id ?? null, forced_by: uid }),
         });
         const text = await r.text();
-        let parsed: any;
+        let parsed: unknown;
         try { parsed = JSON.parse(text); } catch { parsed = { raw: text }; }
         if (!r.ok) return j({ ok: false, error: `matchmaker_${r.status}`, result: parsed }, 400);
         return j({ ok: true, result: parsed });
@@ -188,7 +188,7 @@ serve(async (req) => {
         return j({ ok: true, result: { archived: Number(data ?? 0) } });
       }
       case "create_agent": {
-        const payload: Record<string, any> = {
+        const payload: Record<string, unknown> = {
           agent_key: String(body.agent_key).toLowerCase(),
           name: body.name,
           description: body.description,
@@ -216,7 +216,7 @@ serve(async (req) => {
         return j({ ok: true, result: data });
       }
       case "toggle_agent_status": {
-        const patch: Record<string, any> = { updated_at: new Date().toISOString() };
+        const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
         if (typeof body.is_active === "boolean") patch.is_active = body.is_active;
         if (typeof body.kill_switch === "boolean") patch.kill_switch = body.kill_switch;
         if (Object.keys(patch).length === 1) {
@@ -302,7 +302,7 @@ serve(async (req) => {
 
         // 2. Forward to the smart router (fire-and-wait so the agent gets a
         //    real dispatch report it can speak back to the user).
-        let routerResult: any = null;
+        let routerResult: unknown = null;
         try {
           const r = await fetch(`${SUPABASE_URL}/functions/v1/notify-stakeholder`, {
             method: "POST",
@@ -345,13 +345,13 @@ serve(async (req) => {
       default:
         return j({ ok: false, error: `unknown_admin_tool:${dispatch}` }, 400);
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("[admin-agent-tools] fault:", e);
     return j({ ok: false, error: e?.message ?? String(e) }, 500);
   }
 });
 
-function inferTool(body: any): string | null {
+function inferTool(body: unknown): string | null {
   if (body == null || typeof body !== "object") return null;
   if ("request_id" in body && body.action === "reject") return "reject_payout";
   if ("request_id" in body && (body.action === "approve" || !("action" in body))) {
@@ -369,3 +369,5 @@ function j(b: unknown, status = 200) {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
+
+

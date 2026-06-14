@@ -1,4 +1,4 @@
-import * as React from 'npm:react@18.3.1'
+﻿import * as React from 'npm:react@18.3.1'
 import {
   Body, Button, Container, Head, Heading, Html, Preview, Text,
 } from 'npm:@react-email/components@0.0.22'
@@ -19,7 +19,7 @@ const JobApplicationSentEmail = ({ name, job_title, company_name }: JobApplicati
     <Preview>Your application for {job_title || 'a position'} has been submitted</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Application Submitted ✅</Heading>
+        <Heading style={h1}>Application Submitted âœ…</Heading>
         <Text style={text}>
           {name ? `Hi ${name},` : 'Hi there,'}
         </Text>
@@ -28,14 +28,14 @@ const JobApplicationSentEmail = ({ name, job_title, company_name }: JobApplicati
           {company_name ? ` at ${company_name}` : ''} has been submitted successfully.
         </Text>
         <Text style={text}>
-          The employer will review your application and you'll be notified of any updates.
+          The employer will review your application and you'll be notified of unknown updates.
           In the meantime, keep exploring other opportunities!
         </Text>
         <Button style={button} href={SITE_URL + "/app/my-applications"}>
           View My Applications
         </Button>
         <Text style={footer}>
-          Good luck — The {SITE_NAME} Team
+          Good luck â€” The {SITE_NAME} Team
         </Text>
       </Container>
     </Body>
@@ -55,3 +55,5 @@ const h1 = { fontSize: '22px', fontWeight: 'bold' as const, color: '#333333', ma
 const text = { fontSize: '14px', color: '#677280', lineHeight: '1.6', margin: '0 0 16px' }
 const button = { backgroundColor: '#2A7DDE', color: '#ffffff', fontSize: '14px', borderRadius: '8px', padding: '12px 24px', textDecoration: 'none', fontWeight: '600' as const }
 const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+
+

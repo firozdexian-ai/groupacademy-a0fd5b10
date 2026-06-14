@@ -1,8 +1,8 @@
 // Action-based Unipile WhatsApp connector for messaging_channels.
 // Actions:
-//   start_hosted_auth → upsert pending channel + return Unipile hosted-auth URL
-//   verify_and_save   → fetch account from Unipile, mark channel active, register webhook
-//   delete            → remove account from Unipile + delete row
+//   start_hosted_auth â†’ upsert pending channel + return Unipile hosted-auth URL
+//   verify_and_save   â†’ fetch account from Unipile, mark channel active, register webhook
+//   delete            â†’ remove account from Unipile + delete row
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
@@ -35,7 +35,7 @@ async function unipile(dsn: string, key: string, path: string, init: RequestInit
     },
   });
   const text = await resp.text();
-  let body: any = null;
+  let body: unknown = null;
   try { body = text ? JSON.parse(text) : null; } catch { body = { raw: text }; }
   return { ok: resp.ok, status: resp.status, body };
 }
@@ -72,7 +72,7 @@ Deno.serve(async (req) => {
       .from("user_roles")
       .select("role")
       .eq("user_id", user.id);
-    const isAdmin = (roles ?? []).some((r: any) => r.role === "admin");
+    const isAdmin = (roles ?? []).some((r: unknown) => r.role === "admin");
     if (!isAdmin) return json({ error: "Forbidden" }, 403);
 
     const body = await req.json().catch(() => ({}));
@@ -96,7 +96,7 @@ Deno.serve(async (req) => {
 
     if (!agent_key) return json({ error: "agent_key required" }, 400);
 
-    // ───── delete ─────
+    // â”€â”€â”€â”€â”€ delete â”€â”€â”€â”€â”€
     if (action === "delete") {
       const { data: existing } = await admin
         .from("messaging_channels")
@@ -114,7 +114,7 @@ Deno.serve(async (req) => {
       return json({ ok: true });
     }
 
-    // ───── start_hosted_auth ─────
+    // â”€â”€â”€â”€â”€ start_hosted_auth â”€â”€â”€â”€â”€
     if (action === "start_hosted_auth") {
       // Find or create the channel row (UNIQUE on agent_key)
       const { data: existing } = await admin
@@ -124,7 +124,7 @@ Deno.serve(async (req) => {
         .maybeSingle();
 
       let channelId = existing?.id as string | undefined;
-      let webhookSecret: string = (existing?.metadata as any)?.webhook_secret;
+      let webhookSecret: string = (existing?.metadata as unknown)?.webhook_secret;
       if (!webhookSecret) webhookSecret = rand(16);
 
       if (!channelId) {
@@ -153,7 +153,7 @@ Deno.serve(async (req) => {
             label: label || undefined,
             region: region || undefined,
             status: "pending",
-            metadata: { ...(existing?.metadata as any), webhook_secret: webhookSecret },
+            metadata: { ...(existing?.metadata as unknown), webhook_secret: webhookSecret },
           })
           .eq("id", channelId);
       }
@@ -187,9 +187,9 @@ Deno.serve(async (req) => {
     // Helper: activate a channel given a confirmed Unipile account_id
     const activateChannel = async (
       channelId: string,
-      channelMetadata: any,
+      channelMetadata: unknown,
       accId: string,
-      accountBody: any,
+      accountBody: unknown,
     ) => {
       const phone =
         accountBody?.connection_params?.im?.phone_number ||
@@ -215,7 +215,7 @@ Deno.serve(async (req) => {
       const registerWebhook = async () => {
         try {
           const list = await unipile(UNIPILE_DSN, UNIPILE_API_KEY, "/api/v1/webhooks");
-          const items: any[] = Array.isArray(list.body?.items)
+          const items: unknown[] = Array.isArray(list.body?.items)
             ? list.body.items
             : Array.isArray(list.body)
               ? list.body
@@ -263,9 +263,9 @@ Deno.serve(async (req) => {
             .eq("id", channelId);
         }
       };
-      // @ts-ignore EdgeRuntime is provided by Supabase runtime
+      // @ts-expect-error EdgeRuntime is provided by Supabase runtime
       if (typeof EdgeRuntime !== "undefined" && EdgeRuntime.waitUntil) {
-        // @ts-ignore
+        // @ts-expect-error EdgeRuntime waitUntil is non-standard
         EdgeRuntime.waitUntil(registerWebhook());
       } else {
         registerWebhook();
@@ -274,7 +274,7 @@ Deno.serve(async (req) => {
       return { phone };
     };
 
-    // ───── verify_and_save ─────
+    // â”€â”€â”€â”€â”€ verify_and_save â”€â”€â”€â”€â”€
     if (action === "verify_and_save") {
       if (!account_id) return json({ error: "account_id required" }, 400);
 
@@ -298,7 +298,7 @@ Deno.serve(async (req) => {
       return json({ ok: true, phone, account_id, channel_id: channel.id });
     }
 
-    // ───── reconcile ─────
+    // â”€â”€â”€â”€â”€ reconcile â”€â”€â”€â”€â”€
     // Look up the WhatsApp account in Unipile by name = "group-<agent_key>" and activate.
     if (action === "reconcile") {
       const { data: channel } = await admin
@@ -312,7 +312,7 @@ Deno.serve(async (req) => {
       if (!list.ok) {
         return json({ error: list.body?.title || list.body?.message || `Unipile ${list.status}` }, 400);
       }
-      const items: any[] = Array.isArray(list.body?.items)
+      const items: unknown[] = Array.isArray(list.body?.items)
         ? list.body.items
         : Array.isArray(list.body)
           ? list.body
@@ -339,3 +339,5 @@ Deno.serve(async (req) => {
     return json({ error: e instanceof Error ? e.message : "Unknown" }, 500);
   }
 });
+
+

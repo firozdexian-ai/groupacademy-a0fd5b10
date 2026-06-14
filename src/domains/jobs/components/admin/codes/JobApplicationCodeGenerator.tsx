@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { getCurrentUser } from "@/lib/auth";
 import { insertJobApplicationAccessCode } from "@/domains/jobs/repo/jobsRepo";
 import { Button } from "@/components/ui/button";
@@ -25,9 +25,9 @@ import { cn } from "@/lib/utils";
 import { InlineSpinner } from "@/components/common/InlineSpinner";
 
 /**
- * Platform Logic: Credential Synthesis Terminal (Access Codes)
+ * Platform Logic: Credential summary Terminal (Access Codes)
  * High-fidelity orchestrator for generating unique application authorization keys.
- * 2026 Standard: Executive Logic geometry with reinforced collision-retry logic.
+ * 2026 Standard:  geometry with reinforced collision-retry logic.
  */
 
 export function JobApplicationCodeGenerator() {
@@ -84,9 +84,9 @@ export function JobApplicationCodeGenerator() {
 
       setGeneratedCodes(codes);
       toast.success(`Done: ${codes.length} keys synthesized`);
-    } catch (error: any) {
-      console.error("Synthesis Error:", error);
-      toast.error(error.message || "Credential Synthesis Failed");
+    } catch (error: unknown) {
+      console.error("summary Error:", error);
+      toast.error(error.message || "Credential summary Failed");
     } finally {
       setIsGenerating(false);
     }
@@ -123,7 +123,7 @@ export function JobApplicationCodeGenerator() {
           </div>
           <div className="text-left">
             <CardTitle className="text-3xl font-semibold uppercase tracking-tight italic">
-              Credential Synthesis
+              Credential summary
             </CardTitle>
             <CardDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
               Generate up to 20 access codes
@@ -236,3 +236,5 @@ export function JobApplicationCodeGenerator() {
     </Card>
   );
 }
+
+

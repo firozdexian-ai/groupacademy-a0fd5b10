@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import { updateAiAgent } from "@/domains/agents/repo/agentsRepo";
 import { agentBlueprint } from "@/domains/agents/api/agentsApi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +13,7 @@ import { Loader2, Wand2, Plus, Trash2, BrainCircuit, SplitSquareHorizontal, Shie
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy — Career Guidance System: Agent Instruction Panel Component
+ * Group Academy â€” Career Guidance System: Agent Instruction Panel Component
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/studio?panel=brain (Agent Performance Tuning Surface)
  * Operations Mode: Automated Efficiency plain-language instruction parser and multi-variant prompt engine.
@@ -80,7 +80,7 @@ export function AgentBrainPanel({ agent, onSaved }: AgentBrainPanelProps) {
       const data = await agentBlueprint({ brief, audience: agent.audience });
       if (!data?.proposal) throw new Error("No optimization configuration models returned");
       setProposal(data.proposal as Proposal);
-    } catch (e: any) {
+    } catch (e: unknown) {
       trackError("agent-brain-panel-generation-failure", { error: e.message, agentId: agent.id });
       toast({ title: "Configuration generation failed", description: e.message, variant: "destructive" });
     } finally {
@@ -106,7 +106,7 @@ export function AgentBrainPanel({ agent, onSaved }: AgentBrainPanelProps) {
       setProposal(null);
       setBrief("");
       onSaved?.();
-    } catch (err: any) {
+    } catch (err: unknown) {
       trackError("agent-brain-panel-apply-blueprint-failure", { error: err.message, agentId: agent.id });
       toast({ title: "Application failed", description: err.message, variant: "destructive" });
     } finally {
@@ -120,7 +120,7 @@ export function AgentBrainPanel({ agent, onSaved }: AgentBrainPanelProps) {
       setActiveVariant(key);
       toast({ title: `Prompt variant ${key} is now live` });
       onSaved?.();
-    } catch (error: any) {
+    } catch (error: unknown) {
       trackError("agent-brain-panel-set-active-variant-failure", { error: error.message, agentId: agent.id, key });
       toast({ title: "Activation failed", description: error.message, variant: "destructive" });
     }
@@ -147,7 +147,7 @@ export function AgentBrainPanel({ agent, onSaved }: AgentBrainPanelProps) {
       setNewVariantPrompt("");
       toast({ title: `Experimental variant ${key} successfully added` });
       onSaved?.();
-    } catch (error: any) {
+    } catch (error: unknown) {
       trackError("agent-brain-panel-add-variant-failure", { error: error.message, agentId: agent.id, key });
       toast({ title: "Saving instructions variant failed", description: error.message, variant: "destructive" });
     }
@@ -168,7 +168,7 @@ export function AgentBrainPanel({ agent, onSaved }: AgentBrainPanelProps) {
       await updateAiAgent(agent.id, { prompt_variants: next });
       toast({ title: `Variant ${key} removed` });
       onSaved?.();
-    } catch (error: any) {
+    } catch (error: unknown) {
       trackError("agent-brain-panel-delete-variant-failure", { error: error.message, agentId: agent.id, key });
       toast({ title: "Deletion failed", description: error.message, variant: "destructive" });
     }
@@ -427,3 +427,5 @@ export function AgentBrainPanel({ agent, onSaved }: AgentBrainPanelProps) {
 }
 
 export default AgentBrainPanel;
+
+

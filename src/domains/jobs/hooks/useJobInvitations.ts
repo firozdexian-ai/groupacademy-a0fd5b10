@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCurrentUser } from "@/lib/auth";
 import { notifyHiringEvent } from "@/domains/jobs/api/jobsApi";
 import { insertJobInvitation } from "@/domains/jobs/repo/jobsRepo";
@@ -31,7 +31,7 @@ export function useInviteToApply() {
       const user = await getCurrentUser();
       if (!user) throw new Error("AUTH_REQUIRED: Please sign in to invite talent.");
 
-      // HUD: EXECUTING_JOB_INVITATION_INSERT
+      // dashboard: EXECUTING_JOB_INVITATION_INSERT
       let data: { id: string };
       try {
         data = await insertJobInvitation({
@@ -41,13 +41,13 @@ export function useInviteToApply() {
           note: input.note ?? null,
           invited_by: user.id,
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: job_invitations insert failed.", error);
         throw error;
       }
 
 
-      // HUD: EDGE_INVOCATION_NOTIFICATION_HANDSHAKE
+      // dashboard: EDGE_INVOCATION_NOTIFICATION_HANDSHAKE
       try {
         await notifyHiringEvent({
           kind: "job_invitation",
@@ -72,8 +72,10 @@ export function useInviteToApply() {
       queryClient.invalidateQueries({ queryKey: ["employer-pipeline"] });
       toast.success("Invitation sent to candidate.");
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       toast.error(err.message ?? "Failed to send invitation. Handshake timeout.");
     },
   });
 }
+
+

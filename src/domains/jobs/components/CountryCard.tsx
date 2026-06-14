@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,22 +9,22 @@ import { cn } from "@/lib/utils";
 import type { CountryWithSignal } from "@/hooks/useCountriesWithSignal";
 
 const COUNTRY_FLAGS: Record<string, string> = {
-  Bangladesh: "🇧🇩",
-  India: "🇮🇳",
-  Pakistan: "🇵🇰",
-  Singapore: "🇸🇬",
-  Japan: "🇯🇵",
-  "United Arab Emirates": "🇦🇪",
-  "Saudi Arabia": "🇸🇦",
-  Ireland: "🇮🇪",
-  "United States": "🇺🇸",
-  "United Kingdom": "🇬🇧",
-  Canada: "🇨🇦",
-  Australia: "🇦🇺",
-  Germany: "🇩🇪",
-  Netherlands: "🇳🇱",
-  Malaysia: "🇲🇾",
-  Qatar: "🇶🇦",
+  Bangladesh: "ðŸ‡§ðŸ‡©",
+  India: "ðŸ‡®ðŸ‡³",
+  Pakistan: "ðŸ‡µðŸ‡°",
+  Singapore: "ðŸ‡¸ðŸ‡¬",
+  Japan: "ðŸ‡¯ðŸ‡µ",
+  "United Arab Emirates": "ðŸ‡¦ðŸ‡ª",
+  "Saudi Arabia": "ðŸ‡¸ðŸ‡¦",
+  Ireland: "ðŸ‡®ðŸ‡ª",
+  "United States": "ðŸ‡ºðŸ‡¸",
+  "United Kingdom": "ðŸ‡¬ðŸ‡§",
+  Canada: "ðŸ‡¨ðŸ‡¦",
+  Australia: "ðŸ‡¦ðŸ‡º",
+  Germany: "ðŸ‡©ðŸ‡ª",
+  Netherlands: "ðŸ‡³ðŸ‡±",
+  Malaysia: "ðŸ‡²ðŸ‡¾",
+  Qatar: "ðŸ‡¶ðŸ‡¦",
 };
 
 interface Props {
@@ -34,7 +34,7 @@ interface Props {
 }
 
 /**
- * CountryCard — country tile with active job count, top cities, and top employers.
+ * CountryCard â€” country tile with active job count, top cities, and top employers.
  */
 export function CountryCard({ country, isUserCountry = false, onCityClick }: Props) {
   const queryClient = useQueryClient();
@@ -82,7 +82,7 @@ export function CountryCard({ country, isUserCountry = false, onCityClick }: Pro
     }
   };
 
-  const flagEmojiContext = COUNTRY_FLAGS[country.country] ?? "🌍";
+  const flagEmojiContext = COUNTRY_FLAGS[country.country] ?? "ðŸŒ";
   const activeRolesTotalCount = Number(country.active_jobs || 0);
 
   return (
@@ -203,3 +203,4 @@ export function CountryCard({ country, isUserCountry = false, onCityClick }: Pro
     </Card>
   );
 }
+

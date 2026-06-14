@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { listActiveLanguages, listMyTalentLanguageLevels } from "@/domains/talent/repo/talentRepo";
@@ -30,7 +30,7 @@ interface TalentLanguageLevel {
 /**
  * GroUp Academy: Language Acquisition Hub (LanguagesHub)
  * Hardened responsive directory mapping language proficiency levels to practice channels and instructor conduits.
- * Version: Launch Candidate · Phase Z1 Production Contract Sealed
+ * Version: Launch Candidate Â· Phase Z1 Production Contract Sealed
  */
 export default function LanguagesHub() {
  // =========================================================================
@@ -62,7 +62,7 @@ export default function LanguagesHub() {
 
  return (
  <div className={cn(PAGE_SHELL, "max-w-3xl mx-auto space-y-6 antialiased block transform-gpu w-full")}>
- {/* HUD LEVEL 1: HUB HEADER BLOCK */}
+ {/* dashboard LEVEL 1: HUB HEADER BLOCK */}
  <header className="space-y-1 block border-b border-border/10 pb-4">
  <div className="flex items-center gap-2">
  <Brain className="h-5 w-5 text-primary" />
@@ -73,7 +73,7 @@ export default function LanguagesHub() {
  </p>
  </header>
 
- {/* HUD LEVEL 2: DIRECTORY GRID ITERATOR */}
+ {/* dashboard LEVEL 2: DIRECTORY GRID ITERATOR */}
  {isRegistryLoading ? (
  <div className="space-y-2.5 block w-full">
  {[1, 2, 3, 4].map((i) => (
@@ -99,7 +99,7 @@ export default function LanguagesHub() {
  variant="secondary"
  className="font-mono text-[9px] font-black uppercase mt-1 px-1.5 h-4.5 rounded-xs select-none"
  >
- {userProficiency.cefr_level} {userProficiency.source !== "self" && "✓"}
+ {userProficiency.cefr_level} {userProficiency.source !== "self" && "âœ“"}
  </Badge>
  )}
  </div>
@@ -135,3 +135,4 @@ export default function LanguagesHub() {
  </div>
  );
 }
+

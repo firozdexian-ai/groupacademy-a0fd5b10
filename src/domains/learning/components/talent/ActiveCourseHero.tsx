@@ -33,29 +33,30 @@ export function ActiveCourseHero({ enrollment, upNextEnrollments = [] }: ActiveC
     }
   }, [enrollment]);
 
-  if (!enrollment || !enrollment.content) {
-    return null;
-  }
-
-  const { content, progress = 0, modules = [] } = enrollment;
-
   // Defensive Indexing Guard tracking module structural changes cleanly
   const currentModuleIndex = useMemo(() => {
-    if (!enrollment.current_module_id || !modules.length) return 0;
+    const modulesList = enrollment?.modules || [];
+    if (!enrollment?.current_module_id || !modulesList.length) return 0;
 
-    const calculatedIndex = modules.findIndex((m) => m.id === enrollment.current_module_id);
+    const calculatedIndex = modulesList.findIndex((m) => m.id === enrollment.current_module_id);
 
     if (calculatedIndex === -1) {
       trackError(`Active curriculum module missing or deleted: [${enrollment.current_module_id}]`, {
         component: "ActiveCourseHero",
         action: "calculate_current_module_index",
-        enrollmentId: enrollment.id,
+        enrollmentId: enrollment?.id,
       });
       return 0; // Fallback gracefully to stable initial index state
     }
 
     return Math.max(0, calculatedIndex);
-  }, [enrollment.current_module_id, modules, enrollment.id]);
+  }, [enrollment?.current_module_id, enrollment?.modules, enrollment?.id]);
+
+  if (!enrollment || !enrollment.content) {
+    return null;
+  }
+
+  const { content, progress = 0, modules = [] } = enrollment;
 
   const currentModule = modules[currentModuleIndex];
   const nextModules = modules.slice(currentModuleIndex + 1, currentModuleIndex + 3);
@@ -305,3 +306,4 @@ export function ActiveCourseHero({ enrollment, upNextEnrollments = [] }: ActiveC
     </section>
   );
 }
+

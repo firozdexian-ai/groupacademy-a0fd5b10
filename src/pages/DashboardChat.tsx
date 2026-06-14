@@ -1,5 +1,5 @@
-/**
- * Dashboard / Chat — WhatsApp-style unified conversational agent surface.
+﻿/**
+ * Dashboard / Chat â€” WhatsApp-style unified conversational agent surface.
  * Sibling to the data-heavy `/dashboard`. All admin AI agents live here
  * with persistent per-admin threads.
  */
@@ -23,7 +23,7 @@ export default function DashboardChat() {
     initialAgent && ADMIN_AGENTS_BY_KEY[initialAgent] ? initialAgent : ADMIN_AGENTS[0].key,
   );
   const { threads, reload } = useAdminAgentThreads();
-  const [debugInfo, setDebugInfo] = useState<any>(null);
+  const [debugInfo, setDebugInfo] = useState<unknown>(null);
 
   useEffect(() => {
     (async () => {
@@ -37,7 +37,7 @@ export default function DashboardChat() {
           roles: r.map(x => x.role).join(", ") || "none",
           tokenExists: !!t,
         });
-      } catch (err: any) {
+      } catch (err: unknown) {
         setDebugInfo({ error: err.message });
       }
     })();
@@ -66,7 +66,7 @@ export default function DashboardChat() {
         <div className="flex-1">
           <div className="font-bold text-sm">Agentic Dashboard</div>
           <div className="text-[11px] text-muted-foreground">
-            All conversational agents · persistent threads
+            All conversational agents Â· persistent threads
           </div>
         </div>
       </header>
@@ -107,3 +107,5 @@ export default function DashboardChat() {
     </div>
   );
 }
+
+

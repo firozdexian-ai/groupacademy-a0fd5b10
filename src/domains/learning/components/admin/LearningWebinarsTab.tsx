@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useLearningGraph } from "./hooks/useLearningGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,8 +20,8 @@ export function LearningWebinarsTab() {
  } = useLearningGraph();
  const { data, isLoading } = learningGraphQuery;
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ status: "draft", content_type: "live_webinar" });
- const [sessionsRow, setSessionsRow] = useState<any>(null);
+ const [draft, setDraft] = useState<unknown>({ status: "draft", content_type: "live_webinar" });
+ const [sessionsRow, setSessionsRow] = useState<unknown>(null);
 
  // Filter for webinars only
  const webinars = data?.content?.filter((c) => c.content_type === "live_webinar") || [];
@@ -216,7 +216,7 @@ export function LearningWebinarsTab() {
  <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl p-6 border border-border/60">
  <DialogHeader>
  <DialogTitle className="text-xl font-medium italic tracking-tight text-destructive flex items-center gap-2">
- <CalendarClock className="h-5 w-5" /> Sessions — {sessionsRow?.title}
+ <CalendarClock className="h-5 w-5" /> Sessions â€” {sessionsRow?.title}
  </DialogTitle>
  </DialogHeader>
  {sessionsRow && (
@@ -232,3 +232,5 @@ export function LearningWebinarsTab() {
 }
 
 export default LearningWebinarsTab;
+
+

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+﻿import { useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -257,7 +257,7 @@ export function AdaptiveSnapshotCard({ moduleId, contentId, compact = false, cla
               Recommended focus areas
             </span>
             <div className="space-y-1 w-full min-w-0">
-              {data.weakest.map((weakNodeItem: any, index: number) => {
+              {data.weakest.map((weakNodeItem: unknown, index: number) => {
                 if (!weakNodeItem || !weakNodeItem.topic_tag) return null;
                 const calculatedRowKey = `${weakNodeItem.module_id || "mod"}_${weakNodeItem.topic_tag}_row_${index}`;
 
@@ -312,3 +312,5 @@ export function AdaptiveSnapshotCard({ moduleId, contentId, compact = false, cla
     </Card>
   );
 }
+
+

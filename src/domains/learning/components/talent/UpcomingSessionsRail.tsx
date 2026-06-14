@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+﻿import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Upcoming Live Cohort Sessions Rail (UpcomingSessionsRail)
  * An authoritative rail orchestrating near-term live workspace engagements and deep link joins.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function UpcomingSessionsRail() {
   const queryClient = useQueryClient();
@@ -57,7 +57,7 @@ export function UpcomingSessionsRail() {
 
   return (
     <section className="space-y-2.5 max-w-full w-full text-left select-none sm:select-text antialiased transform-gpu">
-      {/* HUD HEADER TITLE BAR METADATA */}
+      {/* dashboard HEADER TITLE BAR METADATA */}
       <div className="flex items-center justify-between px-0.5 select-none w-full leading-none">
         <h2 className="text-xs font-bold uppercase tracking-wider text-foreground/80 inline-flex items-center gap-1.5 leading-none">
           <Radio className="h-3.5 w-3.5 text-destructive shrink-0 stroke-[2.2]" />
@@ -73,7 +73,7 @@ export function UpcomingSessionsRail() {
 
       {/* DYNAMIC CARD STACK LAYER VIEW */}
       <div className="space-y-2 w-full min-w-0">
-        {data.map((sessionItem: any) => {
+        {data.map((sessionItem: unknown) => {
           if (!sessionItem || !sessionItem.session_id) return null;
 
           const scheduleStartTimeMs = new Date(sessionItem.scheduled_date).getTime();
@@ -143,3 +143,5 @@ export function UpcomingSessionsRail() {
     </section>
   );
 }
+
+

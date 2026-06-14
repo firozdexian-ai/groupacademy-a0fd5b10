@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+﻿import { useEffect, useRef, useState, useCallback } from "react";
 import { hypeContent as rpcHypeContent } from "@/domains/feed/repo/feedRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { useToast } from "@/hooks/use-toast";
@@ -50,7 +50,7 @@ export function useHype(
 
     if (sent > 0) {
       toast({
-        title: sent === 1 ? "🔥 Hype sent · -1 credit" : `🔥 +${sent} Hype · -${sent} credits`,
+        title: sent === 1 ? "ðŸ”¥ Hype sent Â· -1 credit" : `ðŸ”¥ +${sent} Hype Â· -${sent} credits`,
       });
     }
 
@@ -100,7 +100,7 @@ export function useHype(
     inFlight.current += 1;
     setIsHyping(true);
 
-    let error: any = null;
+    let error: unknown = null;
     try {
       await rpcHypeContent({ _content_type: contentType, _content_id: contentId });
     } catch (e) {
@@ -151,3 +151,4 @@ export function useHype(
 
   return { count, hype, isHyping };
 }
+

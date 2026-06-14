@@ -1,7 +1,7 @@
-/**
+﻿/**
  * GroUp Academy: AI Tools Hub Surface (ToolsView)
  * CTO Reference: Authoritative hub container displaying talent career optimization assets.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  * Enhancements: Performance layout tracking, system anomaly filters, and telemetry synchronization.
  */
 import { useState } from "react";
@@ -49,56 +49,56 @@ const TOOL_META: Record<
     cost: 15,
     icon: FileText,
     href: "/app/tools/cv-maker",
-  } as any,
+  } as unknown,
   answers: {
     title: "Application answers",
     description: "Draft tailored answers to application questions.",
     cost: 10,
     icon: ClipboardList,
     href: "/app/tools/application-helper",
-  } as any,
+  } as unknown,
   assessment: {
     title: "Career assessment",
     description: "Get a readiness score and skill-gap plan.",
     cost: 50,
     icon: Target,
     href: "/app/tools/assessment",
-  } as any,
+  } as unknown,
   interview: {
     title: "Mock interview",
     description: "Practice AI-generated questions for a role.",
     cost: 50,
     icon: Zap,
     href: "/app/tools/mock-interview",
-  } as any,
+  } as unknown,
   salary: {
     title: "Salary analysis",
     description: "Benchmark your worth in the market.",
     cost: 50,
     icon: Coins,
     href: "/app/tools/salary-analysis",
-  } as any,
+  } as unknown,
   portfolio: {
     title: "Portfolio builder",
     description: "A polished portfolio site, built for you.",
     cost: 500,
     icon: Sparkles,
     href: "/app/tools/portfolio",
-  } as any,
+  } as unknown,
   score: {
     title: "Score me vs job",
     description: "See how well you match a saved or recent job.",
     cost: 10,
     icon: TrendingUp,
-  } as any,
+  } as unknown,
 };
 
 const REASON_COPY: Record<string, string> = {
-  no_cv: "Start with a clean CV — it boosts every match.",
+  no_cv: "Start with a clean CV â€” it boosts every match.",
   low_completeness: "Build a stronger profile to unlock better matches.",
-  saved_recent: "You saved a job recently — let's draft your answers.",
+  saved_recent: "You saved a job recently â€” let's draft your answers.",
   saved_unscored: "You have unscored saved jobs. See your fit.",
-  no_assessment_recent: "It's been a while — get a fresh readiness score.",
+  no_assessment_recent: "It's been a while â€” get a fresh readiness score.",
   no_salary_recent: "Check your market salary range.",
   default: "Try a mock interview to sharpen your delivery.",
 };
@@ -117,7 +117,7 @@ export function ToolsView() {
       return;
     }
 
-    const meta = TOOL_META[key] as any;
+    const meta = TOOL_META[key] as unknown;
     if (meta?.href) {
       try {
         navigate(meta.href);
@@ -145,7 +145,7 @@ export function ToolsView() {
           </div>
           {loadingNext ? (
             <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground animate-pulse py-1">
-              <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" /> Finding your best next step…
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" /> Finding your best next stepâ€¦
             </div>
           ) : nextBest ? (
             <NextBestCard
@@ -155,7 +155,7 @@ export function ToolsView() {
             />
           ) : (
             <p className="text-xs sm:text-sm font-medium text-muted-foreground leading-normal py-0.5">
-              Pick any tool below to get started — we'll personalize this recommendation as you use them.
+              Pick unknown tool below to get started â€” we'll personalize this recommendation as you use them.
             </p>
           )}
         </CardContent>
@@ -166,7 +166,7 @@ export function ToolsView() {
         <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-1">All AI tools</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 transform-gpu">
           {tools.map((key) => {
-            const meta = TOOL_META[key] as any;
+            const meta = TOOL_META[key] as unknown;
             const Icon = meta.icon;
             return (
               <button
@@ -210,7 +210,7 @@ export function ToolsView() {
           <CardContent className="p-2 w-full">
             {loadingRuns ? (
               <div className="flex items-center gap-2 p-4 text-xs font-semibold text-muted-foreground animate-pulse">
-                <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" /> Loading activity ledger…
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" /> Loading activity ledgerâ€¦
               </div>
             ) : !recent || recent.length === 0 ? (
               <p className="text-xs sm:text-sm font-medium text-muted-foreground/60 p-6 text-center italic">
@@ -219,7 +219,7 @@ export function ToolsView() {
             ) : (
               <ul className="divide-y divide-border/20 w-full">
                 {recent.map((r) => {
-                  const meta = TOOL_META[r.tool_key] as any;
+                  const meta = TOOL_META[r.tool_key] as unknown;
                   const Icon = meta?.icon || Sparkles;
                   return (
                     <li key={r.id} className="w-full">
@@ -236,7 +236,7 @@ export function ToolsView() {
                             {meta?.title || r.tool_key}
                           </p>
                           <p className="text-[11px] font-medium text-muted-foreground/70 mt-0.5 tabular-nums">
-                            {formatDistanceToNow(new Date(r.created_at), { addSuffix: true })} · {r.cost_credits} cr
+                            {formatDistanceToNow(new Date(r.created_at), { addSuffix: true })} Â· {r.cost_credits} cr
                           </p>
                         </div>
                         <ArrowRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary/70 group-hover:translate-x-0.5 transition-all shrink-0" />
@@ -256,7 +256,7 @@ export function ToolsView() {
 }
 
 function NextBestCard({ toolKey, reason, onPick }: { toolKey: ToolKey; reason: string; onPick: () => void }) {
-  const meta = TOOL_META[toolKey] as any;
+  const meta = TOOL_META[toolKey] as unknown;
   const Icon = meta?.icon || Sparkles;
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background/30 p-4 rounded-xl border border-border/20 shadow-inner w-full">
@@ -282,3 +282,5 @@ function NextBestCard({ toolKey, reason, onPick }: { toolKey: ToolKey; reason: s
     </div>
   );
 }
+
+

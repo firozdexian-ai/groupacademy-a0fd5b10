@@ -1,4 +1,4 @@
-/**
+﻿/**
  * IR (Investor Relations) Domain: Public Interface Surface
  * Deep imports remain valid; this barrel exposes the admin shell-routed entries,
  * hooks, and API manifest. Internal helpers (PipelineCard, MetricEntrySheet, etc.)
@@ -19,3 +19,4 @@ export * from "./components/admin/hooks/useIRPipeline";
 
 export { irApi } from "./api/manifest";
 export type { IrApi } from "./api/manifest";
+

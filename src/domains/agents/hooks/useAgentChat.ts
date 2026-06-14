@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+﻿import { useState, useCallback, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getAccessToken } from "@/lib/auth";
@@ -59,8 +59,8 @@ export function useAgentChat(): UseAgentChatReturn {
   const saveConversation = useCallback(
     async (newMessages: AgentMessage[], additionalCredits: number = 0) => {
       if (!session) return;
-      const updatePayload: any = {
-        messages: newMessages as unknown as any,
+      const updatePayload: unknown = {
+        messages: newMessages as unknown as unknown,
         updated_at: new Date().toISOString(),
       };
 
@@ -292,7 +292,7 @@ export function useAgentChat(): UseAgentChatReturn {
 
         // Post-Response Credit Settlement Sync
         if (perResponseCost > 0 && assistantBuffer) {
-          let handshake: any = null;
+          let handshake: unknown = null;
           try {
             handshake = await deductCreditsRpc({
               amount: perResponseCost,
@@ -304,7 +304,7 @@ export function useAgentChat(): UseAgentChatReturn {
           } catch (deductionError) {
             console.warn("Credit settlement pipeline delay or missing transaction return:", deductionError);
           }
-          if (handshake && !(handshake as any).success) {
+          if (handshake && !(handshake as unknown).success) {
             toast.error("Session suspended: Your credit balance has been exhausted.");
           }
         }
@@ -348,3 +348,5 @@ export function useAgentChat(): UseAgentChatReturn {
     perResponseCost,
   };
 }
+
+

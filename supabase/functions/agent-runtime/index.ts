@@ -1,4 +1,4 @@
-// Agent OS — Unified Runtime
+﻿// Agent OS â€” Unified Runtime
 // Single edge function that powers all agent conversations across talent / company / admin / headless.
 // - Loads agent config + allowed tools + KB
 // - Charges connection fee on first contact, per-message + per-tool fees afterward
@@ -25,7 +25,7 @@ interface RunRequest {
   thread_id?: string;
   message?: string;
   context?: Record<string, unknown>;
-  // WaaS — Workforce-as-a-Service flow
+  // WaaS â€” Workforce-as-a-Service flow
   instance_id?: string;
   source?: string; // e.g. "telegram"
   chat_id?: string | number;
@@ -50,18 +50,18 @@ serve(async (req) => {
 
     const body = (await req.json()) as RunRequest;
 
-    // ────────────────────────────────────────────────────────────────────
-    // WaaS (Workforce-as-a-Service) flow — multi-tenant Hired Instances.
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // WaaS (Workforce-as-a-Service) flow â€” multi-tenant Hired Instances.
     // Triggered when the caller (typically the workforce-*-router edge
     // function) provides an `instance_id`. We do NOT touch the legacy
     // `ai_agents` table here. Auth is implicit: only trusted service-role
     // callers (other edge functions) can reach this branch in practice
     // because the router validates channel credentials before dispatch.
-    // ────────────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if (body?.instance_id) {
       try {
         return await runWorkforceInstance(body, admin);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("[agent-runtime/waas] fault", err);
         return json({ error: err?.message || "WAAS_FAULT" }, 500);
       }
@@ -73,13 +73,13 @@ serve(async (req) => {
 
     let subjectKind = "talent";
     let subjectId: string | null = null;
-    let talentRow: any = null;
+    let talentRow: unknown = null;
     let isAdmin = false;
-    let user: any = null;
+    let user: unknown = null;
 
     if (isServiceCall) {
-      // Server-to-server (cron / system) — trust the payload's subject_id.
-      const sid = (body as any).subject_id as string | undefined;
+      // Server-to-server (cron / system) â€” trust the payload's subject_id.
+      const sid = (body as unknown).subject_id as string | undefined;
       if (!sid) return json({ error: "subject_id required for service call" }, 400);
       isAdmin = true;
       subjectKind = "admin";
@@ -97,11 +97,11 @@ serve(async (req) => {
       const { data: adminFlag } = await admin.rpc("has_any_admin_role", { _user_id: user.id });
       isAdmin = adminFlag === true;
 
-      if (isAdmin && (body as any).subject_kind !== "company") {
+      if (isAdmin && (body as unknown).subject_kind !== "company") {
         subjectKind = "admin";
         subjectId = user.id;
-      } else if ((body as any).subject_kind === "company" && (body as any).subject_id) {
-      const companyId = (body as any).subject_id as string;
+      } else if ((body as unknown).subject_kind === "company" && (body as unknown).subject_id) {
+      const companyId = (body as unknown).subject_id as string;
       const { data: membership } = await admin
         .from("company_members")
         .select("id")
@@ -146,7 +146,7 @@ serve(async (req) => {
 
       if (!existingConn) {
         const fee = Number(agent.connection_fee);
-        // Companies are not billed in MVP — talent-only charges
+        // Companies are not billed in MVP â€” talent-only charges
         if (subjectKind === "talent") {
           const charge = await chargeTalent(admin, subjectId!, fee, "agent_connection", agent.agent_key, `Connection: ${agent.name}`);
           if (!charge.ok) return json({ error: "INSUFFICIENT_CREDITS_CONNECTION", required: fee, available: charge.balance }, 402);
@@ -199,7 +199,7 @@ serve(async (req) => {
         .select("status")
         .eq("id", threadId!)
         .maybeSingle();
-      const tStatus = (threadRow as any)?.status ?? "ai";
+      const tStatus = (threadRow as unknown)?.status ?? "ai";
       if (tStatus === "human") {
         return json({ success: true, action: "skipped", reason: "human_in_control", thread_id: threadId });
       }
@@ -210,13 +210,13 @@ serve(async (req) => {
 
     // Resolve system prompt (A/B variant)
     const variant = agent.active_prompt_variant || "A";
-    const variantPrompt = (agent.prompt_variants as any)?.[variant];
+    const variantPrompt = (agent.prompt_variants as unknown)?.[variant];
     const baseSystem = variantPrompt || agent.system_prompt || "You are a helpful assistant.";
 
-    // Build subject context — admin caller, company workspace, or talent profile.
+    // Build subject context â€” admin caller, company workspace, or talent profile.
     let subjectCtx = "";
     if (subjectKind === "admin") {
-      subjectCtx = `\n\n## Caller\nAdmin user (id: ${user.id}, email: ${user.email ?? "—"})\nYou are speaking inside the internal admin Agentic Dashboard. The caller is platform staff with full read access; do not ask them to authenticate, and prefer concise, operational answers.`;
+      subjectCtx = `\n\n## Caller\nAdmin user (id: ${user.id}, email: ${user.email ?? "â€”"})\nYou are speaking inside the internal admin Agentic Dashboard. The caller is platform staff with full read access; do not ask them to authenticate, and prefer concise, operational answers.`;
     } else if (subjectKind === "company") {
       subjectCtx = await buildCompanyContext(admin, subjectId!, body.context);
     } else {
@@ -224,17 +224,17 @@ serve(async (req) => {
     }
     const systemPrompt = baseSystem + subjectCtx;
 
-    // Load tools — admins use agent_tool_bindings as the source of truth (Step 4 wiring),
+    // Load tools â€” admins use agent_tool_bindings as the source of truth (Step 4 wiring),
     // every other subject kind keeps the legacy allowed_tools array on ai_agents.
-    let tools: any[] = [];
+    let tools: unknown[] = [];
     if (subjectKind === "admin") {
       const { data: bindings } = await admin
         .from("agent_tool_bindings")
         .select("agent_tools!inner(tool_key, name, description, input_schema, default_credit_cost, min_level, handler_kind, handler_ref, is_active, status)")
         .eq("agent_id", agent.id);
       tools = (bindings ?? [])
-        .map((b: any) => b.agent_tools)
-        .filter((t: any) => t && t.is_active && (t.status ?? "available") === "available");
+        .map((b: unknown) => b.agent_tools)
+        .filter((t: unknown) => t && t.is_active && (t.status ?? "available") === "available");
     } else {
       const allowedToolKeys: string[] = agent.allowed_tools || [];
       tools = await loadTools(admin, allowedToolKeys, agent.agent_level);
@@ -246,14 +246,14 @@ serve(async (req) => {
       ? `${systemPrompt}\n\n## Knowledge Base Context\n${ragContext}`
       : systemPrompt;
 
-    const convo: any[] = [
+    const convo: unknown[] = [
       { role: "system", content: finalSystem },
-      ...(history ?? []).map((m: any) => ({ role: m.role, content: m.content || "" })),
+      ...(history ?? []).map((m: unknown) => ({ role: m.role, content: m.content || "" })),
       { role: "user", content: body.message },
     ];
 
     const aiToolSchema = tools.length
-      ? tools.map((t: any) => ({
+      ? tools.map((t: unknown) => ({
           type: "function",
           function: {
             name: String(t.tool_key).replace(/[^a-zA-Z0-9_-]/g, "_"),
@@ -267,7 +267,7 @@ serve(async (req) => {
       toolKeyByFn[String(t.tool_key).replace(/[^a-zA-Z0-9_-]/g, "_")] = t.tool_key;
     }
 
-    // Tool-call execution loop (company subject only — talent agents are streamed direct
+    // Tool-call execution loop (company subject only â€” talent agents are streamed direct
     // for now to preserve their existing behaviour). Mirrors ai-agent-chat T2 pattern.
     const invalidations = new Set<string>();
     const TOOL_INVALIDATIONS_COMPANY: Record<string, string[]> = {
@@ -317,9 +317,9 @@ serve(async (req) => {
         for (const call of toolCalls) {
           const fnName = call.function?.name;
           const toolKey = toolKeyByFn[fnName];
-          let parsedArgs: any = {};
+          let parsedArgs: unknown = {};
           try { parsedArgs = JSON.parse(call.function?.arguments ?? "{}"); } catch { /* ignore */ }
-          let toolResult: any;
+          let toolResult: unknown;
           if (!toolKey) {
             toolResult = { ok: false, error: "tool_not_bound" };
           } else {
@@ -335,7 +335,7 @@ serve(async (req) => {
               });
               const txt = await r.text();
               try { toolResult = JSON.parse(txt); } catch { toolResult = { ok: r.ok, raw: txt }; }
-            } catch (e: any) {
+            } catch (e: unknown) {
               toolResult = { ok: false, error: String(e?.message || e) };
             }
           }
@@ -352,8 +352,8 @@ serve(async (req) => {
       }
     }
 
-    // Final streamed completion (no tools advertised on the final pass for company —
-    // the loop above already executed any required tools).
+    // Final streamed completion (no tools advertised on the final pass for company â€”
+    // the loop above already executed unknown required tools).
     // ---------- Admin tool-execution loop ----------
     // Dispatches via the central `agent-tool-execute`, which forwards to
     // `admin-agent-tools` (writes) or `admin-readonly-tools` (telemetry).
@@ -386,9 +386,9 @@ serve(async (req) => {
         for (const call of toolCalls) {
           const fnName = call.function?.name;
           const toolKey = toolKeyByFn[fnName];
-          let parsedArgs: any = {};
+          let parsedArgs: unknown = {};
           try { parsedArgs = JSON.parse(call.function?.arguments ?? "{}"); } catch { /* ignore */ }
-          let toolResult: any = { ok: false, error: "tool_not_bound" };
+          let toolResult: unknown = { ok: false, error: "tool_not_bound" };
           if (toolKey) {
             try {
               const r = await fetch(`${SUPABASE_URL}/functions/v1/agent-tool-execute`, {
@@ -407,7 +407,7 @@ serve(async (req) => {
               });
               const txt = await r.text();
               try { toolResult = JSON.parse(txt); } catch { toolResult = { ok: r.ok, raw: txt }; }
-            } catch (e: any) {
+            } catch (e: unknown) {
               toolResult = { ok: false, error: String(e?.message || e) };
             }
           }
@@ -420,7 +420,7 @@ serve(async (req) => {
       }
     }
 
-    // Final streamed completion. Strip tools for company AND admin — both ran
+    // Final streamed completion. Strip tools for company AND admin â€” both ran
     // their tool loops above, so the final pass is plain text synthesis.
     const stripToolsOnFinal = subjectKind === "company" || subjectKind === "admin";
     const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -462,7 +462,7 @@ serve(async (req) => {
         "X-Thread-Id": threadId!,
       },
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[agent-runtime] fault", err);
     return json({ error: err?.message || "RUNTIME_FAULT" }, 500);
   }
@@ -474,7 +474,7 @@ function json(payload: unknown, status = 200) {
   });
 }
 
-function buildSubjectContext(talent: any): string {
+function buildSubjectContext(talent: unknown): string {
   if (!talent) return "";
   const parts: string[] = ["", "## Caller Profile"];
   if (talent.full_name) parts.push(`Name: ${talent.full_name}`);
@@ -486,7 +486,7 @@ function buildSubjectContext(talent: any): string {
  * currently looking at (job, applicant, gig, bid, talent). Keeps payload
  * small (one row per resource, key fields only). */
 async function buildCompanyContext(
-  admin: any,
+  admin: unknown,
   companyId: string,
   pageCtx: Record<string, unknown> | undefined,
 ): Promise<string> {
@@ -497,7 +497,7 @@ async function buildCompanyContext(
     .eq("id", companyId)
     .maybeSingle();
   if (company) {
-    lines.push(`Company: ${company.name ?? "—"} (id: ${company.id})`);
+    lines.push(`Company: ${company.name ?? "â€”"} (id: ${company.id})`);
     if (company.industry) lines.push(`Industry: ${company.industry}`);
     if (company.country) lines.push(`Country: ${company.country}`);
   } else {
@@ -518,7 +518,7 @@ async function buildCompanyContext(
       .eq("company_id", companyId)
       .maybeSingle();
     if (job) {
-      lines.push(`Active Job: "${job.title}" (id: ${job.id}, status: ${job.is_active ? "live" : "draft/paused"}, location: ${job.location ?? "—"})`);
+      lines.push(`Active Job: "${job.title}" (id: ${job.id}, status: ${job.is_active ? "live" : "draft/paused"}, location: ${job.location ?? "â€”"})`);
     } else {
       lines.push(`Active Job id: ${jobId} (not found in this company)`);
     }
@@ -532,8 +532,8 @@ async function buildCompanyContext(
       .eq("id", appId)
       .maybeSingle();
     if (app) {
-      const t = (app as any).talents;
-      lines.push(`Active Applicant: ${t?.full_name ?? "—"} (application id: ${app.id}, talent id: ${app.talent_id}, job id: ${app.job_id}, stage: ${app.application_status})`);
+      const t = (app as unknown).talents;
+      lines.push(`Active Applicant: ${t?.full_name ?? "â€”"} (application id: ${app.id}, talent id: ${app.talent_id}, job id: ${app.job_id}, stage: ${app.application_status})`);
     }
   }
 
@@ -544,7 +544,7 @@ async function buildCompanyContext(
       .select("id, full_name, country, headline, profession")
       .eq("id", talentId)
       .maybeSingle();
-    if (t) lines.push(`Active Talent: ${t.full_name ?? "—"} (id: ${t.id}, ${t.profession ?? ""}, ${t.country ?? ""})`);
+    if (t) lines.push(`Active Talent: ${t.full_name ?? "â€”"} (id: ${t.id}, ${t.profession ?? ""}, ${t.country ?? ""})`);
   }
 
   const gigId = (pageCtx.gig_id as string | undefined) || undefined;
@@ -554,7 +554,7 @@ async function buildCompanyContext(
       .select("id, title, status, budget_min, budget_max, currency")
       .eq("id", gigId)
       .maybeSingle();
-    if (gig) lines.push(`Active Gig: "${gig.title}" (id: ${gig.id}, status: ${gig.status}, budget: ${gig.budget_min ?? "?"}–${gig.budget_max ?? "?"} ${gig.currency ?? ""})`);
+    if (gig) lines.push(`Active Gig: "${gig.title}" (id: ${gig.id}, status: ${gig.status}, budget: ${gig.budget_min ?? "?"}â€“${gig.budget_max ?? "?"} ${gig.currency ?? ""})`);
   }
 
   const bidId = (pageCtx.bid_id as string | undefined) || undefined;
@@ -570,7 +570,7 @@ async function buildCompanyContext(
   return lines.join("\n");
 }
 
-async function chargeTalent(admin: any, talentId: string, amount: number, txnType: string, serviceType: string, description: string) {
+async function chargeTalent(admin: unknown, talentId: string, amount: number, txnType: string, serviceType: string, description: string) {
   const { data: row } = await admin.from("talent_credits").select("balance").eq("talent_id", talentId).maybeSingle();
   const current = Number(row?.balance ?? 0);
   if (current < amount) return { ok: false as const, balance: current };
@@ -583,8 +583,8 @@ async function chargeTalent(admin: any, talentId: string, amount: number, txnTyp
   return { ok: true as const, balance: next };
 }
 
-async function loadTools(admin: any, keys: string[], agentLevel: number) {
-  if (!keys?.length) return [] as any[];
+async function loadTools(admin: unknown, keys: string[], agentLevel: number) {
+  if (!keys?.length) return [] as unknown[];
   const { data } = await admin
     .from("agent_tools")
     .select("tool_key, name, description, input_schema, default_credit_cost, min_level, handler_kind, handler_ref")
@@ -594,8 +594,8 @@ async function loadTools(admin: any, keys: string[], agentLevel: number) {
   return data ?? [];
 }
 
-async function retrieveKbContext(admin: any, agentId: string, query: string): Promise<string> {
-  // Quick check: any chunks for this agent?
+async function retrieveKbContext(admin: unknown, agentId: string, query: string): Promise<string> {
+  // Quick check: unknown chunks for this agent?
   const { count } = await admin.from("agent_knowledge_chunks").select("id", { count: "exact", head: true }).eq("agent_id", agentId);
   if (!count) return "";
 
@@ -614,7 +614,7 @@ async function retrieveKbContext(admin: any, agentId: string, query: string): Pr
       p_agent_id: agentId, p_query_embedding: vec, p_match_count: 5,
     });
     if (!matches?.length) return "";
-    return matches.map((m: any, i: number) => `[${i + 1}] ${m.content}`).join("\n\n");
+    return matches.map((m: unknown, i: number) => `[${i + 1}] ${m.content}`).join("\n\n");
   } catch (e) {
     console.warn("[agent-runtime] KB retrieval skipped", e);
     return "";
@@ -624,7 +624,7 @@ async function retrieveKbContext(admin: any, agentId: string, query: string): Pr
 async function pipeAndPersist(
   src: ReadableStream<Uint8Array>,
   dst: WritableStream<Uint8Array>,
-  admin: any,
+  admin: unknown,
   ctx: { threadId: string; agentId: string; agentKey: string; subjectKind: string; subjectId: string; variant: string; msgCost: number; invalidationKeys?: string[] },
 ) {
   const reader = src.getReader();
@@ -658,7 +658,7 @@ async function pipeAndPersist(
     }
 
     // Append invalidations frame after the upstream stream ends so the client
-    // can refresh React Query caches for any tools that mutated server state.
+    // can refresh React Query caches for unknown tools that mutated server state.
     const invKeys = ctx.invalidationKeys ?? [];
     if (invKeys.length > 0) {
       try {
@@ -688,8 +688,8 @@ async function pipeAndPersist(
   }
 }
 
-// ──────────────────────────────────────────────────────────────────────
-// WaaS — Workforce-as-a-Service execution path.
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// WaaS â€” Workforce-as-a-Service execution path.
 // Loads a hired instance + its master template, assembles the hybrid
 // system prompt (template base + per-instance overrides + tenant/geo
 // metadata), resolves a per-(instance, chat) thread, and streams the
@@ -699,8 +699,8 @@ async function pipeAndPersist(
 // for Telegram in particular the router currently fires-and-forgets and
 // returns 200 to Telegram immediately, so we still need to drain the
 // stream here so persistence runs.
-// ──────────────────────────────────────────────────────────────────────
-async function runWorkforceInstance(body: RunRequest, admin: any): Promise<Response> {
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+async function runWorkforceInstance(body: RunRequest, admin: unknown): Promise<Response> {
   const instanceId = body.instance_id!;
   const userText = (body.text ?? body.message ?? "").toString().trim();
   if (!userText) return json({ error: "EMPTY_MESSAGE" }, 400);
@@ -724,7 +724,7 @@ async function runWorkforceInstance(body: RunRequest, admin: any): Promise<Respo
   if (instance.status && instance.status !== "active") {
     return json({ error: "INSTANCE_DISABLED", status: instance.status }, 403);
   }
-  const template = (instance as any).template;
+  const template = (instance as unknown).template;
   if (!template) return json({ error: "TEMPLATE_MISSING" }, 500);
 
   // 2. Hybrid brain assembly.
@@ -737,7 +737,7 @@ async function runWorkforceInstance(body: RunRequest, admin: any): Promise<Respo
     `[Tenant ID]: ${instance.tenant_id}\n` +
     `[Geo-Cluster]: ${instance.cluster_geo_id || "Global"}`;
 
-  // 3. Resolve subject — channel chat id (Telegram chat / WhatsApp jid / etc.)
+  // 3. Resolve subject â€” channel chat id (Telegram chat / WhatsApp jid / etc.)
   const source = body.source || "headless";
   const subjectKind = source === "telegram" ? "telegram_user" : `${source}_user`;
   const subjectId = body.chat_id != null ? String(body.chat_id) : (body.from_user_id != null ? String(body.from_user_id) : "anonymous");
@@ -796,7 +796,7 @@ async function runWorkforceInstance(body: RunRequest, admin: any): Promise<Respo
       .select("status")
       .eq("id", threadId!)
       .maybeSingle();
-    const tStatus = (threadRow as any)?.status ?? "ai";
+    const tStatus = (threadRow as unknown)?.status ?? "ai";
     if (tStatus === "human") {
       return json({ success: true, action: "skipped", reason: "human_in_control", thread_id: threadId });
     }
@@ -806,9 +806,9 @@ async function runWorkforceInstance(body: RunRequest, admin: any): Promise<Respo
   }
 
   // 7. Stream completion.
-  const convo: any[] = [
+  const convo: unknown[] = [
     { role: "system", content: finalPrompt },
-    ...(history ?? []).map((m: any) => ({ role: m.role, content: m.content || "" })),
+    ...(history ?? []).map((m: unknown) => ({ role: m.role, content: m.content || "" })),
     { role: "user", content: userText },
   ];
 
@@ -848,3 +848,5 @@ async function runWorkforceInstance(body: RunRequest, admin: any): Promise<Respo
     },
   });
 }
+
+

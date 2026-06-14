@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+﻿import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -33,7 +33,7 @@ Deno.serve(async (req) => {
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
       global: { headers: { Authorization: authHeader } },
     });
-    const { data: userData, error: userErr } = await supabase.auth.getUser();
+    const { data: userData, error: userErr } = await getCurrentUser();
     if (userErr || !userData.user) {
       return new Response(JSON.stringify({ error: "unauthorized" }), {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
     }
 
     // Resolve brief
-    let brief: any;
+    let brief: unknown;
     if (briefId) {
       const { data, error } = await supabase.from("gig_briefs").select("*").eq("id", briefId).maybeSingle();
       if (error || !data) {
@@ -164,3 +164,6 @@ Deno.serve(async (req) => {
     });
   }
 });
+
+
+

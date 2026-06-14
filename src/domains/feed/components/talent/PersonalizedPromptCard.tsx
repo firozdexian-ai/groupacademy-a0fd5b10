@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { FileText, Briefcase, ClipboardCheck, ChevronRight, Sparkles, Loader2, Zap, ShieldCheck } from "lucide-react";
@@ -121,12 +121,12 @@ export function PersonalizedPromptCard() {
     // Enforce transaction conditions for gated features
     if (prompt.cost) {
       if (balance < prompt.cost) {
-        toast.error(`Not enough credits — this needs ${prompt.cost} credits.`);
+        toast.error(`Not enough credits â€” this needs ${prompt.cost} credits.`);
         return;
       }
 
       setLoading(prompt.type);
-      const toastId = toast.loading(`Starting ${prompt.title}…`);
+      const toastId = toast.loading(`Starting ${prompt.title}â€¦`);
 
       try {
         const transactionServiceKey = prompt.type === "portfolio" ? "PORTFOLIO" : "CAREER_ASSESSMENT";
@@ -146,7 +146,7 @@ export function PersonalizedPromptCard() {
         } else {
           throw new Error("Transaction declined by credit validation handler.");
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         const errorMessage = error instanceof Error ? error.message : String(error);
 
         trackError(errorMessage, {
@@ -157,7 +157,7 @@ export function PersonalizedPromptCard() {
           talentId: talent?.id,
         });
 
-        toast.error("Couldn't process that — please check your balance and try again.", { id: toastId });
+        toast.error("Couldn't process that â€” please check your balance and try again.", { id: toastId });
       } finally {
         setLoading(null);
       }
@@ -244,3 +244,4 @@ export function PersonalizedPromptCard() {
     </div>
   );
 }
+

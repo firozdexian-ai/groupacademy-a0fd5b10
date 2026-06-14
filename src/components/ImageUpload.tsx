@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+﻿import { useState, useCallback, useRef, useEffect } from "react";
 import { Upload, X, Loader2, ImagePlus, ShieldCheck, Zap } from "lucide-react";
 import { uploadToBucketPublic, removeFromBucket } from "@/domains/profile/repo/profileRepo";
 import { Button } from "./ui/button";
@@ -17,7 +17,7 @@ interface ImageUploadProps {
 /**
  * GroUp Academy: Object Storage Visual Asset Ingress Node (ImageUpload)
  * Authoritative system interface validating file signatures, processing cloud uploads, and syncing media links.
- * Version: Launch Candidate · Phase Z0 Hardened Asset Ingress
+ * Version: Launch Candidate Â· Phase Z0 Hardened Asset Ingress
  */
 export function ImageUpload({ value, onUpload, onRemove, bucket = "course-covers", className }: ImageUploadProps) {
   const { toast } = useToast();
@@ -87,7 +87,7 @@ export function ImageUpload({ value, onUpload, onRemove, bucket = "course-covers
         });
         trackEvent("storage_asset_upload_success", { bucket });
       }
-    } catch (caughtPipelineExceptionErr: any) {
+    } catch (caughtPipelineExceptionErr: unknown) {
       const formattedExceptionMsgStr =
         caughtPipelineExceptionErr instanceof Error
           ? caughtPipelineExceptionErr.message
@@ -143,7 +143,7 @@ export function ImageUpload({ value, onUpload, onRemove, bucket = "course-covers
     trackEvent("storage_asset_prune_initiated", { bucket });
     const dynamicToastTrackerId = toast({
       title: "PRUNING_REGISTRY",
-      description: "Purging media tracking rows from secure file blocks…",
+      description: "Purging media tracking rows from secure file blocksâ€¦",
     });
 
     try {
@@ -159,7 +159,7 @@ export function ImageUpload({ value, onUpload, onRemove, bucket = "course-covers
         });
         trackEvent("storage_asset_prune_success", { bucket });
       }
-    } catch (caughtPipelineExceptionErr: any) {
+    } catch (caughtPipelineExceptionErr: unknown) {
       const formattedExceptionMsgStr =
         caughtPipelineExceptionErr instanceof Error
           ? caughtPipelineExceptionErr.message
@@ -179,7 +179,7 @@ export function ImageUpload({ value, onUpload, onRemove, bucket = "course-covers
     <div
       className={cn("space-y-2.5 text-left w-full transform-gpu antialiased font-bold text-xs select-none", className)}
     >
-      {/* HUD LEVEL 1: TOP PANEL TRACK HEADING CONTROLS BLOCK */}
+      {/* dashboard LEVEL 1: TOP PANEL TRACK HEADING CONTROLS BLOCK */}
       <div className="flex items-center justify-between gap-4 px-0.5 select-none w-full leading-none shrink-0 h-5">
         <label className="text-[10px] font-mono font-extrabold uppercase tracking-wider text-muted-foreground/60 block pt-0.5 leading-none">
           Institutional Cover Asset Dimension (16:9 Ratio)
@@ -191,7 +191,7 @@ export function ImageUpload({ value, onUpload, onRemove, bucket = "course-covers
         </div>
       </div>
 
-      {/* HUD LEVEL 2: COMPOSITE CONTEXT ACCORDING TO DATA PRESENCE MARKERS */}
+      {/* dashboard LEVEL 2: COMPOSITE CONTEXT ACCORDING TO DATA PRESENCE MARKERS */}
       {value ? (
         /* ASSET VIEWPORT ROUTE: PRESENT COMPACT FILE THUMBNAIL BOX */
         <div className="group/viewport relative rounded-xl overflow-hidden bg-muted border border-border/40 aspect-video shadow-xs transition-colors hover:border-border/80 w-full block animate-in fade-in duration-200">
@@ -248,7 +248,7 @@ export function ImageUpload({ value, onUpload, onRemove, bucket = "course-covers
                 <Zap className="absolute h-3 w-3 text-primary animate-pulse fill-primary/10 stroke-[2.2]" />
               </div>
               <span className="text-[10px] font-mono font-extrabold uppercase tracking-wider text-primary italic animate-pulse block leading-none pt-1">
-                Synchronizing Ledger Storage Registry…
+                Synchronizing Ledger Storage Registryâ€¦
               </span>
             </div>
           ) : (
@@ -295,10 +295,12 @@ export function ImageUpload({ value, onUpload, onRemove, bucket = "course-covers
         </div>
       )}
 
-      {/* HUD LEVEL 3: OVERLAY BOTTOM OMNIPRESENCE SHIELD RIBBON FOOTER */}
+      {/* dashboard LEVEL 3: OVERLAY BOTTOM OMNIPRESENCE SHIELD RIBBON FOOTER */}
       <p className="text-[8px] font-mono font-extrabold text-muted-foreground/30 italic text-center uppercase tracking-widest leading-none pt-1 select-none pointer-events-none w-full block">
         Neural Media Ingress Pipeline Systems Matrix Block Core Validated
       </p>
     </div>
   );
 }
+
+

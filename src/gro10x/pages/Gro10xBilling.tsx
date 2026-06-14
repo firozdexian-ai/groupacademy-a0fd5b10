@@ -1,5 +1,5 @@
-/**
- * Gro10x billing screen — balance, 90-day ledger, top-up CTA.
+﻿/**
+ * Gro10x billing screen â€” balance, 90-day ledger, top-up CTA.
  * USD-base display with localized equivalent (per platform currency model).
  */
 import { useEffect, useState } from "react";
@@ -33,9 +33,9 @@ export default function Gro10xBilling() {
   useEffect(() => {
     if (!user?.id) return;
     let cancelled = false;
-    void getInstructorEarningsSummary().then((data: any) => {
+    void getInstructorEarningsSummary().then((data: unknown) => {
       if (cancelled || !data) return;
-      const d = data as any;
+      const d = data as unknown;
       if ((d?.lifetime_credits ?? 0) > 0) {
         setInstructorEarnings({ available: Number(d.available_credits ?? 0), lifetime: Number(d.lifetime_credits ?? 0) });
       }
@@ -65,7 +65,7 @@ export default function Gro10xBilling() {
   if (isLoading) {
     return (
       <div className="max-w-md md:max-w-5xl mx-auto">
-        <Gro10xLoading label="Loading billing…" />
+        <Gro10xLoading label="Loading billingâ€¦" />
       </div>
     );
   }
@@ -91,7 +91,7 @@ export default function Gro10xBilling() {
           {lowBalance && (
             <div className="mt-3 flex items-center gap-2 text-amber-300 text-xs bg-amber-500/10 border border-amber-500/20 rounded-lg px-2 py-1.5">
               <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
-              <span>Low balance — top up to keep your agents running.</span>
+              <span>Low balance â€” top up to keep your agents running.</span>
             </div>
           )}
         </div>
@@ -100,7 +100,7 @@ export default function Gro10xBilling() {
       {/* Top-up packs */}
       <section className="px-4 mt-4">
         <h2 className="text-sm font-semibold mb-2">Top up</h2>
-        <p className="text-[11px] text-slate-400 mb-2">Manual bKash top-up — admin reviews and credits the shared wallet.</p>
+        <p className="text-[11px] text-slate-400 mb-2">Manual bKash top-up â€” admin reviews and credits the shared wallet.</p>
         <div className="space-y-2">
           {TOPUP_PACKS.map((p) => {
             const usd = creditsToUSD(p.credits);
@@ -122,7 +122,7 @@ export default function Gro10xBilling() {
                   </div>
                   <p className="text-[11px] text-slate-400 truncate">{formatMoney(usd, country, rates)}</p>
                 </div>
-                <span className="text-xs text-[#33E1E4] font-medium">Top up →</span>
+                <span className="text-xs text-[#33E1E4] font-medium">Top up â†’</span>
               </button>
             );
           })}
@@ -137,9 +137,9 @@ export default function Gro10xBilling() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold">Instructor earnings</p>
-              <p className="text-[11px] text-slate-400">Available {instructorEarnings.available.toFixed(1)} cr · lifetime {instructorEarnings.lifetime.toFixed(0)}</p>
+              <p className="text-[11px] text-slate-400">Available {instructorEarnings.available.toFixed(1)} cr Â· lifetime {instructorEarnings.lifetime.toFixed(0)}</p>
             </div>
-            <span className="text-xs text-[#33E1E4]">Open →</span>
+            <span className="text-xs text-[#33E1E4]">Open â†’</span>
           </Link>
         </section>
       )}
@@ -201,3 +201,5 @@ export default function Gro10xBilling() {
     </div>
   );
 }
+
+

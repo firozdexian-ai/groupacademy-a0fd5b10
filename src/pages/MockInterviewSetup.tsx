@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   markMockInterviewAccessCodeUsed,
@@ -62,7 +62,7 @@ function MockInterviewSetupContent() {
 
   const [email, setEmail] = useState("");
   const [checkingCooldown, setCheckingCooldown] = useState(false);
-  const [existingInterview, setExistingInterview] = useState<any>(null);
+  const [existingInterview, setExistingInterview] = useState<unknown>(null);
   const [daysRemaining, setDaysRemaining] = useState(0);
   const [accessCode, setAccessCode] = useState("");
   const [validatingCode, setValidatingCode] = useState(false);
@@ -125,7 +125,7 @@ function MockInterviewSetupContent() {
       if (error || !data) throw new Error("Invalid or expired code.");
       await markMockInterviewAccessCodeUsed(data.id);
       setStep("job-description");
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(e.message);
     } finally {
       setValidatingCode(false);
@@ -147,7 +147,7 @@ function MockInterviewSetupContent() {
         };
       }
 
-      const data: any = await generateInterviewQuestions({
+      const data: unknown = await generateInterviewQuestions({
         jobDescription,
         questionCount: config.questionCount,
         difficulty: config.difficulty,
@@ -173,7 +173,7 @@ function MockInterviewSetupContent() {
 
       if (insertError) throw insertError;
       navigate(`/mock-interview/questions/${interviewId}`);
-    } catch (e: any) {
+    } catch (e: unknown) {
       setGenerationError(e);
       setStep("configuration");
       setIsGenerating(false);
@@ -437,3 +437,5 @@ export default function MockInterviewSetup() {
     </AuthGate>
   );
 }
+
+

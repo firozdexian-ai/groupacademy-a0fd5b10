@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Target, Zap } from "lucide-react";
@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Career Track Roadmaps Catalog (AppProfessions)
  * Hardened operational directory wrapping structured professional lines and ensuring fluid viewport typography scaling.
- * Version: Launch Candidate · Phase Z1 Design Tokens Locked
+ * Version: Launch Candidate Â· Phase Z1 Design Tokens Locked
  */
 export default function AppProfessions() {
  const executeNavigationHook = useNavigate();
@@ -25,7 +25,7 @@ export default function AppProfessions() {
 
  return (
  <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 pb-32 text-left antialiased block transform-gpu w-full animate-in fade-in duration-300">
- {/* HUD LEVEL 1: ADMINISTRATIVE BACKWARD DIRECTORY HUB CONTROL BAR */}
+ {/* dashboard LEVEL 1: ADMINISTRATIVE BACKWARD DIRECTORY HUB CONTROL BAR */}
  <header className="flex flex-col gap-6 mb-8 select-none w-full shrink-0">
  <div className="flex items-center justify-between gap-4 leading-none w-full block">
  <Button
@@ -47,7 +47,7 @@ export default function AppProfessions() {
  </Badge>
  </div>
 
- {/* HUD LEVEL 2: COMPOSITE DISCOVERY PROFILE CONTEXT MODULE */}
+ {/* dashboard LEVEL 2: COMPOSITE DISCOVERY PROFILE CONTEXT MODULE */}
  <div className="block w-full border-b border-border/10 pb-4">
  <div className="flex items-center gap-3.5 leading-none w-full block">
  <div className="h-11 w-11 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-center shrink-0 shadow-2xs rotate-2 pointer-events-none">
@@ -71,12 +71,12 @@ export default function AppProfessions() {
  </div>
  </header>
 
- {/* HUD LEVEL 3: DYNAMIC ACCREDITATION BLUEPRINT CATALOG GRID */}
+ {/* dashboard LEVEL 3: DYNAMIC ACCREDITATION BLUEPRINT CATALOG GRID */}
  <main className="min-h-[60vh] block w-full">
  <TracksTab />
  </main>
 
- {/* HUD LEVEL 4: PLATFORM COMPLIANCE METADATA TERMINAL FOOTER */}
+ {/* dashboard LEVEL 4: PLATFORM COMPLIANCE METADATA TERMINAL FOOTER */}
  <footer className="mt-16 pt-6 border-t border-border/40 flex items-center justify-between opacity-25 select-none pointer-events-none leading-none w-full shrink-0 uppercase tracking-widest font-mono text-[9px] font-bold text-muted-foreground/50">
  <p className="italic">Blueprint Register Connection Protocol Active</p>
  <div className="flex gap-1.5 shrink-0 items-center">
@@ -91,3 +91,4 @@ export default function AppProfessions() {
  </div>
  );
 }
+

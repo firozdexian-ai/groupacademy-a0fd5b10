@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from "react";
+﻿import { useMemo, useCallback } from "react";
 import { Coins, AlertCircle, ArrowRight, Zap, ShieldCheck } from "lucide-react";
 import {
   Dialog,

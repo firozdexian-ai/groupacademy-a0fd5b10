@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+﻿import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -71,12 +71,12 @@ export default function Profile() {
    },
  });
 
- const mapRowToPost = (row: any) => ({
+ const mapRowToPost = (row: unknown) => ({
    id: row.id,
    authorName: row.author_name || "Community member",
    authorAvatar: row.author_avatar || undefined,
    authorTitle: row.author_title || "",
-   contentType: (row.content_type || "text") as any,
+   contentType: (row.content_type || "text") as unknown,
    textContent: row.text_content || "",
    mediaUrl: row.media_url || undefined,
    pollOptions: row.poll_options,
@@ -89,14 +89,14 @@ export default function Profile() {
  });
 
  const handleSectionSave = useCallback(
- async (_section: string | null, data: any) => {
+ async (_section: string | null, data: unknown) => {
  try {
  await updateTalent(data);
  await refreshTalent();
  toast.success("Profile saved.");
  } catch (e) {
  trackError(e, { area: "Profile.handleSectionSave" });
- toast.error("Couldn't save — please try again.");
+ toast.error("Couldn't save â€” please try again.");
  }
  },
  [updateTalent, refreshTalent],
@@ -112,11 +112,11 @@ export default function Profile() {
 
  setIsEnhancing(true);
  try {
- const data: any = await enhanceCoverLetter({
+ const data: unknown = await enhanceCoverLetter({
  type: "experience",
  experience: talent.experience,
  profession: talent.customProfession || "professional",
- } as any);
+ } as unknown);
 
  if (data?.enhancedExperience) {
  await updateTalent({ experience: data.enhancedExperience });
@@ -125,7 +125,7 @@ export default function Profile() {
  }
  } catch (error) {
  trackError(error, { area: "Profile.handleEnhanceWithAI" });
- toast.error("AI rewrite failed — please try again.");
+ toast.error("AI rewrite failed â€” please try again.");
  } finally {
  setIsEnhancing(false);
  setShowEnhanceDialog(false);
@@ -136,14 +136,14 @@ export default function Profile() {
  return (
  <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-3">
  <InlineSpinner size="lg" />
- <p className="text-sm text-muted-foreground">Loading your profile…</p>
+ <p className="text-sm text-muted-foreground">Loading your profileâ€¦</p>
  </div>
  );
  }
 
  if (!talent) return null;
 
- const t: any = talent;
+ const t: unknown = talent;
  const initials = talent.fullName
  ? talent.fullName
  .split(" ")
@@ -151,7 +151,7 @@ export default function Profile() {
  .join("")
  .toUpperCase()
  .slice(0, 2)
- : "—";
+ : "â€”";
 
  const countryLabel = t.country
  ? `${getCountryFlag(t.country) ?? ""} ${getCountryName(t.country) ?? t.country}`.trim()
@@ -354,7 +354,7 @@ export default function Profile() {
      ) : myPosts.length === 0 ? (
        <div className="text-center py-6">
          <p className="text-xs text-muted-foreground mb-4">
-           You haven't shared any updates yet. Post your achievements or ask questions to build your presence.
+           You haven't shared unknown updates yet. Post your achievements or ask questions to build your presence.
          </p>
          <Button variant="outline" size="sm" className="rounded-xl font-bold" onClick={() => navigate("/app/feed")}>
            Share an update
@@ -362,7 +362,7 @@ export default function Profile() {
        </div>
      ) : (
        <div className="space-y-4">
-         {myPosts.map((post: any) => (
+         {myPosts.map((post: unknown) => (
            <PostCard key={post.id} post={mapRowToPost(post)} />
          ))}
        </div>
@@ -385,7 +385,7 @@ export default function Profile() {
  {(t.experience?.length ?? 0) === 0 ? (
  <EmptyState label="Add your work experience." onAdd={() => setEditingSection("experience")} />
  ) : (
- t.experience.map((exp: any, i: number) => (
+ t.experience.map((exp: unknown, i: number) => (
  <div key={i} className="flex gap-3">
  <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
  <Briefcase className="h-4 w-4 text-primary" />
@@ -395,7 +395,7 @@ export default function Profile() {
  <p className="text-xs text-muted-foreground">{exp.company}</p>
  {(exp.startDate || exp.endDate) && (
  <p className="text-[11px] text-muted-foreground mt-0.5">
- {exp.startDate} {exp.endDate ? `– ${exp.endDate}` : exp.isCurrent ? "– Present" : ""}
+ {exp.startDate} {exp.endDate ? `â€“ ${exp.endDate}` : exp.isCurrent ? "â€“ Present" : ""}
  </p>
  )}
  {exp.description && (
@@ -422,7 +422,7 @@ export default function Profile() {
  {(t.education?.length ?? 0) === 0 ? (
  <EmptyState label="Add where you studied." onAdd={() => setEditingSection("education")} />
  ) : (
- t.education.map((ed: any, i: number) => (
+ t.education.map((ed: unknown, i: number) => (
  <div key={i} className="flex gap-3">
  <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
  <GraduationCap className="h-4 w-4 text-primary" />
@@ -431,12 +431,12 @@ export default function Profile() {
  <p className="font-medium text-sm">{ed.institution}</p>
  {(ed.degree || ed.fieldOfStudy) && (
  <p className="text-xs text-muted-foreground">
- {[ed.degree, ed.fieldOfStudy].filter(Boolean).join(" · ")}
+ {[ed.degree, ed.fieldOfStudy].filter(Boolean).join(" Â· ")}
  </p>
  )}
  {(ed.startYear || ed.endYear) && (
  <p className="text-[11px] text-muted-foreground mt-0.5">
- {ed.startYear} {ed.endYear ? `– ${ed.endYear}` : ""}
+ {ed.startYear} {ed.endYear ? `â€“ ${ed.endYear}` : ""}
  </p>
  )}
  </div>
@@ -461,7 +461,7 @@ export default function Profile() {
  <EmptyState label="Add the skills employers should know about." onAdd={() => setEditingSection("skills")} />
  ) : (
  <div className="flex flex-wrap gap-1.5">
- {t.skills.map((s: any, i: number) => (
+ {t.skills.map((s: unknown, i: number) => (
  <Badge key={i} variant="secondary" className="text-xs">
  {typeof s === "string" ? s : s.name}
  </Badge>
@@ -485,11 +485,11 @@ export default function Profile() {
  {(t.languages?.length ?? 0) === 0 ? (
  <EmptyState label="Add languages you speak." onAdd={() => setEditingSection("languages")} />
  ) : (
- t.languages.map((l: any, i: number) => (
+ t.languages.map((l: unknown, i: number) => (
  <div key={i} className="flex items-center gap-2 text-sm">
  <LanguagesIcon className="h-3.5 w-3.5 text-primary" />
  <span className="font-medium">{l.language}</span>
- <span className="text-muted-foreground text-xs">· {l.proficiency}</span>
+ <span className="text-muted-foreground text-xs">Â· {l.proficiency}</span>
  </div>
  ))
  )}
@@ -513,7 +513,7 @@ export default function Profile() {
  onAdd={() => setEditingSection("achievements")}
  />
  ) : (
- t.achievements.map((a: any, i: number) => (
+ t.achievements.map((a: unknown, i: number) => (
  <div key={i} className="flex gap-3">
  <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
  <Award className="h-4 w-4 text-primary" />
@@ -521,7 +521,7 @@ export default function Profile() {
  <div className="flex-1 min-w-0">
  <p className="font-medium text-sm">{a.title}</p>
  <p className="text-xs text-muted-foreground">
- {[a.issuer, a.date].filter(Boolean).join(" · ")}
+ {[a.issuer, a.date].filter(Boolean).join(" Â· ")}
  </p>
  </div>
  </div>
@@ -555,7 +555,7 @@ export default function Profile() {
  <Button onClick={handleEnhanceWithAI} disabled={isEnhancing}>
  {isEnhancing ? (
  <>
- <InlineSpinner size="sm" className="mr-2" /> Rewriting…
+ <InlineSpinner size="sm" className="mr-2" /> Rewritingâ€¦
  </>
  ) : (
  <>
@@ -576,3 +576,5 @@ export default function Profile() {
  </div>
  );
 }
+
+

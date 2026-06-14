@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -106,7 +106,7 @@ export default function CourseSessionsManager({
  if (!parentEventDate) return;
  setEditing({
  ...emptyDraft(contentId),
- title: `${contentTitle} — Session 1`,
+ title: `${contentTitle} â€” Session 1`,
  scheduled_date: parentEventDate,
  });
  };
@@ -115,7 +115,7 @@ export default function CourseSessionsManager({
  if (!editing) return;
  if (!editing.title?.trim()) { toast.error("Title is required"); return; }
  if (!editing.scheduled_date) { toast.error("Schedule is required"); return; }
- const payload: any = {
+ const payload: unknown = {
  content_id: contentId,
  title: editing.title.trim(),
  description: editing.description || null,
@@ -128,7 +128,7 @@ export default function CourseSessionsManager({
  };
  try {
  await upsertCourseSession(editing.id ? { id: editing.id, ...payload } : payload);
- } catch (err: any) {
+ } catch (err: unknown) {
  toast.error(err?.message ?? "Save failed");
  return;
  }
@@ -141,7 +141,7 @@ export default function CourseSessionsManager({
  if (!confirm("Delete this session?")) return;
  try {
  await deleteCourseSession(id);
- } catch (err: any) {
+ } catch (err: unknown) {
  return toast.error(err?.message ?? "Delete failed");
  }
  toast.success("Session deleted");
@@ -151,7 +151,7 @@ export default function CourseSessionsManager({
  const setStatus = async (s: Session, status: SessionStatus) => {
  try {
  await updateCourseSessionStatus(s.id, status);
- } catch (err: any) {
+ } catch (err: unknown) {
  return toast.error(err?.message ?? "Update failed");
  }
  toast.success(`Marked ${status}`);
@@ -165,7 +165,7 @@ export default function CourseSessionsManager({
  d.setDate(d.getDate() + i * recurDraft.intervalDays);
  return {
  content_id: contentId,
- title: `${contentTitle} — Session ${sessions.length + i + 1}`,
+ title: `${contentTitle} â€” Session ${sessions.length + i + 1}`,
  scheduled_date: d.toISOString(),
  duration_minutes: recurDraft.duration,
  status: "scheduled" as SessionStatus,
@@ -173,7 +173,7 @@ export default function CourseSessionsManager({
  });
  try {
  await bulkInsertCourseSessions(rows);
- } catch (err: any) {
+ } catch (err: unknown) {
  return toast.error(err?.message ?? "Create failed");
  }
  toast.success(`${rows.length} sessions created`);
@@ -231,7 +231,7 @@ export default function CourseSessionsManager({
  </div>
  <p className="font-bold text-sm truncate">{s.title}</p>
  <p className="text-xs text-muted-foreground mt-1">
- 📅 {formatEventTime(s.scheduled_date, tz)} · {s.duration_minutes ?? 60} min
+ ðŸ“… {formatEventTime(s.scheduled_date, tz)} Â· {s.duration_minutes ?? 60} min
  </p>
  {s.meeting_link && (
  <div className="flex items-center gap-2 mt-2">
@@ -327,7 +327,7 @@ export default function CourseSessionsManager({
  <Select value={editing.instructor_id || "none"} onValueChange={(v) => setEditing({ ...editing, instructor_id: v === "none" ? null : v })}>
  <SelectTrigger className="rounded-xl"><SelectValue placeholder="Select instructor" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="none">— None —</SelectItem>
+ <SelectItem value="none">â€” None â€”</SelectItem>
  {instructors.map((i) => <SelectItem key={i.id} value={i.id}>{i.full_name}</SelectItem>)}
  </SelectContent>
  </Select>
@@ -392,3 +392,5 @@ export default function CourseSessionsManager({
  </div>
  );
 }
+
+

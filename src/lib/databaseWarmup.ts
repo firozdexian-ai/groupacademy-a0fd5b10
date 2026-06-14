@@ -1,4 +1,4 @@
-import { pingProfessionCategories } from "@/domains/talent/repo/talentRepo";
+﻿import { pingProfessionCategories } from "@/domains/talent/repo/talentRepo";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 
 /**
@@ -9,7 +9,7 @@ import { TIMEOUTS } from "@/lib/timeoutConfig";
 
 let warmupPromise: Promise<void> | null = null;
 
-// HUD: Institutional Max Duration - strictly time-boxed to 8 seconds.
+// dashboard: Institutional Max Duration - strictly time-boxed to 8 seconds.
 const WARMUP_MAX_MS = 8000;
 
 /**
@@ -21,21 +21,21 @@ export function warmupDatabase(): Promise<void> {
   if (warmupPromise) return warmupPromise;
 
   const startTime = Date.now();
-  console.log("[Sentinel] Initiating database warmup sequence...");
+  console.log("[guard] Initiating database warmup sequence...");
 
   warmupPromise = new Promise<void>((resolve) => {
     const controller = new AbortController();
 
-    // HUD: HARD_LIMIT_SENTINEL
+    // dashboard: HARD_LIMIT_SENTINEL
     const hardTimeout = setTimeout(() => {
-      console.warn(`[Sentinel] Warmup hard-limit reached (${WARMUP_MAX_MS}ms)`);
+      console.warn(`[guard] Warmup hard-limit reached (${WARMUP_MAX_MS}ms)`);
       controller.abort();
       resolve();
     }, WARMUP_MAX_MS);
 
-    // HUD: SOFT_LIMIT_SENTINEL (Config-driven)
+    // dashboard: SOFT_LIMIT_SENTINEL (Config-driven)
     const softTimeout = setTimeout(() => {
-      console.warn(`[Sentinel] Soft timeout limit reached (${TIMEOUTS.COLD_START}ms)`);
+      console.warn(`[guard] Soft timeout limit reached (${TIMEOUTS.COLD_START}ms)`);
       controller.abort();
     }, TIMEOUTS.COLD_START);
 
@@ -44,13 +44,13 @@ export function warmupDatabase(): Promise<void> {
 
     Promise.resolve(query)
       .then(() => {
-        console.log(`[Sentinel] Database ready for trajectory. Ingress: ${Date.now() - startTime}ms`);
+        console.log(`[guard] Database ready for trajectory. Ingress: ${Date.now() - startTime}ms`);
       })
       .catch((error: unknown) => {
         const err = error as { name?: string; message?: string };
         // LOG: Silent failure for best-effort tasks
         if (err?.name !== "AbortError") {
-          console.warn("[Sentinel] Warmup query unsuccessful:", err?.message || error);
+          console.warn("[guard] Warmup query unsuccessful:", err?.message || error);
         }
       })
       .finally(() => {
@@ -69,3 +69,4 @@ export function warmupDatabase(): Promise<void> {
 export function resetWarmupForDebug() {
   warmupPromise = null;
 }
+

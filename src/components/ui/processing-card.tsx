@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -23,9 +23,9 @@ interface ProcessingCardProps {
 }
 
 /**
- * GroUp Academy: Technical Kinetic Synthesis Protocol Indicator (ProcessingCard)
+ * GroUp Academy: Technical Kinetic summary Protocol Indicator (ProcessingCard)
  * Hardened asynchronous background progress monitor enforcing self-clearing memory hooks and flexible vector scales.
- * Version: Launch Candidate · Phase Z0 Lifecycle & Vector Bounds Locked
+ * Version: Launch Candidate Â· Phase Z0 Lifecycle & Vector Bounds Locked
  */
 export function ProcessingCard({ title, stages, duration = 30000, error, onRetry, className }: ProcessingCardProps) {
   const [currentProgress, setCurrentProgress] = useState(0);
@@ -84,7 +84,7 @@ export function ProcessingCard({ title, stages, duration = 30000, error, onRetry
 
           <div className="space-y-1.5 leading-none w-full block">
             <h2 className="text-sm sm:text-base font-bold text-foreground uppercase tracking-wide leading-none pt-0.5">
-              Synthesis Fault Flagged
+              summary Fault Flagged
             </h2>
             <p className="text-[10px] sm:text-[11px] font-semibold text-muted-foreground/60 leading-normal block italic pr-0.5 select-text selection:bg-destructive/5 max-w-xs mx-auto">
               {error}
@@ -121,7 +121,7 @@ export function ProcessingCard({ title, stages, duration = 30000, error, onRetry
       )}
     >
       <CardContent className="p-5 sm:p-6 text-center flex flex-col justify-center items-center w-full">
-        {/* HUD LEVEL 1: COMPOSITE SVG PERCENTAGE HOOP DISPATCH MATRIX */}
+        {/* dashboard LEVEL 1: COMPOSITE SVG PERCENTAGE HOOP DISPATCH MATRIX */}
         <div className="relative h-16 w-16 mx-auto mb-4 shrink-0 pointer-events-none select-none">
           <svg className="w-full h-full -rotate-90 block" viewBox="0 0 36 36">
             <circle
@@ -154,7 +154,7 @@ export function ProcessingCard({ title, stages, duration = 30000, error, onRetry
           </div>
         </div>
 
-        {/* HUD LEVEL 2: CONTEXT READOUT TEXT CONTAINERS */}
+        {/* dashboard LEVEL 2: CONTEXT READOUT TEXT CONTAINERS */}
         <div className="space-y-1.5 leading-none w-full block mb-5">
           <h2 className="text-sm sm:text-base font-bold text-foreground uppercase tracking-wide leading-none pt-0.5">
             {title}
@@ -164,7 +164,7 @@ export function ProcessingCard({ title, stages, duration = 30000, error, onRetry
           </p>
         </div>
 
-        {/* HUD LEVEL 3: LINEAR METRIC GAUGES & PULSING ACCENTS */}
+        {/* dashboard LEVEL 3: LINEAR METRIC GAUGES & PULSING ACCENTS */}
         <div className="w-full block space-y-4">
           <Progress value={currentProgress} className="h-1 bg-primary/10 rounded-full" />
 
@@ -182,3 +182,4 @@ export function ProcessingCard({ title, stages, duration = 30000, error, onRetry
     </Card>
   );
 }
+

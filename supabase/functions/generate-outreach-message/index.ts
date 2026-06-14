@@ -81,9 +81,9 @@ serve(async (req) => {
       });
     }
 
-    // 2. Parse Request
     const body = await req.json();
-    let { parsedCV, product, professionCategory, senderName, language = "auto", talent_id, product_context } = body;
+    const { senderName, language = "auto", talent_id, product_context } = body;
+    let { parsedCV, product, professionCategory } = body;
 
     if (talent_id && !parsedCV) {
       console.log(`[generate-outreach-message] Resolving talent_id: ${talent_id}`);
@@ -181,11 +181,11 @@ serve(async (req) => {
     // Determine appropriate greeting based on gender
     let genderInstruction = "";
     if (gender === "male") {
-      genderInstruction = 'Use "ভাই" (Bhai) as the greeting suffix for this male candidate.';
+      genderInstruction = 'Use "à¦­à¦¾à¦‡" (Bhai) as the greeting suffix for this male candidate.';
     } else if (gender === "female") {
-      genderInstruction = 'Use "আপু" (Apu) as the greeting suffix for this female candidate.';
+      genderInstruction = 'Use "à¦†à¦ªà§" (Apu) as the greeting suffix for this female candidate.';
     } else {
-      genderInstruction = "Gender is unknown, so use a neutral greeting without ভাই/আপু suffix.";
+      genderInstruction = "Gender is unknown, so use a neutral greeting without à¦­à¦¾à¦‡/à¦†à¦ªà§ suffix.";
     }
 
     // Determine language for message
@@ -193,7 +193,7 @@ serve(async (req) => {
     if (language === "bangla") {
       languageInstruction = `
 IMPORTANT: Write the ENTIRE message in Bangla (Bengali script). Use natural, conversational Bangla.
-- Use appropriate Bangla greetings like "আসসালামু আলাইকুম" or "নমস্কার"
+- Use appropriate Bangla greetings like "à¦†à¦¸à¦¸à¦¾à¦²à¦¾à¦®à§ à¦†à¦²à¦¾à¦‡à¦•à§à¦®" or "à¦¨à¦®à¦¸à§à¦•à¦¾à¦°"
 - ${genderInstruction}
 - Keep the tone warm and professional in Bangla`;
     } else if (language === "english") {
@@ -223,10 +223,10 @@ ${languageInstruction}
 
 CRITICAL GENDER RULES:
 - ${genderInstruction}
-- NEVER use "আপু" (Apu) for male candidates
-- NEVER use "ভাই" (Bhai) for female candidates
-- If gender is "male", you MUST use "ভাই" (Bhai)
-- If gender is "female", you MUST use "আপু" (Apu)
+- NEVER use "à¦†à¦ªà§" (Apu) for male candidates
+- NEVER use "à¦­à¦¾à¦‡" (Bhai) for female candidates
+- If gender is "male", you MUST use "à¦­à¦¾à¦‡" (Bhai)
+- If gender is "female", you MUST use "à¦†à¦ªà§" (Apu)
 
 Create a warm, personalized WhatsApp message that:
 - Opens with a friendly greeting using their first name with the CORRECT gender-appropriate suffix
@@ -250,7 +250,7 @@ Return ONLY the message text, no quotes or formatting.`;
 
 **Candidate Profile:**
 - Name: ${parsedCV.full_name}
-- Gender: ${gender} (${gender === "male" ? "USE ভাই/Bhai" : gender === "female" ? "USE আপু/Apu" : "neutral greeting"})
+- Gender: ${gender} (${gender === "male" ? "USE à¦­à¦¾à¦‡/Bhai" : gender === "female" ? "USE à¦†à¦ªà§/Apu" : "neutral greeting"})
 - Profession Category: ${professionCategory || "Professional"}
 - Current Status: ${parsedCV.current_status || "Not specified"}
 - Education: ${JSON.stringify(parsedCV.education?.slice(0, 2) || [])}
@@ -317,7 +317,7 @@ Generate the personalized WhatsApp message:`;
     const aiData = await aiResponse.json();
     let message = aiData.choices?.[0]?.message?.content?.trim() || "";
 
-    // Clean up any quotes
+    // Clean up unknown quotes
     if (message.startsWith('"') && message.endsWith('"')) {
       message = message.slice(1, -1);
     }
@@ -328,7 +328,7 @@ Generate the personalized WhatsApp message:`;
 
     // Format phone for WhatsApp link
     let phone = primaryPhone;
-    phone = phone.replace(/[\s\-\(\)\+]/g, "");
+    phone = phone.replace(/[\s\-()+]/g, "");
     if (phone.startsWith("880")) {
       // Already has country code
     } else if (phone.startsWith("0")) {
@@ -361,3 +361,5 @@ Generate the personalized WhatsApp message:`;
     });
   }
 });
+
+

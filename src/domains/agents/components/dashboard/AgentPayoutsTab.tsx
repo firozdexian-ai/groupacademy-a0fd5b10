@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import {
   listPayoutRequestsByStatus,
   markPayoutPaid,
@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy — Career Guidance System: Agent Creator Financial Payout Management Panel
+ * Group Academy â€” Career Guidance System: Agent Creator Financial Payout Management Panel
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/command-center?tab=payouts (Operator Financial Administration Area)
  * Operations Mode: Automated Efficiency ledger processing system disbursements across status boundaries.
@@ -49,7 +49,7 @@ export function AgentPayoutsManager() {
     try {
       const data = await listPayoutRequestsByStatus(tab);
       setRows((data as PayoutRow[]) ?? []);
-    } catch (err: any) {
+    } catch (err: unknown) {
       trackError("agent-payouts-manager-load-failure", { error: err.message, tab });
       toast.error("Failed to load payout records ledger");
     } finally {
@@ -89,7 +89,7 @@ export function AgentPayoutsManager() {
 
       toast.success(`Transaction committed: Status marked as ${status}`);
       await load();
-    } catch (err: any) {
+    } catch (err: unknown) {
       trackError("agent-payouts-manager-update-failure", { error: err.message, id: row.id, status });
       toast.error(err.message || "Financial transaction processing operation dropped");
     } finally {
@@ -211,9 +211,9 @@ export function AgentPayoutsManager() {
                           </TableCell>
                           <TableCell
                             className="text-xs text-muted-foreground/90 max-w-[200px] truncate font-medium"
-                            title={(r.payout_details as { note?: string })?.note ?? "—"}
+                            title={(r.payout_details as { note?: string })?.note ?? "â€”"}
                           >
-                            {(r.payout_details as { note?: string })?.note ?? "—"}
+                            {(r.payout_details as { note?: string })?.note ?? "â€”"}
                           </TableCell>
                           <TableCell className="text-xs text-muted-foreground/70 font-medium whitespace-nowrap">
                             {new Date(r.created_at).toLocaleDateString(undefined, { dateStyle: "medium" })}
@@ -279,3 +279,5 @@ export function AgentPayoutsManager() {
 }
 
 export default AgentPayoutsManager;
+
+

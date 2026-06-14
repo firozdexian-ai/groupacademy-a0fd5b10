@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useUgcGraph } from "./hooks/useUgcGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,9 +18,9 @@ export function UgcCompetitionsTab() {
  const { ugcGraphQuery, mutations: { upsertCompetition, deleteCompetition } } = useUgcGraph();
  const { data, isLoading } = ugcGraphQuery;
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ status: "draft" });
+ const [draft, setDraft] = useState<unknown>({ status: "draft" });
 
- const openEdit = (row: any) => {
+ const openEdit = (row: unknown) => {
  setDraft({ ...row, prizes: row.prizes ? JSON.stringify(row.prizes, null, 2) : "" });
  setOpen(true);
  };
@@ -61,7 +61,7 @@ export function UgcCompetitionsTab() {
  ) : (data?.competitions ?? []).length === 0 ? (
  <TableRow><TableCell colSpan={5} className="text-center py-12 text-muted-foreground font-medium">Zero tournaments active.</TableCell></TableRow>
  ) : (
- data?.competitions.map((row: any) => (
+ data?.competitions.map((row: unknown) => (
  <TableRow key={row.id} className="hover:bg-warning/5">
  <TableCell>
  <div className="flex items-center gap-3">
@@ -71,7 +71,7 @@ export function UgcCompetitionsTab() {
  <span className="font-bold">{row.title}</span>
  </div>
  </TableCell>
- <TableCell className="text-xs uppercase text-muted-foreground">{row.category || "—"}</TableCell>
+ <TableCell className="text-xs uppercase text-muted-foreground">{row.category || "â€”"}</TableCell>
  <TableCell>
  <Badge
  variant="outline"
@@ -86,7 +86,7 @@ export function UgcCompetitionsTab() {
  </Badge>
  </TableCell>
  <TableCell className="text-xs text-muted-foreground tabular-nums">
- {row.start_date || "?"} → {row.end_date || "?"}
+ {row.start_date || "?"} â†’ {row.end_date || "?"}
  </TableCell>
  <TableCell className="text-right">
  <div className="flex items-center justify-end gap-1">
@@ -196,3 +196,5 @@ export function UgcCompetitionsTab() {
 }
 
 export default UgcCompetitionsTab;
+
+

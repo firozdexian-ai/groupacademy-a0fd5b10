@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -194,7 +194,7 @@ const SUBTASK_KIND_GUIDES: Record<string, { instructions: string; formatTips: st
     formatTips: "Recommended: Markdown or PDF document with clean categories, titles, URLs, and descriptions."
   },
   other: {
-    instructions: "Upload any other learning resources, files, or reference materials designated by the course designer.",
+    instructions: "Upload unknown other learning resources, files, or reference materials designated by the course designer.",
     formatTips: "Format specified by course coordinator."
   }
 };
@@ -202,7 +202,7 @@ const SUBTASK_KIND_GUIDES: Record<string, { instructions: string; formatTips: st
 /**
  * GroUp Academy: Authoritative Gig Hub Course Project Panel (CourseProjectDetail)
  * Hardened assignment workbench securing subtask validation hooks and protecting credit rewards from main-thread thrash.
- * Version: Launch Candidate · Phase Z1 Production Contract Locked
+ * Version: Launch Candidate Â· Phase Z1 Production Contract Locked
  */
 export default function CourseProjectDetail() {
  const { projectId: unverifiedProjectIdStr } = useParams<{ projectId: string }>();
@@ -323,7 +323,7 @@ export default function CourseProjectDetail() {
 
  return (
  <div className="max-w-3xl mx-auto px-4 py-4 space-y-5 text-left antialiased block transform-gpu w-full pb-32">
- {/* HUD LEVEL 1: HUBS BACKWARD NAVIGATION HEADER LINK BAR */}
+ {/* dashboard LEVEL 1: HUBS BACKWARD NAVIGATION HEADER LINK BAR */}
  <header className="block select-none leading-none w-full shrink-0">
  <button
  type="button"
@@ -334,7 +334,7 @@ export default function CourseProjectDetail() {
  </button>
  </header>
 
- {/* HUD LEVEL 2: COMPOSITE PROJECT METADATA CARD HERO PANELS */}
+ {/* dashboard LEVEL 2: COMPOSITE PROJECT METADATA CARD HERO PANELS */}
  <Card className="rounded-lg border border-primary/20 bg-linear-to-br from-primary/[0.01] to-transparent shadow-none overflow-hidden block w-full">
  <CardContent className="p-4 sm:p-5 space-y-4 block w-full leading-none">
  <div className="flex items-start gap-3.5 leading-none w-full block">
@@ -407,7 +407,7 @@ export default function CourseProjectDetail() {
  </div>
  )}
 
- {/* HUD LEVEL 3: TRANSACTION PIPELINE ROUTER CONTROLLERS BUTTONS */}
+ {/* dashboard LEVEL 3: TRANSACTION PIPELINE ROUTER CONTROLLERS BUTTONS */}
  {isProjectOpenToClaim ? (
  <Button
  type="button"
@@ -443,7 +443,7 @@ export default function CourseProjectDetail() {
  </CardContent>
  </Card>
 
- {/* HUD LEVEL 4: ITERATIVE SUB-COMPONENTS ROW CANVAS FOR SUBTASKS */}
+ {/* dashboard LEVEL 4: ITERATIVE SUB-COMPONENTS ROW CANVAS FOR SUBTASKS */}
  <section className="space-y-2 block w-full">
  <h2 className="text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 select-none block leading-none pb-2 border-b border-border/5 px-1">
  Detailed Subtask Operations Matrix
@@ -532,7 +532,7 @@ function SubtaskRow({ subtask, isOwner, isLocked, expanded, onToggle, onUpdated 
 
  try {
  const { error: updateHandshakeError } = await updateCourseProjectSubtask(subtask.id, {
- submitted_files: uploadedFilesCollection as any,
+ submitted_files: uploadedFilesCollection as unknown,
  submitted_notes: textReviewerNotesInput.trim() || null,
  submitted_at: uploadedFilesCollection.length ? new Date().toISOString() : null,
  status: uploadedFilesCollection.length ? "in_review" : "pending",
@@ -542,7 +542,7 @@ function SubtaskRow({ subtask, isOwner, isLocked, expanded, onToggle, onUpdated 
 
  toast.success("Subtask progress variables successfully updated.");
  if (isThreadMountedFlag.current) onUpdated();
- } catch (mutationExceptionPayload: any) {
+ } catch (mutationExceptionPayload: unknown) {
  toast.error(mutationExceptionPayload.message || "Failed to finalize subtask save operation.");
  } finally {
  if (isThreadMountedFlag.current) {
@@ -674,7 +674,7 @@ function SubtaskRow({ subtask, isOwner, isLocked, expanded, onToggle, onUpdated 
  <ul className="text-xs font-semibold font-mono text-primary leading-none space-y-1.5 block select-text">
  {uploadedFilesCollection.map((fileItem) => (
  <li key={`subtask-file-node-${fileItem.path}`} className="truncate block flex items-center gap-1.5">
- <span>📎</span> <span>{fileItem.name}</span>
+ <span>ðŸ“Ž</span> <span>{fileItem.name}</span>
  </li>
  ))}
  </ul>
@@ -702,3 +702,5 @@ function SubtaskRow({ subtask, isOwner, isLocked, expanded, onToggle, onUpdated 
  </Card>
  );
 }
+
+

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { listJobsByIdsBasic } from "@/domains/jobs/repo/jobsRepo";
 import { listContentByIdsBasic } from "@/domains/learning/repo/learningRepo";
@@ -56,7 +56,7 @@ export default function SavedItems() {
  const [loadingDetails, setLoadingDetails] = useState(true);
 
  // Internal error logger
- const reportAnomaly = async (event: string, context: any) => {
+ const reportAnomaly = async (event: string, context: unknown) => {
  console.error(`[app] ${event}`, context);
  await adminSupportAssistant({ type: "saved_items_sync_error", event, context });
  };
@@ -77,12 +77,12 @@ export default function SavedItems() {
  const blogIds = savedItems.filter((i) => i.item_type === "blog").map((i) => i.item_id);
 
  const [jobsResult, coursesResult, blogsResult] = await Promise.all([
- jobIds.length ? listJobsByIdsBasic(jobIds) : Promise.resolve([] as any[]),
- courseIds.length ? listContentByIdsBasic(courseIds) : Promise.resolve([] as any[]),
- blogIds.length ? listBlogPostsByIds(blogIds) : Promise.resolve([] as any[]),
+ jobIds.length ? listJobsByIdsBasic(jobIds) : Promise.resolve([] as unknown[]),
+ courseIds.length ? listContentByIdsBasic(courseIds) : Promise.resolve([] as unknown[]),
+ blogIds.length ? listBlogPostsByIds(blogIds) : Promise.resolve([] as unknown[]),
  ]);
 
- jobsResult.forEach((job: any) => {
+ jobsResult.forEach((job: unknown) => {
  const saved = savedItems.find((i) => i.item_id === job.id);
  if (saved)
  details.set(`${saved.item_type}-${job.id}`, {
@@ -93,7 +93,7 @@ export default function SavedItems() {
  });
  });
 
- coursesResult.forEach((c: any) => {
+ coursesResult.forEach((c: unknown) => {
  const saved = savedItems.find((i) => i.item_id === c.id);
  if (saved)
  details.set(`${saved.item_type}-${c.id}`, {
@@ -104,7 +104,7 @@ export default function SavedItems() {
  });
  });
 
- blogsResult.forEach((b: any) => {
+ blogsResult.forEach((b: unknown) => {
  const saved = savedItems.find((i) => i.item_id === b.id);
  if (saved)
  details.set(`${saved.item_type}-${b.id}`, {
@@ -243,3 +243,5 @@ export default function SavedItems() {
  </div>
  );
 }
+
+

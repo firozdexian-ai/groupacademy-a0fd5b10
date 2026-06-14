@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+﻿import { useEffect, useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2, Send, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -35,15 +35,15 @@ export default function ProfileBuilder() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Lightweight client-side error log; replace with a real telemetry sink later.
-  const logChatError = (error: string, context: any) => {
+  const logChatError = (error: string, context: unknown) => {
     console.warn(`[ProfileBuilder] ${error}`, context);
   };
 
   useEffect(() => {
     if (!talent || messages.length > 0) return;
     const greeting = talent.institution
-      ? `Hi! I'm your University Representative for ${talent.institution} 👋 Let's get your profile market-ready. To start — what's your full name?`
-      : "Hi! I'm Aisha 👋 I'll get your profile market-ready in under a minute. To start — what's your full name?";
+      ? `Hi! I'm your University Representative for ${talent.institution} ðŸ‘‹ Let's get your profile market-ready. To start â€” what's your full name?`
+      : "Hi! I'm Aisha ðŸ‘‹ I'll get your profile market-ready in under a minute. To start â€” what's your full name?";
     setMessages([
       {
         role: "assistant",
@@ -106,7 +106,7 @@ export default function ProfileBuilder() {
             ...prev,
             {
               role: "assistant",
-              content: `✨ Handing you off to ${agentRow.name}, your domain coach. They'll take it from here to finish your profile.`,
+              content: `âœ¨ Handing you off to ${agentRow.name}, your domain coach. They'll take it from here to finish your profile.`,
             },
           ]);
           toast.success(`Connected with ${agentRow.name}`);
@@ -115,9 +115,9 @@ export default function ProfileBuilder() {
       }
 
       await refreshTalent();
-    } catch (e: any) {
+    } catch (e: unknown) {
       logChatError("OnboardingChatError", { error: e.message, messages: nextMessages });
-      toast.error(e.message || "Something went wrong — please try again.");
+      toast.error(e.message || "Something went wrong â€” please try again.");
     } finally {
       setSending(false);
     }
@@ -143,7 +143,7 @@ export default function ProfileBuilder() {
           <div className="flex-1 min-w-0">
             <h1 className="text-sm font-semibold text-foreground">{displayName}</h1>
             <p className="text-xs text-muted-foreground">
-              {displaySubtitle} · {readiness.percent}% complete
+              {displaySubtitle} Â· {readiness.percent}% complete
             </p>
           </div>
         </div>
@@ -182,7 +182,7 @@ export default function ProfileBuilder() {
  send();
  }
  }}
- placeholder="Type your reply…"
+ placeholder="Type your replyâ€¦"
  disabled={sending}
  className="rounded-full"
  />
@@ -199,3 +199,5 @@ export default function ProfileBuilder() {
  </div>
  );
 }
+
+

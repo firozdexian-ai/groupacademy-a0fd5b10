@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCurrentUser } from "@/lib/auth";
 import {
   updateLearningTrack,
@@ -197,7 +197,7 @@ export function useAssignTrack() {
     mutationFn: async (input: { track_id: string; company_id: string; user_ids: string[]; due_at?: string | null }) => {
       try {
         return await orgAssignTrack(input);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] ANOMALY: org_assign_track bulk handshake failed.", error);
         throw error;
       }
@@ -227,3 +227,5 @@ export function useEnrollTrack() {
     },
   });
 }
+
+

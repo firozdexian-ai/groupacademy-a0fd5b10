@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { cva, type VariantProps } from "class-variance-authority";
 import { X } from "lucide-react";
@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Authoritative Lateral Discovery Protocol Primitive (Sheet)
  * Hardened lateral slide-out panel isolating auxiliary workspace contexts and neutralizing scroll-lock layout snapping.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const Sheet = SheetPrimitive.Root;
 const SheetTrigger = SheetPrimitive.Trigger;
@@ -58,7 +58,7 @@ const SheetContent = React.forwardRef<React.ElementRef<typeof SheetPrimitive.Con
       <SheetPrimitive.Content ref={ref} className={cn(sheetVariants({ side }), className)} {...props}>
         {children}
 
-        {/* HUD LEVEL 1: ISOLATED LATERAL ACCORDION TERMINATION SWITCH */}
+        {/* dashboard LEVEL 1: ISOLATED LATERAL ACCORDION TERMINATION SWITCH */}
         <SheetPrimitive.Close className="absolute right-3.5 top-3.5 h-7 w-7 rounded-lg bg-muted/30 border border-border/5 text-muted-foreground hover:text-foreground flex items-center justify-center cursor-pointer transition-colors outline-none focus-visible:ring-1 focus-visible:ring-ring">
           <X className="h-4 w-4 stroke-[2.5]" />
           <span className="sr-only">Terminate lateral exploration view panel sheet</span>
@@ -127,3 +127,4 @@ export {
   SheetTitle,
   SheetTrigger,
 };
+

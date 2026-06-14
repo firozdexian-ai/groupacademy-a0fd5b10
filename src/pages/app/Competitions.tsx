@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -56,7 +56,7 @@ const SKELETON_ROWS_ROSTER = [1, 2, 3];
 /**
  * GroUp Academy: Capability Arena Competitions Marketplace (Competitions)
  * Hardened list center mapping active hackathons, tracking deadlines dynamically, and insulating text scales.
- * Version: Launch Candidate · Phase Z1 Production Contract Locked
+ * Version: Launch Candidate Â· Phase Z1 Production Contract Locked
  */
 export default function Competitions() {
  const navigateHook = useNavigate();
@@ -122,7 +122,7 @@ export default function Competitions() {
  <div
  className={cn(PAGE_SHELL_WIDE, "max-w-4xl mx-auto space-y-5 text-left antialiased block transform-gpu w-full")}
  >
- {/* HUD LEVEL 1: APPLICATION COCKPIT NAVIGATION CONTROL BAR */}
+ {/* dashboard LEVEL 1: APPLICATION COCKPIT NAVIGATION CONTROL BAR */}
  <header className="block select-none leading-none w-full shrink-0 pb-1">
  <Button
  type="button"
@@ -135,7 +135,7 @@ export default function Competitions() {
  </Button>
  </header>
 
- {/* HUD LEVEL 2: COMPOSITE HUB TITLE COMPLIANCE DESCRIPTION BLOCK */}
+ {/* dashboard LEVEL 2: COMPOSITE HUB TITLE COMPLIANCE DESCRIPTION BLOCK */}
  <div className="space-y-1 block select-none pointer-events-none border-b border-border/10 pb-3 w-full shrink-0 leading-none">
  <div className="flex items-center gap-2 leading-none w-full block">
  <Trophy className="h-4.5 w-4.5 text-primary stroke-[2.2] shrink-0" />
@@ -159,7 +159,7 @@ export default function Competitions() {
  </p>
  </div>
 
- {/* HUD LEVEL 3: TAB FILTERS SYSTEM TRACK CONTROLLER */}
+ {/* dashboard LEVEL 3: TAB FILTERS SYSTEM TRACK CONTROLLER */}
  <div className="w-full block shrink-0 select-none leading-none h-10 mt-1">
  <Tabs
  value={filterScopeSelection}
@@ -195,7 +195,7 @@ export default function Competitions() {
  </Tabs>
  </div>
 
- {/* HUD LEVEL 4: RELATIONAL COMPETITIONS SYSTEM OUTPUT BOARDS */}
+ {/* dashboard LEVEL 4: RELATIONAL COMPETITIONS SYSTEM OUTPUT BOARDS */}
  {isCollectionCacheResolving ? (
  <div className="space-y-2.5 block w-full select-none pointer-events-none">
  {SKELETON_ROWS_ROSTER.map((rowItemNum) => (
@@ -305,3 +305,4 @@ export default function Competitions() {
  </div>
  );
 }
+

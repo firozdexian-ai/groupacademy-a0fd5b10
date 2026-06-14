@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { enrollInContent } from "@/domains/learning/repo/learningRepo";
 import { findTalentEnrollment } from "@/domains/learning/repo/learningRepo";
@@ -50,11 +50,11 @@ export function useEnrollment(contentId: string | undefined) {
     enabled: !!talent?.id && !!contentId,
     staleTime: 2 * 60 * 1000, // 2-minute baseline consistency window
     queryFn: async (): Promise<EnrollmentNode | null> => {
-      // HUD: EXECUTING_CANONICAL_ENROLLMENT_LOOKUP
+      // dashboard: EXECUTING_CANONICAL_ENROLLMENT_LOOKUP
       try {
         const data = await findTalentEnrollment(contentId!, talent!.id);
         return (data as unknown as EnrollmentNode | null) ?? null;
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: enrollments table selection evaluation error.", {
           talentId: talent?.id,
           contentId,
@@ -82,7 +82,7 @@ export function useEnrollment(contentId: string | undefined) {
 
       const activeRef = refOverride ?? readRef();
 
-      // HUD: EXECUTING_RPC_ATOMIC_ENROLLMENT_INGRESS
+      // dashboard: EXECUTING_RPC_ATOMIC_ENROLLMENT_INGRESS
       const data = await enrollInContent<EnrollmentHandshakePayload>({
         contentId,
         refCode: activeRef || null,
@@ -97,7 +97,7 @@ export function useEnrollment(contentId: string | undefined) {
       }
 
       if (!data.already_enrolled) {
-        toast.success("You're enrolled! Trajectory activated. 🎓");
+        toast.success("You're enrolled! Trajectory activated. ðŸŽ“");
       }
 
       // Automated Efficiency: clear referral parameters once transaction commits
@@ -107,7 +107,7 @@ export function useEnrollment(contentId: string | undefined) {
 
       invalidateMatrix();
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       // Digital Workforce Sensor: Intercept unhandled anomalies to enable rapid telemetry updates
       console.error("[Digital Workforce] ANOMALY: enroll_in_content transaction pipeline dropout.", {
         talentId: talent?.id,
@@ -137,7 +137,7 @@ export function useEnrollment(contentId: string | undefined) {
  * Maps system core database transition blocks to high-fidelity 2024 SaaS instructions responses.
  * Immutable platform feature component.
  */
-function humanizeError(code: string, data?: any): string {
+function humanizeError(code: string, data?: unknown): string {
   switch (code) {
     case "auth_required":
       return "Please sign in to your authenticated account to enroll.";
@@ -152,8 +152,10 @@ function humanizeError(code: string, data?: any): string {
     case "sold_out":
       return "All available programmatic tier seats are currently filled.";
     case "insufficient_credits":
-      return `Fiscal deficit detected. This transaction requires ${data?.required ?? "additional"} credits — update your wallet to enroll.`;
+      return `Fiscal deficit detected. This transaction requires ${data?.required ?? "additional"} credits â€” update your wallet to enroll.`;
     default:
       return `Enrollment transaction interface rejected (${code})`;
   }
 }
+
+

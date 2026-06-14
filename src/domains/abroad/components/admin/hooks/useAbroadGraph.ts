@@ -1,5 +1,5 @@
 /**
- * Group Academy — Career Abroad Domain Graph Orchestration Hook
+ * Group Academy â€” Career Abroad Domain Graph Orchestration Hook
  * Version: Phase 10i.2 Hardened (Production Candidate)
  * Architecture: Centralized TanStack Query cache mutations managing student placement graphs.
  */
@@ -67,7 +67,7 @@ export function useAbroadGraph() {
       try {
         const master = await getAbroadGraphMaster();
 
-        const applications: AbroadApplication[] = (master.apps ?? []).map((r: any) => ({
+        const applications: AbroadApplication[] = (master.apps ?? []).map((r: unknown) => ({
           id: r.id,
           talent_user_id: r.talent_user_id,
           program_id: r.program_id,
@@ -75,7 +75,7 @@ export function useAbroadGraph() {
           created_at: r.created_at,
         }));
 
-        const programs: AbroadProgram[] = (master.programs ?? []).map((r: any) => ({
+        const programs: AbroadProgram[] = (master.programs ?? []).map((r: unknown) => ({
           id: r.id,
           title: r.program_name ?? "Untitled Program",
           institution_id: r.university_name ?? "",
@@ -83,16 +83,16 @@ export function useAbroadGraph() {
           created_at: r.created_at,
         }));
 
-        const roadmaps: RoadmapLead[] = (master.roadmaps ?? []).map((r: any) => ({
+        const roadmaps: RoadmapLead[] = (master.roadmaps ?? []).map((r: unknown) => ({
           id: r.id,
           talent_id: r.talent_id,
           destination:
-            Array.isArray(r.target_countries) && r.target_countries.length > 0 ? String(r.target_countries[0]) : "—",
+            Array.isArray(r.target_countries) && r.target_countries.length > 0 ? String(r.target_countries[0]) : "â€”",
           status: r.status ?? "pending",
           created_at: r.created_at,
         }));
 
-        const agents: DestinationAgent[] = (master.agents ?? []).map((r: any) => ({
+        const agents: DestinationAgent[] = (master.agents ?? []).map((r: unknown) => ({
           id: r.id,
           name: r.display_name ?? "Unnamed",
           country: r.country_code ?? "",
@@ -100,7 +100,7 @@ export function useAbroadGraph() {
           created_at: r.created_at,
         }));
 
-        const ieltsAttempts: IeltsAttempt[] = (master.ielts ?? []).map((r: any) => ({
+        const ieltsAttempts: IeltsAttempt[] = (master.ielts ?? []).map((r: unknown) => ({
           id: r.id,
           user_id: r.user_id,
           prompt_id: r.prompt_id,
@@ -109,7 +109,7 @@ export function useAbroadGraph() {
           created_at: r.created_at,
         }));
 
-        const ieltsResources: IeltsResource[] = (master.resources ?? []).map((r: any) => ({
+        const ieltsResources: IeltsResource[] = (master.resources ?? []).map((r: unknown) => ({
           id: r.id,
           title: r.title ?? "Untitled",
           resource_type: r.content_type ?? "unknown",
@@ -118,16 +118,16 @@ export function useAbroadGraph() {
         }));
 
         return { applications, programs, roadmaps, agents, ieltsAttempts, ieltsResources };
-      } catch (err: any) {
+      } catch (err: unknown) {
         trackError("abroad-graph-master-hydrator-failure", { error: err.message });
         throw err;
       }
     },
   });
 
-  const createUpsertMutation = (table: string, entityLabel: string) =>
+  const useCreateUpsertMutation = (table: string, entityLabel: string) =>
     useMutation({
-      mutationFn: (payload: any) => upsertGraphRow(table, payload),
+      mutationFn: (payload: unknown) => upsertGraphRow(table, payload),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["abroad_graph_master"] });
         toast.success(`${entityLabel} saved successfully.`);
@@ -138,7 +138,7 @@ export function useAbroadGraph() {
       },
     });
 
-  const createDeleteMutation = (table: string, entityLabel: string) =>
+  const useCreateDeleteMutation = (table: string, entityLabel: string) =>
     useMutation({
       mutationFn: (id: string) => deleteGraphRow(table, id),
       onSuccess: () => {
@@ -154,18 +154,20 @@ export function useAbroadGraph() {
   return {
     abroadGraphQuery,
     mutations: {
-      upsertApplication: createUpsertMutation("abroad_applications", "Application"),
-      deleteApplication: createDeleteMutation("abroad_applications", "Application"),
-      upsertProgram: createUpsertMutation("study_abroad_programs", "Program"),
-      deleteProgram: createDeleteMutation("study_abroad_programs", "Program"),
-      upsertRoadmap: createUpsertMutation("study_abroad_roadmaps", "Roadmap"),
-      deleteRoadmap: createDeleteMutation("study_abroad_roadmaps", "Roadmap"),
-      upsertAgent: createUpsertMutation("destination_agents", "Agent info"),
-      deleteAgent: createDeleteMutation("destination_agents", "Agent info"),
-      upsertIeltsAttempt: createUpsertMutation("ielts_mock_attempts", "IELTS try"),
-      deleteIeltsAttempt: createDeleteMutation("ielts_mock_attempts", "IELTS try"),
-      upsertIeltsResource: createUpsertMutation("ielts_resources", "IELTS resource"),
-      deleteIeltsResource: createDeleteMutation("ielts_resources", "IELTS resource"),
+      upsertApplication: useCreateUpsertMutation("abroad_applications", "Application"),
+      deleteApplication: useCreateDeleteMutation("abroad_applications", "Application"),
+      upsertProgram: useCreateUpsertMutation("study_abroad_programs", "Program"),
+      deleteProgram: useCreateDeleteMutation("study_abroad_programs", "Program"),
+      upsertRoadmap: useCreateUpsertMutation("study_abroad_roadmaps", "Roadmap"),
+      deleteRoadmap: useCreateDeleteMutation("study_abroad_roadmaps", "Roadmap"),
+      upsertAgent: useCreateUpsertMutation("destination_agents", "Agent info"),
+      deleteAgent: useCreateDeleteMutation("destination_agents", "Agent info"),
+      upsertIeltsAttempt: useCreateUpsertMutation("ielts_mock_attempts", "IELTS try"),
+      deleteIeltsAttempt: useCreateDeleteMutation("ielts_mock_attempts", "IELTS try"),
+      upsertIeltsResource: useCreateUpsertMutation("ielts_resources", "IELTS resource"),
+      deleteIeltsResource: useCreateDeleteMutation("ielts_resources", "IELTS resource"),
     },
   };
 }
+
+

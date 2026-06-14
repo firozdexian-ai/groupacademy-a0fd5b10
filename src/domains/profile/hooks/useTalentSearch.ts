@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { searchPublicTalents } from "@/domains/profile/repo/profileRepo";
 
 /**
@@ -48,7 +48,7 @@ export function useTalentSearch(filters: TalentSearchFilters, page = 0, pageSize
     return [...filters.skills].sort().join(",");
   }, [filters.skills]);
 
-  // HUD: SECURE_REFERENCE_ISOLATED_QUERY_KEY
+  // dashboard: SECURE_REFERENCE_ISOLATED_QUERY_KEY
   const queryKey = ["talent-search", keywordParam, countryParam, skillsSerialized, page, pageSize];
 
   return useQuery<TalentSearchResponse, Error>({
@@ -62,15 +62,15 @@ export function useTalentSearch(filters: TalentSearchFilters, page = 0, pageSize
         skills: filters.skills && filters.skills.length > 0 ? filters.skills : null,
       };
 
-      // HUD: EXECUTING_DIRECTORY_RPC_QUERY_INGRESS
-      let data: any;
+      // dashboard: EXECUTING_DIRECTORY_RPC_QUERY_INGRESS
+      let data: unknown;
       try {
-        data = await searchPublicTalents<any>({
+        data = await searchPublicTalents<unknown>({
           filters: payloadFilters,
           limit: pageSize,
           offset: page * pageSize,
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] ANOMALY: search_public_talents RPC pipeline dropped.", {
           payloadFilters,
           page,
@@ -79,11 +79,11 @@ export function useTalentSearch(filters: TalentSearchFilters, page = 0, pageSize
         throw error;
       }
 
-      const obj = (data as any) || {};
+      const obj = (data as unknown) || {};
       const rawRows = Array.isArray(obj.rows) ? obj.rows : [];
 
       // Hardened Data Normalization Layer: Sanitizes directory item variables against schema drifts
-      const normalizedRows: TalentSearchRow[] = rawRows.map((row: any) => ({
+      const normalizedRows: TalentSearchRow[] = rawRows.map((row: unknown) => ({
         id: String(row.id),
         public_handle: row.public_handle ? String(row.public_handle) : null,
         full_name: String(row.full_name ?? "Candidate Node"),
@@ -107,3 +107,5 @@ export function useTalentSearch(filters: TalentSearchFilters, page = 0, pageSize
 
 // React import helper mapping for native useMemo parsing dependencies
 import { useMemo } from "react";
+
+

@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+﻿import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -30,7 +30,7 @@ serve(async (req) => {
     const { count = 10, topic = "", context = "" } = await req.json();
 
     const { data: programs } = await supabase.from("profession_categories").select("name").limit(30);
-    const programContext = (programs || []).map((p: any) => p.name).join(", ");
+    const programContext = (programs || []).map((p: unknown) => p.name).join(", ");
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
@@ -139,8 +139,10 @@ Rules:
       JSON.stringify({ inserted, total_posts: totalPosts }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("batch-generate-feed-posts error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
+
+

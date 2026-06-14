@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from "react";
+﻿import { useEffect, useState, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getCurrentUserId } from "@/lib/auth";
 import { getLatestIdentityDoc, insertIdentityDoc, uploadIdentityDoc } from "@/domains/profile/repo/profileRepo";
@@ -45,7 +45,7 @@ const STATUS_CONFIG = {
 /**
  * GroUp Academy: Identity Verification Document Ingress Terminal (IdentityDocsUpload)
  * An authoritative operational sandbox managing identity document storage commits, encryption locks, and validation states.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function IdentityDocsUpload() {
   const queryClient = useQueryClient();
@@ -147,7 +147,7 @@ export function IdentityDocsUpload() {
         trackEvent("identity_docs_submission_success");
         await loadActiveVerificationDocument();
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       const parsedExceptionMsg = e instanceof Error ? e.message : String(e);
       trackError(parsedExceptionMsg, { component: "IdentityDocsUpload", action: "commit_identity_docs_pipeline" });
       toast.error(`Upload failed: ${parsedExceptionMsg}`, { id: dynamicToastTrackerId });
@@ -164,7 +164,7 @@ export function IdentityDocsUpload() {
   return (
     <Card className="w-full text-left rounded-xl border border-border/40 bg-card/40 backdrop-blur-md shadow-sm antialiased transform-gpu overflow-hidden transition-colors hover:border-border/60">
       <CardContent className="p-4 sm:p-5 space-y-4 w-full min-w-0 flex flex-col justify-center">
-        {/* HUD LEVEL 1: TOP PANEL TRACK HEADING CONTROLS BLOCK */}
+        {/* dashboard LEVEL 1: TOP PANEL TRACK HEADING CONTROLS BLOCK */}
         <div className="flex items-center justify-between gap-4 px-0.5 select-none w-full leading-none shrink-0 h-8">
           <div className="flex items-center gap-2 min-w-0 flex-1 h-full">
             <ShieldCheck className="h-4.5 w-4.5 text-primary stroke-[2.2] shrink-0 animate-pulse" />
@@ -184,7 +184,7 @@ export function IdentityDocsUpload() {
           <div className="flex items-center gap-2 py-4 text-muted-foreground select-none leading-none w-full">
             <Loader2 className="h-4 w-4 animate-spin text-primary stroke-[2.5]" />
             <span className="text-[10px] font-extrabold uppercase tracking-wider pl-0.5 animate-pulse">
-              Loading verification status…
+              Loading verification statusâ€¦
             </span>
           </div>
         ) : doc ? (
@@ -218,7 +218,7 @@ export function IdentityDocsUpload() {
           </div>
         ) : null}
 
-        {/* HUD LEVEL 2: REGISTRY ACTIONS ENTRY INPUT FIELDS FORM */}
+        {/* dashboard LEVEL 2: REGISTRY ACTIONS ENTRY INPUT FIELDS FORM */}
         {(!doc || doc.status === "rejected") && (
           <div className="space-y-3.5 p-3.5 border border-border/40 bg-background/50 rounded-xl w-full min-w-0 flex flex-col justify-center animate-in slide-in-from-bottom-1 duration-200">
             <div className="space-y-1.5 text-left w-full min-w-0 font-bold text-xs tracking-tight">
@@ -230,7 +230,7 @@ export function IdentityDocsUpload() {
                 disabled={busy}
                 onValueChange={(v) => {
                   trackEvent("identity_docs_type_altered", { type: v });
-                  setDocType(v as any);
+                  setDocType(v as unknown);
                 }}
               >
                 <SelectTrigger className="h-10 rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground px-3 cursor-pointer">
@@ -286,7 +286,7 @@ export function IdentityDocsUpload() {
               {busy ? (
                 <>
                   <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                  <span>Uploading…</span>
+                  <span>Uploadingâ€¦</span>
                 </>
               ) : (
                 <>
@@ -298,7 +298,7 @@ export function IdentityDocsUpload() {
           </div>
         )}
 
-        {/* HUD LEVEL 3: RECTILINEAR OVERLAY BOTTOM METRIC LOG OMNIPRESENCE SHIELD */}
+        {/* dashboard LEVEL 3: RECTILINEAR OVERLAY BOTTOM METRIC LOG OMNIPRESENCE SHIELD */}
         <div className="mt-4 flex items-center justify-center gap-1.5 py-2.5 border-t border-border/10 select-none shadow-none pointer-events-none tracking-normal font-bold text-[9px] text-muted-foreground/40 font-mono leading-none shrink-0 uppercase w-full">
           <Zap className="h-3.5 w-3.5 text-warning fill-warning/10 stroke-[2.2] shrink-0 animate-pulse" />
           <span>Secure Identity Verification</span>
@@ -309,3 +309,5 @@ export function IdentityDocsUpload() {
 }
 
 export default IdentityDocsUpload;
+
+

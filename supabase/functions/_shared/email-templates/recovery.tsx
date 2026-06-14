@@ -1,4 +1,4 @@
-/// <reference types="npm:@types/react@18.3.1" />
+﻿/// <reference types="npm:@types/react@18.3.1" />
 
 import * as React from 'npm:react@18.3.1'
 
@@ -70,3 +70,4 @@ const button = {
   fontWeight: '600' as const,
 }
 const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+

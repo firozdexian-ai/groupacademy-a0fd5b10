@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
  Dialog,
@@ -70,14 +70,14 @@ export const SalaryAnalysisCodeGenerator = ({ leadEmail, leadName }: SalaryAnaly
 
  // 3. Monitor Execution via Platform Timeout Protocol
  const { error } = (await withTimeout(executeInsertion(), TIMEOUTS.DEFAULT, "Code generation timed out")) as {
- error: any;
+ error: unknown;
  };
 
  if (error) throw error;
 
  setGeneratedCode(code);
  toast.success("Access code deployed.");
- } catch (error: any) {
+ } catch (error: unknown) {
  console.error("Access Code Fault:", error);
  const isTimeout = error.message?.includes("timed out");
  toast.error(isTimeout ? "Network Latency Detected. Retrying..." : "System Error: Code generation failed.");
@@ -179,7 +179,7 @@ export const SalaryAnalysisCodeGenerator = ({ leadEmail, leadName }: SalaryAnaly
  {isGenerating ? (
  <>
  <InlineSpinner size="md" className="mr-2" />
- Saving…
+ Savingâ€¦
  </>
  ) : (
  <>
@@ -206,3 +206,5 @@ export const SalaryAnalysisCodeGenerator = ({ leadEmail, leadName }: SalaryAnaly
  </Dialog>
  );
 };
+
+

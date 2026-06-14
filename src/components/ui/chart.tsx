@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as RechartsPrimitive from "recharts";
 import type { TooltipProps } from "recharts";
 import { cn } from "@/lib/utils";
@@ -31,7 +31,7 @@ function useChart() {
 /**
  * GroUp Academy: Data Intelligence Visualization & Theme Sync Engine (ChartContainer)
  * Authoritative operational shell mapping dynamic chart colors across HSL layers and neutralizing layout shift jitters.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 const ChartContainer = React.forwardRef<
   HTMLDivElement,
@@ -110,11 +110,11 @@ const ChartTooltip = RechartsPrimitive.Tooltip;
 
 const ChartTooltipContent = React.forwardRef<
   HTMLDivElement,
-  Omit<TooltipProps<any, any>, "content"> &
+  Omit<TooltipProps<unknown, unknown>, "content"> &
     React.ComponentProps<"div"> & {
       active?: boolean;
-      payload?: Array<any>;
-      label?: any;
+      payload?: Array<unknown>;
+      label?: unknown;
       hideLabel?: boolean;
       hideIndicator?: boolean;
       indicator?: "line" | "dot" | "dashed";
@@ -311,7 +311,7 @@ ChartLegendContent.displayName = "ChartLegend_Core_Content_Node";
 // ARCHITECTURAL HARDENED INTERNAL ENGINE PLUG CONTEXT HOOK HELPERS
 // =========================================================================
 
-function breweryFallbackLabelSelector(resolvedItemConfigNode: any, defaultStaticFallbackLabelStr: any): string {
+function breweryFallbackLabelSelector(resolvedItemConfigNode: unknown, defaultStaticFallbackLabelStr: unknown): string {
   if (resolvedItemConfigNode?.label) return String(resolvedItemConfigNode.label);
   if (defaultStaticFallbackLabelStr !== undefined && defaultStaticFallbackLabelStr !== null)
     return String(defaultStaticFallbackLabelStr);
@@ -322,18 +322,18 @@ function breweryFallbackLabelSelector(resolvedItemConfigNode: any, defaultStatic
  * Authoritative Payload Evaluator Tracking Mapper
  * Resolves configuration key mappings across fluid multi-series dataset payload entries.
  */
-function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, targetLookupKeyStr: string): any {
+function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, targetLookupKeyStr: string): unknown {
   if (typeof payload !== "object" || payload === null) return undefined;
 
   const nestedSubPayloadRowBlock =
-    "payload" in payload && typeof (payload as any).payload === "object" && (payload as any).payload !== null
-      ? (payload as any).payload
+    "payload" in payload && typeof (payload as unknown).payload === "object" && (payload as unknown).payload !== null
+      ? (payload as unknown).payload
       : undefined;
 
   let computedActiveConfigLabelKeyStr: string = targetLookupKeyStr;
 
-  if (targetLookupKeyStr in payload && typeof (payload as any)[targetLookupKeyStr] === "string") {
-    computedActiveConfigLabelKeyStr = (payload as any)[targetLookupKeyStr] as string;
+  if (targetLookupKeyStr in payload && typeof (payload as unknown)[targetLookupKeyStr] === "string") {
+    computedActiveConfigLabelKeyStr = (payload as unknown)[targetLookupKeyStr] as string;
   } else if (
     nestedSubPayloadRowBlock &&
     targetLookupKeyStr in nestedSubPayloadRowBlock &&
@@ -348,3 +348,5 @@ function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, targ
 }
 
 export { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent, ChartStyle };
+
+

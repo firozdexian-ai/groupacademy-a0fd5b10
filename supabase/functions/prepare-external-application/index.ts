@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+﻿import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    // *** Credits are NOT deducted here anymore — moved AFTER successful processing ***
+    // *** Credits are NOT deducted here anymore â€” moved AFTER successful processing ***
 
     // Check credit balance upfront (without deducting) so we can fail fast
     const { data: talentRow } = await supabaseAdmin
@@ -103,7 +103,7 @@ Deno.serve(async (req) => {
       .maybeSingle();
 
     if (cached?.questions && Array.isArray(cached.questions) && cached.questions.length > 0) {
-      questions = cached.questions as any;
+      questions = cached.questions as unknown;
       extractionMethod = "cache";
       console.log("Cache hit for", application_url, "- questions:", questions.length);
     } else if (mode === "screenshot" && screenshots?.length > 0) {
@@ -158,7 +158,7 @@ Deno.serve(async (req) => {
       .single();
 
     // Step 4: Fetch job details
-    let jobData: any = null;
+    let jobData: unknown = null;
     if (job_id) {
       const { data } = await supabaseAdmin
         .from("jobs")
@@ -184,7 +184,7 @@ Deno.serve(async (req) => {
     let generalSummary = "";
 
     if (extractionMethod === "scrape_failed") {
-      // Only generate general summary — NO credit charge for fallback
+      // Only generate general summary â€” NO credit charge for fallback
       generalSummary = await generateGeneralSummary(LOVABLE_API_KEY, profileSummary, jobSummary);
       return new Response(
         JSON.stringify({
@@ -220,7 +220,7 @@ Deno.serve(async (req) => {
 
     if (creditError || !creditResult?.success) {
       console.error("Credit deduction failed after processing:", creditError, creditResult);
-      // Still return results — user already got value, log the issue
+      // Still return results â€” user already got value, log the issue
     }
 
     // Track service usage (non-critical)
@@ -320,7 +320,7 @@ async function extractQuestionsFromMarkdown(
 - "Describe your experience with X"
 - "What makes you a good fit?"
 - Cover letter prompts
-- Any free-text question fields
+- unknown free-text question fields
 
 Return a JSON array of objects with "question_text" and "field_type" (one of: "essay", "short_answer", "cover_letter"). Return an empty array if no such questions are found. Return ONLY valid JSON, no markdown.`,
           },
@@ -400,7 +400,7 @@ Return a JSON array of objects with "question_text" and "field_type" (one of: "e
   }
 }
 
-function buildProfileSummary(talent: any): string {
+function buildProfileSummary(talent: unknown): string {
   if (!talent) return "No profile data available.";
   const parts = [];
   if (talent.full_name) parts.push(`Name: ${talent.full_name}`);
@@ -411,7 +411,7 @@ function buildProfileSummary(talent: any): string {
     if (exp.length > 0) {
       parts.push(
         `Experience:\n${exp
-          .map((e: any) => `- ${e.title || e.position || "Role"} at ${e.company || "Company"} (${e.duration || e.years || ""})`)
+          .map((e: unknown) => `- ${e.title || e.position || "Role"} at ${e.company || "Company"} (${e.duration || e.years || ""})`)
           .join("\n")}`
       );
     }
@@ -421,7 +421,7 @@ function buildProfileSummary(talent: any): string {
     if (edu.length > 0) {
       parts.push(
         `Education:\n${edu
-          .map((e: any) => `- ${e.degree || e.qualification || "Degree"} from ${e.institution || e.school || "Institution"}`)
+          .map((e: unknown) => `- ${e.degree || e.qualification || "Degree"} from ${e.institution || e.school || "Institution"}`)
           .join("\n")}`
       );
     }
@@ -430,7 +430,7 @@ function buildProfileSummary(talent: any): string {
   return parts.join("\n\n");
 }
 
-function buildJobSummary(job: any): string {
+function buildJobSummary(job: unknown): string {
   if (!job) return "No job details available.";
   const parts = [];
   if (job.title) parts.push(`Job Title: ${job.title}`);
@@ -547,3 +547,5 @@ Write in first person. Be specific to the candidate's actual background. Keep it
     return "Unable to generate summary.";
   }
 }
+
+

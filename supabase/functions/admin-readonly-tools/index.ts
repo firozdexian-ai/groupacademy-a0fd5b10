@@ -1,4 +1,4 @@
-// admin-readonly-tools — Phase D2 read-only telemetry gateway for the
+﻿// admin-readonly-tools â€” Phase D2 read-only telemetry gateway for the
 // Executive Council (business-analyst, report-builder, talent-aisha,
 // agent-manager). Strict RBAC: admin or super_admin only.
 //
@@ -34,10 +34,10 @@ serve(async (req) => {
     if (authErr || !auth?.user) return j({ ok: false, error: "unauthorized" }, 401);
     const uid = auth.user.id;
 
-    // RBAC — admin or super_admin only.
+    // RBAC â€” admin or super_admin only.
     const { data: roleRows } = await admin
       .from("user_roles").select("role").eq("user_id", uid);
-    const roles = (roleRows ?? []).map((r: any) => r.role);
+    const roles = (roleRows ?? []).map((r: unknown) => r.role);
     if (!roles.includes("admin") && !roles.includes("super_admin")) {
       return j({ ok: false, error: "forbidden_admin_only" }, 403);
     }
@@ -91,12 +91,12 @@ function windowToInterval(w: unknown): string {
   return m[String(w ?? "30d")] ?? "30 days";
 }
 
-async function queryPlatformMetrics(admin: any, args: any) {
+async function queryPlatformMetrics(admin: unknown, args: unknown) {
   const interval = windowToInterval(args?.window);
   const sinceISO = new Date(Date.now() - parseDays(interval) * 86400_000).toISOString();
   const metric = String(args?.metric ?? "summary");
 
-  // High-level KPI bundle — one round-trip, all read-only counts.
+  // High-level KPI bundle â€” one round-trip, all read-only counts.
   const [talents, companies, jobs, gigs, apps, newSignups] = await Promise.all([
     admin.from("talents").select("id", { count: "exact", head: true }),
     admin.from("companies").select("id", { count: "exact", head: true }),
@@ -110,7 +110,7 @@ async function queryPlatformMetrics(admin: any, args: any) {
   const safeSum = async (
     table: string,
     column: string,
-    filter?: (q: any) => any,
+    filter?: (q: unknown) => unknown,
   ): Promise<number> => {
     try {
       let q = admin.from(table).select(column);
@@ -118,7 +118,7 @@ async function queryPlatformMetrics(admin: any, args: any) {
       const { data, error } = await q;
       if (error) return 0;
       return (data ?? []).reduce(
-        (acc: number, row: any) => acc + Number(row?.[column] ?? 0),
+        (acc: number, row: unknown) => acc + Number(row?.[column] ?? 0),
         0,
       );
     } catch {
@@ -137,7 +137,7 @@ async function queryPlatformMetrics(admin: any, args: any) {
     safeSum("credit_transactions", "amount", (q) =>
       q.gt("amount", 0).gte("created_at", sinceISO),
     ),
-    // Negative credit ledger entries (spend) — return absolute value
+    // Negative credit ledger entries (spend) â€” return absolute value
     safeSum("credit_transactions", "amount", (q) =>
       q.lt("amount", 0).gte("created_at", sinceISO),
     ).then((n) => Math.abs(n)),
@@ -176,7 +176,7 @@ async function queryPlatformMetrics(admin: any, args: any) {
   };
 }
 
-async function queryAgentHealth(admin: any, args: any) {
+async function queryAgentHealth(admin: unknown, args: unknown) {
   const sinceISO = new Date(Date.now() - parseDays(windowToInterval(args?.window ?? "24h")) * 86400_000).toISOString();
   const agentKey = args?.agent_key ? String(args.agent_key) : null;
 
@@ -185,7 +185,7 @@ async function queryAgentHealth(admin: any, args: any) {
   const { data: agents, error } = await q;
   if (error) throw error;
 
-  const ids = (agents ?? []).map((a: any) => a.id);
+  const ids = (agents ?? []).map((a: unknown) => a.id);
   if (ids.length === 0) return { agents: [], window: args?.window ?? "24h" };
 
   const { data: events } = await admin
@@ -205,14 +205,14 @@ async function queryAgentHealth(admin: any, args: any) {
 
   return {
     window: args?.window ?? "24h",
-    agents: (agents ?? []).map((a: any) => ({
+    agents: (agents ?? []).map((a: unknown) => ({
       ...a,
       stats: byAgent.get(a.id) ?? { calls: 0, errors: 0, credits: 0 },
     })),
   };
 }
 
-async function queryAgentLogs(admin: any, args: any) {
+async function queryAgentLogs(admin: unknown, args: unknown) {
   const limit = Math.min(Number(args?.limit ?? 50), 200);
   let q = admin
     .from("agent_messages")
@@ -231,13 +231,13 @@ async function queryAgentLogs(admin: any, args: any) {
   return { messages: data ?? [], count: data?.length ?? 0 };
 }
 
-async function fetchTalentSummary(admin: any, args: any) {
+async function fetchTalentSummary(admin: unknown, args: unknown) {
   const id = String(args?.talent_id ?? "").trim();
   if (!id) throw new Error("talent_id_required");
 
   const [profile, credits, applications] = await Promise.all([
     admin.from("talents").select("*").eq("id", id).maybeSingle(),
-    admin.from("credits_wallet").select("*").eq("talent_id", id).maybeSingle().then((r: any) => r).catch(() => ({ data: null })),
+    admin.from("credits_wallet").select("*").eq("talent_id", id).maybeSingle().then((r: unknown) => r).catch(() => ({ data: null })),
     admin.from("job_applications").select("id, job_id, status, created_at").eq("talent_id", id).order("created_at", { ascending: false }).limit(10),
   ]);
 
@@ -261,3 +261,5 @@ function j(b: unknown, status: number) {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
+
+

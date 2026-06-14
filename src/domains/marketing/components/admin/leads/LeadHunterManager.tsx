@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+﻿import { useState, useEffect, useCallback, useMemo } from "react";
 import { leadHuntMatch } from "@/domains/marketing/api/marketingApi";
 import {
  listLeadHuntSessionsAndJobs,
@@ -68,8 +68,8 @@ import { InlineSpinner } from "@/components/common/InlineSpinner";
 
 export function LeadHunterManager() {
  // Data State
- const [sessions, setSessions] = useState<any[]>([]);
- const [activeJobs, setActiveJobs] = useState<any[]>([]);
+ const [sessions, setSessions] = useState<unknown[]>([]);
+ const [activeJobs, setActiveJobs] = useState<unknown[]>([]);
  const [jobSearch, setJobSearch] = useState("");
  const [huntMode, setHuntMode] = useState<"select" | "paste">("select");
 
@@ -88,11 +88,11 @@ export function LeadHunterManager() {
  const [leadsRequested, setLeadsRequested] = useState(20);
 
  // Detail View State
- const [selectedSession, setSelectedSession] = useState<any | null>(null);
- const [matches, setMatches] = useState<any[]>([]);
+ const [selectedSession, setSelectedSession] = useState<unknown | null>(null);
+ const [matches, setMatches] = useState<unknown[]>([]);
  const [loadingMatches, setLoadingMatches] = useState(false);
  const [talentDetailOpen, setTalentDetailOpen] = useState(false);
- const [selectedTalent, setSelectedTalent] = useState<any>(null);
+ const [selectedTalent, setSelectedTalent] = useState<unknown>(null);
 
  // CTO FIX: State to manage which explanation panel is expanded
  const [expandedExplanationId, setExpandedExplanationId] = useState<string | null>(null);
@@ -104,7 +104,7 @@ export function LeadHunterManager() {
  const { sessions, jobs } = await listLeadHuntSessionsAndJobs();
  setSessions(sessions || []);
  setActiveJobs(jobs || []);
- } catch (err: any) {
+ } catch (err: unknown) {
  setError(err.message);
  } finally {
  setIsLoading(false);
@@ -115,7 +115,7 @@ export function LeadHunterManager() {
  loadRegistry();
  }, [loadRegistry]);
 
- const loadSessionMatches = async (session: any) => {
+ const loadSessionMatches = async (session: unknown) => {
  setSelectedSession(session);
  setLoadingMatches(true);
  setExpandedExplanationId(null);
@@ -137,7 +137,7 @@ export function LeadHunterManager() {
  );
  }, [activeJobs, jobSearch]);
 
- const handleJobSelection = (job: any) => {
+ const handleJobSelection = (job: unknown) => {
  setSelectedJobId(job.id);
  setJobTitle(job.title);
  setCompanyName(job.company_name);
@@ -164,7 +164,7 @@ export function LeadHunterManager() {
  }
  };
 
- const handleInvite = async (match: any, channel: "whatsapp" | "email" | "linkedin") => {
+ const handleInvite = async (match: unknown, channel: "whatsapp" | "email" | "linkedin") => {
  const name = extractFirstName(match.talent.full_name);
  const title = selectedSession?.job_title || jobTitle;
  try {
@@ -357,7 +357,7 @@ export function LeadHunterManager() {
  className="rounded-xl font-bold p-3 gap-3 cursor-pointer"
  onClick={() => handleInvite(m, "email")}
  >
- <Mail className="w-4 h-4 text-primary" /> Email Synthesis
+ <Mail className="w-4 h-4 text-primary" /> Email summary
  </DropdownMenuItem>
  <DropdownMenuItem
  className="rounded-xl font-bold p-3 gap-3 cursor-pointer"
@@ -485,7 +485,7 @@ export function LeadHunterManager() {
  )}
  onClick={() => setHuntMode("paste")}
  >
- <Type className="w-5 h-5" /> Raw JD Synthesis
+ <Type className="w-5 h-5" /> Raw JD summary
  </Button>
  </div>
 
@@ -572,3 +572,5 @@ export function LeadHunterManager() {
  </div>
  );
 }
+
+

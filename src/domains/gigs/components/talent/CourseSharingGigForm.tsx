@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getTalentRefCode } from "@/domains/talent/repo/talentRepo";
 import { listShareableActiveContent, insertGigSubmission } from "@/domains/gigs/repo/gigsRepo";
@@ -85,7 +85,7 @@ export function CourseSharingGigForm({ gig, talentId, onSubmitted }: Props) {
   const selected = useMemo(() => courses.find((c) => c.id === selectedId), [courses, selectedId]);
 
   // SSR Safe Guard String Resolution
-  const linkFor = (contentItem: any): string => {
+  const linkFor = (contentItem: unknown): string => {
     if (!contentItem) return "";
     const pathSegment =
       contentItem.content_type === "live_webinar" || contentItem.content_type === "batch_class"
@@ -100,7 +100,7 @@ export function CourseSharingGigForm({ gig, talentId, onSubmitted }: Props) {
   const launch = (channelKey: string) => {
     if (!selected) return;
     const computedTargetUrl = linkFor(selected);
-    const standardPromoText = `${selected.title} — ${computedTargetUrl}`;
+    const standardPromoText = `${selected.title} â€” ${computedTargetUrl}`;
 
     trackEvent("course_sharing_channel_launched", { channel: channelKey, courseId: selected.id });
 
@@ -150,7 +150,7 @@ export function CourseSharingGigForm({ gig, talentId, onSubmitted }: Props) {
 
       toast.success("Referral tracking active!");
       onSubmitted();
-    } catch (err: any) {
+    } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
 
       trackError(msg, {
@@ -320,3 +320,5 @@ export function CourseSharingGigForm({ gig, talentId, onSubmitted }: Props) {
     </div>
   );
 }
+
+

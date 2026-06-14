@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+﻿import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 /**
  * GroUp Academy: Institutional Authentication Guard
@@ -26,7 +26,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    // HUD: Institutional Secret Ingress
+    // dashboard: Institutional Secret Ingress
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -78,7 +78,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    console.log(`[Sentinel] Admin ${user.email} initiating ${method} reset for ${targetEmail}`);
+    console.log(`[guard] Admin ${user.email} initiating ${method} reset for ${targetEmail}`);
 
     if (method === "email") {
       // ACTION: Generate recovery link artifact
@@ -124,8 +124,8 @@ Deno.serve(async (req) => {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-  } catch (error: any) {
-    console.error("[Sentinel] AUTH_GUARD_FAULT:", error);
+  } catch (error: unknown) {
+    console.error("[guard] AUTH_GUARD_FAULT:", error);
     return new Response(JSON.stringify({ error: error.message || "INTERNAL_AUTH_FAULT" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -134,7 +134,7 @@ Deno.serve(async (req) => {
 });
 
 /**
- * HUD: Cryptographic Entropy Generator
+ * dashboard: Cryptographic Entropy Generator
  * Ensures institutional complexity: 12 chars, mixed case, numbers, and symbols.
  */
 function generateTempPassword(): string {
@@ -162,3 +162,5 @@ function generateTempPassword(): string {
     .sort(() => Math.random() - 0.5)
     .join("");
 }
+
+

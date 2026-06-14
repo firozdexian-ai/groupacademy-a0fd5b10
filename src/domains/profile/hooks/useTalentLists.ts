@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCurrentUser } from "@/lib/auth";
 import {
   listTalentLists as repoListTalentLists,
@@ -55,14 +55,14 @@ export function useTalentLists(companyId?: string | null) {
     enabled: !!companyId,
     staleTime: 30 * 1000, // 30-second list cache consistency window
     queryFn: async (): Promise<TalentList[]> => {
-      let data: any[];
+      let data: unknown[];
       try {
         data = await repoListTalentLists(companyId!);
       } catch (error) {
         console.error("[Digital Workforce] FAULT: talent_lists collection channel dropped.", error);
         throw error;
       }
-      return data.map((row: any) => ({
+      return data.map((row: unknown) => ({
         id: String(row.id),
         company_id: String(row.company_id),
         name: String(row.name ?? "Untitled List"),
@@ -84,14 +84,14 @@ export function useListMembers(listId?: string | null) {
     queryKey: ["talent-list-members", listId],
     enabled: !!listId,
     queryFn: async (): Promise<ListMember[]> => {
-      let data: any[];
+      let data: unknown[];
       try {
         data = await listTalentListMembers(listId!);
       } catch (error) {
         console.error("[Digital Workforce] FAULT: talent_list_members lookup failed.", error);
         throw error;
       }
-      return data.map((row: any) => ({
+      return data.map((row: unknown) => ({
         id: String(row.id),
         list_id: String(row.list_id),
         talent_id: String(row.talent_id),
@@ -146,7 +146,7 @@ export function useCreateTalentList() {
       });
       toast.success("Sourcing shortlist initialized successfully.");
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       toast.error(err.message || "Failed to finalize new talent shortlist record.");
     },
   });
@@ -170,7 +170,7 @@ export function useAddToList() {
           addedBy: user.id,
           note: input.note ?? null,
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] ANOMALY: talent_list_members operation rejected.", {
           listId: input.listId,
           talentId: input.talentId,
@@ -186,8 +186,10 @@ export function useAddToList() {
 
       toast.success("Candidate node appended to your active sourcing list.");
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       toast.error(err.message || "Failed to commit candidate link transaction.");
     },
   });
 }
+
+

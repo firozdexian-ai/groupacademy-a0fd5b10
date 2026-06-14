@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+﻿import { useEffect, useMemo, useRef } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { trackEvent } from "@/lib/errorTracking";
@@ -14,7 +14,7 @@ interface StreakBadgeProps {
 /**
  * GroUp Academy: Technical Engagement Activity Streak Indicator (StreakBadge)
  * An authoritative operational badge tracking candidate learning streaks, engagement velocity, and records.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function StreakBadge({ current, longest, className }: StreakBadgeProps) {
   const isMountedRef = useRef<boolean>(true);
@@ -86,3 +86,4 @@ export function StreakBadge({ current, longest, className }: StreakBadgeProps) {
 }
 
 export default StreakBadge;
+

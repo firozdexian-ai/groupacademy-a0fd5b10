@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   getFinOpsGraphMaster,
@@ -63,29 +63,29 @@ export function useFinOpsGraph() {
       const master = await getFinOpsGraphMaster();
 
       // Safe hydration fallback routines protect array iterations from null values
-      const talentWallets = (master.talentWallets as any[]).map((w) => ({
+      const talentWallets = (master.talentWallets as unknown[]).map((w) => ({
         ...w,
         talent: w.talent || { full_name: "User Account", email: "" },
       }));
-      const companyWallets = (master.companyWallets as any[]).map((w) => ({
+      const companyWallets = (master.companyWallets as unknown[]).map((w) => ({
         ...w,
         company: w.company || { name: "Company Workspace", type: "Standard" },
       }));
-      const creditInvoices = (master.invoices as any[]).map((i) => ({
+      const creditInvoices = (master.invoices as unknown[]).map((i) => ({
         ...i,
         talent: i.talent || { full_name: "User Account" },
       }));
-      const withdrawalRequests = (master.withdrawals as any[]).map((wr) => ({
+      const withdrawalRequests = (master.withdrawals as unknown[]).map((wr) => ({
         ...wr,
         talent: wr.talent || { full_name: "User Account", email: "" },
       }));
 
       // Segments global enterprise account buckets based on platform workspace configurations
       const gro10xWallets = companyWallets.filter(
-        (w: any) => w.company.type === "agent" || w.company.name.toLowerCase().includes("gro10x"),
+        (w: unknown) => w.company.type === "agent" || w.company.name.toLowerCase().includes("gro10x"),
       );
       const standardCompanyWallets = companyWallets.filter(
-        (w: any) => w.company.type !== "agent" && !w.company.name.toLowerCase().includes("gro10x"),
+        (w: unknown) => w.company.type !== "agent" && !w.company.name.toLowerCase().includes("gro10x"),
       );
 
       return {
@@ -116,7 +116,7 @@ export function useFinOpsGraph() {
 
   // Programmatically upserts provider channel credentials and updates global payment configurations
   const upsertPayInfra = useMutation({
-    mutationFn: async (payload: any) => {
+    mutationFn: async (payload: unknown) => {
       await upsertPaymentConfig(payload);
     },
     onSuccess: () => {
@@ -137,3 +137,5 @@ export function useFinOpsGraph() {
     },
   };
 }
+
+

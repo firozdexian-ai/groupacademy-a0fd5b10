@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+﻿import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { updateMockInterview } from "@/domains/marketing/repo/marketingRepo";
 import { getMockInterviewById } from "@/domains/marketing/repo/marketingRepo";
@@ -104,8 +104,8 @@ export default function MockInterviewQuestions() {
         return;
       }
 
-      const questions = (data.questions as any) || [];
-      const existingAnswers = (data.answers as any) || [];
+      const questions = (data.questions as unknown) || [];
+      const existingAnswers = (data.answers as unknown) || [];
 
       setInterview({ ...data, questions, answers: existingAnswers });
       setAnswers(existingAnswers);
@@ -113,7 +113,7 @@ export default function MockInterviewQuestions() {
         setCurrentIndex(existingAnswers.length);
       }
       setQuestionStartTime(Date.now());
-    } catch (err: any) {
+    } catch (err: unknown) {
       setLoadError("Session handshake failed. Please refresh.");
     } finally {
       setLoading(false);
@@ -123,7 +123,7 @@ export default function MockInterviewQuestions() {
   const saveProgress = useCallback(
     async (newAnswers: Answer[]) => {
       if (!id) return;
-      await updateMockInterview(id, { answers: newAnswers as any });
+      await updateMockInterview(id, { answers: newAnswers as unknown });
     },
     [id],
   );
@@ -165,7 +165,7 @@ export default function MockInterviewQuestions() {
         try {
           await analyzeMockInterview({ interviewId: id });
           navigate(`/mock-interview/results/${id}`);
-        } catch (err: any) {
+        } catch (err: unknown) {
           setAnalysisError("AI linkage failure. Retrying session...");
           setIsAnalyzing(false);
         }
@@ -378,3 +378,5 @@ export default function MockInterviewQuestions() {
     </div>
   );
 }
+
+

@@ -1,7 +1,7 @@
-/**
+﻿/**
  * Talent domain repository.
  * All raw `supabase.from(...)` access for talent admin surfaces flows through here.
- * Phase 10d — see .lovable/plan.md.
+ * Phase 10d â€” see .lovable/plan.md.
  */
 import { supabase } from "@/integrations/supabase/client";
 import { sanitizeIlike } from "@/lib/supabaseQuery";
@@ -88,7 +88,7 @@ export const talentRepo = {
       const safe = sanitizeIlike(search);
       if (safe) query = query.or(`full_name.ilike.%${safe}%,email.ilike.%${safe}%,phone.ilike.%${safe}%`);
     }
-    if (statusFilter && statusFilter !== "all") query = query.eq("status", statusFilter as any);
+    if (statusFilter && statusFilter !== "all") query = query.eq("status", statusFilter as unknown);
     const from = (page - 1) * pageSize;
     return query.range(from, from + pageSize - 1);
   },
@@ -109,10 +109,10 @@ export const talentRepo = {
 
   upsertProfessionRow: async (
     table: ProfessionTable,
-    payload: Record<string, any>,
+    payload: Record<string, unknown>,
     id?: string,
   ) => {
-    const tbl = supabase.from(table) as any;
+    const tbl = supabase.from(table) as unknown;
     return id ? tbl.update(payload).eq("id", id) : tbl.insert(payload);
   },
 
@@ -159,9 +159,9 @@ export const talentRepo = {
 
   // ---------- Overview ----------
   countAishaConversations: async (
-    filter?: (q: any) => any,
+    filter?: (q: unknown) => unknown,
   ): Promise<number> => {
-    let q: any = supabase.from("aisha_conversations").select("id", { head: true, count: "exact" });
+    let q: unknown = supabase.from("aisha_conversations").select("id", { head: true, count: "exact" });
     if (filter) q = filter(q);
     const { count } = await q;
     return count ?? 0;
@@ -188,7 +188,7 @@ export const talentRepo = {
       .limit(10),
 
   // ---------- Portfolio Requests ----------
-  updatePortfolioRequest: (id: string, updates: Record<string, any>) =>
+  updatePortfolioRequest: (id: string, updates: Record<string, unknown>) =>
     supabase.from("portfolio_requests").update(updates).eq("id", id),
 
   // ---------- Notifications ----------
@@ -199,7 +199,7 @@ export const talentRepo = {
     supabase.from("talents").select("id, full_name, email").order("full_name").limit(limit),
 
   // ---------- Batch / Importers ----------
-  upsertTalentsBatch: (batch: any[]) =>
+  upsertTalentsBatch: (batch: unknown[]) =>
     supabase
       .from("talents")
       .upsert(batch, { onConflict: "phone", ignoreDuplicates: true }),
@@ -211,7 +211,7 @@ export const talentRepo = {
     supabase.from("batch_uploads").insert(payload).select().single(),
 
   logAgentMessage: (body: string) =>
-    (supabase.from("messaging_messages") as any).insert({
+    (supabase.from("messaging_messages") as unknown).insert({
       direction: "inbound",
       author: "Data Ingestion Agent",
       body,
@@ -219,24 +219,24 @@ export const talentRepo = {
     }),
 
   // ---------- LinkedIn JSON importer ----------
-  insertCompany: (insertObj: Record<string, any>) =>
-    (supabase.from("companies") as any).insert(insertObj).select("id").single(),
+  insertCompany: (insertObj: Record<string, unknown>) =>
+    (supabase.from("companies") as unknown).insert(insertObj).select("id").single(),
 
   findCompanyByName: (name: string) =>
     supabase.from("companies").select("id").ilike("name", name).limit(1).single(),
 
   findExistingByEmails: (table: string, emails: string[]) =>
-    (supabase.from(table as any) as any)
+    (supabase.from(table as unknown) as unknown)
       .select("email, linkedin_url")
       .or(`email.in.(${emails.join(",")})`),
 
-  insertIntoTable: (table: string, insertData: Record<string, any>) =>
-    ((supabase as any).from(table)).insert(insertData),
+  insertIntoTable: (table: string, insertData: Record<string, unknown>) =>
+    ((supabase as unknown).from(table)).insert(insertData),
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Standalone helpers (Phase 10h.3)
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function findTalentIdsBySearch(search: string, limit = 200): Promise<string[]> {
   const safe = sanitizeIlike(search);
@@ -247,7 +247,7 @@ export async function findTalentIdsBySearch(search: string, limit = 200): Promis
     .or(`full_name.ilike.%${safe}%,email.ilike.%${safe}%`)
     .limit(limit);
   if (error) throw error;
-  return (data ?? []).map((t: any) => t.id);
+  return (data ?? []).map((t: unknown) => t.id);
 }
 
 export async function findTalentByEmail(email: string): Promise<{ id: string } | null> {
@@ -256,22 +256,22 @@ export async function findTalentByEmail(email: string): Promise<{ id: string } |
     .select("id")
     .ilike("email", email.trim())
     .maybeSingle();
-  return (data as any) ?? null;
+  return (data as unknown) ?? null;
 }
 
-export async function getTalentJobPreferences(talentId: string): Promise<any | null> {
+export async function getTalentJobPreferences(talentId: string): Promise<unknown | null> {
   const { data, error } = await supabase
     .from("talents")
     .select("job_preferences")
     .eq("id", talentId)
     .single();
   if (error) throw error;
-  return (data as any)?.job_preferences ?? null;
+  return (data as unknown)?.job_preferences ?? null;
 }
 
 export async function updateTalentJobPreferences(
   talentId: string,
-  preferences: any,
+  preferences: unknown,
 ): Promise<void> {
   const { error } = await supabase
     .from("talents")
@@ -281,13 +281,13 @@ export async function updateTalentJobPreferences(
 }
 
 // -----------------------------------------------------------------------------
-// Phase 10j.1 — shared infra helpers
+// Phase 10j.1 â€” shared infra helpers
 // -----------------------------------------------------------------------------
 
 /** Lightweight registry ping used to warm up the PostgREST connection. */
 export function pingProfessionCategories(signal?: AbortSignal) {
   let q = supabase.from("profession_categories").select("id").limit(1);
-  if (signal) q = (q as any).abortSignal(signal);
+  if (signal) q = (q as unknown).abortSignal(signal);
   return q;
 }
 
@@ -328,7 +328,7 @@ export async function patchTalentByUser(userId: string, patch: Record<string, un
 }
 
 
-// ─── Phase 10j.2 — notifications + onboarding state ────────────────────────
+// â”€â”€â”€ Phase 10j.2 â€” notifications + onboarding state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function listNotifications(talentId: string, limit = 50) {
   const { data, error } = await supabase
     .from("notifications")
@@ -382,7 +382,7 @@ export async function getTalentDuplicateState(
     .eq("id", talentId)
     .maybeSingle();
   if (error) throw error;
-  return (data as any) ?? null;
+  return (data as unknown) ?? null;
 }
 
 export async function completeTalentOnboarding(talentId: string): Promise<void> {
@@ -409,7 +409,7 @@ export async function getTalentRowByUserId(userId: string) {
     .eq("user_id", userId)
     .maybeSingle();
   if (error) throw error;
-  return data as any | null;
+  return data as unknown | null;
 }
 
 export async function updateTalentById(id: string, patch: Record<string, unknown>): Promise<void> {
@@ -426,7 +426,7 @@ export async function getTalentReferralIdentityByUser(
     .eq("user_id", userId)
     .maybeSingle();
   if (error) throw error;
-  return (data as any) ?? null;
+  return (data as unknown) ?? null;
 }
 
 export async function countTalentsReferredBy(referrerTalentId: string): Promise<number> {
@@ -440,12 +440,12 @@ export async function countTalentsReferredBy(referrerTalentId: string): Promise<
 
 export async function getTalentInboxVolume(talentId: string): Promise<number> {
   const { data, error } = await supabase
-    .from("v_talent_transaction_volume" as any)
+    .from("v_talent_transaction_volume" as unknown)
     .select("volume")
     .eq("talent_id", talentId)
     .maybeSingle();
   if (error) throw error;
-  return Number((data as any)?.volume ?? 0);
+  return Number((data as unknown)?.volume ?? 0);
 }
 
 export async function getTalentInboxUnlocked(talentId: string): Promise<boolean> {
@@ -455,7 +455,7 @@ export async function getTalentInboxUnlocked(talentId: string): Promise<boolean>
     .eq("talent_id", talentId)
     .maybeSingle();
   if (error) throw error;
-  return Boolean((data as any)?.unlocked);
+  return Boolean((data as unknown)?.unlocked);
 }
 
 export async function getTalentCareerCoachInstructorId(talentId: string): Promise<string | null> {
@@ -465,7 +465,7 @@ export async function getTalentCareerCoachInstructorId(talentId: string): Promis
     .eq("id", talentId)
     .maybeSingle();
   if (error) throw error;
-  return ((data as any)?.career_coach_instructor_id as string | null) ?? null;
+  return ((data as unknown)?.career_coach_instructor_id as string | null) ?? null;
 }
 
 // -----------------------------------------------------------------------------
@@ -495,17 +495,17 @@ export async function resolveTalentEmailByPhoneVariants(variants: string[]): Pro
   if (data.length > 1) {
     throw new Error("Multiple accounts found for this phone. Please sign in with email.");
   }
-  return (data[0] as any).email as string | null;
+  return (data[0] as unknown).email as string | null;
 }
 
 export async function getTalentLifetimeCredits(talentId: string) {
   const { data, error } = await supabase
-    .from("talent_lifetime_credits" as any)
+    .from("talent_lifetime_credits" as unknown)
     .select("lifetime_volume, lifetime_earned, lifetime_spent, transaction_count")
     .eq("talent_id", talentId)
     .maybeSingle();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function listNotificationPreferences(talentId: string) {
@@ -561,7 +561,7 @@ export async function getTalentUserIdById(talentId: string): Promise<string | nu
     .eq("id", talentId)
     .maybeSingle();
   if (error) throw error;
-  return (data as any)?.user_id ?? null;
+  return (data as unknown)?.user_id ?? null;
 }
 
 export async function listTalentNamesByIds(ids: string[]): Promise<Array<{ id: string; full_name: string | null }>> {
@@ -571,20 +571,20 @@ export async function listTalentNamesByIds(ids: string[]): Promise<Array<{ id: s
     .select("id, full_name")
     .in("id", ids);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-// ─── Phase 10j.4: mini profile for composer ────────────────────────────────
+// â”€â”€â”€ Phase 10j.4: mini profile for composer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getTalentMiniProfileByUser(userId: string) {
   const { data } = await supabase
     .from("talents")
     .select("id, full_name, profile_photo_url, custom_profession")
     .eq("user_id", userId)
     .maybeSingle();
-  return (data as any) ?? null;
+  return (data as unknown) ?? null;
 }
 
-// ─── Phase 10j.5d additions ────────────────────────────────────────────────
+// â”€â”€â”€ Phase 10j.5d additions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function listActiveLanguages() {
   const { data, error } = await supabase
     .from("languages")
@@ -592,7 +592,7 @@ export async function listActiveLanguages() {
     .eq("is_active", true)
     .order("display_order");
   if (error) throw error;
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
 export async function listMyTalentLanguageLevels() {
@@ -600,7 +600,7 @@ export async function listMyTalentLanguageLevels() {
     .from("talent_language_levels")
     .select("language_code, cefr_level, source");
   if (error) throw error;
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
 export async function getTalentVerificationStatus(id: string): Promise<string> {
@@ -609,7 +609,7 @@ export async function getTalentVerificationStatus(id: string): Promise<string> {
     .select("verification_status")
     .eq("id", id)
     .maybeSingle();
-  return ((data as any)?.verification_status as string) || "unverified";
+  return ((data as unknown)?.verification_status as string) || "unverified";
 }
 
 export async function listIdDocStatuses(talentId: string): Promise<Array<{ status: string }>> {
@@ -618,7 +618,7 @@ export async function listIdDocStatuses(talentId: string): Promise<Array<{ statu
     .select("status")
     .eq("talent_id", talentId);
   if (error) throw error;
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
 export async function listPayoutAccountPrimaryFlags(talentId: string): Promise<Array<{ is_primary: boolean }>> {
@@ -627,10 +627,10 @@ export async function listPayoutAccountPrimaryFlags(talentId: string): Promise<A
     .select("is_primary")
     .eq("talent_id", talentId);
   if (error) throw error;
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
-// ─── Phase 10j.5e: public profile + directory helpers ──────────────────────
+// â”€â”€â”€ Phase 10j.5e: public profile + directory helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function findTalentByPhone(phone: string): Promise<{ id: string } | null> {
   const { data } = await supabase
     .from("talents")
@@ -649,7 +649,7 @@ export async function getTalentPublicProfileById(id: string) {
     .eq("id", id)
     .maybeSingle();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function getTalentPublicProfileMeta(id: string) {
@@ -659,8 +659,8 @@ export async function getTalentPublicProfileMeta(id: string) {
     supabase.from("post_hypes").select("id", { count: "exact", head: true }).eq("recipient_talent_id", id),
   ]);
   return {
-    unlocked: Boolean((s.data as any)?.unlocked),
-    volume: Number((v.data as any)?.volume || 0),
+    unlocked: Boolean((s.data as unknown)?.unlocked),
+    volume: Number((v.data as unknown)?.volume || 0),
     hypeCount: h.count || 0,
   };
 }
@@ -676,7 +676,7 @@ export async function listTalentRowsForDirectory(opts: TalentDirectoryQuery = {}
   if (opts.country && opts.country !== "all") query = query.eq("country", opts.country);
   const { data, error } = await query;
   if (error) throw error;
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
 export async function listTalentInboxSettingsByIds(ids: string[]) {
@@ -686,7 +686,7 @@ export async function listTalentInboxSettingsByIds(ids: string[]) {
     .select("talent_id, unlocked, boost_until")
     .in("talent_id", ids);
   if (error) throw error;
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
 export async function listTalentVolumeByIds(ids: string[]) {
@@ -696,7 +696,7 @@ export async function listTalentVolumeByIds(ids: string[]) {
     .select("talent_id, volume")
     .in("talent_id", ids);
   if (error) throw error;
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
 export async function listPostHypeRecipientsByIds(ids: string[]) {
@@ -706,20 +706,20 @@ export async function listPostHypeRecipientsByIds(ids: string[]) {
     .select("recipient_talent_id")
     .in("recipient_talent_id", ids);
   if (error) throw error;
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
-// ─── Phase 10j.6a: talent contact unlocks + coach assignment ───────────────
+// â”€â”€â”€ Phase 10j.6a: talent contact unlocks + coach assignment â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getTalentContactUnlockCost(): Promise<number> {
-  const { data, error } = await (supabase as any).rpc("get_talent_contact_unlock_cost");
+  const { data, error } = await (supabase as unknown).rpc("get_talent_contact_unlock_cost");
   if (error) throw error;
   return Number(data ?? 10);
 }
 
 export async function getCompanyUnlockedTalents(p_company_id: string): Promise<Set<string>> {
-  const { data, error } = await (supabase as any).rpc("get_company_unlocked_talents", { p_company_id });
+  const { data, error } = await (supabase as unknown).rpc("get_company_unlocked_talents", { p_company_id });
   if (error) throw error;
-  return new Set(((data as any[]) ?? []).map((r) => (typeof r === "string" ? r : r.get_company_unlocked_talents)));
+  return new Set(((data as unknown[]) ?? []).map((r) => (typeof r === "string" ? r : r.get_company_unlocked_talents)));
 }
 
 export async function assignCareerCoach(_talent_id: string): Promise<string | null> {
@@ -734,7 +734,7 @@ export async function getTalentCareerCoachId(talentId: string): Promise<string |
     .select("career_coach_instructor_id")
     .eq("id", talentId)
     .maybeSingle();
-  return ((data as any)?.career_coach_instructor_id as string | null) ?? null;
+  return ((data as unknown)?.career_coach_instructor_id as string | null) ?? null;
 }
 
 export async function getAiInstructorBasicById(id: string) {
@@ -743,7 +743,7 @@ export async function getAiInstructorBasicById(id: string) {
     .select("id, name, profession_line_id, avatar_url")
     .eq("id", id)
     .maybeSingle();
-  return data as any;
+  return data as unknown;
 }
 
 export async function getProfessionTrackBySlug(slug: string) {
@@ -755,7 +755,7 @@ export async function getProfessionTrackBySlug(slug: string) {
     .eq("slug", slug)
     .maybeSingle();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function getActiveInstructorForProfession(professionLineId: string) {
@@ -766,7 +766,7 @@ export async function getActiveInstructorForProfession(professionLineId: string)
     .eq("is_active", true)
     .maybeSingle();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function listPublishedContentForProfession(professionLineId: string) {
@@ -779,7 +779,7 @@ export async function listPublishedContentForProfession(professionLineId: string
     .eq("is_published", true)
     .order("display_order");
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 
@@ -788,7 +788,7 @@ export async function getTalentCountryByUserId(user_id: string): Promise<string 
   return (data?.country as string | null) ?? null;
 }
 
-// ─── Phase 10j.5g: talent credit pools (gro10x contact view) ──────────────
+// â”€â”€â”€ Phase 10j.5g: talent credit pools (gro10x contact view) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getTalentCreditPoolsByUserId(
   userId: string,
 ): Promise<{ balance: number; earned: number; bonus: number }> {
@@ -806,31 +806,31 @@ export async function getTalentCreditPoolsByUserId(
   return {
     balance: Number(data?.balance ?? 0),
     earned: Number(data?.earned_balance ?? 0),
-    bonus: Number((data as any)?.contact_bonus_balance ?? 0),
+    bonus: Number((data as unknown)?.contact_bonus_balance ?? 0),
   };
 }
 
-// ─── Phase 10j.5g2: talent mini-profiles for company team list ────────────
-export async function listTalentMiniProfilesByUserIds(userIds: string[]): Promise<any[]> {
+// â”€â”€â”€ Phase 10j.5g2: talent mini-profiles for company team list â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function listTalentMiniProfilesByUserIds(userIds: string[]): Promise<unknown[]> {
   if (!userIds.length) return [];
   const { data } = await supabase
     .from("talents")
     .select("user_id, full_name, profile_photo_url, custom_profession, public_handle")
     .in("user_id", userIds);
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-export async function listTalentBasicByUserIds(userIds: string[], limit = 12): Promise<any[]> {
+export async function listTalentBasicByUserIds(userIds: string[], limit = 12): Promise<unknown[]> {
   if (!userIds.length) return [];
   const { data } = await supabase
     .from("talents")
     .select("full_name, profile_photo_url, custom_profession")
     .in("user_id", userIds)
     .limit(limit);
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-export async function updateTalentCvUrl(talentId: string, cvUrl: string): Promise<{ error: any }> {
+export async function updateTalentCvUrl(talentId: string, cvUrl: string): Promise<{ error: unknown }> {
   const { error } = await supabase.from("talents").update({ cv_url: cvUrl }).eq("id", talentId);
   return { error };
 }
@@ -843,7 +843,7 @@ export async function markTalentWhatsappBonusClaimed(talentId: string): Promise<
   if (error) throw error;
 }
 
-// ─── Phase 10j.5g3 ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Phase 10j.5g3 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function listTalentSystemFeedNotifications(talentId: string, limit = 200) {
   const { data, error } = await supabase
     .from("notifications")
@@ -855,17 +855,17 @@ export async function listTalentSystemFeedNotifications(talentId: string, limit 
   return (data ?? []) as Array<{ id: string; title: string; message: string | null; link: string | null; created_at: string }>;
 }
 
-// ─── Phase 10j.5g5 ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Phase 10j.5g5 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function listTalentsBasicByIds(ids: string[]) {
-  if (!ids.length) return [] as any[];
+  if (!ids.length) return [] as unknown[];
   const { data } = await supabase
     .from("talents")
     .select("id, user_id, full_name, custom_profession, profile_photo_url, public_handle")
     .in("id", ids);
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-// ─── Phase 10j.5g6 ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Phase 10j.5g6 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getTalentPhotoByUserId(userId: string) {
   const { data } = await supabase
     .from("talents")
@@ -875,7 +875,7 @@ export async function getTalentPhotoByUserId(userId: string) {
   return (data as { full_name: string | null; profile_photo_url: string | null } | null) ?? null;
 }
 
-// ─── Phase 10j.5h1: RPC wrappers ──────────────────────────────────────────
+// â”€â”€â”€ Phase 10j.5h1: RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function boostProfile(): Promise<void> {
   const { error } = await supabase.rpc("boost_profile");
   if (error) throw error;
@@ -893,16 +893,16 @@ export async function getTalentBoostUntil(talentId: string): Promise<string | nu
     .eq("talent_id", talentId)
     .maybeSingle();
   if (error) throw error;
-  return ((data as any)?.boost_until as string | null) ?? null;
+  return ((data as unknown)?.boost_until as string | null) ?? null;
 }
 
-// ─── Phase 10j.5h4: admin RPC wrappers ────────────────────────────────────
+// â”€â”€â”€ Phase 10j.5h4: admin RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export interface GlobalCrmOverview {
   total_talents?: number;
   onboarded_count?: number;
   professions?: Record<string, number>;
   countries?: Record<string, number>;
-  recent_nodes?: any[];
+  recent_nodes?: unknown[];
 }
 
 export async function getGlobalCrmOverview(): Promise<GlobalCrmOverview> {
@@ -911,12 +911,12 @@ export async function getGlobalCrmOverview(): Promise<GlobalCrmOverview> {
   return (data ?? {}) as unknown as GlobalCrmOverview;
 }
 
-export async function getCreatorEconomyLeaderboard(windowDays = 30): Promise<any[]> {
+export async function getCreatorEconomyLeaderboard(windowDays = 30): Promise<unknown[]> {
   const { data, error } = await supabase.rpc("get_creator_economy_leaderboard", {
     window_days: windowDays,
   });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function sweepExpiredConnections(): Promise<number> {
@@ -940,13 +940,13 @@ export async function broadcastNotifications(args: {
   if (error) throw error;
 }
 
-// ─── Phase 10j.5h6: talent connection RPC wrappers ────────────────────────
+// â”€â”€â”€ Phase 10j.5h6: talent connection RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function requestTalentConnection(recipientId: string): Promise<void> {
   const { error } = await supabase.rpc("talent_connection_request", { _recipient: recipientId });
   if (error) throw error;
 }
 
-// ─── Phase 10j.5k2: talent connection price ───────────────────────────────
+// â”€â”€â”€ Phase 10j.5k2: talent connection price â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getTalentConnectionPrice(recipientId: string): Promise<number> {
   const { data, error } = await supabase.rpc("get_talent_connection_price", { _recipient: recipientId });
   if (error) throw error;
@@ -970,7 +970,7 @@ export async function acceptConnectionAndOpenThread(connectionId: string): Promi
 }
 
 // -----------------------------------------------------------------------------
-// Storage helpers (Phase 10j.5i) — legacy `cvs` bucket (Gro10x onboarding)
+// Storage helpers (Phase 10j.5i) â€” legacy `cvs` bucket (Gro10x onboarding)
 // -----------------------------------------------------------------------------
 
 export async function uploadLegacyCv(
@@ -987,13 +987,13 @@ export async function uploadLegacyCv(
 }
 
 // -----------------------------------------------------------------------------
-// Realtime helpers (Phase 10j.5k1) — notifications CDC subscription
+// Realtime helpers (Phase 10j.5k1) â€” notifications CDC subscription
 // -----------------------------------------------------------------------------
 
 export interface NotificationsRealtimeHandlers {
-  onInsert?: (row: any) => void;
-  onUpdate?: (row: any) => void;
-  onDelete?: (oldRow: any) => void;
+  onInsert?: (row: unknown) => void;
+  onUpdate?: (row: unknown) => void;
+  onDelete?: (oldRow: unknown) => void;
 }
 
 export function subscribeNotificationsRealtime(
@@ -1043,3 +1043,5 @@ export async function getCompanyUnlockedContacts(
   }
   return result;
 }
+
+

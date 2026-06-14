@@ -1,4 +1,4 @@
-// Per-country Destination Agent: chat + tool-calls (build_roadmap, find_programs)
+﻿// Per-country Destination Agent: chat + tool-calls (build_roadmap, find_programs)
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -72,7 +72,7 @@ Deno.serve(async (req) => {
       .order("created_at", { ascending: true })
       .limit(20);
 
-    // ── ROADMAP TOOL CALL ──
+    // â”€â”€ ROADMAP TOOL CALL â”€â”€
     if (intent === "roadmap" && roadmapPayload) {
       // Persist roadmap row
       const { data: roadmapRow, error: rmErr } = await admin
@@ -112,7 +112,7 @@ Country knowledge:
 ${(packs ?? []).map((p) => `[${p.kind}] ${p.title}: ${p.body_markdown.slice(0, 300)}`).join("\n")}
 
 Available programs:
-${(programs ?? []).map((p) => `${p.university_name} — ${p.program_name} (${p.tuition_range || "n/a"})`).join("\n")}`;
+${(programs ?? []).map((p) => `${p.university_name} â€” ${p.program_name} (${p.tuition_range || "n/a"})`).join("\n")}`;
 
       const ai = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
@@ -132,7 +132,7 @@ ${(programs ?? []).map((p) => `${p.university_name} — ${p.program_name} (${p.t
         return json({ error: `ai_error_${ai.status}` }, 500);
       }
       const aiData = await ai.json();
-      let parsed: any = {};
+      let parsed: unknown = {};
       try {
         parsed = JSON.parse(aiData.choices?.[0]?.message?.content ?? "{}");
       } catch { parsed = { raw: aiData.choices?.[0]?.message?.content }; }
@@ -151,7 +151,7 @@ ${(programs ?? []).map((p) => `${p.university_name} — ${p.program_name} (${p.t
       return json({ ok: true, roadmap_id: roadmapRow.id, roadmap: parsed, credits_spent: ROADMAP_COST });
     }
 
-    // ── CHAT ──
+    // â”€â”€ CHAT â”€â”€
     if (!userMessage) return json({ error: "message required" }, 400);
 
     const sysPrompt = `${agent.system_prompt}
@@ -164,11 +164,11 @@ Knowledge packs:
 ${(packs ?? []).map((p) => `[${p.kind}] ${p.title}\n${p.body_markdown.slice(0, 500)}`).join("\n\n")}
 
 Sample programs (${(programs ?? []).length}):
-${(programs ?? []).slice(0, 8).map((p) => `- ${p.university_name} — ${p.program_name}`).join("\n")}`;
+${(programs ?? []).slice(0, 8).map((p) => `- ${p.university_name} â€” ${p.program_name}`).join("\n")}`;
 
     const messages = [
       { role: "system", content: sysPrompt },
-      ...(history ?? []).map((m: any) => ({ role: m.role === "tool" ? "assistant" : m.role, content: m.content })),
+      ...(history ?? []).map((m: unknown) => ({ role: m.role === "tool" ? "assistant" : m.role, content: m.content })),
       { role: "user", content: userMessage },
     ];
 
@@ -191,11 +191,13 @@ ${(programs ?? []).slice(0, 8).map((p) => `- ${p.university_name} — ${p.progra
     ]);
 
     return json({ message: reply, credits_spent: CHAT_COST });
-  } catch (e: any) {
+  } catch (e: unknown) {
     return json({ error: e?.message ?? "unknown" }, 500);
   }
 });
 
-function json(b: any, status = 200) {
+function json(b: unknown, status = 200) {
   return new Response(JSON.stringify(b), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 }
+
+

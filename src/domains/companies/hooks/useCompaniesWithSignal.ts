@@ -1,5 +1,5 @@
-/**
- * Companies Domain Hooks — B2B Activity Signals Tracker
+﻿/**
+ * Companies Domain Hooks â€” B2B Activity Signals Tracker
  * Version: 2024 Highly Professional SAAS UI
  * Rules: Enforces Digital Workforce error-reporting pipelines on query failures.
  */
@@ -27,7 +27,7 @@ export function useCompaniesWithSignal(country?: string | null, limit = 100) {
       try {
         const data = await getCompaniesWithSignal<CompanyWithSignal[]>({ country: country ?? null, limit });
         return (data as CompanyWithSignal[]) || [];
-      } catch (error: any) {
+      } catch (error: unknown) {
         // Digital Workforce Rule: Map operational anomalies cleanly to systemic log registers
         console.error("Employer signal tracking query encountered a network mismatch:", {
           country: country ?? null,
@@ -41,3 +41,4 @@ export function useCompaniesWithSignal(country?: string | null, limit = 100) {
     staleTime: 5 * 60 * 1000,
   });
 }
+

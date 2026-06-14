@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+﻿import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { GRO10X_PANEL, GRO10X_MUTED } from "../../lib/tokens";
 import { Loader2, Bookmark, MapPin, MessageSquare } from "lucide-react";
@@ -37,9 +37,9 @@ export default function Gro10xShortlist() {
         toast.error(data?.error ?? "Could not load shortlist");
         setItems([]);
       } else {
-        setItems(((data.result as any)?.shortlist ?? []) as ShortlistItem[]);
+        setItems(((data.result as unknown)?.shortlist ?? []) as ShortlistItem[]);
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(e?.message ?? "Could not load shortlist");
       setItems([]);
     }
@@ -54,7 +54,7 @@ export default function Gro10xShortlist() {
   if (loading) {
     return (
       <div className="py-10 text-center text-sm text-slate-400 inline-flex items-center gap-2 w-full justify-center">
-        <Loader2 className="h-4 w-4 animate-spin" /> Loading shortlist…
+        <Loader2 className="h-4 w-4 animate-spin" /> Loading shortlistâ€¦
       </div>
     );
   }
@@ -68,7 +68,7 @@ export default function Gro10xShortlist() {
           to="/gro10x/c/sourcer"
           className="inline-flex items-center gap-1 text-[11px] text-[#33E1E4] hover:underline"
         >
-          Ask Sourcer to find candidates →
+          Ask Sourcer to find candidates â†’
         </Link>
       </div>
     );
@@ -90,7 +90,7 @@ export default function Gro10xShortlist() {
                 {it.talents?.full_name ?? "Candidate"}
               </p>
               <p className="text-[11px] text-slate-400 truncate">
-                {it.talents?.headline ?? it.talents?.profession ?? "—"}
+                {it.talents?.headline ?? it.talents?.profession ?? "â€”"}
               </p>
               <div className={`mt-0.5 flex items-center gap-2 text-[10px] ${GRO10X_MUTED}`}>
                 {it.talents?.country && (
@@ -124,3 +124,5 @@ export default function Gro10xShortlist() {
     </div>
   );
 }
+
+

@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+﻿import { useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listSavedItemsByTalent, deleteSavedItemRow, insertSavedItemRow } from "@/domains/talent/repo/talentRepo";
 import { useTalent } from "@/hooks/useTalent";
@@ -39,7 +39,7 @@ export function useSavedItems() {
     enabled: !!talentId,
     staleTime: 30 * 1000, // 30-second cache consistency boundary for user assets
     queryFn: async (): Promise<SavedItem[]> => {
-      // HUD: EXECUTING_BOOKMARK_REGISTRY_INGRESS
+      // dashboard: EXECUTING_BOOKMARK_REGISTRY_INGRESS
       let data: Array<{ id: string; item_id: string; item_type: string; saved_at: string }> = [];
       try {
         data = await listSavedItemsByTalent(talentId!);
@@ -57,7 +57,7 @@ export function useSavedItems() {
     },
   });
 
-  // --- HUD: CORE_SELECTOR_METHODS ---
+  // --- dashboard: CORE_SELECTOR_METHODS ---
   const isSaved = useCallback(
     (itemId: string, itemType: SavedItemType) => {
       return savedItems.some((item) => item.item_id === itemId && item.item_type === itemType);
@@ -86,11 +86,11 @@ export function useSavedItems() {
       if (!talentId) throw new Error("AUTH_REQUIRED");
 
       if (alreadySaved) {
-        // HUD: COMMITTING_BOOKMARK_PURGE_TRANSACTION
+        // dashboard: COMMITTING_BOOKMARK_PURGE_TRANSACTION
         await deleteSavedItemRow(talentId, itemId, itemType);
         return { itemId, itemType, action: "purged" as const };
       } else {
-        // HUD: COMMITTING_BOOKMARK_INSERTION_TRANSACTION
+        // dashboard: COMMITTING_BOOKMARK_INSERTION_TRANSACTION
         const data = await insertSavedItemRow(talentId, itemId, itemType);
         return {
           item: {
@@ -108,7 +108,7 @@ export function useSavedItems() {
       await qc.cancelQueries({ queryKey });
       const previousItems = qc.getQueryData<SavedItem[]>(queryKey) || [];
 
-      // HUD: APPLYING_OPTIMISTIC_REGISTRY_SNAPSHOT
+      // dashboard: APPLYING_OPTIMISTIC_REGISTRY_SNAPSHOT
       qc.setQueryData<SavedItem[]>(queryKey, (old = []) => {
         if (alreadySaved) {
           return old.filter((item) => !(item.item_id === itemId && item.item_type === itemType));
@@ -125,7 +125,7 @@ export function useSavedItems() {
 
       return { previousItems };
     },
-    onError: (err: any, { itemId, itemType }, context) => {
+    onError: (err: unknown, { itemId, itemType }, context) => {
       // Restore past data state if transactional error occurs
       if (context?.previousItems) {
         qc.setQueryData(queryKey, context.previousItems);
@@ -179,3 +179,5 @@ export function useSavedItems() {
     refresh: refetch,
   };
 }
+
+

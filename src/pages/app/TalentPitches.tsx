@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Sparkles, Building2, MessageCircle, ExternalLink, CheckCircle2, Clock } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTalentPitches } from "@/domains/profile/hooks/useTalentPitches";
@@ -11,7 +11,7 @@ import {
 } from "@/gro10x/lib/tokens";
 
 /**
- * /app/pitches — full inbox of AI-dispatched employer pitches.
+ * /app/pitches â€” full inbox of AI-dispatched employer pitches.
  * Standardized to the Gro10x golden UI standard.
  */
 export default function TalentPitches() {
@@ -116,3 +116,4 @@ export default function TalentPitches() {
  </div>
  );
 }
+

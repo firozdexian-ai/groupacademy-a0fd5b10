@@ -1,11 +1,11 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Semantic Ingress Feedback Terminal Nodes (Alert)
  * Provides high-visibility information arrays for runtime states, system exceptions, and security blocks.
- * Version: Launch Candidate · Phase Z0 Architectural Spacing Lock
+ * Version: Launch Candidate Â· Phase Z0 Architectural Spacing Lock
  */
 const alertVariants = cva(
   "relative w-full rounded-xl border p-4 shadow-xs select-none sm:select-text text-left antialiased transition-colors duration-200 grid grid-cols-[auto_1fr] gap-3 items-start transform-gpu",
@@ -33,7 +33,7 @@ interface AlertProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(({ className, variant, icon, children, ...props }, ref) => (
   <div ref={ref} role="alert" className={cn(alertVariants({ variant }), className)} {...props}>
-    {/* HUD CHANNEL INGRESS: Isolate graphic nodes cleanly away from layout block segments */}
+    {/* dashboard CHANNEL INGRESS: Isolate graphic nodes cleanly away from layout block segments */}
     {icon && (
       <div className="h-4 w-4 shrink-0 flex items-center justify-center select-none pointer-events-none stroke-[2.2] mt-0.5">
         {icon}
@@ -73,3 +73,4 @@ const AlertDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttrib
 AlertDescription.displayName = "AlertDescription";
 
 export { Alert, AlertTitle, AlertDescription };
+

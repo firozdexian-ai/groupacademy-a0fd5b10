@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Radio, ExternalLink, AlertCircle, Inbox, CheckCircle2 } from "lucide-react";
@@ -28,7 +28,7 @@ interface ClassroomSessionMetadata {
 /**
  * GroUp Academy: Auth-Gated Realtime Session Ingress Router (AppSessionJoin)
  * Hardened access token redirect capturing parallel attendance logging and shielding linkages from browser popup blocker rejections.
- * Version: Launch Candidate · Phase Z1 Integration Stability Locked
+ * Version: Launch Candidate Â· Phase Z1 Integration Stability Locked
  */
 export default function AppSessionJoin() {
  const { sessionId: unverifiedSessionIdStr } = useParams<{ sessionId: string }>();
@@ -158,7 +158,7 @@ export default function AppSessionJoin() {
 
  return (
  <div className="max-w-md mx-auto px-4 py-8 text-left antialiased block transform-gpu w-full">
- {/* HUD LEVEL 1: ENTRY COORDINATES ABSTRACT DATA PANEL SLOTS */}
+ {/* dashboard LEVEL 1: ENTRY COORDINATES ABSTRACT DATA PANEL SLOTS */}
  <Card className="rounded-xl border border-border/60 bg-card/40 shadow-none overflow-hidden block w-full">
  <CardContent className="p-4 space-y-3.5 block w-full leading-none">
  <div className="flex items-start gap-2.5 leading-none w-full block">
@@ -173,11 +173,11 @@ export default function AppSessionJoin() {
  sessionMetadataState.scheduled_date,
  sessionMetadataState.event_timezone || DEFAULT_EVENT_TZ,
  ).toUpperCase()}{" "}
- <span className="opacity-30 mx-1">•</span> DURATION:{" "}
+ <span className="opacity-30 mx-1">â€¢</span> DURATION:{" "}
  {(sessionMetadataState.duration_minutes ?? 60).toString()} MIN
  </p>
 
- {/* HUD LEVEL 2: COMPLIANCE INTEGRATION CALL-TO-ACTIONS INTERFACES */}
+ {/* dashboard LEVEL 2: COMPLIANCE INTEGRATION CALL-TO-ACTIONS INTERFACES */}
  <div className="block w-full leading-none pt-1">
  {sessionMetadataState.meeting_link ? (
  <Button
@@ -206,7 +206,7 @@ export default function AppSessionJoin() {
  )}
  </div>
 
- {/* HUD LEVEL 3: VALIDATION VERIFIED LOG INDICATORS BAR */}
+ {/* dashboard LEVEL 3: VALIDATION VERIFIED LOG INDICATORS BAR */}
  <div className="flex items-center gap-1.5 font-mono text-[10px] font-black text-emerald-600 border-t border-border/5 pt-3 w-full shrink-0 select-none pointer-events-none uppercase tracking-wide leading-none">
  <CheckCircle2 className="h-3.5 w-3.5 stroke-[2.5] text-emerald-600" />
  <span className="pt-0.5">Attendance recorded</span>
@@ -216,3 +216,4 @@ export default function AppSessionJoin() {
  </div>
  );
 }
+

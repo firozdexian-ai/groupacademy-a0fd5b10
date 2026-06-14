@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+﻿import { useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { trackEvent } from "@/lib/errorTracking";
 import { Command } from "lucide-react";
@@ -10,7 +10,7 @@ interface Props {
 }
 
 const SHORTCUTS: { keys: string; label: string }[] = [
-  { keys: "← / →", label: "Previous / next stage" },
+  { keys: "â† / â†’", label: "Previous / next stage" },
   { keys: "[ / ]", label: "Previous / next module" },
   { keys: "Enter", label: "Complete stage" },
   { keys: "?", label: "Toggle shortcuts help" },
@@ -19,7 +19,7 @@ const SHORTCUTS: { keys: string; label: string }[] = [
 /**
  * GroUp Academy: Keyboard Shortcuts Accessibility Overlay (ShortcutsDialog)
  * An authoritative operational modal visualizing platform macro control bindings and hotkey definitions.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export default function ShortcutsDialog({ open, onOpenChange }: Props) {
   const isMountedRef = useRef<boolean>(true);
@@ -44,7 +44,7 @@ export default function ShortcutsDialog({ open, onOpenChange }: Props) {
       }}
     >
       <DialogContent className="max-w-sm rounded-2xl border border-border/40 bg-card/60 backdrop-blur-3xl p-5 shadow-2xl overflow-hidden text-left antialiased transform-gpu select-none">
-        {/* HUD LEVEL 1: TITLE BANNER SEGMENT AREA */}
+        {/* dashboard LEVEL 1: TITLE BANNER SEGMENT AREA */}
         <DialogHeader className="text-left leading-none border-b border-border/10 pb-3 w-full">
           <div className="flex items-center gap-2.5 w-full leading-none">
             <div className="h-7 w-7 rounded-lg bg-primary/10 border border-primary/5 text-primary flex items-center justify-center shrink-0 shadow-inner select-none">
@@ -61,7 +61,7 @@ export default function ShortcutsDialog({ open, onOpenChange }: Props) {
           </div>
         </DialogHeader>
 
-        {/* HUD LEVEL 2: SHORTCUT KEYS DIRECTORY RECORD ROWS */}
+        {/* dashboard LEVEL 2: SHORTCUT KEYS DIRECTORY RECORD ROWS */}
         <ul className="space-y-3 pt-3.5 w-full font-bold text-xs tracking-tight">
           {SHORTCUTS.map((shortcutItem) => (
             <li
@@ -81,3 +81,4 @@ export default function ShortcutsDialog({ open, onOpenChange }: Props) {
     </Dialog>
   );
 }
+

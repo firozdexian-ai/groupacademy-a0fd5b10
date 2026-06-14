@@ -1,11 +1,11 @@
-/**
+﻿/**
  * Edge-function contracts for the agents domain (Phase 9c).
  *
  * Request types mirror what live call sites actually send (preserve
  * runtime behavior). Where a call site sends a body the edge function
  * rejects, the drift is documented in
  * `.lovable/known-edge-contract-drift.md` and the request type still
- * reflects the call site, not the edge function — same precedent as
+ * reflects the call site, not the edge function â€” same precedent as
  * talent contracts (`generate-outreach-message`).
  */
 import { z } from "zod";
@@ -193,3 +193,4 @@ export const TriggerAgentPitchResponseSchema = z
 export type TriggerAgentPitchResponse = z.infer<
   typeof TriggerAgentPitchResponseSchema
 >;
+

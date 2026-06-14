@@ -1,5 +1,5 @@
-/**
- * Marketing domain — typed edge function wrappers (Phase 9g).
+﻿/**
+ * Marketing domain â€” typed edge function wrappers (Phase 9g).
  */
 import { supabase } from "@/integrations/supabase/client";
 import { EdgeFunctionError } from "@/edge/EdgeFunctionError";
@@ -23,3 +23,4 @@ export async function leadHuntMatch(
     data ?? {},
   );
 }
+

@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+﻿import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, SlidersHorizontal, ListFilter } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -39,7 +39,7 @@ export function JobsHubHeader() {
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search jobs, companies, skills…"
+            placeholder="Search jobs, companies, skillsâ€¦"
             className="pl-9 h-10"
           />
         </div>
@@ -59,3 +59,4 @@ export function JobsHubHeader() {
     </header>
   );
 }
+

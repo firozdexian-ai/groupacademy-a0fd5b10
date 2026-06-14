@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+﻿import { useState, useEffect, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useItemAnalytics, type QuizItemStat, type ScenarioItemStat } from "@/domains/learning";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,7 +18,7 @@ const FLAG_LABEL: Record<string, string> = {
   low_rubric: "Low Rubric Alignment",
 };
 
-const pct = (v: number | null | undefined) => (v === null || v === undefined ? "—" : `${Math.round(v * 100)}%`);
+const pct = (v: number | null | undefined) => (v === null || v === undefined ? "â€”" : `${Math.round(v * 100)}%`);
 
 const masteryTone = (v: number | null) => {
   if (v === null) return "text-muted-foreground";
@@ -537,3 +537,4 @@ function ScenarioRow({ s, onRewrite }: { s: ScenarioItemStat; onRewrite: () => v
     </div>
   );
 }
+

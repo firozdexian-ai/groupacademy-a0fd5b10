@@ -32,11 +32,8 @@ export function ExistingCVCard({
   showActions = true,
   className,
 }: ExistingCVCardProps) {
-  // Guard the visual component tree layout entirely against missing context metrics
-  if (!talent?.cvUrl) return null;
-
   // --- PHASE: SAFE_TEMPORAL_BARRIER_COMPILATION ---
-  // Architecture Fix: Prevent redundant date instance allocations inside main paint sweeps
+  // Prevent redundant date instance allocations inside main paint sweeps
   const sanitizedRegistryDateString = useMemo((): string | null => {
     const rawParsedAtTimestamp = talent?.cvParsedAt;
     if (!rawParsedAtTimestamp) return null;
@@ -62,6 +59,9 @@ export function ExistingCVCard({
     return `${fallbackSanitizedName}_CV.pdf`;
   }, [talent?.fullName]);
 
+  // Guard the visual component tree layout entirely against missing context metrics
+  if (!talent?.cvUrl) return null;
+
   // Handle file download requests safely without risking non-null runtime pointer crashes
   const handleSecureDownloadHandshake = () => {
     if (talent?.cvUrl) {
@@ -81,7 +81,7 @@ export function ExistingCVCard({
 
       <CardContent className="p-6">
         <div className="flex items-start gap-5">
-          {/* HUD: ARTIFACT_ICON_STATUS_CELL */}
+          {/* dashboard: ARTIFACT_ICON_STATUS_CELL */}
           <div className="relative shrink-0">
             <div className="p-4 rounded-2xl bg-primary/10 border-2 border-primary/10 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
               <FileText className="h-6 w-6 text-primary shrink-0" />
@@ -91,7 +91,7 @@ export function ExistingCVCard({
             </div>
           </div>
 
-          {/* HUD: DESCRIPTIVE_TELEMETRY_COLUMN */}
+          {/* dashboard: DESCRIPTIVE_TELEMETRY_COLUMN */}
           <div className="flex-1 min-w-0 py-0.5">
             <div className="flex items-center gap-2">
               <h3 className="text-sm font-black uppercase italic tracking-tighter text-foreground leading-none">
@@ -159,3 +159,4 @@ export function ExistingCVCard({
     </Card>
   );
 }
+

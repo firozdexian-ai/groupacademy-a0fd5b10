@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useMemo } from "react";
+﻿import { useEffect, useRef, useState, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Public Telemetry Profile Settings Terminal (PublicProfileSettings)
  * An authoritative security panel orchestrating public route claiming, bio tagging, and visibility flags.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function PublicProfileSettings() {
   const queryClient = useQueryClient();
@@ -86,7 +86,7 @@ export function PublicProfileSettings() {
           description: "Your public profile handle has been updated.",
         });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       const parsedExceptionMsg = err instanceof Error ? err.message : String(err);
       trackError(parsedExceptionMsg, { component: "PublicProfileSettings", action: "commit_handle_claim" });
 
@@ -135,7 +135,7 @@ export function PublicProfileSettings() {
 
   return (
     <Card className="w-full text-left rounded-xl border border-border/40 bg-card/40 backdrop-blur-md shadow-sm antialiased transform-gpu overflow-hidden select-none sm:select-text flex flex-col justify-center">
-      {/* HUD LEVEL 1: OVERVIEW PANEL ROW HEADER */}
+      {/* dashboard LEVEL 1: OVERVIEW PANEL ROW HEADER */}
       <CardHeader className="p-4 sm:p-5 border-b border-border/10 bg-muted/10 select-none leading-none w-full shrink-0">
         <CardTitle className="text-xs sm:text-sm font-bold text-foreground uppercase tracking-wider flex items-center gap-2 w-full leading-none">
           <Globe className="h-4 w-4 text-primary stroke-[2.2] shrink-0" />
@@ -305,7 +305,7 @@ export function PublicProfileSettings() {
                   onClick={onSaveBioProtocol}
                   className="text-[10px] font-bold uppercase tracking-wider text-primary hover:text-primary hover:bg-primary/5 h-7 rounded-xl px-2.5 cursor-pointer disabled:opacity-30 disabled:hover:bg-transparent"
                 >
-                  {update.isPending ? "Saving…" : "Save bio"}
+                  {update.isPending ? "Savingâ€¦" : "Save bio"}
                 </Button>
               </div>
             </div>
@@ -356,3 +356,5 @@ export function PublicProfileSettings() {
     </Card>
   );
 }
+
+

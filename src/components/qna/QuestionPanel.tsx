@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+﻿import { useState, useEffect, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,7 @@ interface QuestionPanelProps {
 /**
  * GroUp Academy: Psychometric Lesson-Level Q&A Discussion Terminal (QuestionPanel)
  * An authoritative operational sandbox managing asynchronous user queries, solutions auditing, and forum tracking rows.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function QuestionPanel({ open, onClose, contentId, itemId, moduleId, cohortId }: QuestionPanelProps) {
   const queryClient = useQueryClient();
@@ -72,7 +72,7 @@ export function QuestionPanel({ open, onClose, contentId, itemId, moduleId, coho
     trackEvent("question_panel_submission_initiated");
     const dynamicToastTrackerId = toast({
       title: "COMMITTING_QUERY",
-      description: "Registering inquiry down discussion ledger nodes…",
+      description: "Registering inquiry down discussion ledger nodesâ€¦",
     });
 
     try {
@@ -92,7 +92,7 @@ export function QuestionPanel({ open, onClose, contentId, itemId, moduleId, coho
         toast({ title: "QUERY_SYNC_VERIFIED", description: "Your inquiry is registered for instructor calibration." });
         trackEvent("question_panel_submission_success");
       }
-    } catch (caughtPipelineExceptionErr: any) {
+    } catch (caughtPipelineExceptionErr: unknown) {
       const formattedExceptionMsgStr =
         caughtPipelineExceptionErr instanceof Error
           ? caughtPipelineExceptionErr.message
@@ -124,7 +124,7 @@ export function QuestionPanel({ open, onClose, contentId, itemId, moduleId, coho
         setActiveReplyingQuestionId(null);
         toast({ title: "ANSWER_COMMITTED_SUCCESS" });
       }
-    } catch (caughtPipelineExceptionErr: any) {
+    } catch (caughtPipelineExceptionErr: unknown) {
       const formattedExceptionMsgStr =
         caughtPipelineExceptionErr instanceof Error
           ? caughtPipelineExceptionErr.message
@@ -173,7 +173,7 @@ export function QuestionPanel({ open, onClose, contentId, itemId, moduleId, coho
         side="bottom"
         className="h-[90vh] rounded-t-xl border-t border-border/40 bg-background/95 backdrop-blur-xl flex flex-col p-4 sm:p-5 text-left antialiased transform-gpu select-none sm:select-text"
       >
-        {/* HUD LEVEL 1: OVERLAY CONTENT WORKSPACE ROW HEADER */}
+        {/* dashboard LEVEL 1: OVERLAY CONTENT WORKSPACE ROW HEADER */}
         <SheetHeader className="mb-4 text-left select-none shrink-0 leading-none w-full">
           <div className="flex items-center gap-2.5 leading-none w-full">
             <div className="h-7 w-7 rounded-lg bg-primary/10 border border-primary/5 text-primary flex items-center justify-center shrink-0 shadow-inner">
@@ -190,13 +190,13 @@ export function QuestionPanel({ open, onClose, contentId, itemId, moduleId, coho
           </div>
         </SheetHeader>
 
-        {/* HUD LEVEL 2: COMPONENT CORE INQUIRY DISPATCH DISPATCH TEXTAREA INPUT BLOCK */}
+        {/* dashboard LEVEL 2: COMPONENT CORE INQUIRY DISPATCH DISPATCH TEXTAREA INPUT BLOCK */}
         <div className="flex gap-2 w-full shrink-0 select-none items-start font-bold text-xs pb-1">
           <Textarea
             rows={2}
             value={questionBody}
             disabled={askQuestionMutation.isPending}
-            placeholder="Broadcast a specialized technical inquiry over this operational node baseline…"
+            placeholder="Broadcast a specialized technical inquiry over this operational node baselineâ€¦"
             onChange={(e) => setQuestionBody(e.target.value)}
             className="rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3 leading-relaxed resize-none shadow-inner flex-1 focus-visible:ring-1 focus-visible:ring-ring"
           />
@@ -216,14 +216,14 @@ export function QuestionPanel({ open, onClose, contentId, itemId, moduleId, coho
           </Button>
         </div>
 
-        {/* HUD LEVEL 3: SCROLL CANVAS HOSTING CORE DISCUSSION DECK MATRIX REPOSITORY */}
+        {/* dashboard LEVEL 3: SCROLL CANVAS HOSTING CORE DISCUSSION DECK MATRIX REPOSITORY */}
         <ScrollArea className="flex-1 mt-3 pr-1.5 w-full min-w-0 text-left outline-none">
           <div className="w-full min-w-0 space-y-3 font-bold text-xs select-text block pb-4 animate-in fade-in duration-200">
             {isLoading ? (
               <div className="flex items-center justify-center gap-2 py-8 text-muted-foreground select-none leading-none w-full">
                 <Loader2 className="h-4 w-4 animate-spin text-primary stroke-[2.5]" />
                 <span className="text-[10px] font-mono font-extrabold uppercase tracking-wider animate-pulse">
-                  Hydrating discussion registry logs…
+                  Hydrating discussion registry logsâ€¦
                 </span>
               </div>
             ) : safeQuestionsCollection.length === 0 ? (
@@ -231,7 +231,7 @@ export function QuestionPanel({ open, onClose, contentId, itemId, moduleId, coho
                 Discussion Registry Empty &bull; Mapped thread parameters vacant
               </p>
             ) : (
-              safeQuestionsCollection.map((queryNodeItem: any) => {
+              safeQuestionsCollection.map((queryNodeItem: unknown) => {
                 if (!queryNodeItem || !queryNodeItem.id) return null;
                 const isReplyingActive = activeReplyingQuestionId === queryNodeItem.id;
 
@@ -259,7 +259,7 @@ export function QuestionPanel({ open, onClose, contentId, itemId, moduleId, coho
 
                       {/* INDIVIDUAL NESTED REPLY STREAM BLOCKS ROW SHIELDS */}
                       <div className="space-y-2 pl-2 sm:pl-3 border-l-2 border-border/10 w-full min-w-0">
-                        {(queryNodeItem.answers ?? []).map((answerItem: any) => {
+                        {(queryNodeItem.answers ?? []).map((answerItem: unknown) => {
                           if (!answerItem || !answerItem.id) return null;
                           const isSolutionAcceptedNode = queryNodeItem.accepted_answer_id === answerItem.id;
 
@@ -316,7 +316,7 @@ export function QuestionPanel({ open, onClose, contentId, itemId, moduleId, coho
                               rows={1}
                               disabled={answerQuestionMutation.isPending}
                               value={individualAnswerBodyMap[queryNodeItem.id] || ""}
-                              placeholder="Inject targeted response segment variables here…"
+                              placeholder="Inject targeted response segment variables hereâ€¦"
                               onChange={(e) =>
                                 setIndividualAnswerBodyMap((prev) => ({ ...prev, [queryNodeItem.id]: e.target.value }))
                               }
@@ -358,7 +358,7 @@ export function QuestionPanel({ open, onClose, contentId, itemId, moduleId, coho
           </div>
         </ScrollArea>
 
-        {/* HUD LEVEL 4: OVERLAY BOTTOM OMNIPRESENCE SHIELD RIBBON FOOTER */}
+        {/* dashboard LEVEL 4: OVERLAY BOTTOM OMNIPRESENCE SHIELD RIBBON FOOTER */}
         <div className="shrink-0 pt-2 border-t border-border/10 select-none shadow-none pointer-events-none tracking-normal font-bold text-[9px] text-muted-foreground/40 font-mono leading-none uppercase w-full flex items-center justify-center gap-1.5 h-6">
           <Zap className="h-3.5 w-3.5 text-amber-500 fill-amber-500/10 stroke-[2.2] shrink-0 animate-pulse" />
           <span>Lesson conversation workspace tracking calibration index variables complete</span>
@@ -367,3 +367,5 @@ export function QuestionPanel({ open, onClose, contentId, itemId, moduleId, coho
     </Sheet>
   );
 }
+
+

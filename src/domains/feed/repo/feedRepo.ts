@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Feed Domain Repository Layer
  * Primary data access layer for user feed posts, reactions, comments, and analytics.
  */
@@ -42,7 +42,7 @@ export interface CommentInput {
 /**
  * Removes a reaction from a post.
  */
-export async function deletePostReaction(input: PostReactionInput): Promise<{ error: any }> {
+export async function deletePostReaction(input: PostReactionInput): Promise<{ error: unknown }> {
   const { error } = await supabase
     .from("post_reactions")
     .delete()
@@ -54,8 +54,8 @@ export async function deletePostReaction(input: PostReactionInput): Promise<{ er
 /**
  * Adds a reaction to a post.
  */
-export async function insertPostReaction(input: InsertReactionInput): Promise<{ error: any }> {
-  const { error } = await (supabase as any)
+export async function insertPostReaction(input: InsertReactionInput): Promise<{ error: unknown }> {
+  const { error } = await (supabase as unknown)
     .from("post_reactions")
     .insert({
       post_id: input.postId,
@@ -68,8 +68,8 @@ export async function insertPostReaction(input: InsertReactionInput): Promise<{ 
 /**
  * Creates a user-generated post in the feed.
  */
-export async function insertFeedPost(payload: Record<string, any>): Promise<{ error: any }> {
-  const { error } = await (supabase as any).from("feed_posts").insert(payload);
+export async function insertFeedPost(payload: Record<string, unknown>): Promise<{ error: unknown }> {
+  const { error } = await (supabase as unknown).from("feed_posts").insert(payload);
   return { error };
 }
 
@@ -230,7 +230,7 @@ export async function recordShare(_post_id: string, _channel: string): Promise<v
 /**
  * Fetches batch engagement statistics for multiple posts.
  */
-export async function getFeedEngagement(args: { _post_ids: string[]; _talent_id: string | null }): Promise<any[]> {
+export async function getFeedEngagement(args: { _post_ids: string[]; _talent_id: string | null }): Promise<unknown[]> {
   const { data, error } = await supabase.rpc("get_feed_engagement", args);
   if (error) throw error;
   return data ?? [];
@@ -327,17 +327,17 @@ export async function listTopHypedPostsWeek(limit = 5) {
   const talentIds = (topRows ?? []).map((t) => t.talent_id).filter(Boolean);
   if (!talentIds.length) return [];
 
-  const { data: contentRows, error: contentError } = await (supabase as any)
+  const { data: contentRows, error: contentError } = await (supabase as unknown)
     .from("feed_posts")
     .select("id, text_content, user_id")
     .in("user_id", talentIds)
     .limit(limit);
 
   if (contentError) throw contentError;
-  const buf = new Map((contentRows ?? []).map((r: any) => [r.user_id, r]));
+  const buf = new Map((contentRows ?? []).map((r: unknown) => [r.user_id, r]));
 
-  return (topRows ?? []).map((r: any) => {
-    const p: any = buf.get(r.talent_id);
+  return (topRows ?? []).map((r: unknown) => {
+    const p: unknown = buf.get(r.talent_id);
     return {
       post_id: p?.id ?? r.talent_id,
       hypes_week: Number(r.hype_count || 0),
@@ -367,7 +367,7 @@ export async function listPostComments(postId: string, limit = 50) {
 /**
  * Posts a new comment to a feed item.
  */
-export async function insertPostComment(input: CommentInput): Promise<{ error: any }> {
+export async function insertPostComment(input: CommentInput): Promise<{ error: unknown }> {
   const { error } = await supabase
     .from("post_comments")
     .insert({ 
@@ -377,3 +377,4 @@ export async function insertPostComment(input: CommentInput): Promise<{ error: a
     });
   return { error };
 }
+

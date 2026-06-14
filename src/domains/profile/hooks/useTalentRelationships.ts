@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   listTalentRelationships as repoListTalentRelationships,
   upsertTalentRelationship,
@@ -67,14 +67,14 @@ export function useTalentRelationships(companyId?: string | null) {
     enabled: !!companyId,
     staleTime: 30 * 1000, // 30-second pipeline cache consistency boundary
     queryFn: async (): Promise<TalentRelationship[]> => {
-      let data: any[];
+      let data: unknown[];
       try {
         data = await repoListTalentRelationships(companyId!);
       } catch (error) {
         console.error("[Digital Workforce] FAULT: talent_relationships query pipeline dropped.", error);
         throw error;
       }
-      return data.map((row: any) => ({
+      return data.map((row: unknown) => ({
         id: String(row.id),
         company_id: String(row.company_id),
         talent_id: String(row.talent_id),
@@ -125,7 +125,7 @@ export function useUpsertRelationship() {
       });
       toast.success("Pipeline status committed successfully.");
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       toast.error(err.message || "Failed to finalize pipeline tracking record.");
     },
   });
@@ -141,7 +141,7 @@ export function useMoveRelationshipStage(companyId?: string | null) {
     mutationFn: async (input: { id: string; stage: TalentRelStage }) => {
       try {
         await updateTalentRelationshipStage(input.id, input.stage);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] ANOMALY: talent_relationships update operation rejected.", {
           relationshipId: input.id,
           targetStage: input.stage,
@@ -155,8 +155,10 @@ export function useMoveRelationshipStage(companyId?: string | null) {
       void qc.invalidateQueries({ queryKey: ["talent-relationships", companyId] });
       toast.success("Candidate migrated smoothly across your funnel grid.");
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       toast.error(err.message || "Failed to commit stage advancement transaction.");
     },
   });
 }
+
+

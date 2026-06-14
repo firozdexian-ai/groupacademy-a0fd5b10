@@ -1,10 +1,10 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Authoritative Artifact Enclosure Interface Node (Card)
  * Hardened atomic container isolating high-fidelity curriculum blocks, talent metrics, and profile dashboards.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
   <div
@@ -89,3 +89,4 @@ const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
 CardFooter.displayName = "Card_Core_Footer_Node";
 
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };
+

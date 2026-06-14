@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { usePostInsights } from "@/hooks/useCreatorAnalytics";
@@ -67,7 +67,7 @@ function InsightsBody({ postId }: { postId: string }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-4 px-3 text-[11px] font-medium text-muted-foreground tracking-wide animate-pulse select-none">
-        <LoaderSpinner className="h-3 w-3 animate-spin mr-2 text-primary" /> Loading insights…
+        <LoaderSpinner className="h-3 w-3 animate-spin mr-2 text-primary" /> Loading insightsâ€¦
       </div>
     );
   }
@@ -153,7 +153,7 @@ function InsightsBody({ postId }: { postId: string }) {
             Top Contributors
           </p>
           <div className="flex flex-wrap gap-1.5 max-w-full">
-            {data.top_hypers.map((hyperProfile: any) => (
+            {data.top_hypers.map((hyperProfile: unknown) => (
               <div
                 key={hyperProfile.id || Math.random().toString()}
                 className="flex items-center gap-1.5 px-3 py-1 bg-muted/40 hover:bg-muted/70 border border-border/20 transition-all rounded-full text-[11px] font-bold text-foreground/90 select-text selection:bg-primary/20 shadow-sm"
@@ -171,7 +171,7 @@ function InsightsBody({ postId }: { postId: string }) {
   );
 }
 
-function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: any }) {
+function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: unknown }) {
   return (
     <div className="p-2.5 rounded-xl bg-muted/20 dark:bg-muted/5 border border-border/20 shadow-inner flex flex-col text-left justify-center min-w-0">
       <div className="flex items-center gap-1 text-[9px] font-bold text-muted-foreground/80 uppercase tracking-wider select-none truncate">
@@ -195,3 +195,4 @@ function LoaderSpinner({ className }: { className?: string }) {
     </svg>
   );
 }
+

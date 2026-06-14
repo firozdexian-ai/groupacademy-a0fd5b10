@@ -1,4 +1,4 @@
-// notify-discussion-event — fanout for Phase 4.3 social events.
+﻿// notify-discussion-event â€” fanout for Phase 4.3 social events.
 // Kinds: thread_reply | mention | q_answer | q_accepted | review_assigned | review_received | submission_decided | all_reviews_in
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
@@ -39,9 +39,11 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ ok: true, count: rows.length }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-  } catch (e: any) {
+  } catch (e: unknown) {
     return new Response(JSON.stringify({ error: e?.message ?? "unknown" }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 });
+
+

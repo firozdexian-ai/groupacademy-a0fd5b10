@@ -1,4 +1,4 @@
-import { useTheme } from "next-themes";
+﻿import { useTheme } from "next-themes";
 import { Toaster as Sonner, toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -7,7 +7,7 @@ type ToasterProps = React.ComponentProps<typeof Sonner>;
 /**
  * GroUp Academy: Technical Event Disclosure Notification Protocol Interface (Toaster)
  * Hardened toast layer optimizing multi-toast overlay stacks and protecting description fields from layout distortions.
- * Version: Launch Candidate · Phase Z0 Lifecycle & Stack Bounds Locked
+ * Version: Launch Candidate Â· Phase Z0 Lifecycle & Stack Bounds Locked
  */
 const Toaster = ({ className, ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
@@ -39,3 +39,4 @@ const Toaster = ({ className, ...props }: ToasterProps) => {
 };
 
 export { Toaster, toast };
+

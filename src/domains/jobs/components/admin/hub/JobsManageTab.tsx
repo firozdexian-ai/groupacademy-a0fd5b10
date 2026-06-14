@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+﻿import { useState, useEffect, useCallback } from "react";
 import {
   listAdminJobs,
   updateJobsBulk,
@@ -89,7 +89,7 @@ export function JobsManageTab() {
       queryClient.invalidateQueries({ queryKey: ["admin-jobs"] });
       queryClient.invalidateQueries({ queryKey: ["jobs-hub-dashboard"] });
       loadJobs();
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(e?.message ?? "Failed to purge expired jobs");
     } finally {
       setPurging(false);
@@ -109,14 +109,14 @@ export function JobsManageTab() {
         columns:
           "id,title,company_name,location,is_active,is_featured,created_at,application_type,source_platform,deadline",
         search: searchQuery,
-        status: statusFilter as any,
+        status: statusFilter as unknown,
         page,
         pageSize: PAGE_SIZE,
       });
       setJobs(rows as Job[]);
       setTotalCount(count || 0);
-      if (rows.length) fetchEngagement(rows.map((j: any) => j.id));
-    } catch (err: any) {
+      if (rows.length) fetchEngagement(rows.map((j: unknown) => j.id));
+    } catch (err: unknown) {
       toast.error("Load failed: " + err.message);
     } finally {
       setLoading(false);
@@ -141,7 +141,7 @@ export function JobsManageTab() {
     const ids = Array.from(selected);
     try {
       await updateJobsBulk(ids, patch);
-    } catch (e: any) {
+    } catch (e: unknown) {
       return toast.error("Could not update: " + e.message);
     }
     toast.success(`${ids.length} jobs updated`);
@@ -240,7 +240,7 @@ export function JobsManageTab() {
                 title="Archive jobs past deadline or stale (>90d)"
               >
                 <Flame className="h-4 w-4" />
-                {purging ? "Purging…" : "Purge Expired"}
+                {purging ? "Purgingâ€¦" : "Purge Expired"}
               </Button>
               <Button
                 onClick={() => {
@@ -347,7 +347,7 @@ export function JobsManageTab() {
                         <TableCell className="py-5 text-left">
                           <p className="font-semibold text-sm uppercase italic tracking-tight">{job.title}</p>
                           <p className="text-[9px] font-bold text-muted-foreground mt-0.5">
-                            {job.company_name} · {job.location || "REMOTE_ACCESS"}
+                            {job.company_name} Â· {job.location || "REMOTE_ACCESS"}
                           </p>
                         </TableCell>
                         <TableCell className="text-left">
@@ -467,3 +467,5 @@ export function JobsManageTab() {
     </div>
   );
 }
+
+

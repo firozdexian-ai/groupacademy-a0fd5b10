@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+﻿import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -35,8 +35,8 @@ Rules:
 - Be specific and practical, not vague
 - Cover the key concepts, frameworks, tools, or skills relevant to the module topic
 - Order from foundational concepts to more advanced/applied ones
-- Use bullet points with "•" prefix
-- Do NOT include any headers, introductions, or closing remarks — just the bullet points`;
+- Use bullet points with "â€¢" prefix
+- Do NOT include unknown headers, introductions, or closing remarks â€” just the bullet points`;
 
     const userPrompt = `Program: ${programName || "Professional Development"}
 Level: ${levelName || "General"}
@@ -93,3 +93,5 @@ Generate the content guide for this module:`;
     );
   }
 });
+
+

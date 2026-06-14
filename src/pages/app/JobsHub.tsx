@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useSearchParams } from "react-router-dom";
 import { useTalent } from "@/hooks/useTalent";
 import { useJobsHubDashboard } from "@/domains/jobs";
@@ -66,3 +66,4 @@ export default function JobsHub() {
  </div>
  );
 }
+

@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -118,7 +118,7 @@ export default function MyAgents() {
  </TabsList>
 
  <TabsContent value="agents" className="space-y-3">
- {agents.map((a: any) => (
+ {agents.map((a: unknown) => (
  <Card key={a.id} className="p-4">
  <h3 className="font-semibold">{a.name}</h3>
  <p className="text-xs text-muted-foreground mt-1">{a.description}</p>
@@ -171,3 +171,5 @@ function SummaryTile({
  </Card>
  );
 }
+
+

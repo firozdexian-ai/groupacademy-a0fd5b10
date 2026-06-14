@@ -1,9 +1,9 @@
-import { Draggable } from "@hello-pangea/dnd";
+﻿import { Draggable } from "@hello-pangea/dnd";
 import { formatUSD } from "@/lib/irConfig";
 import { Crown, Users, TrendingUp, Calendar as CalIcon, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const LEAD_BADGE: Record<string, { label: string; className: string; icon: any }> = {
+const LEAD_BADGE: Record<string, { label: string; className: string; icon: unknown }> = {
   lead: { label: "True Lead", className: "bg-primary/10 text-primary border-primary/30", icon: Crown },
   co_lead: {
     label: "Co-Lead",
@@ -28,9 +28,9 @@ const LEAD_BADGE: Record<string, { label: string; className: string; icon: any }
 };
 
 interface Props {
-  investor: any;
+  investor: unknown;
   index: number;
-  onSelect?: (investor: any) => void;
+  onSelect?: (investor: unknown) => void;
 }
 
 export function PipelineCard({ investor, index, onSelect }: Props) {
@@ -39,7 +39,7 @@ export function PipelineCard({ investor, index, onSelect }: Props) {
 
   const checkRange =
     investor.check_size_min_usd || investor.check_size_max_usd
-      ? `${investor.check_size_min_usd ? formatUSD(investor.check_size_min_usd) : "?"} – ${
+      ? `${investor.check_size_min_usd ? formatUSD(investor.check_size_min_usd) : "?"} â€“ ${
           investor.check_size_max_usd ? formatUSD(investor.check_size_max_usd) : "?"
         }`
       : null;
@@ -124,3 +124,5 @@ export function PipelineCard({ investor, index, onSelect }: Props) {
     </Draggable>
   );
 }
+
+

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import { insertModuleResources } from "@/domains/learning/repo/learningRepo";
 
 import { Button } from "@/components/ui/button";
@@ -64,7 +64,7 @@ export function BulkResourceUpload({
     const items: QueueItem[] = [];
     for (const f of list) {
       if (f.size > MAX_RESOURCE_MB * 1024 * 1024) {
-        toast.error(`${f.name} exceeds ${MAX_RESOURCE_MB}MB — skipped.`);
+        toast.error(`${f.name} exceeds ${MAX_RESOURCE_MB}MB â€” skipped.`);
         continue;
       }
       items.push({
@@ -90,7 +90,7 @@ export function BulkResourceUpload({
     try {
       const { url } = await uploadModuleResourceFile(item.file, moduleId);
       updateItem(item.id, { status: "uploaded", uploadedUrl: url });
-    } catch (e: any) {
+    } catch (e: unknown) {
       updateItem(item.id, { status: "error", error: e.message || "Upload failed" });
     }
   };
@@ -103,7 +103,7 @@ export function BulkResourceUpload({
       return prev;
     });
     // Loop until no queued items remain.
-    // eslint-disable-next-line no-constant-condition
+     
     while (true) {
       const pending = snap.filter((q) => q.status === "queued");
       if (!pending.length) return;
@@ -136,7 +136,7 @@ export function BulkResourceUpload({
   const saveAll = async () => {
     const ready = queue.filter((q) => q.status === "uploaded");
     if (!ready.length) {
-      toast.error("Nothing to save — wait for uploads to finish.");
+      toast.error("Nothing to save â€” wait for uploads to finish.");
       return;
     }
     setSaving(true);
@@ -158,7 +158,7 @@ export function BulkResourceUpload({
       // Drop saved items, keep failures for retry.
       setQueue((prev) => prev.filter((q) => q.status !== "uploaded"));
       onComplete();
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(`Save failed: ${e.message}`);
     } finally {
       setSaving(false);
@@ -238,7 +238,7 @@ export function BulkResourceUpload({
           Drop files or click to upload
         </p>
         <p className="text-[10px] text-muted-foreground mt-1">
-          PDF · MP4 · DOCX · PPTX · images · ≤ {MAX_RESOURCE_MB}MB · multi-file
+          PDF Â· MP4 Â· DOCX Â· PPTX Â· images Â· â‰¤ {MAX_RESOURCE_MB}MB Â· multi-file
         </p>
       </div>
 
@@ -314,3 +314,5 @@ export function BulkResourceUpload({
 }
 
 export default BulkResourceUpload;
+
+

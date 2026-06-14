@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Messaging domain barrel. Surfaces peer DM threads, agent inbox UI,
  * the Unipile WhatsApp channel admin tab, and the typed edge client.
  * Repo + hook helpers are imported directly via deep paths from external
@@ -11,3 +11,4 @@ export { ThreadListItem } from "./components/talent/ThreadListItem";
 export { MessagingChannelsTab } from "./components/admin/MessagingChannelsTab";
 export { unipileConnect } from "./api/manifest";
 export type { UnipileConnectRequest, UnipileConnectResponse, UnipileAction } from "./api/manifest";
+

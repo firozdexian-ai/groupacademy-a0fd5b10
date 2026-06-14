@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useGtmGraph } from "./hooks/useGtmGraph";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -18,7 +18,7 @@ import { ConfirmPurge } from "@/platform/admin/ui/ConfirmPurge";
 export function GtmKnowledgeTab() {
  const { gtmGraphQuery, mutations: { upsertKnowledgePack, deleteKnowledgePack } } = useGtmGraph();
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ is_published: false, kind: "visa", display_order: 0, body_markdown: "" });
+ const [draft, setDraft] = useState<unknown>({ is_published: false, kind: "visa", display_order: 0, body_markdown: "" });
 
  const packs = gtmGraphQuery.data?.knowledgePacks ?? [];
  const destinations = gtmGraphQuery.data?.destinations ?? [];
@@ -67,7 +67,7 @@ export function GtmKnowledgeTab() {
  ) : packs.length === 0 ? (
  <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">Zero CMS nodes detected.</TableCell></TableRow>
  ) : (
- packs.map((row: any) => (
+ packs.map((row: unknown) => (
  <TableRow key={row.id}>
  <TableCell>
  <div className="flex items-center gap-2">
@@ -78,7 +78,7 @@ export function GtmKnowledgeTab() {
  <TableCell>
  <div className="flex items-center gap-2">
  <Globe className="h-3.5 w-3.5 text-muted-foreground" />
- {destinations.find((d: any) => d.country_code === row.country_code)?.display_name || row.country_code}
+ {destinations.find((d: unknown) => d.country_code === row.country_code)?.display_name || row.country_code}
  </div>
  </TableCell>
  <TableCell>
@@ -143,7 +143,7 @@ export function GtmKnowledgeTab() {
  <Select value={draft.country_code || ""} onValueChange={(v) => setDraft({ ...draft, country_code: v })}>
  <SelectTrigger className="h-12 rounded-xl border"><SelectValue placeholder="Select country" /></SelectTrigger>
  <SelectContent>
- {destinations.map((d: any) => (
+ {destinations.map((d: unknown) => (
  <SelectItem key={d.country_code} value={d.country_code}>{d.display_name} ({d.country_code})</SelectItem>
  ))}
  </SelectContent>
@@ -237,3 +237,5 @@ export function GtmKnowledgeTab() {
 }
 
 export default GtmKnowledgeTab;
+
+

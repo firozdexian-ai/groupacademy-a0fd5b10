@@ -1,6 +1,6 @@
-import React from "react";
+﻿import React from "react";
 
-export const ROUTES: Record<string, React.LazyExoticComponent<any>> = {
+export const ROUTES: Record<string, React.LazyExoticComponent<unknown>> = {
   "learning-overview": React.lazy(() => import("@/domains/learning/components/admin/LearningOverviewTab").then(m => ({ default: m.LearningOverviewTab }))),
   "learning-academies": React.lazy(() => import("@/domains/learning/components/admin/LearningSimpleTabs").then(m => ({ default: m.AcademiesTab }))),
   "learning-schools": React.lazy(() => import("@/domains/learning/components/admin/LearningSimpleTabs").then(m => ({ default: m.SchoolsTab }))),
@@ -41,3 +41,5 @@ export const TITLES: Record<string, string> = {
   "learning-json-importer": "Bulk course importer",
   modules: "Modules",
 };
+
+

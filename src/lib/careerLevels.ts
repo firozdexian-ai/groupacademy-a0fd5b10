@@ -1,4 +1,4 @@
-export interface CareerLevel {
+﻿export interface CareerLevel {
   level: number;
   label: string;
   min: number;
@@ -59,3 +59,4 @@ export function computeCareerLevel(volume: number): CareerLevelInfo {
     toNext: Math.max(0, next.min - v),
   };
 }
+

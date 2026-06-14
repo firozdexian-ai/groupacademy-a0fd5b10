@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { updateTalentById } from "@/domains/talent/repo/talentRepo";
 import { useTalent } from "@/hooks/useTalent";
@@ -33,7 +33,7 @@ interface ProfileEditDialogProps {
 /**
  * GroUp Academy: Authoritative Professional Identity Gateway Master Editor (ProfileEditDialog)
  * An operational sandbox orchestrating academic records, career histories, skill matrices, and profile hydration tasks.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDialogProps) {
   const queryClient = useQueryClient();
@@ -75,7 +75,7 @@ export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDia
 
       const eduData = Array.isArray(talent.education) ? talent.education : [];
       setEducation(
-        eduData.map((edu: any) => ({
+        eduData.map((edu: unknown) => ({
           institution: String(edu?.institution || ""),
           degree: String(edu?.degree || ""),
           fieldOfStudy: String(edu?.fieldOfStudy || edu?.field_of_study || ""),
@@ -86,7 +86,7 @@ export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDia
 
       const expData = Array.isArray(talent.experience) ? talent.experience : [];
       setExperience(
-        expData.map((exp: any) => ({
+        expData.map((exp: unknown) => ({
           company: String(exp?.company || ""),
           position: String(exp?.position || exp?.title || ""),
           startDate: String(exp?.startDate || exp?.start_date || ""),
@@ -97,7 +97,7 @@ export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDia
 
       const skillData = Array.isArray(talent.skills) ? talent.skills : [];
       setSkills(
-        skillData.map((skill: any) =>
+        skillData.map((skill: unknown) =>
           typeof skill === "string" ? skill : String(skill?.name || skill?.skill || skill),
         ),
       );
@@ -115,7 +115,7 @@ export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDia
 
     setIsSaving(true);
     trackEvent("profile_editor_save_requested");
-    const dynamicToastTrackerId = toast.loading("Saving profile…");
+    const dynamicToastTrackerId = toast.loading("Saving profileâ€¦");
 
     try {
       // Pack parameters defensively with explicit cast schema configurations
@@ -126,9 +126,9 @@ export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDia
         portfolio_url: portfolioUrl.trim() || null,
         custom_profession: customProfession.trim() || null,
         profile_photo_url: profilePhotoUrl || null,
-        education: education.filter((e) => e.institution.trim() || e.degree.trim()) as any,
-        experience: experience.filter((e) => e.company.trim() || e.position.trim()) as any,
-        skills: skills.filter((s) => s.trim()) as any,
+        education: education.filter((e) => e.institution.trim() || e.degree.trim()) as unknown,
+        experience: experience.filter((e) => e.company.trim() || e.position.trim()) as unknown,
+        skills: skills.filter((s) => s.trim()) as unknown,
       };
 
       await updateTalentById(talent.id, compiledNextUpdateData);
@@ -145,7 +145,7 @@ export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDia
         trackEvent("profile_editor_save_success");
         onOpenChange(false);
       }
-    } catch (caughtPipelineExceptionErr: any) {
+    } catch (caughtPipelineExceptionErr: unknown) {
       const formattedExceptionMsgStr =
         caughtPipelineExceptionErr instanceof Error
           ? caughtPipelineExceptionErr.message
@@ -175,7 +175,7 @@ export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDia
       }}
     >
       <DialogContent className="sm:max-w-xl rounded-xl border border-border/40 bg-card/95 backdrop-blur-xl shadow-2xl p-5 sm:p-6 text-left antialiased overflow-hidden transform-gpu select-none sm:select-text flex flex-col justify-center">
-        {/* HUD LEVEL 1: GATEWAY DIALOG ROW HEADER CONTAINER */}
+        {/* dashboard LEVEL 1: GATEWAY DIALOG ROW HEADER CONTAINER */}
         <DialogHeader className="mb-4 text-left select-none shrink-0 leading-none w-full">
           <div className="flex items-center gap-2.5 leading-none w-full">
             <div className="h-7 w-7 rounded-lg bg-primary/10 border border-primary/5 text-primary flex items-center justify-center shrink-0 shadow-inner">
@@ -192,7 +192,7 @@ export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDia
           </div>
         </DialogHeader>
 
-        {/* HUD LEVEL 2: COMPOSITE SELECTION TABS TRIGGER DECK PANEL LIST */}
+        {/* dashboard LEVEL 2: COMPOSITE SELECTION TABS TRIGGER DECK PANEL LIST */}
         <Tabs
           value={activeTab}
           onValueChange={(tab) => {
@@ -234,7 +234,7 @@ export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDia
             </TabsTrigger>
           </TabsList>
 
-          {/* HUD LEVEL 3: SCROLL LAYOUT INTERFACE CANVAS CONTENT FRAME */}
+          {/* dashboard LEVEL 3: SCROLL LAYOUT INTERFACE CANVAS CONTENT FRAME */}
           <ScrollArea className="h-[400px] sm:h-[450px] mt-4 pr-1.5 w-full min-w-0 text-left">
             <div className="w-full min-w-0 select-text font-bold text-xs flex flex-col justify-center animate-in fade-in duration-200">
               <TabsContent value="photo" className="mt-0 pb-2 w-full outline-none focus-visible:ring-0">
@@ -333,7 +333,7 @@ export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDia
           </ScrollArea>
         </Tabs>
 
-        {/* HUD LEVEL 4: FOOTER ACTION CONFIRMATION OVERLAY TRACK BUTTON ROW */}
+        {/* dashboard LEVEL 4: FOOTER ACTION CONFIRMATION OVERLAY TRACK BUTTON ROW */}
         <DialogFooter className="mt-5 gap-2.5 sm:gap-0 select-none border-t border-border/10 pt-4 w-full shrink-0 flex items-center justify-end font-bold text-xs">
           <Button
             variant="ghost"
@@ -354,7 +354,7 @@ export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDia
             {isSaving ? (
               <>
                 <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                <span>Saving…</span>
+                <span>Savingâ€¦</span>
               </>
             ) : (
               <>
@@ -368,3 +368,5 @@ export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDia
     </Dialog>
   );
 }
+
+

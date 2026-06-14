@@ -1,4 +1,4 @@
-// Outbound message dispatcher
+﻿// Outbound message dispatcher
 // Supports:
 //  - sending into an existing Unipile chat (external_chat_id present)
 //  - starting a new 1-on-1 WhatsApp chat when external_chat_id looks like a raw phone
@@ -158,7 +158,7 @@ Deno.serve(async (req) => {
         direction: "out",
         author: agent_run_id ? "agent" : "human_operator",
         body: text,
-        status: status as any,
+        status: status as unknown,
         error: errorMsg,
         agent_run_id: agent_run_id ?? null,
         sent_by_user_id: userId,
@@ -186,3 +186,5 @@ Deno.serve(async (req) => {
     return jsonResp({ error: (e as Error).message }, 500);
   }
 });
+
+

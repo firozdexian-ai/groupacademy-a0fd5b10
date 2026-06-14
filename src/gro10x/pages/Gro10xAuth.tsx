@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, FormEvent } from "react";
+﻿import { useEffect, useRef, useState, FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Send, Loader2, Eye, EyeOff, Paperclip, ArrowRight, Sparkles } from "lucide-react";
 import { useGro10xAuthChat, type RiyaAction } from "../hooks/useGro10xAuthChat";
@@ -70,7 +70,7 @@ export default function Gro10xAuth() {
       collect_phone: `Mobile number (${data.countryCode})`,
       verify_human: "Type your answer",
       set_password: "Min 8 characters",
-    } as Record<string, string>)[a] || "Type a message…";
+    } as Record<string, string>)[a] || "Type a messageâ€¦";
 
   const isPasswordStep = currentAction === "set_password";
   const isCVStep = currentAction === "collect_cv";
@@ -234,7 +234,7 @@ export default function Gro10xAuth() {
         <div ref={endRef} />
       </main>
 
-      {/* Input bar — hidden during chip-only steps */}
+      {/* Input bar â€” hidden during chip-only steps */}
       {!isComplete && !isCVStep && !isGoalsStep && !existingAccount && (
         <form
           onSubmit={onSubmit}
@@ -292,3 +292,4 @@ export default function Gro10xAuth() {
     </div>
   );
 }
+

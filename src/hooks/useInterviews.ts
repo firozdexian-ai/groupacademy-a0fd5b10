@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCurrentUser } from "@/lib/auth";
 import { toast } from "sonner";
 import { notifyHiringEvent } from "@/domains/jobs/api/jobsApi";
@@ -41,7 +41,7 @@ export interface Interview {
 
 export interface HireState {
   interview: (Interview & { slots: InterviewSlot[] }) | null;
-  offer: any | null;
+  offer: unknown | null;
 }
 
 // --- SENSOR: APPLICATION_HIRE_STATE ---
@@ -53,8 +53,8 @@ export function useApplicationHireState(applicationId: string | undefined) {
     queryFn: async (): Promise<HireState> => {
       try {
         const data = await getApplicationHireState(applicationId!);
-        return (data as any) ?? { interview: null, offer: null };
-      } catch (error: any) {
+        return (data as unknown) ?? { interview: null, offer: null };
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: get_application_hire_state query failed.", error);
         throw error;
       }
@@ -118,7 +118,7 @@ export function useCreateInterview() {
       qc.invalidateQueries({ queryKey: ["application-hire-state", variables.application_id] });
       toast.success("Interview proposed and slots sent to candidate.");
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       toast.error(err.message ?? "Failed to propose interview.");
     },
   });
@@ -150,9 +150,11 @@ export function useConfirmInterviewSlot() {
       qc.invalidateQueries({ queryKey: ["application-hire-state", variables.applicationId] });
       toast.success("Interview confirmed! Calendar invites sent.");
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       console.error("[Digital Workforce] FAULT: confirm_interview_slot transaction failed.", err);
       toast.error("Handshake failed. The slot may no longer be available.");
     },
   });
 }
+
+

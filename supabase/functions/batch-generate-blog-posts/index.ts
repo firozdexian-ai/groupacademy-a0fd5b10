@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+﻿import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -32,8 +32,8 @@ serve(async (req) => {
     const { data: academies } = await supabase.from("academies").select("name, description").eq("is_active", true).limit(10);
     const { data: programs } = await supabase.from("profession_categories").select("name").limit(30);
 
-    const academyContext = (academies || []).map((a: any) => a.name).join(", ");
-    const programContext = (programs || []).map((p: any) => p.name).join(", ");
+    const academyContext = (academies || []).map((a: unknown) => a.name).join(", ");
+    const programContext = (programs || []).map((p: unknown) => p.name).join(", ");
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
@@ -153,8 +153,10 @@ Rules:
       JSON.stringify({ inserted, total_posts: totalPosts }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("batch-generate-blog-posts error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
+
+

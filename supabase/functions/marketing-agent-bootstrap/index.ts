@@ -1,4 +1,4 @@
-// Public bootstrap endpoint for the auth/landing chat widget.
+﻿// Public bootstrap endpoint for the auth/landing chat widget.
 // Resolves the visitor's country (via Cloudflare/edge headers, defaults to
 // Bangladesh) and lazily provisions a `mkt-seo-01` workforce instance for
 // that country. Returns { country, instance_id, agent_name } so the client
@@ -95,7 +95,7 @@ serve(async (req) => {
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[marketing-agent-bootstrap] FAULT:", err.message);
     return new Response(
       JSON.stringify({
@@ -109,3 +109,5 @@ serve(async (req) => {
     );
   }
 });
+
+

@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+﻿import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -19,8 +19,8 @@ interface RoadmapRequest {
   gpa?: string;
   yearsExperience?: number;
   cvText?: string;
-  educationSummary?: any;
-  experienceSummary?: any;
+  educationSummary?: unknown;
+  experienceSummary?: unknown;
   partTimeWorkInterest: boolean;
   familySupport: boolean;
   specialRequirements?: string;
@@ -124,7 +124,7 @@ serve(async (req) => {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Roadmap Edge Function Error:", error.message);
 
     // Attempt to set failure status if possible
@@ -134,3 +134,5 @@ serve(async (req) => {
     });
   }
 });
+
+

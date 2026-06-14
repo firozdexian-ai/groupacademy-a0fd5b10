@@ -1,11 +1,11 @@
-import React from "react";
+﻿import React from "react";
 
-export const ROUTES: Record<string, React.LazyExoticComponent<any>> = {
+export const ROUTES: Record<string, React.LazyExoticComponent<unknown>> = {
   leads: React.lazy(() =>
     import("@/domains/jobs/components/admin/JobsAssessmentLeadsTab").then((m) => ({ default: m.JobsAssessmentLeadsTab })),
   ),
   "jobs-overview": React.lazy(() => import("@/domains/jobs/components/admin/JobsOverviewTab")),
-// "jobs-upload" route removed – redirect handled via JobsHub
+// "jobs-upload" route removed â€“ redirect handled via JobsHub
   "jobs-hub": React.lazy(() => import("@/domains/jobs/components/admin/hub/JobsHub").then(m => ({ default: m.JobsHub }))),
   "jobs-applications": React.lazy(() => import("@/domains/jobs/components/admin/hub/JobsApplicationsTab").then(m => ({ default: m.JobsApplicationsTab }))),
   "jobs-pipeline": React.lazy(() => import("@/domains/jobs/components/admin/JobsKanbanPipelineTab").then(m => ({ default: m.JobsKanbanPipelineTab }))),
@@ -27,3 +27,5 @@ export const TITLES: Record<string, string> = {
   "jobs-assessments": "Assessments",
   "jobs-kpis": "Analytics",
 };
+
+

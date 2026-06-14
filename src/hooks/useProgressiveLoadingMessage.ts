@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 
 /**
- * GroUp Academy: Perceptual Latency Sentinel (V5.6.0)
+ * GroUp Academy: Perceptual Latency guard (V5.6.0)
  * CTO Reference: Authoritative hook for dynamic loading states and UX continuity.
  * Architecture: Reference-isolated parameters preventing accidental timer clearing.
  * Phase: Z0 Code Freeze Hardened (May 2026 Launch Variant).
@@ -39,7 +39,7 @@ export function useProgressiveLoadingMessage(active: boolean, options?: Progress
 
     setSeconds(0);
 
-    // HUD: INITIALIZE_MONOTONIC_INTERVAL_INCREMENTOR
+    // dashboard: INITIALIZE_MONOTONIC_INTERVAL_INCREMENTOR
     const intervalId = setInterval(() => {
       setSeconds((s) => s + 1);
     }, 1000);
@@ -51,7 +51,7 @@ export function useProgressiveLoadingMessage(active: boolean, options?: Progress
   // PHASE 2: Semantic Message Derivation
   // --------------------------------------------------------
   const message = useMemo(() => {
-    // HUD: TELEMETRY_WARNING_TRIGGER
+    // dashboard: TELEMETRY_WARNING_TRIGGER
     if (seconds === veryLongThreshold) {
       console.warn(
         `[Digital Workforce] ANOMALY: Progressive loader exceeded maximum safety threshold (${veryLongThreshold}s). Inspect underlying network transport layer.`,
@@ -59,17 +59,18 @@ export function useProgressiveLoadingMessage(active: boolean, options?: Progress
     }
 
     if (seconds < connectingThreshold) {
-      return "Initializing trajectory…";
+      return "Initializing trajectoryâ€¦";
     }
     if (seconds < longThreshold) {
-      return "Connecting to neural server…";
+      return "Connecting to neural serverâ€¦";
     }
     if (seconds < veryLongThreshold) {
-      return "Optimizing connection (this may take a moment)…";
+      return "Optimizing connection (this may take a moment)â€¦";
     }
 
-    return "Finalizing handshake… almost there.";
+    return "Finalizing handshakeâ€¦ almost there.";
   }, [seconds, connectingThreshold, longThreshold, veryLongThreshold]);
 
   return { seconds, message };
 }
+

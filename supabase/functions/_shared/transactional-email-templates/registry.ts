@@ -1,12 +1,12 @@
-/// <reference types="npm:@types/react@18.3.1" />
+﻿/// <reference types="npm:@types/react@18.3.1" />
 import * as React from 'npm:react@18.3.1'
 
 export interface TemplateEntry {
-  component: React.ComponentType<any>
-  subject: string | ((data: Record<string, any>) => string)
+  component: React.ComponentType<unknown>
+  subject: string | ((data: Record<string, unknown>) => string)
   to?: string
   displayName?: string
-  previewData?: Record<string, any>
+  previewData?: Record<string, unknown>
 }
 
 import { template as welcome } from './welcome.tsx'
@@ -32,3 +32,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'company-welcome': companyWelcome,
   'authoring-review-digest': authoringReviewDigest,
 }
+
+

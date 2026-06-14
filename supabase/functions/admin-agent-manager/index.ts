@@ -1,4 +1,4 @@
-// Admin Agent Manager — chat with the entire AI Agent OS.
+﻿// Admin Agent Manager â€” chat with the entire AI Agent OS.
 // Admin/super_admin only. Reports on agents, tools, channels, sessions, credits.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { augmentLastUserMessage } from "../_shared/attachments.ts";
@@ -83,8 +83,8 @@ const TOOLS = [
   },
 ];
 
-const SYSTEM = `You are the Agent Manager — operator console for the entire AI Agent OS at GroUp Academy.
-Answer the admin's questions about all agents (B2C, B2B, platform tools, user-generated, marketplace) by CALLING TOOLS — never invent numbers.
+const SYSTEM = `You are the Agent Manager â€” operator console for the entire AI Agent OS at GroUp Academy.
+Answer the admin's questions about all agents (B2C, B2B, platform tools, user-generated, marketplace) by CALLING TOOLS â€” never invent numbers.
 Be concise. Use markdown. Bold the key numbers. Today: ${new Date().toISOString().slice(0, 10)}.`;
 
 Deno.serve(async (req) => {
@@ -108,7 +108,7 @@ Deno.serve(async (req) => {
       .from("user_roles")
       .select("role")
       .eq("user_id", userData.user.id);
-    const roles = (roleRows ?? []).map((r: any) => r.role);
+    const roles = (roleRows ?? []).map((r: unknown) => r.role);
     if (!roles.includes("super_admin") && !roles.includes("admin")) {
       return json({ error: "forbidden" }, 403);
     }
@@ -116,7 +116,7 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const messages = body.messages ?? [];
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
-    const convo: any[] = [{ role: "system", content: SYSTEM }, ...messages];
+    const convo: unknown[] = [{ role: "system", content: SYSTEM }, ...messages];
     await augmentLastUserMessage(admin, convo, body.attachments);
 
     for (let step = 0; step < 5; step++) {
@@ -144,7 +144,7 @@ Deno.serve(async (req) => {
         convo.push(msg);
         for (const tc of msg.tool_calls) {
           const args = safeParse(tc.function?.arguments);
-          let toolResult: any = { error: "unknown tool" };
+          let toolResult: unknown = { error: "unknown tool" };
           try {
             toolResult = await runTool(admin, tc.function.name, args);
           } catch (e) {
@@ -178,7 +178,7 @@ Deno.serve(async (req) => {
   }
 });
 
-async function runTool(admin: any, name: string, args: any) {
+async function runTool(admin: unknown, name: string, args: unknown) {
   switch (name) {
     case "agents_list": {
       const limit = Math.min(100, Math.max(1, args.limit ?? 25));
@@ -223,7 +223,7 @@ async function runTool(admin: any, name: string, args: any) {
         .select("credits")
         .gte("created_at", since)
         .limit(5000);
-      const total = (data ?? []).reduce((a: number, r: any) => a + Number(r.credits ?? 0), 0);
+      const total = (data ?? []).reduce((a: number, r: unknown) => a + Number(r.credits ?? 0), 0);
       return { total_credits: total, days };
     }
     case "tools_registry": {
@@ -245,3 +245,5 @@ async function runTool(admin: any, name: string, args: any) {
       return { error: `unknown tool: ${name}` };
   }
 }
+
+

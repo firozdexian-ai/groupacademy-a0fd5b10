@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { learnerNextActions } from "@/domains/learning/api/learningApi";
 
 /**
@@ -39,9 +39,10 @@ export function useNextActions() {
     // Performance Baseline: 1-minute stability window for high-engagement dashboards
     staleTime: 60 * 1000,
     queryFn: async (): Promise<NextActionsResponse> => {
-      // HUD: INVOKING_LEARNER_NEXT_ACTIONS_EDGE_ENGINE
+      // dashboard: INVOKING_LEARNER_NEXT_ACTIONS_EDGE_ENGINE
       const data = await learnerNextActions({});
       return data as unknown as NextActionsResponse;
     },
   });
 }
+

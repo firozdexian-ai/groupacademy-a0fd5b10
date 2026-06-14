@@ -1,6 +1,6 @@
-import React from "react";
+﻿import React from "react";
 
-export const ROUTES: Record<string, React.LazyExoticComponent<any>> = {
+export const ROUTES: Record<string, React.LazyExoticComponent<unknown>> = {
   overview: React.lazy(() =>
     import("@/domains/analytics/components/admin/overview/LifetimeOverviewTab").then((m) => ({ default: m.LifetimeOverviewTab })),
   ),
@@ -43,3 +43,5 @@ export const TITLES: Record<string, string> = {
   "overview-reports": "Report builder",
   "signals-waitlist": "Demand signals",
 };
+
+

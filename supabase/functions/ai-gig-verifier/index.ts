@@ -1,4 +1,4 @@
-// AI gig verifier — pulls submission + acceptance criteria, scores via Lovable AI, applies verdict.
+﻿// AI gig verifier â€” pulls submission + acceptance criteria, scores via Lovable AI, applies verdict.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -33,7 +33,7 @@ Deno.serve(async (req) => {
     const { data: ver } = await admin.from("gig_verifications").select("*").eq("id", verId).maybeSingle();
     if (!ver) throw new Error("verification missing");
 
-    let gig: any = null; let submissionPayload: any = null;
+    let gig: unknown = null; let submissionPayload: unknown = null;
     if (gig_kind === "quick") {
       const { data: g } = await admin.from("gigs").select("*").eq("id", ver.gig_id).maybeSingle();
       gig = g;
@@ -143,10 +143,12 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ verification_id: verId, verdict, score }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("verifier error", err);
     return new Response(JSON.stringify({ error: err?.message ?? "unknown" }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 });
+
+

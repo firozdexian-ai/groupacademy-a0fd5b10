@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+﻿import { useEffect, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -41,7 +41,7 @@ interface ProgressStageProps {
 /**
  * GroUp Academy: End-Of-Module Milestone Synchronization Controller (ProgressStage)
  * An authoritative operational pipeline auditing progression telemetry, updating wallets, and launching curriculum node routing shifts.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function ProgressStage({
   moduleId,
@@ -129,7 +129,7 @@ export function ProgressStage({
 
   return (
     <div className="space-y-5 text-left max-w-full w-full transform-gpu antialiased">
-      {/* HUD LEVEL 1: STAGE HEADER METADATA SHIELD */}
+      {/* dashboard LEVEL 1: STAGE HEADER METADATA SHIELD */}
       <div className="flex items-center justify-between gap-4 px-0.5 select-none w-full leading-none">
         <div className="space-y-1.5 text-left flex flex-col justify-center min-w-0 flex-1 leading-none">
           <h2 className="text-sm sm:text-base font-bold tracking-tight text-foreground uppercase tracking-wide flex items-center gap-2">
@@ -149,7 +149,7 @@ export function ProgressStage({
         </Badge>
       </div>
 
-      {/* HUD LEVEL 2: TWO-COLUMN MAIN TELEMETRY CONTENT CONTAINER */}
+      {/* dashboard LEVEL 2: TWO-COLUMN MAIN TELEMETRY CONTENT CONTAINER */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr,340px] gap-4 w-full min-w-0 items-start">
         {/* MAIN PANEL CONTENT STACK: COLUMN LEFT */}
         <div className="space-y-4 w-full min-w-0 flex flex-col justify-start">
@@ -210,7 +210,7 @@ export function ProgressStage({
             </div>
 
             <p className="text-[9px] font-extrabold text-muted-foreground/50 uppercase tracking-wider select-none leading-none pt-5 relative z-10">
-              Saving your progress…
+              Saving your progressâ€¦
             </p>
           </Card>
 
@@ -326,7 +326,7 @@ export function ProgressStage({
         </div>
       </div>
 
-      {/* HUD LEVEL 3: TIMELINE TRANSACTION CONFIGURATION CONTROL COMMAND DISPATCH ROW STRIP */}
+      {/* dashboard LEVEL 3: TIMELINE TRANSACTION CONFIGURATION CONTROL COMMAND DISPATCH ROW STRIP */}
       <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border/10 select-none w-full shrink-0">
         <Button
           variant="outline"
@@ -361,3 +361,4 @@ export function ProgressStage({
     </div>
   );
 }
+

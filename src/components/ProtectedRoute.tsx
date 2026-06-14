@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef, useMemo } from "react";
+﻿import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,7 +25,7 @@ interface ProtectedRouteProps {
 /**
  * GroUp Academy: Authoritative Role-Based Access Control Ingress Firewall (ProtectedRoute)
  * High-performance route isolation gateway auditing network security clearance vectors and identity persistence tokens.
- * Version: Launch Candidate · Phase Z0 Hardened Routing Guard Lock
+ * Version: Launch Candidate Â· Phase Z0 Hardened Routing Guard Lock
  */
 export function ProtectedRoute({
   children,
@@ -46,7 +46,7 @@ export function ProtectedRoute({
   // protected route. Previously, `location` in deps recreated callbacks on
   // every URL change, re-running the audit and flashing the loader, which
   // unmounted child pages mid-render (e.g. /dashboard/chat got stuck in a
-  // "Verifying Core Clearance Tokens…" / "Syncing thread history…" loop).
+  // "Verifying Core Clearance Tokensâ€¦" / "Syncing thread historyâ€¦" loop).
   const locationRef = useRef(location);
   locationRef.current = location;
   const authTypeRef = useRef(authType);
@@ -112,9 +112,9 @@ export function ProtectedRoute({
         }, temporalThresholdNum);
       });
 
-      const sessionCheckQueryPromise = supabase.auth.getSession();
+      const sessionCheckQueryPromise = getCurrentSession();
 
-      const dynamicRaceResolutionResult: any = await Promise.race([sessionCheckQueryPromise, diagnosticTimeoutPromise]);
+      const dynamicRaceResolutionResult: unknown = await Promise.race([sessionCheckQueryPromise, diagnosticTimeoutPromise]);
 
       if (globalTimerTrackerId) {
         clearTimeout(globalTimerTrackerId);
@@ -160,7 +160,7 @@ export function ProtectedRoute({
         setIsAuthorized(true);
         setFault(null);
       }
-    } catch (caughtPipelineExceptionErr: any) {
+    } catch (caughtPipelineExceptionErr: unknown) {
       if (globalTimerTrackerId) clearTimeout(globalTimerTrackerId);
 
       const formattedExceptionMsgStr =
@@ -192,7 +192,7 @@ export function ProtectedRoute({
 
   // Audit runs once on mount and only re-runs on real auth lifecycle changes.
   // Route or search-param changes inside a protected page MUST NOT retrigger
-  // it — that previously flashed the verification loader and unmounted the
+  // it â€” that previously flashed the verification loader and unmounted the
   // page below on every URL update.
   useEffect(() => {
     executeFirewallAudit();
@@ -235,7 +235,7 @@ export function ProtectedRoute({
           <div className="w-2 h-2 bg-primary rounded-full animate-bounce" />
         </div>
         <p className="mt-4 text-[9px] font-mono font-extrabold uppercase tracking-widest text-muted-foreground/40 italic leading-none block">
-          Verifying Core Clearance Tokens…
+          Verifying Core Clearance Tokensâ€¦
         </p>
       </div>
     );
@@ -317,7 +317,7 @@ export function useUserRole() {
       const {
         data: { session },
         error: sessionFetchError,
-      } = await supabase.auth.getSession();
+      } = await getCurrentSession();
       if (sessionFetchError) throw sessionFetchError;
       if (!session?.user) return null;
 
@@ -354,10 +354,13 @@ export function useUserRole() {
 }
 
 // Integrated Error Tracking and Telemetry Fallback Adaptations
-function trackError(errorObj: any, contextualMetaBlock: Record<string, any>) {
+function trackError(errorObj: unknown, contextualMetaBlock: Record<string, unknown>) {
   console.error(`[protected-route] error:`, errorObj, contextualMetaBlock);
 }
 
-function trackEvent(eventNameStr: string, contextualMetaBlock?: Record<string, any>) {
+function trackEvent(eventNameStr: string, contextualMetaBlock?: Record<string, unknown>) {
   // Analytical logging pass parameters line placeholder integration
 }
+
+
+

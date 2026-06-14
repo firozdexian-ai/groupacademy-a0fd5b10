@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getPublishedBlogPostDetailBySlug, updateBlogPostViewsAbsolute } from "@/domains/marketing/repo/marketingRepo";
@@ -37,7 +37,7 @@ interface BlogPostPayload {
 /**
  * GroUp Academy: Knowledge Briefing Content Canvas Reader (BlogPost)
  * Hardened responsive reader framing article telemetry and shielding insertion blocks from Cross-Site Scripting (XSS) anomalies.
- * Version: Launch Candidate · Phase Z1 Transaction Matrix Sealed
+ * Version: Launch Candidate Â· Phase Z1 Transaction Matrix Sealed
  */
 export default function BlogPost() {
  const { slug: unverifiedPostSlugStr } = useParams<{ slug: string }>();
@@ -159,7 +159,7 @@ export default function BlogPost() {
 
  return (
  <div className={cn(PAGE_SHELL, "text-left antialiased block transform-gpu w-full space-y-4 pb-24")}>
- {/* HUD LEVEL 1: APPLICATION HEADER PANEL ACTIONS CONTROL BAR */}
+ {/* dashboard LEVEL 1: APPLICATION HEADER PANEL ACTIONS CONTROL BAR */}
  <header className="block select-none leading-none w-full shrink-0 pb-1">
  <Button
  type="button"
@@ -172,7 +172,7 @@ export default function BlogPost() {
  </Button>
  </header>
 
- {/* HUD LEVEL 2: DETAILED DATA TITLE METADATA HUD CORE */}
+ {/* dashboard LEVEL 2: DETAILED DATA TITLE METADATA dashboard CORE */}
  <div className="space-y-3 block w-full leading-none">
  <div className="flex flex-wrap gap-1.5 select-none pointer-events-none leading-none w-full block">
  {activeArticleRecord.category && (
@@ -224,14 +224,14 @@ export default function BlogPost() {
  </div>
  </div>
 
- {/* HUD LEVEL 3: IMAGE MEDIA MATRICES LAYOUT FRAME CANVAS */}
+ {/* dashboard LEVEL 3: IMAGE MEDIA MATRICES LAYOUT FRAME CANVAS */}
  {activeArticleRecord.featured_image && (
  <div className="aspect-video rounded-xl overflow-hidden border border-border/40 w-full block select-none pointer-events-none shadow-2xs shrink-0">
  <img src={activeArticleRecord.featured_image} alt="" className="w-full h-full object-cover block" />
  </div>
  )}
 
- {/* HUD LEVEL 4: EXCERPT OUTLINE SUMMARY HIGHLIGHT SEGMENT BLOCK */}
+ {/* dashboard LEVEL 4: EXCERPT OUTLINE SUMMARY HIGHLIGHT SEGMENT BLOCK */}
  {activeArticleRecord.excerpt && (
  <Card
  className={cn(
@@ -247,7 +247,7 @@ export default function BlogPost() {
  </Card>
  )}
 
- {/* HUD LEVEL 5: CONDITIONAL EXTERNAL REDIRECTIONS OR STRUCTURAL ARTICLE BODIES CORES */}
+ {/* dashboard LEVEL 5: CONDITIONAL EXTERNAL REDIRECTIONS OR STRUCTURAL ARTICLE BODIES CORES */}
  {activeArticleRecord.external_url ? (
  <Card className="rounded-lg border border-border/60 bg-card/40 shadow-none overflow-hidden block w-full select-none">
  <CardContent className="p-5 flex flex-col items-center text-center gap-3.5 block w-full leading-none">
@@ -297,7 +297,7 @@ export default function BlogPost() {
 
  <Separator className="bg-border/40 w-full block shrink-0" />
 
- {/* HUD LEVEL 6: DATA DISPATCH COCKPIT ROUTING INTERFACES CONTROLLERS BAR */}
+ {/* dashboard LEVEL 6: DATA DISPATCH COCKPIT ROUTING INTERFACES CONTROLLERS BAR */}
  <div className="flex items-center justify-between gap-4 leading-none select-none w-full shrink-0 pt-1">
  <Button
  type="button"
@@ -327,3 +327,4 @@ export default function BlogPost() {
 function ShieldAlertNodeHelper({ className }: { className?: string }) {
  return <Loader2 className={className} />;
 }
+

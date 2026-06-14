@@ -1,5 +1,5 @@
-/**
- * Infinite Jobs List Component — Phase INST-Z2 Hardened
+﻿/**
+ * Infinite Jobs List Component â€” Phase INST-Z2 Hardened
  * CTO Version: June 2026
  * Refactored for absolute layout alignment, plain-language parsing, and optimized cache invalidation loops.
  * Rules: All original event pipelines and properties remain fully immutable.
@@ -37,7 +37,7 @@ export function InfiniteJobsList({ talentId }: Props) {
     error: queryError,
   } = useRankedJobs(talentId);
 
-  // Sentinel intersection observer for infinite scroll.
+  // guard intersection observer for infinite scroll.
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel || !hasNextPage || isFetchingNextPage) return;
@@ -127,7 +127,7 @@ export function InfiniteJobsList({ talentId }: Props) {
 
   return (
     <div className="space-y-3.5 w-full antialiased select-none sm:select-text px-0.5">
-      {items.map((recordItem: any) => {
+      {items.map((recordItem: unknown) => {
         if (!recordItem || !recordItem.job || !recordItem.job.id) return null;
 
         const currentJobId = recordItem.job.id;
@@ -135,7 +135,7 @@ export function InfiniteJobsList({ talentId }: Props) {
         return (
           <JobCard
             key={currentJobId}
-            job={recordItem.job as any}
+            job={recordItem.job as unknown}
             variant="default" // Shifted to default variant to bring vertical row items up to standard density map
             isSaved={!!isSaved(currentJobId, "job")}
             onSaveToggle={() => {
@@ -161,24 +161,24 @@ export function InfiniteJobsList({ talentId }: Props) {
                     : recordItem.match_reason === "location_only"
                       ? "Open for remote or local deployment in your region"
                       : "Recommended based on recent platform matches",
-              match_reason: recordItem.match_reason === "profession" ? "keyword" : (recordItem.match_reason as any),
+              match_reason: recordItem.match_reason === "profession" ? "keyword" : (recordItem.match_reason as unknown),
             }}
           />
         );
       })}
 
-      {/* Sentinel for infinite scroll tracking configurations */}
+      {/* guard for infinite scroll tracking configurations */}
       <div ref={sentinelRef} className="h-12 flex items-center justify-center select-none w-full pt-2">
         {isFetchingNextPage ? (
           <div className="flex items-center justify-center text-[11px] font-bold text-muted-foreground/70 tracking-wide animate-pulse">
             <Loader2 className="h-3.5 w-3.5 animate-spin mr-2 text-primary stroke-[2.5]" />
-            <span>Loading more jobs…</span>
+            <span>Loading more jobsâ€¦</span>
           </div>
         ) : (
           !hasNextPage &&
           items.length > 4 && (
             <p className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/40 select-none animate-in fade-in duration-300">
-              — You're all caught up —
+              â€” You're all caught up â€”
             </p>
           )
         )}
@@ -186,3 +186,5 @@ export function InfiniteJobsList({ talentId }: Props) {
     </div>
   );
 }
+
+

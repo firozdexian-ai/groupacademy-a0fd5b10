@@ -1,4 +1,4 @@
-import { SimpleAdminRegistry } from "@/platform/admin/ui/SimpleAdminRegistry";
+﻿import { SimpleAdminRegistry } from "@/platform/admin/ui/SimpleAdminRegistry";
 
 export const ChannelsTab = () => (
   <SimpleAdminRegistry
@@ -28,3 +28,4 @@ export const CommunityGroupsTab = () => (
 );
 
 export { CommunityGroupsTab as CommunityTab };
+

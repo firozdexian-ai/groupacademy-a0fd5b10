@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { uploadAssessmentAudio } from "@/domains/learning/repo/learningRepo";
@@ -29,7 +29,7 @@ interface JobAssessmentRecord {
   job_id: string;
   talent_id: string;
   questions: QuestionNode[];
-  answers: Record<string, any> | null;
+  answers: Record<string, unknown> | null;
   status: string;
   jobs?: {
     title: string;
@@ -38,7 +38,7 @@ interface JobAssessmentRecord {
 }
 
 /**
- * Job AI assessment runner — MCQ + voice + text questions, autosaves each answer.
+ * Job AI assessment runner â€” MCQ + voice + text questions, autosaves each answer.
  */
 export default function JobAssessment() {
   const { assessmentId } = useParams<{ assessmentId: string }>();
@@ -52,7 +52,7 @@ export default function JobAssessment() {
   const [uploading, setUploading] = React.useState<boolean>(false);
 
   const [currentIndex, setCurrentIndex] = React.useState<number>(0);
-  const [answers, setAnswers] = React.useState<Record<string, any>>({});
+  const [answers, setAnswers] = React.useState<Record<string, unknown>>({});
 
   const [recording, setRecording] = React.useState<boolean>(false);
   const [recordSeconds, setRecordSeconds] = React.useState<number>(0);
@@ -62,7 +62,7 @@ export default function JobAssessment() {
   const timerRef = React.useRef<NodeJS.Timeout | null>(null);
 
   // Keep latest state values inside mutable refs to defeat stale closure captures in recorders
-  const answersRef = React.useRef<Record<string, any>>({});
+  const answersRef = React.useRef<Record<string, unknown>>({});
   const currentIndexRef = React.useRef<number>(0);
 
   React.useEffect(() => {
@@ -94,24 +94,24 @@ export default function JobAssessment() {
 
       if (error || !data) throw new Error("Couldn't load this assessment.");
 
-      const raw = (data.questions as any) || {};
+      const raw = (data.questions as unknown) || {};
       const questions: QuestionNode[] = [
-        ...(raw.mcq_questions || []).map((q: any) => ({ ...q, type: "mcq" })),
-        ...(raw.voice_questions || []).map((q: any) => ({ ...q, type: "voice", timeLimit: 120 })),
-        ...(raw.text_questions || []).map((q: any) => ({ ...q, type: "text" })),
+        ...(raw.mcq_questions || []).map((q: unknown) => ({ ...q, type: "mcq" })),
+        ...(raw.voice_questions || []).map((q: unknown) => ({ ...q, type: "voice", timeLimit: 120 })),
+        ...(raw.text_questions || []).map((q: unknown) => ({ ...q, type: "text" })),
       ];
 
       const finalized: JobAssessmentRecord = {
         ...data,
         questions,
-        answers: data.answers as Record<string, any> | null,
+        answers: data.answers as Record<string, unknown> | null,
       };
 
       setAssessment(finalized);
       assessmentRef.current = finalized;
       if (data.answers) {
-        setAnswers(data.answers as Record<string, any>);
-        answersRef.current = data.answers as Record<string, any>;
+        setAnswers(data.answers as Record<string, unknown>);
+        answersRef.current = data.answers as Record<string, unknown>;
       }
 
       if (data.status === "pending") {
@@ -323,7 +323,7 @@ export default function JobAssessment() {
             <Textarea
               value={answers[current.id] || ""}
               onChange={(e) => setAnswers((prev) => ({ ...prev, [current.id]: e.target.value }))}
-              placeholder="Type your answer here…"
+              placeholder="Type your answer hereâ€¦"
               className="min-h-[160px] rounded-lg text-sm bg-background/50 border-border/60"
             />
           )}
@@ -359,3 +359,5 @@ export default function JobAssessment() {
     </div>
   );
 }
+
+

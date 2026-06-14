@@ -1,5 +1,5 @@
-/**
- * Corporate Contacts Directory — Phase Z0 Hardened
+﻿/**
+ * Corporate Contacts Directory â€” Phase Z0 Hardened
  * Version: 2024 Highly Professional SAAS UI
  * Fixes: S1 (Ownership Move), PII Masking Standardized
  */
@@ -55,15 +55,15 @@ export function ContactsTab() {
   const { role } = useUserRole();
   const isAdmin = role === "admin" || role === "super_admin";
 
-  const [contacts, setContacts] = useState<any[]>([]);
-  const [companies, setCompanies] = useState<any[]>([]);
+  const [contacts, setContacts] = useState<unknown[]>([]);
+  const [companies, setCompanies] = useState<unknown[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [formData, setFormData] = useState<any>({ full_name: "", is_primary: false });
+  const [formData, setFormData] = useState<unknown>({ full_name: "", is_primary: false });
 
   const loadData = useCallback(async () => {
     setIsLoading(true);
@@ -190,7 +190,7 @@ export function ContactsTab() {
                         <Mail className="h-3 w-3 opacity-40 text-primary" /> {isAdmin ? contact.email : "hidden_for_privacy@groupacademy"}
                       </p>
                       <p className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                        <Phone className="h-3 w-3 opacity-40 text-primary" /> {isAdmin ? contact.phone : "••••••••"}
+                        <Phone className="h-3 w-3 opacity-40 text-primary" /> {isAdmin ? contact.phone : "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"}
                       </p>
                     </div>
                   </TableCell>
@@ -291,7 +291,7 @@ export function ContactsTab() {
   );
 }
 
-function MetricTile({ label, value, icon: Icon, color, bg }: any) {
+function MetricTile({ label, value, icon: Icon, color, bg }: unknown) {
   return (
     <Card className="rounded-2xl border border-border/60 bg-card p-6 text-left group transition-all hover:border-primary/30 shadow-sm relative overflow-hidden">
       <div className="flex items-center gap-5">
@@ -312,3 +312,4 @@ function MetricTile({ label, value, icon: Icon, color, bg }: any) {
     </Card>
   );
 }
+

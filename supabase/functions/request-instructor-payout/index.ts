@@ -1,4 +1,4 @@
-// Phase 4.7 — Instructor payout request
+﻿// Phase 4.7 â€” Instructor payout request
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -19,7 +19,7 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
       { global: { headers: { Authorization: auth } } },
     );
-    const { data: userRes } = await supabase.auth.getUser(token);
+    const { data: userRes } = await getCurrentUser(token);
     const user = userRes?.user;
     if (!user) return new Response(JSON.stringify({ error: "unauthenticated" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
@@ -61,3 +61,5 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
+
+

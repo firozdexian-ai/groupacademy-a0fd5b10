@@ -1,4 +1,4 @@
-// Secure Financial Executor: Handles state transitions and ledger refunds for withdrawals
+﻿// Secure Financial Executor: Handles state transitions and ledger refunds for withdrawals
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -97,7 +97,7 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ ok: true, success: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Executor Error:", err);
     return new Response(JSON.stringify({ error: err.message || "Unknown error" }), {
       status: 400,
@@ -105,3 +105,5 @@ Deno.serve(async (req) => {
     });
   }
 });
+
+

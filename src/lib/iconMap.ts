@@ -1,4 +1,4 @@
-import {
+﻿import {
   Briefcase,
   Code,
   DollarSign,
@@ -115,7 +115,7 @@ import {
  */
 
 export const iconMap: Record<string, LucideIcon> = {
-  // --- HUD: Business & Finance ---
+  // --- dashboard: Business & Finance ---
   briefcase: Briefcase,
   landmark: Landmark,
   banknote: Banknote,
@@ -131,27 +131,27 @@ export const iconMap: Record<string, LucideIcon> = {
   "pie-chart": PieChart,
   presentation: Presentation,
 
-  // --- HUD: Sales & Marketing ---
+  // --- dashboard: Sales & Marketing ---
   megaphone: Megaphone,
   store: Store,
   "shopping-cart": ShoppingCart,
   handshake: Handshake,
 
-  // --- HUD: Operations & Logistics ---
+  // --- dashboard: Operations & Logistics ---
   truck: Truck,
   package: Package,
   factory: Factory,
   warehouse: Warehouse,
   "clipboard-list": ClipboardList,
 
-  // --- HUD: Healthcare & Pharma ---
+  // --- dashboard: Healthcare & Pharma ---
   "heart-pulse": HeartPulse,
   stethoscope: Stethoscope,
   pill: Pill,
   activity: Activity,
   heart: Heart,
 
-  // --- HUD: Technology ---
+  // --- dashboard: Technology ---
   code: Code,
   laptop: Laptop,
   monitor: Monitor,
@@ -168,12 +168,12 @@ export const iconMap: Record<string, LucideIcon> = {
   "git-branch": GitBranch,
   wifi: Wifi,
 
-  // --- HUD: HR & People ---
+  // --- dashboard: HR & People ---
   users: Users,
   "user-check": UserCheck,
   "user-cog": UserCog,
 
-  // --- HUD: Creative & Design ---
+  // --- dashboard: Creative & Design ---
   palette: Palette,
   pencil: Pencil,
   "pen-tool": PenTool,
@@ -182,14 +182,14 @@ export const iconMap: Record<string, LucideIcon> = {
   music: Music,
   mic: Mic,
 
-  // --- HUD: Education & Learning ---
+  // --- dashboard: Education & Learning ---
   "graduation-cap": GraduationCap,
   "book-open": BookOpen,
   book: Book,
   "file-text": FileText,
   award: Award,
 
-  // --- HUD: Infrastructure ---
+  // --- dashboard: Infrastructure ---
   "building-2": Building2,
   building2: Building2,
   building: Building,
@@ -197,12 +197,12 @@ export const iconMap: Record<string, LucideIcon> = {
   home: Home,
   "map-pin": MapPin,
 
-  // --- HUD: Transportation ---
+  // --- dashboard: Transportation ---
   plane: Plane,
   car: Car,
   ship: Ship,
 
-  // --- HUD: Security & Science ---
+  // --- dashboard: Security & Science ---
   shield: Shield,
   lock: Lock,
   scale: Scale,
@@ -213,7 +213,7 @@ export const iconMap: Record<string, LucideIcon> = {
   atom: Atom,
   brain: Brain,
 
-  // --- HUD: Miscellaneous ---
+  // --- dashboard: Miscellaneous ---
   star: Star,
   target: Target,
   lightbulb: Lightbulb,
@@ -229,10 +229,11 @@ export const iconMap: Record<string, LucideIcon> = {
 export const defaultIcon = Briefcase;
 
 /**
- * HUD: Safe Icon Resolver
+ * dashboard: Safe Icon Resolver
  * Returns the mapped icon or the institutional default.
  */
 export function getIcon(iconName: string | null | undefined): LucideIcon {
   if (!iconName) return defaultIcon;
   return iconMap[iconName] || defaultIcon;
 }
+

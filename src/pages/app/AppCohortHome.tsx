@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { Link, useParams } from "react-router-dom";
 import { Loader2, Calendar, Users, Radio, Video, ChevronLeft, Inbox } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -48,7 +48,7 @@ interface SessionCardProps {
 /**
  * GroUp Academy: Student Cohort Environment Dashboard (AppCohortHome)
  * Hardened candidate-facing console filtering scheduling streams and insulating date boundaries against client timezone drift.
- * Version: Launch Candidate · Phase Z1 Production Contract Locked
+ * Version: Launch Candidate Â· Phase Z1 Production Contract Locked
  */
 export default function AppCohortHome() {
  const { cohortId: unverifiedCohortParamStr } = useParams<{ cohortId: string }>();
@@ -133,7 +133,7 @@ export default function AppCohortHome() {
 
  return (
  <div className="max-w-2xl mx-auto px-4 py-4 pb-24 text-left antialiased block transform-gpu w-full">
- {/* HUD LEVEL 1: ENVIRONMENT DESKTOP TRACK CONTROL BAR */}
+ {/* dashboard LEVEL 1: ENVIRONMENT DESKTOP TRACK CONTROL BAR */}
  <header className="block w-full select-none pb-3 border-b border-border/10">
  <Link
  to="/app/my-learning"
@@ -160,7 +160,7 @@ export default function AppCohortHome() {
  <Calendar className="h-3 w-3 mr-1 text-primary stroke-[2.2] shrink-0" />
  <span>
  STARTS: {resolvedCohortNode.starts_on ?? "SELF-PACED"}
- {resolvedCohortNode.ends_on ? ` → ${resolvedCohortNode.ends_on}` : ""}
+ {resolvedCohortNode.ends_on ? ` â†’ ${resolvedCohortNode.ends_on}` : ""}
  </span>
  </Badge>
 
@@ -184,7 +184,7 @@ export default function AppCohortHome() {
  </div>
  </header>
 
- {/* HUD LEVEL 2: CHROMATIC UPCOMING/PAST MISSION TIMELINES */}
+ {/* dashboard LEVEL 2: CHROMATIC UPCOMING/PAST MISSION TIMELINES */}
  <main className="mt-5 space-y-5 block w-full">
  {/* SECTION A: UPCOMING STREAM ROSTERS */}
  <section className="block w-full">
@@ -238,7 +238,7 @@ function SessionCard({ session, past = false }: SessionCardProps) {
  {session.title}
  </p>
  <p className="font-mono text-[10px] sm:text-[11px] font-bold text-muted-foreground/50 leading-none select-text block tracking-tight">
- {formatEventTime(session.scheduled_date, session.event_timezone || DEFAULT_EVENT_TZ)} •{" "}
+ {formatEventTime(session.scheduled_date, session.event_timezone || DEFAULT_EVENT_TZ)} â€¢{" "}
  {session.duration_minutes ?? 60} MIN
  </p>
  <Badge
@@ -287,3 +287,4 @@ function SessionCard({ session, past = false }: SessionCardProps) {
  </Card>
  );
 }
+

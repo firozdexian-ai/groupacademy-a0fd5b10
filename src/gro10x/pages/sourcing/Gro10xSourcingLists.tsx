@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ export default function Gro10xSourcingLists() {
   const { data: lists, isLoading } = useTalentLists(companyId);
   const create = useCreateTalentList();
   const [name, setName] = useState("");
-  const [selectedList, setSelectedList] = useState<any | null>(null);
+  const [selectedList, setSelectedList] = useState<unknown | null>(null);
 
   const handleCreate = async () => {
     if (!companyId || !name.trim()) return;
@@ -32,7 +32,7 @@ export default function Gro10xSourcingLists() {
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Talent Lists</h1>
         <Link to="/gro10x/sourcing" className="text-xs text-[#33E1E4]">
-          Search →
+          Search â†’
         </Link>
       </div>
 
@@ -48,7 +48,7 @@ export default function Gro10xSourcingLists() {
         </Button>
       </div>
 
-      {isLoading && <Gro10xLoading label="Loading lists…" />}
+      {isLoading && <Gro10xLoading label="Loading listsâ€¦" />}
 
       <div className="space-y-2">
         {(lists ?? []).map((l) => (
@@ -87,7 +87,7 @@ export default function Gro10xSourcingLists() {
   );
 }
 
-function ListMembersSheet({ list, onClose }: { list: any; onClose: () => void }) {
+function ListMembersSheet({ list, onClose }: { list: unknown; onClose: () => void }) {
   const { data: members, isLoading } = useListMembers(list.id);
 
   return (
@@ -192,3 +192,5 @@ function ListMembersSheet({ list, onClose }: { list: any; onClose: () => void })
     </Sheet>
   );
 }
+
+

@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+﻿import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -10,12 +10,12 @@ const corsHeaders = {
 const MIN_DESCRIPTION_LENGTH = 500;
 
 async function generateAndSave(
-  modules: any[],
+  modules: unknown[],
   courseMap: Record<string, { title: string; programId: string }>,
   programMap: Record<string, string>,
-  supabase: any
+  supabase: unknown
 ): Promise<{ updated: number; skipped: number }> {
-  const moduleList = modules.map((m: any, i: number) => {
+  const moduleList = modules.map((m: unknown, i: number) => {
     const course = courseMap[m.content_id] || { title: "Unknown", programId: "" };
     const programName = programMap[course.programId] || "Unknown Program";
     return `${i + 1}. Module ID: ${m.id}\n   Course: "${course.title}"\n   Program: "${programName}"\n   Module Title: "${m.title}"`;
@@ -41,7 +41,7 @@ async function generateAndSave(
           role: "system",
           content: `You are a curriculum designer for an online career academy. For each module, generate a rich content guide consisting of 5-7 bullet points. Each bullet point should be a detailed sentence or two that describes a specific concept, framework, technique, or skill the learner will master in this module. 
 
-Format each description as bullet points starting with "• " (bullet character + space). Each bullet should:
+Format each description as bullet points starting with "â€¢ " (bullet character + space). Each bullet should:
 - Start with an action verb or topic focus
 - Be specific and practical (not generic filler)
 - Cover a distinct aspect of the module topic
@@ -50,11 +50,11 @@ Format each description as bullet points starting with "• " (bullet character 
 The total description should be 500-1500 characters. Focus on what the learner will understand, analyze, apply, or create.
 
 Example format:
-• Explain the psychology of visual perception in finance, focusing on how the human brain processes imagery faster than numerical data to establish an immediate emotional connection.
-• Identify the core elements of a visual narrative—including setting, protagonist, conflict, and resolution—and how to apply these roles to financial subjects like retirement planning or market volatility.
-• Detail the use of composition techniques, such as the Rule of Thirds and leading lines, to direct a viewer's eye toward the most critical data points or calls to action within an image.
-• Analyze the symbolic power of metaphors in banking imagery, illustrating how concepts like "liquidity," "growth," and "security" can be represented without relying on literal or cliché stock photos.
-• Demonstrate how to select and pair high-quality photography with financial typography to ensure the visual message reinforces the brand's credibility and professionalism.`,
+â€¢ Explain the psychology of visual perception in finance, focusing on how the human brain processes imagery faster than numerical data to establish an immediate emotional connection.
+â€¢ Identify the core elements of a visual narrativeâ€”including setting, protagonist, conflict, and resolutionâ€”and how to apply these roles to financial subjects like retirement planning or market volatility.
+â€¢ Detail the use of composition techniques, such as the Rule of Thirds and leading lines, to direct a viewer's eye toward the most critical data points or calls to action within an image.
+â€¢ Analyze the symbolic power of metaphors in banking imagery, illustrating how concepts like "liquidity," "growth," and "security" can be represented without relying on literal or clichÃ© stock photos.
+â€¢ Demonstrate how to select and pair high-quality photography with financial typography to ensure the visual message reinforces the brand's credibility and professionalism.`,
         },
         {
           role: "user",
@@ -170,8 +170,8 @@ serve(async (req) => {
       );
     }
 
-    const programIds = programs.map((p: any) => p.id);
-    const programMap = Object.fromEntries(programs.map((p: any) => [p.id, p.name]));
+    const programIds = programs.map((p: unknown) => p.id);
+    const programMap = Object.fromEntries(programs.map((p: unknown) => [p.id, p.name]));
 
     const { data: courses } = await supabase
       .from("content")
@@ -185,8 +185,8 @@ serve(async (req) => {
       );
     }
 
-    const courseIds = courses.map((c: any) => c.id);
-    const courseMap = Object.fromEntries(courses.map((c: any) => [c.id, { title: c.title, programId: c.profession_line_id }]));
+    const courseIds = courses.map((c: unknown) => c.id);
+    const courseMap = Object.fromEntries(courses.map((c: unknown) => [c.id, { title: c.title, programId: c.profession_line_id }]));
 
     const { data: allModules } = await supabase
       .from("course_modules")
@@ -214,7 +214,7 @@ serve(async (req) => {
 
     // Normal mode
     const pendingModules = (allModules || []).filter(
-      (m: any) => (m.description || "").length < MIN_DESCRIPTION_LENGTH
+      (m: unknown) => (m.description || "").length < MIN_DESCRIPTION_LENGTH
     );
     const batch = pendingModules.slice(0, batch_size);
 
@@ -234,14 +234,14 @@ serve(async (req) => {
       .in("content_id", courseIds)
       .limit(1000);
     const freshRemaining = (freshModules || []).filter(
-      (m: any) => (m.description || "").length < MIN_DESCRIPTION_LENGTH
+      (m: unknown) => (m.description || "").length < MIN_DESCRIPTION_LENGTH
     ).length;
 
     return new Response(
       JSON.stringify({ processed: result.updated, skipped: result.skipped, remaining: freshRemaining, total: totalAll }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("batch-generate-descriptions error:", e);
     const status = e?.status || 500;
     if (status === 429 || status === 402) {
@@ -256,3 +256,5 @@ serve(async (req) => {
     );
   }
 });
+
+

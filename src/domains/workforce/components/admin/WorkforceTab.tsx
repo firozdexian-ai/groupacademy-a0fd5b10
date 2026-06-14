@@ -1,5 +1,5 @@
-/**
- * Workforce Pulse Terminal — Phase HR-Z1 Hardened
+﻿/**
+ * Workforce Pulse Terminal â€” Phase HR-Z1 Hardened
  * CTO Version: May 2026
  * Fixes: W1 (Restored Dialogs), W2 (Team/Grade Wiring), W3 (RPC Adoption), W5 (Purged Fragments)
  */
@@ -66,7 +66,7 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export function WorkforceManager() {
- const [members, setMembers] = useState<any[]>([]);
+ const [members, setMembers] = useState<unknown[]>([]);
  const [loading, setLoading] = useState(true);
  const [search, setSearch] = useState("");
  const [roleFilter, setRoleFilter] = useState("all");
@@ -76,8 +76,8 @@ export function WorkforceManager() {
  // W1/W2 Form State
  const { verticalsQuery, functionsQuery, teamsQuery, gradesQuery } = useHrGraph();
  const [talentSearch, setTalentSearch] = useState("");
- const [talentOptions, setTalentOptions] = useState<any[]>([]);
- const [selectedTalent, setSelectedTalent] = useState<any | null>(null);
+ const [talentOptions, setTalentOptions] = useState<unknown[]>([]);
+ const [selectedTalent, setSelectedTalent] = useState<unknown | null>(null);
 
  const [formData, setFormData] = useState({
  role_type: "talent_executive",
@@ -90,12 +90,12 @@ export function WorkforceManager() {
  });
 
  const [kpis, setKpis] = useState({ total: 0, active: 0, totalCommission: 0, totalAssigned: 0 });
- const [editMember, setEditMember] = useState<any | null>(null);
- const [editForm, setEditForm] = useState<any>({});
+ const [editMember, setEditMember] = useState<unknown | null>(null);
+ const [editForm, setEditForm] = useState<unknown>({});
  const queryClient = useQueryClient();
 
  const saveMemberEdit = useMutation({
-  mutationFn: async (patch: any) => {
+  mutationFn: async (patch: unknown) => {
    const { id, ...rest } = patch;
    await updateWorkforceMember(id, rest);
   },
@@ -117,11 +117,11 @@ export function WorkforceManager() {
  setMembers(data || []);
  setKpis({
  total: data?.length || 0,
- active: data?.filter((m: any) => m.status === "active").length || 0,
- totalCommission: data?.reduce((s: number, m: any) => s + (m.commission_earned || 0), 0) || 0,
- totalAssigned: data?.reduce((s: number, m: any) => s + (m.assigned_count || 0), 0) || 0,
+ active: data?.filter((m: unknown) => m.status === "active").length || 0,
+ totalCommission: data?.reduce((s: number, m: unknown) => s + (m.commission_earned || 0), 0) || 0,
+ totalAssigned: data?.reduce((s: number, m: unknown) => s + (m.assigned_count || 0), 0) || 0,
  });
- } catch (err: any) {
+ } catch (err: unknown) {
  toast.error("Failed to load");
  } finally {
  setLoading(false);
@@ -164,7 +164,7 @@ export function WorkforceManager() {
  toast.success("Identity Deployed to Workforce");
  setShowAddDialog(false);
  fetchMembers();
- } catch (err: any) {
+ } catch (err: unknown) {
  toast.error(err.message);
  } finally {
  setSaving(false);
@@ -209,7 +209,7 @@ export function WorkforceManager() {
  <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
  <KPIStat icon={Users} label="Total Members" value={kpis.total} color="primary" />
  <KPIStat icon={ShieldCheck} label="Active Assets" value={kpis.active} color="emerald" />
- <KPIStat icon={Coins} label="Total Commission" value={`₵${kpis.totalCommission}`} color="amber" />
+ <KPIStat icon={Coins} label="Total Commission" value={`â‚µ${kpis.totalCommission}`} color="amber" />
  <KPIStat icon={TrendingUp} label="Yield Count" value={kpis.totalAssigned} color="blue" />
  </div>
 
@@ -264,7 +264,7 @@ export function WorkforceManager() {
  >
  <TableCell className="py-6 pl-8">
  <div className="text-left min-w-[200px]">
- <p className="font-semibold text-sm font-medium">{m.talent_name || "—"}</p>
+ <p className="font-semibold text-sm font-medium">{m.talent_name || "â€”"}</p>
  <p className="text-[9px] font-bold text-muted-foreground uppercase mt-0.5">{m.talent_email}</p>
  </div>
  </TableCell>
@@ -283,7 +283,7 @@ export function WorkforceManager() {
  </TableCell>
  <TableCell className="text-center font-semibold">{m.assigned_count}</TableCell>
  <TableCell className="text-center">
- <span className="font-semibold text-success italic">₵{m.commission_earned}</span>
+ <span className="font-semibold text-success italic">â‚µ{m.commission_earned}</span>
  </TableCell>
  <TableCell className="text-center">
  <Badge
@@ -376,7 +376,7 @@ export function WorkforceManager() {
  <SelectValue placeholder="SELECT TEAM" />
  </SelectTrigger>
  <SelectContent>
- {teamsQuery.data?.map((t: any) => (
+ {teamsQuery.data?.map((t: unknown) => (
  <SelectItem key={t.id} value={t.id} className="font-bold text-xs uppercase">
  {t.name}
  </SelectItem>
@@ -393,9 +393,9 @@ export function WorkforceManager() {
  <SelectValue placeholder="SELECT GRADE" />
  </SelectTrigger>
  <SelectContent>
- {gradesQuery.data?.map((g: any) => (
+ {gradesQuery.data?.map((g: unknown) => (
  <SelectItem key={g.id} value={g.id} className="font-bold text-xs uppercase">
- L{g.level} · {g.name}
+ L{g.level} Â· {g.name}
  </SelectItem>
  ))}
  </SelectContent>
@@ -527,7 +527,7 @@ export function WorkforceManager() {
  );
 }
 
-function KPIStat({ icon: Icon, label, value, color }: any) {
+function KPIStat({ icon: Icon, label, value, color }: unknown) {
  const colors: Record<string, string> = {
  primary: "bg-primary/10 border-primary/20 text-primary",
  emerald: "bg-success/10 border-success/20 text-success",
@@ -553,3 +553,5 @@ function KPIStat({ icon: Icon, label, value, color }: any) {
  </Card>
  );
 }
+
+

@@ -1,4 +1,4 @@
-// Agent OS — Knowledge Base Ingestor
+﻿// Agent OS â€” Knowledge Base Ingestor
 // Accepts raw text / URL / file content for an agent, chunks it, embeds via Lovable AI,
 // and stores chunks in agent_knowledge_chunks (vector(768)).
 // Admin-only (verifies user_roles).
@@ -96,7 +96,7 @@ serve(async (req) => {
           throw new Error(`Embed failed: ${embResp.status}`);
         }
         const emb = await embResp.json();
-        const rows = (emb.data as any[]).map((e, k) => ({
+        const rows = (emb.data as unknown[]).map((e, k) => ({
           agent_id: body.agent_id, source_id: source.id,
           chunk_index: i + k, content: slice[k],
           embedding: e.embedding, token_count: Math.ceil(slice[k].length / 4),
@@ -111,13 +111,13 @@ serve(async (req) => {
       }).eq("id", source.id);
 
       return j({ success: true, source_id: source.id, chunks: stored });
-    } catch (e: any) {
+    } catch (e: unknown) {
       await admin.from("agent_knowledge_sources").update({
         status: "failed", error: e?.message ?? "ingest failed", chunk_count: stored,
       }).eq("id", source.id);
       throw e;
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[ingest-agent-knowledge]", err);
     return j({ error: err?.message ?? "INGEST_FAULT" }, 500);
   }
@@ -156,3 +156,5 @@ function htmlToText(html: string): string {
     .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
     .replace(/\s+/g, " ").trim();
 }
+
+

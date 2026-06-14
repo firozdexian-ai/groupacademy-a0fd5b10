@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -39,7 +39,7 @@ interface TalentDetail {
  country: string | null;
  linkedin_url: string | null;
  portfolio_url: string | null;
- skills: any;
+ skills: unknown;
 }
 
 export default function TalentPublicProfile() {
@@ -88,7 +88,7 @@ export default function TalentPublicProfile() {
 
  const isMe = me?.id === t.id;
  const skills: string[] = Array.isArray(t.skills)
- ? t.skills.map((s: any) => (typeof s === "string" ? s : s?.name))
+ ? t.skills.map((s: unknown) => (typeof s === "string" ? s : s?.name))
  : [];
 
  return (
@@ -157,3 +157,5 @@ export default function TalentPublicProfile() {
  </div>
  );
 }
+
+

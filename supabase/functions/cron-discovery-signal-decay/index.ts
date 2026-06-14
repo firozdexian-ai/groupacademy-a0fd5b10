@@ -1,4 +1,4 @@
-// Decays discovery_signals weight by half-life of 14 days; deletes signals older than 180d.
+﻿// Decays discovery_signals weight by half-life of 14 days; deletes signals older than 180d.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
 
@@ -9,3 +9,4 @@ Deno.serve(async (req) => {
   const { error } = await admin.from("discovery_signals").delete().lt("created_at", cutoff);
   return new Response(JSON.stringify({ ok: !error, error: error?.message }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
 });
+

@@ -1,4 +1,4 @@
-// /s/:short → records share signal, redirects to canonical URL.
+﻿// /s/:short â†’ records share signal, redirects to canonical URL.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
 
@@ -18,3 +18,4 @@ Deno.serve(async (req) => {
   }
   return Response.redirect(`https://groupacademy.online/${kind}s/${slug}`, 302);
 });
+

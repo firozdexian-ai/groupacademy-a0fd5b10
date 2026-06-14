@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Inbox, AlertCircle } from "lucide-react";
@@ -22,10 +22,10 @@ interface FeedPostRow {
  content_type: string | null;
  text_content: string | null;
  media_url: string | null;
- poll_options: any | null;
+ poll_options: unknown | null;
  poll_ends_at: string | null;
  link_url: string | null;
- link_preview: any | null;
+ link_preview: unknown | null;
  tags: string[] | null;
  is_pinned: boolean;
  created_at: string;
@@ -57,7 +57,7 @@ export default function PostDetail() {
  const { talent } = useTalent();
 
  // Anomaly reporting to Digital Workforce Admin Chat[cite: 5, 6]
- const reportAnomaly = async (event: string, context: any) => {
+ const reportAnomaly = async (event: string, context: unknown) => {
  console.error(`[Digital Workforce Anomaly] ${event}`, context);
  // Future-proofing: integration with admin-support-assistant or admin-ugc-events[cite: 5, 6]
  };
@@ -118,7 +118,7 @@ export default function PostDetail() {
  useEffect(() => {
  if (!post) return;
  const titleText = post.text_content?.slice(0, 60) || "Post";
- document.title = `${titleText} · GroUp Academy`;
+ document.title = `${titleText} Â· GroUp Academy`;
 
  // SEO Schema Injection
  const ld = document.createElement("script");
@@ -199,3 +199,5 @@ export default function PostDetail() {
  </div>
  );
 }
+
+

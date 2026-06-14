@@ -1,4 +1,4 @@
-/**
+﻿/**
  * GroUp Academy: Post-Auth Routing Intelligence
  */
 import { useQuery } from "@tanstack/react-query";
@@ -20,7 +20,7 @@ export function useAccountType() {
 
       try {
         // Fast path: Check user_metadata first for immediate UI responsiveness
-        const metaType = (user.user_metadata as any)?.account_type;
+        const metaType = (user.user_metadata as unknown)?.account_type;
 
         // If metadata says company, verify active membership status
         if (metaType === "company") {
@@ -65,3 +65,5 @@ export function useAccountType() {
     error: query.error,
   };
 }
+
+

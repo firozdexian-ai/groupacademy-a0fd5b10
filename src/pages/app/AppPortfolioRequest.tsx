@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import {
  countPortfolioRequests,
@@ -107,7 +107,7 @@ const steps: StepConfig[] = [
 /**
  * GroUp Academy: Digital Asset Portfolio Request Setup (AppPortfolioRequest)
  * Hardened multi-stage collection wizard executing credit validation checks and isolating concurrent database queries.
- * Version: Launch Candidate · Phase Z1 Production Type Contract Sealed
+ * Version: Launch Candidate Â· Phase Z1 Production Type Contract Sealed
  */
 export default function AppPortfolioRequest() {
  const navigateHook = useNavigate();
@@ -287,10 +287,10 @@ export default function AppPortfolioRequest() {
         profession_category_id: validatedCleanCategoryId,
         custom_profession: isOtherCategoryFlag ? formDataState.customProfession.trim() : null,
         cv_url: resolvedEffectiveCvUrlStr || null,
-        profile_data: (formDataState.cvInputMode === "profile" ? formDataState.profileData : {}) as any,
-        certificates: formDataState.certificates as any,
+        profile_data: (formDataState.cvInputMode === "profile" ? formDataState.profileData : {}) as unknown,
+        certificates: formDataState.certificates as unknown,
         achievements: formDataState.achievements.trim(),
-        social_links: formDataState.socialLinks as any,
+        social_links: formDataState.socialLinks as unknown,
         additional_notes: formDataState.additionalNotes.trim(),
         talent_id: talentProfileRecord.id,
         payment_status: isFreePromotionActive ? "free_promo" : "paid_credits",
@@ -303,7 +303,7 @@ export default function AppPortfolioRequest() {
       setIsWizardSuccess(true);
       recordToolRun({ toolKey: "portfolio", costCredits: isFreePromotionActive ? 0 : 500, payload: { request_id: assignmentUuidKeyStr } });
       toast({ title: "Portfolio Request Submitted", description: "Your details have been successfully submitted." });
- } catch (mutationFailurePayload: any) {
+ } catch (mutationFailurePayload: unknown) {
  toast({ title: "Pipeline Refused", description: mutationFailurePayload.message || "Failed to commit allocation records.", variant: "destructive" });
  } finally {
  setIsSubmissionPending(false);
@@ -361,7 +361,7 @@ export default function AppPortfolioRequest() {
  return (
  <div className="max-w-3xl mx-auto px-4 py-6 space-y-6 text-left antialiased block transform-gpu w-full">
  
- {/* HUD LEVEL 1: APP SHELL TOP BAR HUD INTERFACES CONTROL CONSOLE */}
+ {/* dashboard LEVEL 1: APP SHELL TOP BAR dashboard INTERFACES CONTROL CONSOLE */}
  <header className="flex items-center justify-between select-none leading-none w-full shrink-0">
  <Button
  type="button"
@@ -382,7 +382,7 @@ export default function AppPortfolioRequest() {
 
  <ProfileCompletionPrompt variant="banner" className="rounded-xl border border-dashed border-primary/20 bg-card/10 block w-full shadow-none" />
 
- {/* HUD LEVEL 2: CHROMATIC PROMOTION VALIDATION SYSTEM VIEWPORTS */}
+ {/* dashboard LEVEL 2: CHROMATIC PROMOTION VALIDATION SYSTEM VIEWPORTS */}
  {isFreePromotionActive ? (
  <Card className="rounded-xl border border-primary/20 bg-primary/[0.01] shadow-none overflow-hidden block w-full select-none pointer-events-none">
  <CardContent className="p-3.5 flex items-center justify-between gap-4 leading-none w-full block animate-pulse">
@@ -411,7 +411,7 @@ export default function AppPortfolioRequest() {
  </Card>
  )}
 
- {/* HUD LEVEL 3: DYNAMIC TIMELINE DISCLOSURE WIZARD STEPPER TRACK */}
+ {/* dashboard LEVEL 3: DYNAMIC TIMELINE DISCLOSURE WIZARD STEPPER TRACK */}
  <div className="flex items-center justify-between px-1 select-none pointer-events-none leading-none w-full block shrink-0">
  {steps.map((stepItem, indexPos) => (
  <div key={`stepper-node-indicator-item-${stepItem.id}`} className="flex flex-1 items-center gap-2 block shrink-0 leading-none">
@@ -437,7 +437,7 @@ export default function AppPortfolioRequest() {
  ))}
  </div>
 
- {/* HUD LEVEL 4: CORE SUBMISSION COMPOSER ENTRY DIALOG FORMS */}
+ {/* dashboard LEVEL 4: CORE SUBMISSION COMPOSER ENTRY DIALOG FORMS */}
  <Card className="rounded-xl border border-border/60 bg-card/40 shadow-none overflow-hidden block w-full">
  <CardHeader className="p-4 border-b border-border/5 bg-muted/20 flex flex-row items-center justify-between w-full select-none shrink-0 leading-none">
  <div className="space-y-0.5 block leading-none select-none pointer-events-none">
@@ -644,7 +644,7 @@ export default function AppPortfolioRequest() {
  <Textarea
  value={formDataState.additionalNotes}
  onChange={(e) => setFormDataState((prev) => ({ ...prev, additionalNotes: e.target.value }))}
- placeholder="Add any styling preferences, layout ideas, or instructions for the design team..."
+ placeholder="Add unknown styling preferences, layout ideas, or instructions for the design team..."
  className="min-h-[100px] font-sans text-xs sm:text-sm font-medium leading-relaxed bg-background/50 border border-border/60 focus-visible:ring-1 focus-visible:ring-ring rounded-lg shadow-none p-3 resize-none"
  />
  </div>
@@ -733,3 +733,4 @@ export default function AppPortfolioRequest() {
  </div>
  );
 }
+

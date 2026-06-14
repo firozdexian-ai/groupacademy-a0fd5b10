@@ -54,7 +54,7 @@ import { InlineSpinner } from "@/components/common/InlineSpinner";
 /**
  * Platform Logic: Autonomous Content Factory
  * High-fidelity orchestrator for batch AI generation and artifact review.
- * 2026 Standard: Executive Logic geometry with reinforced rate-limit telemetry.
+ * 2026 Standard:  geometry with reinforced rate-limit telemetry.
  */
 
 interface SchoolInfo {
@@ -208,26 +208,26 @@ export function BatchContentGenerator() {
       for (const school of schoolsData) {
         const programs = await listProgramsBySchool(school.id);
         if (!programs?.length) continue;
-        const programIds = programs.map((p: any) => p.id);
+        const programIds = programs.map((p: unknown) => p.id);
         const contents = await listContentsByProgramIds(programIds);
         if (!contents?.length) continue;
-        const contentIds = contents.map((c: any) => c.id);
+        const contentIds = contents.map((c: unknown) => c.id);
         const modules = await listModulesByContentIds(contentIds);
         if (!modules?.length) continue;
 
         let pending = 0;
-        const moduleIds = modules.map((m: any) => m.id);
+        const moduleIds = modules.map((m: unknown) => m.id);
         if (activeTab === "quizzes") {
           const qm = await listQuizQuestionsByModuleIds(moduleIds);
-          pending = modules.length - new Set(qm?.map((q: any) => q.module_id)).size;
+          pending = modules.length - new Set(qm?.map((q: unknown) => q.module_id)).size;
         } else if (activeTab === "descriptions") {
-          pending = modules.filter((m: any) => (m.description || "").length < 500).length;
+          pending = modules.filter((m: unknown) => (m.description || "").length < 500).length;
         } else if (activeTab === "course-metadata") {
-          pending = contents.filter((c: any) => !c.description || !c.learning_objectives).length;
+          pending = contents.filter((c: unknown) => !c.description || !c.learning_objectives).length;
         } else {
           const rType = activeTab === "flashcards" ? "flashcards" : "ai_scenario";
           const res = await listModuleResourcesByType(moduleIds, rType);
-          pending = modules.length - new Set(res?.map((r: any) => r.module_id)).size;
+          pending = modules.length - new Set(res?.map((r: unknown) => r.module_id)).size;
         }
 
         schoolInfos.push({
@@ -289,7 +289,7 @@ export function BatchContentGenerator() {
 
     while (currentRemaining > 0 && !stopRef.current) {
       try {
-        const body: any = { batch_size: generator.batchSize };
+        const body: unknown = { batch_size: generator.batchSize };
         if (generator.needsSchool) {
           body.school_id = selectedSchool;
           if (regenerateAll) body.regenerate_all = true;
@@ -311,7 +311,7 @@ export function BatchContentGenerator() {
         });
 
         if (response.status === 429) {
-          addLog("⚠️ Throttle Active — cooling down 30s...");
+          addLog("âš ï¸ Throttle Active â€” cooling down 30s...");
           await new Promise((r) => setTimeout(r, 30000));
           continue;
         }
@@ -327,20 +327,24 @@ export function BatchContentGenerator() {
         if (result.total) setTotalItems(result.total);
 
         if (batchCount === 0) {
-          addLog(`✅ Synthesis Complete: All nodes sync'd.`);
+          addLog(`âœ… summary Complete: All nodes sync'd.`);
           break;
         }
 
-        addLog(`✓ Artifacts Generated: ${batchCount} ${generator.countLabel} (${currentRemaining} in queue)`);
+        addLog(`âœ“ Artifacts Generated: ${batchCount} ${generator.countLabel} (${currentRemaining} in queue)`);
         if (!generator.needsSchool) break;
         await new Promise((r) => setTimeout(r, 3000));
-      } catch (err: any) {
-        addLog(`❌ Error: ${err.message}`);
+      } catch (err: unknown) {
+        addLog(`âŒ Error: ${err.message}`);
         await new Promise((r) => setTimeout(r, 5000));
       }
     }
     setIsRunning(false);
-    generator.needsSchool ? fetchSchools() : fetchDrafts();
+    if (generator.needsSchool) {
+      fetchSchools();
+    } else {
+      fetchDrafts();
+    }
   };
 
   const stopSequence = () => {
@@ -431,7 +435,7 @@ export function BatchContentGenerator() {
                         disabled={GENERATORS[key].needsSchool && !selectedSchool}
                         className="rounded-xl h-14 px-10 font-black uppercase text-[10px] tracking-widest shadow-sm gap-3 group"
                       >
-                        <Play className="w-5 h-5 group-hover:scale-110 transition-transform" /> Initialize Synthesis
+                        <Play className="w-5 h-5 group-hover:scale-110 transition-transform" /> Initialize summary
                       </Button>
                     )}
                   </div>
@@ -439,7 +443,7 @@ export function BatchContentGenerator() {
               </CardHeader>
 
               <CardContent className="p-10 space-y-10">
-                {/* HUD: Factory Parameters */}
+                {/* dashboard: Factory Parameters */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-6">
                     {GENERATORS[key].needsSchool ? (
@@ -537,7 +541,7 @@ export function BatchContentGenerator() {
                           <ShieldCheck className="h-6 w-6 text-success" />
                         )}
                         <span className="text-xl font-black uppercase tracking-tighter italic">
-                          {isRunning ? "Synthesis Active" : "Cycle Verified"}
+                          {isRunning ? "summary Active" : "Cycle Verified"}
                         </span>
                       </div>
                       <Badge
@@ -678,3 +682,5 @@ export function BatchContentGenerator() {
     </div>
   );
 }
+
+

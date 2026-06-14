@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+﻿import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { useGtmDashboard } from "./hooks/useGtmGraph";
@@ -69,7 +69,7 @@ export function GtmOverviewTab() {
                               <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                                 <Badge variant="outline" className="text-[10px] font-mono">{country.tier}</Badge>
                                 <span className="text-[11px] text-muted-foreground">
-                                  {country.region_count} regions · {country.city_count} cities
+                                  {country.region_count} regions Â· {country.city_count} cities
                                 </span>
                               </div>
                             </div>
@@ -166,7 +166,7 @@ export function GtmOverviewTab() {
   );
 }
 
-function MetricTile({ label, value, icon: Icon, color, bg }: { label: string; value: number; icon: any; color: string; bg: string; }) {
+function MetricTile({ label, value, icon: Icon, color, bg }: { label: string; value: number; icon: unknown; color: string; bg: string; }) {
   return (
     <Card className="border-2">
       <CardContent className="p-4 flex items-center gap-3">
@@ -183,3 +183,5 @@ function MetricTile({ label, value, icon: Icon, color, bg }: { label: string; va
 }
 
 export default GtmOverviewTab;
+
+

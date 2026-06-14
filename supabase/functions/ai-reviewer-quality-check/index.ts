@@ -1,4 +1,4 @@
-// Periodic spot-check: re-scores a random 5% of submitted reviewer verdicts using verifier AI.
+﻿// Periodic spot-check: re-scores a random 5% of submitted reviewer verdicts using verifier AI.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -51,3 +51,4 @@ Deno.serve(async (req) => {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 });
+

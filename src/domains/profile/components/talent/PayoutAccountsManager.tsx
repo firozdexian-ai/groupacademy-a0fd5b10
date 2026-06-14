@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from "react";
+﻿import { useEffect, useState, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getCurrentUserId } from "@/lib/auth";
 import {
@@ -39,7 +39,7 @@ const METHOD_LABEL = {
 /**
  * GroUp Academy: Authoritative Disbursement Ledger Configuration Terminal (PayoutAccountsManager)
  * An operational sandbox orchestrating multi-channel payout accounts, routing keys, and primary flags.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function PayoutAccountsManager() {
   const queryClient = useQueryClient();
@@ -76,7 +76,7 @@ export function PayoutAccountsManager() {
       const data = await listPayoutAccounts(talent.id);
 
       if (isMountedRef.current) {
-        setRows((data as any[]) || []);
+        setRows((data as unknown[]) || []);
         setLoading(false);
         trackEvent("payout_accounts_loaded", { accountsCount: data?.length || 0 });
       }
@@ -144,7 +144,7 @@ export function PayoutAccountsManager() {
         trackEvent("payout_account_registration_success");
         await loadPayoutAccountsLedger();
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       const parsedExceptionMsg = e instanceof Error ? e.message : String(e);
       trackError(parsedExceptionMsg, { component: "PayoutAccountsManager", action: "commit_account_registration" });
       toast.error(`Couldn't save account: ${parsedExceptionMsg}`, { id: dynamicToastTrackerId });
@@ -172,7 +172,7 @@ export function PayoutAccountsManager() {
         trackEvent("payout_account_primary_set_success");
         await loadPayoutAccountsLedger();
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       const parsedExceptionMsg = e instanceof Error ? e.message : String(e);
       trackError(parsedExceptionMsg, {
         component: "PayoutAccountsManager",
@@ -229,7 +229,7 @@ export function PayoutAccountsManager() {
   return (
     <Card className="w-full text-left rounded-xl border border-border/40 bg-card/40 backdrop-blur-md shadow-sm antialiased transform-gpu overflow-hidden transition-colors hover:border-border/60">
       <CardContent className="p-4 sm:p-5 space-y-4 w-full min-w-0 flex flex-col justify-center">
-        {/* HUD LEVEL 1: TOP PANEL TRACK HEADING CONTROLS BLOCK */}
+        {/* dashboard LEVEL 1: TOP PANEL TRACK HEADING CONTROLS BLOCK */}
         <div className="flex items-center gap-2 px-0.5 select-none w-full leading-none shrink-0 h-8 text-left">
           <Wallet className="h-4.5 w-4.5 text-primary stroke-[2.2] shrink-0 animate-pulse" />
           <h3 className="text-xs sm:text-sm font-bold text-foreground/90 uppercase tracking-wide truncate block pt-0.5 leading-none">
@@ -246,7 +246,7 @@ export function PayoutAccountsManager() {
           <div className="flex items-center gap-2 py-4 text-muted-foreground select-none leading-none w-full">
             <Loader2 className="h-4 w-4 animate-spin text-primary stroke-[2.5]" />
             <span className="text-[10px] font-extrabold uppercase tracking-wider pl-0.5 animate-pulse">
-              Loading payout accounts…
+              Loading payout accountsâ€¦
             </span>
           </div>
         ) : rows.length === 0 ? (
@@ -311,7 +311,7 @@ export function PayoutAccountsManager() {
           </div>
         )}
 
-        {/* HUD LEVEL 2: ADD NEW ACCOUNT CONDITIONAL LAYOUT SHEETS FORM */}
+        {/* dashboard LEVEL 2: ADD NEW ACCOUNT CONDITIONAL LAYOUT SHEETS FORM */}
         {adding ? (
           <div className="space-y-3.5 p-3.5 border border-border/40 bg-background/50 rounded-xl w-full min-w-0 flex flex-col justify-center animate-in slide-in-from-bottom-1 duration-200">
             <div className="space-y-1.5 text-left w-full min-w-0 font-bold text-xs tracking-tight">
@@ -323,7 +323,7 @@ export function PayoutAccountsManager() {
                 disabled={busy}
                 onValueChange={(v) => {
                   trackEvent("payout_accounts_method_altered", { method: v });
-                  setMethod(v as any);
+                  setMethod(v as unknown);
                 }}
               >
                 <SelectTrigger className="h-10 rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground px-3 cursor-pointer">
@@ -431,7 +431,7 @@ export function PayoutAccountsManager() {
           </Button>
         )}
 
-        {/* HUD LEVEL 3: RECTILINEAR OVERLAY BOTTOM METRIC LOG OMNIPRESENCE SHIELD */}
+        {/* dashboard LEVEL 3: RECTILINEAR OVERLAY BOTTOM METRIC LOG OMNIPRESENCE SHIELD */}
         <div className="mt-4 flex items-center justify-center gap-1.5 py-2.5 border-t border-border/10 select-none shadow-none pointer-events-none tracking-normal font-bold text-[9px] text-muted-foreground/40 font-mono leading-none shrink-0 uppercase w-full">
           <Zap className="h-3.5 w-3.5 text-warning fill-warning/10 stroke-[2.2] shrink-0 animate-pulse" />
           <span>Your payout details are stored securely</span>
@@ -442,3 +442,5 @@ export function PayoutAccountsManager() {
 }
 
 export default PayoutAccountsManager;
+
+

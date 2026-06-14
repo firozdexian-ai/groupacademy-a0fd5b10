@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Feed Domain: Public Interface Surface
  * Consolidates all engagement, interaction, and content-stream hooks.
  */

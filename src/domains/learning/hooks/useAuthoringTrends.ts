@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { getAuthoringTrends } from "@/domains/learning/repo/learningRepo";
 
 
@@ -39,7 +39,7 @@ export function useAuthoringTrends(instructorId: string | undefined, days = 30) 
       try {
         const data = await getAuthoringTrends<AuthoringTrends>({ instructorId, days });
         return data;
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: get_authoring_trends sync failed.", {
           instructorId,
           error: error?.message,
@@ -51,3 +51,5 @@ export function useAuthoringTrends(instructorId: string | undefined, days = 30) 
     },
   });
 }
+
+

@@ -1,9 +1,9 @@
-// Phase E — Proactive Engine dispatcher.
+﻿// Phase E â€” Proactive Engine dispatcher.
 // Runs every minute. Pulls unprocessed platform_events, matches to
 // agent_triggers, dedupes per (agent, recipient, event_kind, 24h),
 // generates the message via Lovable AI, then delivers via either:
-//   - in_app  → notifications (cost 0.5)
-//   - whatsapp → messaging-send via Unipile (cost 2.0), with cold-start
+//   - in_app  â†’ notifications (cost 0.5)
+//   - whatsapp â†’ messaging-send via Unipile (cost 2.0), with cold-start
 //                fail-soft to in_app when phone or channel is missing.
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
@@ -85,7 +85,7 @@ serve(async (req) => {
   }
 });
 
-async function runTrigger(admin: any, evt: PlatformEvent, trig: AgentTrigger) {
+async function runTrigger(admin: unknown, evt: PlatformEvent, trig: AgentTrigger) {
   const { data: agent } = await admin
     .from("ai_agents")
     .select("id, agent_key, name, system_prompt, kill_switch, is_active, default_channel, region")
@@ -128,13 +128,13 @@ async function runTrigger(admin: any, evt: PlatformEvent, trig: AgentTrigger) {
   const { data: charge, error: chargeErr } = await admin.rpc("headless_pool_charge", {
     p_amount: cost, p_reason: `${agent.agent_key} -> ${trig.event_kind} (${channel})`,
   });
-  if (chargeErr || !(charge as any)?.success) {
+  if (chargeErr || !(charge as unknown)?.success) {
     await admin.from("agent_outreach").insert({
       agent_id: agent.id, trigger_id: trig.id, event_id: evt.id,
       recipient_kind: recipient.kind, recipient_id: recipient.id,
       channel, subject: trig.event_kind, body: trig.template,
-      payload: evt.payload as any, status: "failed",
-      error_message: (charge as any)?.error || chargeErr?.message || "pool_charge_failed",
+      payload: evt.payload as unknown, status: "failed",
+      error_message: (charge as unknown)?.error || chargeErr?.message || "pool_charge_failed",
       credits_charged: 0,
     });
     return { dispatched: false, reason: "pool_unavailable" };
@@ -180,7 +180,7 @@ async function runTrigger(admin: any, evt: PlatformEvent, trig: AgentTrigger) {
     // in_app: mirror to notifications
     await admin.from("notifications").insert({
       talent_id: recipient.id, type: "agent_outreach",
-      title: agent.name, message: body.length > 220 ? body.slice(0, 217) + "…" : body,
+      title: agent.name, message: body.length > 220 ? body.slice(0, 217) + "â€¦" : body,
       icon: "sparkles",
     });
   }
@@ -188,7 +188,7 @@ async function runTrigger(admin: any, evt: PlatformEvent, trig: AgentTrigger) {
   const { data: outreach } = await admin.from("agent_outreach").insert({
     agent_id: agent.id, trigger_id: trig.id, event_id: evt.id,
     recipient_kind: recipient.kind, recipient_id: recipient.id,
-    channel, subject: agent.name, body, payload: evt.payload as any,
+    channel, subject: agent.name, body, payload: evt.payload as unknown,
     status, error_message: errorMsg, credits_charged: cost,
     conversation_id: conversationId, external_message_id: externalMessageId,
   }).select("id").single();
@@ -213,18 +213,18 @@ function resolveRecipient(trig: AgentTrigger, evt: PlatformEvent) {
       const kind = trig.recipient_filter?.recipient_kind as string;
       const id = trig.recipient_filter?.recipient_id as string;
       if (!kind) return null;
-      return { kind, id: id || null } as any;
+      return { kind, id: id || null } as unknown;
     }
     default: return null;
   }
 }
 
-async function resolveRecipientPhone(admin: any, recipient: { kind: string; id: string | null }) {
+async function resolveRecipientPhone(admin: unknown, recipient: { kind: string; id: string | null }) {
   if (recipient.kind === "talent" && recipient.id) {
     const { data } = await admin.from("talents").select("phone, full_name").eq("id", recipient.id).maybeSingle();
     return { phone: normalizePhone(data?.phone), name: data?.full_name ?? null };
   }
-  // companies have no phone field today → fail-soft
+  // companies have no phone field today â†’ fail-soft
   return { phone: null, name: null };
 }
 
@@ -235,7 +235,7 @@ function normalizePhone(p: string | null | undefined) {
 }
 
 async function resolveOrCreateConversation(
-  admin: any, agentKey: string, region: string | null,
+  admin: unknown, agentKey: string, region: string | null,
   phone: string, name: string | null, recipient: { kind: string; id: string | null },
 ) {
   const q = admin.from("messaging_channels")
@@ -245,7 +245,7 @@ async function resolveOrCreateConversation(
     .eq("provider", "whatsapp");
   const { data: channels } = await q;
   if (!channels?.length) return null;
-  const channel = channels.find((c: any) => !region || c.region === region) || channels[0];
+  const channel = channels.find((c: unknown) => !region || c.region === region) || channels[0];
 
   const { data: existing } = await admin.from("messaging_conversations")
     .select("id")
@@ -293,3 +293,5 @@ async function generateMessage(agent: { name: string; system_prompt: string }, t
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 }
+
+

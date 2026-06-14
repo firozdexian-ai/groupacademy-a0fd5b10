@@ -1,4 +1,4 @@
-// notify-review-due
+﻿// notify-review-due
 // Inserts a `review_due` notification for the calling learner if they have
 // topics whose `due_at <= now()`, deduped to once per UTC day.
 // Called on app-open / Learning hub mount (cheap, idempotent).
@@ -111,3 +111,4 @@ Deno.serve(async (req) => {
     });
   }
 });
+

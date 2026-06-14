@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import {
@@ -86,7 +86,7 @@ const SKELETON_ROWS_ROSTER = [1, 2, 3];
 /**
  * GroUp Academy: AI IELTS Coach & Language Evaluation Core (IELTSCoach)
  * Hardened preparation center isolating user metric deltas and guarding inline aggregations from thread re-paint thrashes.
- * Version: Launch Candidate · Phase Z1 Production Type Contract Sealed
+ * Version: Launch Candidate Â· Phase Z1 Production Type Contract Sealed
  */
 export default function IELTSCoach() {
  // =========================================================================
@@ -156,7 +156,7 @@ export default function IELTSCoach() {
 
  return (
  <div className="max-w-3xl mx-auto px-4 py-4 space-y-5 text-left antialiased block transform-gpu w-full pb-32">
- {/* HUD LEVEL 1: ADMINISTRATIVE DIRECTORY CONTROLS MODULE PANELS */}
+ {/* dashboard LEVEL 1: ADMINISTRATIVE DIRECTORY CONTROLS MODULE PANELS */}
  <header className="flex items-center justify-between gap-4 select-none pointer-events-none leading-none w-full shrink-0 border-b border-border/5 pb-2.5">
  <div className="min-w-0 flex-1 leading-none space-y-1 block">
  <h1 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-foreground leading-none m-0">
@@ -178,11 +178,11 @@ export default function IELTSCoach() {
  </Badge>
  </header>
 
- {/* HUD LEVEL 2: CHROMATIC COMPLIANCE ATTENDANCE RECORD BANNER */}
+ {/* dashboard LEVEL 2: CHROMATIC COMPLIANCE ATTENDANCE RECORD BANNER */}
  <Card className="rounded-lg border border-primary/20 bg-linear-to-br from-primary/5 via-cyan-500/[0.01] to-transparent shadow-none overflow-hidden block w-full select-none pointer-events-none">
  <CardContent className="p-4 flex items-center gap-4 block w-full leading-none">
  <div className="text-4xl shrink-0 leading-none block select-none pointer-events-none filter drop-shadow-sm rotate-2">
- 🔥
+ ðŸ”¥
  </div>
  <div className="flex-1 leading-none space-y-1 block">
  <span className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-wide block leading-none">
@@ -196,7 +196,7 @@ export default function IELTSCoach() {
  Cumulative Reward: {userStreakRecord?.xp_total ? userStreakRecord.xp_total.toLocaleString() : "0"} Total
  XP
  </span>
- <span className="opacity-30 select-none">•</span>
+ <span className="opacity-30 select-none">â€¢</span>
  <span>
  Best Streak:{" "}
  {userStreakRecord?.longest_streak_days ? userStreakRecord.longest_streak_days.toString() : "0"} Days
@@ -207,7 +207,7 @@ export default function IELTSCoach() {
  </CardContent>
  </Card>
 
- {/* HUD LEVEL 3: DAILY CHALLENGE SYLLABUS DIRECTORY CARD SEGMENT */}
+ {/* dashboard LEVEL 3: DAILY CHALLENGE SYLLABUS DIRECTORY CARD SEGMENT */}
  {dailyChallengePayload && dailyChallengePayload.ielts_prompts?.prompt_text && (
  <Card className="rounded-lg border border-primary/30 bg-primary/[0.01] shadow-none overflow-hidden block w-full animate-in fade-in duration-200">
  <CardContent className="p-4 block w-full leading-none">
@@ -241,7 +241,7 @@ export default function IELTSCoach() {
  </Card>
  )}
 
- {/* HUD LEVEL 4: WEAKEST METRICS CRITERIA DETECTOR INSIGHT HIGHLIGHT */}
+ {/* dashboard LEVEL 4: WEAKEST METRICS CRITERIA DETECTOR INSIGHT HIGHLIGHT */}
  {calculatedWeakestSectionItem && calculatedWeakestSectionItem.ai_band_score !== null && (
  <Card className="rounded-lg border border-amber-200/60 bg-amber-500/[0.01] shadow-none overflow-hidden block w-full select-none pointer-events-none animate-in fade-in duration-150">
  <CardContent className="p-3 flex items-start gap-2.5 block w-full leading-none">
@@ -258,7 +258,7 @@ export default function IELTSCoach() {
  </Card>
  )}
 
- {/* HUD LEVEL 5: FOUR CORE SPECIALTY CAPABILITY EVALUATION TILES GRID */}
+ {/* dashboard LEVEL 5: FOUR CORE SPECIALTY CAPABILITY EVALUATION TILES GRID */}
  <div className="grid grid-cols-2 gap-2 w-full block select-none">
  {MODULES_SECTIONS.map((sectionNodeItem) => {
  const SubtaskIconComponent = sectionNodeItem.icon;
@@ -281,7 +281,7 @@ export default function IELTSCoach() {
  {sectionNodeItem.name}
  </div>
  <div className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-tight tabular-nums block">
- 1 credit • ~10 mins
+ 1 credit â€¢ ~10 mins
  </div>
  </CardContent>
  </Card>
@@ -290,7 +290,7 @@ export default function IELTSCoach() {
  })}
  </div>
 
- {/* HUD LEVEL 6: CUMULATIVE ASSESSMENT MACRO DISPATCH TRIGGER CONTAINER */}
+ {/* dashboard LEVEL 6: CUMULATIVE ASSESSMENT MACRO DISPATCH TRIGGER CONTAINER */}
  <div className="block select-none leading-none w-full shrink-0">
  <Button
  asChild
@@ -304,7 +304,7 @@ export default function IELTSCoach() {
  </Button>
  </div>
 
- {/* HUD LEVEL 7: TIMELINE HISTORICAL ATTEMPTS OUTPUT HOOK VIEWPORTS */}
+ {/* dashboard LEVEL 7: TIMELINE HISTORICAL ATTEMPTS OUTPUT HOOK VIEWPORTS */}
  {recentAttemptsCollection.length > 0 && (
  <section className="space-y-2 block w-full">
  <h2 className="text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 select-none block leading-none pb-2 border-b border-border/5 px-0.5">
@@ -350,7 +350,7 @@ export default function IELTSCoach() {
  className="font-mono text-xs font-black uppercase px-2 h-7 rounded border border-border bg-background shadow-3xs text-foreground shrink-0 leading-none pt-0.5 tabular-nums"
  >
  BAND{" "}
- {attemptRowNode.ai_band_score !== null ? Number(attemptRowNode.ai_band_score).toFixed(1) : "—"}
+ {attemptRowNode.ai_band_score !== null ? Number(attemptRowNode.ai_band_score).toFixed(1) : "â€”"}
  </Badge>
  </CardContent>
  </Card>
@@ -363,3 +363,4 @@ export default function IELTSCoach() {
  </div>
  );
 }
+

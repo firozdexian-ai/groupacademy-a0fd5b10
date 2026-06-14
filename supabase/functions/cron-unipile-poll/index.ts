@@ -1,4 +1,4 @@
-// cron-unipile-poll — safety net poller for Unipile-hosted WhatsApp lines.
+﻿// cron-unipile-poll â€” safety net poller for Unipile-hosted WhatsApp lines.
 // Every ~2 min: for each connected messaging_channel with a unipile_account_id,
 // fetch recent chats, then for each chat fetch messages newer than the last
 // polled cursor and replay them into unipile-webhook. Idempotency is enforced
@@ -30,11 +30,11 @@ Deno.serve(async (req) => {
     .eq("status", "connected")
     .not("unipile_account_id", "is", null);
 
-  const summary: any[] = [];
+  const summary: unknown[] = [];
 
   for (const ch of channels ?? []) {
     const accId = ch.unipile_account_id as string;
-    const meta = (ch.metadata as any) ?? {};
+    const meta = (ch.metadata as unknown) ?? {};
     const cs = meta.webhook_secret;
     const lastPolled = meta.last_poll_at ? new Date(meta.last_poll_at).getTime() : Date.now() - 10 * 60_000;
     if (!cs) { summary.push({ channel: ch.id, skipped: "no webhook_secret" }); continue; }
@@ -42,13 +42,13 @@ Deno.serve(async (req) => {
     let replayed = 0, scanned = 0, errors = 0;
     try {
       const chats = await uni(`/api/v1/chats?account_id=${accId}&limit=20`);
-      const items: any[] = chats.body?.items ?? [];
+      const items: unknown[] = chats.body?.items ?? [];
       for (const c of items) {
         const chatTs = c.timestamp ? new Date(c.timestamp).getTime() : 0;
         if (chatTs <= lastPolled) continue;
         scanned++;
         const msgs = await uni(`/api/v1/chats/${c.id}/messages?limit=10`);
-        const mItems: any[] = msgs.body?.items ?? [];
+        const mItems: unknown[] = msgs.body?.items ?? [];
         // Oldest-first replay
         for (const m of mItems.slice().reverse()) {
           const ts = m.timestamp ? new Date(m.timestamp).getTime() : 0;
@@ -87,3 +87,5 @@ Deno.serve(async (req) => {
     headers: { ...cors, "Content-Type": "application/json" },
   });
 });
+
+

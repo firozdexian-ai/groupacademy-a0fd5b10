@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+﻿import { useState, useEffect, useCallback } from "react";
 import { talentRepo } from "@/domains/talent/repo/talentRepo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,7 +59,7 @@ export function ProfessionsTab() {
  const [professionDialog, setProfessionDialog] = useState(false);
 
  // Edit States
- const [editingItem, setEditingItem] = useState<any>(null);
+ const [editingItem, setEditingItem] = useState<unknown>(null);
 
  const loadData = useCallback(async () => {
  setIsLoading(true);
@@ -86,14 +86,14 @@ export function ProfessionsTab() {
  const handleSave = async (e: React.FormEvent<HTMLFormElement>, table: string, setOpen: (o: boolean) => void) => {
  e.preventDefault();
  const formData = new FormData(e.currentTarget);
- const raw = Object.fromEntries(formData.entries()) as Record<string, any>;
- const payload: Record<string, any> = { ...raw };
+ const raw = Object.fromEntries(formData.entries()) as Record<string, unknown>;
+ const payload: Record<string, unknown> = { ...raw };
 
  // Convert checkbox
  if ("is_active" in raw) payload.is_active = raw.is_active === "on";
 
  const { error } = await talentRepo.upsertProfessionRow(
- table as any,
+ table as unknown,
  payload,
  editingItem?.id,
  );
@@ -232,11 +232,11 @@ export function ProfessionsTab() {
  <div className="space-y-4">
  <div className="grid gap-2">
  <Label>School Name</Label>
- <Input name="name" defaultValue={editingItem?.name} required />
+ <Input name="name" defaultValue={editingItem?.name} required className="rounded-xl bg-surface text-primary" />
  </div>
  <div className="grid gap-2">
  <Label>Slug</Label>
- <Input name="slug" defaultValue={editingItem?.slug} required />
+ <Input name="slug" defaultValue={editingItem?.slug} required className="rounded-xl bg-surface text-primary" />
  </div>
  <div className="grid gap-2">
  <Label>Parent Academy</Label>
@@ -255,7 +255,7 @@ export function ProfessionsTab() {
  </div>
  <div className="grid gap-2">
  <Label>Capability goal</Label>
- <Input name="executive_capability_goal" defaultValue={editingItem?.executive_capability_goal} />
+ <Input name="executive_capability_goal" defaultValue={editingItem?.executive_capability_goal} className="rounded-xl bg-surface text-primary" />
  </div>
  </div>
  </StructuralDialog>
@@ -269,11 +269,11 @@ export function ProfessionsTab() {
  <div className="space-y-4">
  <div className="grid gap-2">
  <Label>Program Name</Label>
- <Input name="name" defaultValue={editingItem?.name} required />
+ <Input name="name" defaultValue={editingItem?.name} required className="rounded-xl bg-surface text-primary" />
  </div>
  <div className="grid gap-2">
- <Label>Credit Cost (1 cr = ৳2)</Label>
- <Input type="number" name="credit_cost" defaultValue={editingItem?.credit_cost} required />
+ <Label>Credit Cost (1 cr = à§³2)</Label>
+ <Input type="number" name="credit_cost" defaultValue={editingItem?.credit_cost} required className="rounded-xl bg-surface text-primary" />
  </div>
  <div className="grid gap-2">
  <Label>Parent School</Label>
@@ -296,7 +296,7 @@ export function ProfessionsTab() {
  );
 }
 
-function StructuralDialog({ title, open, setOpen, onSave, children }: any) {
+function StructuralDialog({ title, open, setOpen, onSave, children }: unknown) {
  return (
  <Dialog open={open} onOpenChange={setOpen}>
  <DialogContent className="max-w-md rounded-2xl border-4">
@@ -316,7 +316,7 @@ function StructuralDialog({ title, open, setOpen, onSave, children }: any) {
  );
 }
 
-function AcademyCard({ academy, onEdit }: any) {
+function AcademyCard({ academy, onEdit }: unknown) {
  const Icon = getIcon(academy.icon || "building-2");
  return (
  <Card className="rounded-2xl border bg-card/40 p-5 flex items-center justify-between group">
@@ -338,7 +338,7 @@ function AcademyCard({ academy, onEdit }: any) {
  );
 }
 
-function SchoolCard({ school, academyName, onEdit }: any) {
+function SchoolCard({ school, academyName, onEdit }: unknown) {
  return (
  <Card className="rounded-2xl border bg-card/40 p-5 flex items-center justify-between group">
  <div className="flex items-center gap-4">
@@ -357,7 +357,7 @@ function SchoolCard({ school, academyName, onEdit }: any) {
  );
 }
 
-function ProfessionCard({ profession, schoolName, onEdit }: any) {
+function ProfessionCard({ profession, schoolName, onEdit }: unknown) {
  return (
  <Card className="rounded-2xl border bg-card/40 p-5 flex items-center justify-between group">
  <div className="flex items-center gap-4">
@@ -375,3 +375,5 @@ function ProfessionCard({ profession, schoolName, onEdit }: any) {
  </Card>
  );
 }
+
+

@@ -1,4 +1,4 @@
-import {
+﻿import {
   Html,
   Body,
   Container,
@@ -78,3 +78,4 @@ export default function TalentInviteEmail({ name, personal_note }: { name: strin
     </Html>
   );
 }
+

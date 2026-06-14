@@ -1,9 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCurrentUser } from "@/lib/auth";
 import { insertToolRun, listToolRunsForUser } from "@/domains/jobs/repo/jobsRepo";
 
 /**
- * Tool runs ledger — tracks each AI tool invocation by the current user
+ * Tool runs ledger â€” tracks each AI tool invocation by the current user
  * so we can show "Recent activity" and "Up next" recommendations.
  */
 
@@ -13,7 +13,7 @@ export interface ToolRun {
   id: string;
   tool_key: ToolKey;
   cost_credits: number;
-  payload: Record<string, any>;
+  payload: Record<string, unknown>;
   job_id: string | null;
   created_at: string;
 }
@@ -37,7 +37,7 @@ export function useToolRuns(limit = 5) {
       const user = await getCurrentUser();
       if (!user) return [];
 
-      let data: any[] = [];
+      let data: unknown[] = [];
       try {
         data = await listToolRunsForUser(user.id, limit);
       } catch (error) {
@@ -45,7 +45,7 @@ export function useToolRuns(limit = 5) {
         throw error;
       }
 
-      return (data || []).map((row: any) => {
+      return (data || []).map((row: unknown) => {
         const rawKey = String(row.tool_key);
         const validatedKey: ToolKey = VALID_TOOL_KEYS.has(rawKey as ToolKey) ? (rawKey as ToolKey) : "assessment";
 
@@ -65,7 +65,7 @@ export function useToolRuns(limit = 5) {
 export interface RecordToolRunInput {
   toolKey: ToolKey;
   costCredits: number;
-  payload?: Record<string, any>;
+  payload?: Record<string, unknown>;
   jobId?: string | null;
 }
 
@@ -86,7 +86,7 @@ export function useRecordToolRun() {
           payload: opts.payload ?? {},
           job_id: opts.jobId ?? null,
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Failed to record tool run", {
           toolKey: opts.toolKey,
           costCredits: opts.costCredits,
@@ -125,3 +125,5 @@ export function useInvalidateToolRuns() {
   const qc = useQueryClient();
   return () => qc.invalidateQueries({ queryKey: ["tool-runs"] });
 }
+
+

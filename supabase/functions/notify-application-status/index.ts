@@ -1,4 +1,4 @@
-// notify-application-status
+﻿// notify-application-status
 // Dispatcher: given an application_id and a new status, writes an in-app notification
 // for the talent, and (for high-signal status changes) enqueues a transactional email.
 // Called from the recruiter / admin UI right after updating job_applications.application_status.
@@ -36,9 +36,9 @@ const COPY: Record<string, { title: string; message: string; emailSubject?: stri
     emailSubject: "Update on your {role} application",
   },
   hired: {
-    title: "🎉 You got hired",
+    title: "ðŸŽ‰ You got hired",
     message: "{company} marked you as hired for {role}. Congratulations!",
-    emailSubject: "🎉 You got hired at {company}",
+    emailSubject: "ðŸŽ‰ You got hired at {company}",
   },
   withdrawn: {
     title: "Application withdrawn",
@@ -163,3 +163,4 @@ Deno.serve(async (req) => {
     });
   }
 });
+

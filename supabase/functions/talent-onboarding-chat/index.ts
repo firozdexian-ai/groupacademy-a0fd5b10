@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+﻿import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -107,7 +107,7 @@ serve(async (req) => {
 
     const known = `\n\nKNOWN PROFILE:\n- full_name: ${talent?.full_name || "(missing)"}\n- phone: ${talent?.phone || "(missing)"}\n- skills: ${
       Array.isArray(talent?.skills) && talent!.skills.length
-        ? (talent!.skills as any[]).join(", ")
+        ? (talent!.skills as unknown[]).join(", ")
         : "(missing)"
     }\nNever re-ask for fields already known. Ask for the next missing one. After all three are saved, congratulate the user.`;
 
@@ -118,7 +118,7 @@ serve(async (req) => {
 
     const systemPrompt = basePrompt + known;
 
-    const conversation: any[] = [{ role: "system", content: systemPrompt }, ...incoming];
+    const conversation: unknown[] = [{ role: "system", content: systemPrompt }, ...incoming];
 
     let handoff: { agent_key: string; instructor_id: string | null } | null = null;
     // Tool-calling loop (max 4 turns to be safe)
@@ -159,7 +159,7 @@ serve(async (req) => {
       }
 
       for (const tc of toolCalls) {
-        let result: any = { ok: false, error: "unknown_tool" };
+        let result: unknown = { ok: false, error: "unknown_tool" };
         const fname = tc.function?.name;
         try {
           const args = JSON.parse(tc.function?.arguments || "{}");
@@ -175,10 +175,10 @@ serve(async (req) => {
               p_goal: args.goal ?? null,
             });
             result = rpcErr ? { ok: false, error: rpcErr.message } : rpcData;
-            if ((result as any)?.ok && (result as any)?.agent_key) {
+            if ((result as unknown)?.ok && (result as unknown)?.agent_key) {
               handoff = {
-                agent_key: (result as any).agent_key,
-                instructor_id: (result as any).instructor_id ?? null,
+                agent_key: (result as unknown).agent_key,
+                instructor_id: (result as unknown).instructor_id ?? null,
               };
             }
           } else if (fname === "search_professions") {
@@ -213,3 +213,5 @@ function json(b: unknown, status: number) {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
+
+

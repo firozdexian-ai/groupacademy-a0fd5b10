@@ -1,9 +1,9 @@
-/**
+﻿/**
  * check-company-account
  * Anon-callable. Given an email, returns:
  *   { exists: boolean, isCompany: boolean }
  * Used by Riya (Gro10x auth chat) to detect returning users so we can
- * pivot from signup → sign-in instead of asking for a name.
+ * pivot from signup â†’ sign-in instead of asking for a name.
  *
  * No PII leaks beyond a boolean. Email enumeration is already possible
  * via auth.signUp errors, so this matches the existing risk surface.
@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Is this user a member of any company?
+    // Is this user a member of unknown company?
     const { data: member } = await supabase
       .from("company_members")
       .select("company_id")
@@ -73,3 +73,5 @@ Deno.serve(async (req) => {
     });
   }
 });
+
+

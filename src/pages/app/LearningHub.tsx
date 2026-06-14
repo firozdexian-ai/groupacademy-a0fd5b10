@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useSearchParams } from "react-router-dom";
 import { BookOpen, Target, Library, Globe, Bell } from "lucide-react";
 import { useReviewQueue } from "@/domains/learning";
@@ -67,3 +67,4 @@ export default function LearningHub() {
  </div>
  );
 }
+

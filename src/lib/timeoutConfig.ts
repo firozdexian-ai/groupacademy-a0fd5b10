@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Centralized timeout configuration for all async operations
  * Adjust these values to control how long operations wait before failing
  */
@@ -29,3 +29,4 @@ export const TIMEOUTS = {
 } as const;
 
 export type TimeoutKey = keyof typeof TIMEOUTS;
+

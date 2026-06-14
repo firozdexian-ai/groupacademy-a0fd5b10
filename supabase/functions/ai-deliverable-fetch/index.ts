@@ -25,17 +25,21 @@ Deno.serve(async (req) => {
           body: JSON.stringify({
             model: "google/gemini-2.5-flash-lite",
             messages: [
-              { role: "system", content: "Summarise the deliverable in ≤120 words. Note medium (figma/github/doc/etc), scope, and any obvious quality flags." },
+              { role: "system", content: "Summarise the deliverable in â‰¤120 words. Note medium (figma/github/doc/etc), scope, and unknown obvious quality flags." },
               { role: "user", content: `URL: ${url}\n\n${raw}` },
             ],
           }),
         });
         const j = await resp.json();
         summary = j?.choices?.[0]?.message?.content || summary;
-      } catch (_) {}
+      } catch (_) {
+        // Intentionally empty
+      }
     }
     return new Response(JSON.stringify({ summary }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
     return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: corsHeaders });
   }
 });
+
+

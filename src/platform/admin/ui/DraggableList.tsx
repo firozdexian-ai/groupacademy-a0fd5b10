@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+﻿import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { GripVertical } from "lucide-react";
 
@@ -128,3 +128,4 @@ export function DragHandle({ draggable, onDragStart, onDragEnd, className }: Dra
     </div>
   );
 }
+

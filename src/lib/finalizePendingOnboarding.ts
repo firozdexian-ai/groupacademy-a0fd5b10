@@ -1,4 +1,4 @@
-import { getCurrentUser } from "@/lib/auth";
+﻿import { getCurrentUser } from "@/lib/auth";
 import {
   getTalentOnboardingStateByUser,
   patchTalentByUser,
@@ -39,7 +39,7 @@ export function clearPendingOnboarding() {
 /**
  * Apply a pre-auth onboarding stash to the current user's talents row.
  * Only fills blank fields so we never overwrite something the user already set.
- * Safe to call multiple times — clears the stash on success.
+ * Safe to call multiple times â€” clears the stash on success.
  */
 export async function finalizePendingOnboarding(): Promise<boolean> {
   const pending = readPendingOnboarding();
@@ -112,3 +112,4 @@ export async function finalizePendingOnboarding(): Promise<boolean> {
     return false;
   }
 }
+

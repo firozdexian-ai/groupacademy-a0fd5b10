@@ -1,4 +1,4 @@
-// notify-hiring-event
+﻿// notify-hiring-event
 // Unified dispatcher for Phase 3.7 events:
 //   - interview_proposed / interview_confirmed
 //   - offer_sent / offer_accepted / offer_declined
@@ -40,7 +40,7 @@ const COPY: Record<
   },
   offer_sent: {
     audience: "talent",
-    title: "🎉 You received an offer",
+    title: "ðŸŽ‰ You received an offer",
     message: "{company} sent you an offer for {role}.",
     emailSubject: "Your offer from {company}",
     icon: "file-text",
@@ -141,11 +141,11 @@ Deno.serve(async (req) => {
     }
     const { data: job } = jobId
       ? await admin.from("jobs").select("title, company_name, company_id").eq("id", jobId).maybeSingle()
-      : { data: null as any };
+      : { data: null as unknown };
 
     const { data: talent } = talentId
       ? await admin.from("talents").select("id, full_name, email, user_id").eq("id", talentId).maybeSingle()
-      : { data: null as any };
+      : { data: null as unknown };
 
     const vars = {
       role: job?.title ?? "the role",
@@ -210,3 +210,5 @@ Deno.serve(async (req) => {
     });
   }
 });
+
+

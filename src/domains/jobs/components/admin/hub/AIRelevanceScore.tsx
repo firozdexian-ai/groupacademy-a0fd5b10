@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { updateApplicationAIScore } from "@/domains/jobs/repo/jobsRepo";
 import { scoreJobMatch } from "@/domains/jobs/api/jobsApi";
 
@@ -64,7 +64,7 @@ export function AIRelevanceScore({ applicationId, jobId, talentId, score, ration
 
       toast.success(`Match score: ${overall}/100`, { id: toastId });
       onScored?.(overall, reco);
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error("Couldn't score this match: " + err.message, { id: toastId });
     } finally {
       setLoading(false);
@@ -86,7 +86,7 @@ export function AIRelevanceScore({ applicationId, jobId, talentId, score, ration
         >
           {loading ? <InlineSpinner size="sm" /> : <Zap className="h-3 w-3 fill-current" />}
           <span>{score}%</span>
-          <span className="opacity-60 hidden sm:inline">· {scoreLabel(score)}</span>
+          <span className="opacity-60 hidden sm:inline">Â· {scoreLabel(score)}</span>
         </button>
       </div>
     );
@@ -105,3 +105,5 @@ export function AIRelevanceScore({ applicationId, jobId, talentId, score, ration
     </Button>
   );
 }
+
+

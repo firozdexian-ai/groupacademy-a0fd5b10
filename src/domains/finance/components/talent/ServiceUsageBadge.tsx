@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+﻿import { useMemo } from "react";
 import { Coins, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getServiceCost, ServiceType } from "@/lib/creditPricing";

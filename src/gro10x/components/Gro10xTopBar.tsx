@@ -1,7 +1,7 @@
-/**
+﻿/**
  * Compact top bar for the Gro10x app shell.
  *
- * Layout: [credits pill] · [avatar → /gro10x/me]
+ * Layout: [credits pill] Â· [avatar â†’ /gro10x/me]
  * - Owner/Admin: pill shows the company credit pool, links to /gro10x/billing.
  * - Member:      pill shows personal + Gro10x bonus credits, links to /gro10x/billing too.
  * - Notifications are surfaced via the "concierge" agent thread (Atlas), not a separate bell.
@@ -54,8 +54,8 @@ export function Gro10xTopBar() {
         className={`inline-flex items-center gap-1.5 ${GRO10X_PANEL} border ${low ? "border-amber-500/40" : "border-white/10"} rounded-full px-2.5 py-1`}
         title={
           isCompanyController
-            ? `Company pool · $${(companyBalance * 0.02).toFixed(2)}`
-            : `Free ${balance} · Bonus ${bonus} · Earned ${earned}`
+            ? `Company pool Â· $${(companyBalance * 0.02).toFixed(2)}`
+            : `Free ${balance} Â· Bonus ${bonus} Â· Earned ${earned}`
         }
         aria-label={isCompanyController ? "Company credits" : "My credits"}
       >
@@ -66,7 +66,7 @@ export function Gro10xTopBar() {
         </span>
       </Link>
 
-      {/* Desktop search trigger (⌘K) */}
+      {/* Desktop search trigger (âŒ˜K) */}
       <button
         type="button"
         onClick={() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }))}
@@ -75,7 +75,7 @@ export function Gro10xTopBar() {
       >
         <Search className="h-3.5 w-3.5" />
         <span>Search</span>
-        <kbd className="ml-2 text-[10px] px-1.5 py-0.5 rounded bg-white/10 border border-white/10">⌘K</kbd>
+        <kbd className="ml-2 text-[10px] px-1.5 py-0.5 rounded bg-white/10 border border-white/10">âŒ˜K</kbd>
       </button>
 
       <button
@@ -93,3 +93,4 @@ export function Gro10xTopBar() {
     </div>
   );
 }
+

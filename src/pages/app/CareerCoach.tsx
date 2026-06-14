@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { Loader2, Bot, UserX } from "lucide-react";
 import {
  assignCareerCoach,
@@ -39,7 +39,7 @@ const STRATEGIC_GOALS_DIRECTORY: Record<string, string> = {
 /**
  * GroUp Academy: Personalized AI Career Coach Dashboard (CareerCoach)
  * Hardened communications portal executing automated coach-to-talent bindings and isolating inference panels from layout shifting.
- * Version: Launch Candidate · Phase Z1 Transaction Matrix Sealed
+ * Version: Launch Candidate Â· Phase Z1 Transaction Matrix Sealed
  */
 export default function CareerCoach() {
  const { talent: talentProfileRecord } = useTalent();
@@ -134,7 +134,7 @@ export default function CareerCoach() {
  const coreGoalClauseStr = resolvedGoalLabelStr
  ? ` You indicated your current target landmark objective is to ${resolvedGoalLabelStr}.`
  : "";
- return `Hi ${resolvedGivenNameStr}, I am ${activeCoachInstructor.name} — your specialized performance Career Coach.${coreGoalClauseStr} Shall we construct a milestone 30-day advancement sprint, calibrate structural resume formatting errors, or map corporate positions aligned with your capabilities?`;
+ return `Hi ${resolvedGivenNameStr}, I am ${activeCoachInstructor.name} â€” your specialized performance Career Coach.${coreGoalClauseStr} Shall we construct a milestone 30-day advancement sprint, calibrate structural resume formatting errors, or map corporate positions aligned with your capabilities?`;
  }, [activeCoachInstructor, resolvedGivenNameStr, resolvedGoalLabelStr]);
 
  const contextStarterChips = React.useMemo<StarterChipConfig[]>(() => {
@@ -163,7 +163,7 @@ export default function CareerCoach() {
 
  return (
  <div className="flex flex-col h-[calc(100dvh-64px)] max-w-3xl mx-auto w-full px-4 py-3 antialiased transform-gpu">
- {/* HUD LEVEL 1: ADMINISTRATIVE HUB TITLE BLOCK METADATA */}
+ {/* dashboard LEVEL 1: ADMINISTRATIVE HUB TITLE BLOCK METADATA */}
  <header className="px-1 pb-3 block select-none pointer-events-none leading-none w-full shrink-0 border-b border-border/10 mb-3">
  <div className="flex items-center gap-2.5 leading-none w-full block">
  <div className="p-1.5 bg-primary/5 border border-primary/10 rounded-md text-primary shrink-0 block shadow-3xs">
@@ -175,12 +175,12 @@ export default function CareerCoach() {
  </div>
  <p className="font-mono text-sm font-medium text-muted-foreground/50 uppercase tracking-tight block leading-none pt-1.5">
  {activeCoachInstructor
- ? `OPERATIONAL MODERATOR: ${activeCoachInstructor.name.toUpperCase()} • ASSIGNED TO TARGET LANDMARK: ${resolvedGoalLabelStr ? resolvedGoalLabelStr.toUpperCase() : "GENERAL IMPROVEMENT PROTOCOL"}`
+ ? `OPERATIONAL MODERATOR: ${activeCoachInstructor.name.toUpperCase()} â€¢ ASSIGNED TO TARGET LANDMARK: ${resolvedGoalLabelStr ? resolvedGoalLabelStr.toUpperCase() : "GENERAL IMPROVEMENT PROTOCOL"}`
  : "Continuous AI guidance counseling for systemic professional track transitions."}
  </p>
  </header>
 
- {/* HUD LEVEL 2: CONSOLE WORKSPACE VIEWPORT LAYOUT GATEWAYS */}
+ {/* dashboard LEVEL 2: CONSOLE WORKSPACE VIEWPORT LAYOUT GATEWAYS */}
  <main className="flex-1 min-h-0 block w-full relative">
  {isCoachCacheResolving ? (
  <div
@@ -229,3 +229,4 @@ export default function CareerCoach() {
  </div>
  );
 }
+

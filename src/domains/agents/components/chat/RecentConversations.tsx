@@ -9,7 +9,7 @@ import { AgentAvatar } from "@/domains/agents/components/chat/AgentAvatar";
 import { trackError } from "@/lib/errorTracking";
 
 /**
- * Group Academy — Career Guidance System: Recent Conversations Ledger Component
+ * Group Academy â€” Career Guidance System: Recent Conversations Ledger Component
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/chat?tab=history (User Conversation Ledger viewport)
  * Operations Mode: High-performance session tracker aggregating historical chat sequences.
@@ -33,25 +33,6 @@ export function RecentConversations({
   isCompanyAgent,
   isCreatorAgent,
 }: RecentConversationsProps) {
-  // Guard the component viewport completely against empty session logs arrays
-  if (sessions.length === 0) {
-    return (
-      <Card className="border border-dashed border-border bg-muted/5 rounded-2xl overflow-hidden select-none animate-in fade-in duration-300">
-        <CardContent className="p-10 text-center flex flex-col items-center justify-center gap-4">
-          <div className="h-12 w-12 rounded-xl bg-muted border border-border/40 flex items-center justify-center text-muted-foreground/40">
-            <MessageCircle className="h-5 w-5" />
-          </div>
-          <div className="space-y-1">
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">No Active Logs Found</p>
-            <p className="text-xs text-muted-foreground/60 max-w-xs mx-auto">
-              Start a conversation with an advisory assistant to see it listed here.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
   // --- PHASE: SESSION_ARRAY_NORMALIZATION_MATRIX ---
   const normalizedSessions = useMemo(() => {
     const currentUnixTimestamp = Date.now();
@@ -71,7 +52,7 @@ export function RecentConversations({
         if (!isValid(creationDate)) return "Recent";
         try {
           return formatDistanceToNow(creationDate, { addSuffix: true });
-        } catch (err: any) {
+        } catch (err: unknown) {
           trackError("recent-conversations-temporal-sync-failure", { error: err.message, id: session.id });
           return "Active";
         }
@@ -86,6 +67,25 @@ export function RecentConversations({
       };
     });
   }, [sessions, getAgentName]);
+
+  // Guard the component viewport completely against empty session logs arrays
+  if (sessions.length === 0) {
+    return (
+      <Card className="border border-dashed border-border bg-muted/5 rounded-2xl overflow-hidden select-none animate-in fade-in duration-300">
+        <CardContent className="p-10 text-center flex flex-col items-center justify-center gap-4">
+          <div className="h-12 w-12 rounded-xl bg-muted border border-border/40 flex items-center justify-center text-muted-foreground/40">
+            <MessageCircle className="h-5 w-5" />
+          </div>
+          <div className="space-y-1">
+            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">No Active Logs Found</p>
+            <p className="text-xs text-muted-foreground/60 max-w-xs mx-auto">
+              Start a conversation with an advisory assistant to see it listed here.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <div className="space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300 select-none text-left">
@@ -175,3 +175,5 @@ export function RecentConversations({
 }
 
 export default RecentConversations;
+
+

@@ -1,4 +1,4 @@
-// notify-admin: agent tool that pings the admin team via Telegram.
+﻿// notify-admin: agent tool that pings the admin team via Telegram.
 // Inputs: { channel?: 'telegram', message: string, context?: object }
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -21,7 +21,7 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_ANON_KEY") ?? "",
       { global: { headers: { Authorization: authHeader } } },
     );
-    const { data: { user }, error: authErr } = await supabase.auth.getUser();
+    const { data: { user }, error: authErr } = await getCurrentUser();
     if (authErr || !user) return json({ ok: false, error: "unauthorized" }, 401);
 
     const body = await req.json().catch(() => ({}));
@@ -34,11 +34,11 @@ serve(async (req) => {
     const botToken = Deno.env.get("TELEGRAM_BOT_TOKEN");
     const chatId = Deno.env.get("TELEGRAM_ADMIN_CHAT_ID");
     if (!botToken || !chatId) {
-      console.log("[notify-admin] skipped — Telegram secrets missing");
+      console.log("[notify-admin] skipped â€” Telegram secrets missing");
       return json({ ok: true, skipped: true }, 200);
     }
 
-    const text = `🔔 Agent alert\n${message}\n\n— from ${user.email ?? user.id}`;
+    const text = `ðŸ”” Agent alert\n${message}\n\nâ€” from ${user.email ?? user.id}`;
     const r = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -58,3 +58,5 @@ function json(b: unknown, status: number) {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
+
+

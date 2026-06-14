@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+﻿import { useCallback, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getStageProgress,
@@ -42,7 +42,7 @@ export function useStageProgress({ enrollmentId, moduleId, totalStages = 6 }: Us
     enabled: !!enrollmentId && !!moduleId,
     staleTime: 15000, // 15-second consistency boundary
     queryFn: async (): Promise<StageProgressPayload> => {
-      // HUD: EXECUTING_STAGE_PROGRESS_INGRESS
+      // dashboard: EXECUTING_STAGE_PROGRESS_INGRESS
       const data = await getStageProgress(enrollmentId!, moduleId!);
 
       if (!data) {
@@ -67,7 +67,7 @@ export function useStageProgress({ enrollmentId, moduleId, totalStages = 6 }: Us
     mutationFn: async (payload: StageProgressPayload) => {
       if (!enrollmentId || !moduleId) return;
 
-      // HUD: EXECUTING_PROGRESS_UPSERT_HANDSHAKE
+      // dashboard: EXECUTING_PROGRESS_UPSERT_HANDSHAKE
       await upsertEnrollmentStageProgress({
         enrollment_id: enrollmentId,
         module_id: moduleId,
@@ -76,7 +76,7 @@ export function useStageProgress({ enrollmentId, moduleId, totalStages = 6 }: Us
         resource_view_states: payload.resourceViewStates,
       });
 
-      // HUD: EXECUTING_ENROLLMENT_AGGREGATE_CALCULATION
+      // dashboard: EXECUTING_ENROLLMENT_AGGREGATE_CALCULATION
       const progressPercent = Math.round((payload.completedStages.length / totalStages) * 100);
       await updateEnrollmentProgress(enrollmentId, {
         progress: Math.min(progressPercent, 100),
@@ -87,12 +87,12 @@ export function useStageProgress({ enrollmentId, moduleId, totalStages = 6 }: Us
       await qc.cancelQueries({ queryKey });
       const previous = qc.getQueryData<StageProgressPayload>(queryKey);
 
-      // HUD: APPLYING_OPTIMISTIC_PROGRESS_METRICS
+      // dashboard: APPLYING_OPTIMISTIC_PROGRESS_METRICS
       qc.setQueryData<StageProgressPayload>(queryKey, payload);
 
       return { previous };
     },
-    onError: (err: any, _, context) => {
+    onError: (err: unknown, _, context) => {
       if (context?.previous) {
         qc.setQueryData(queryKey, context.previous);
       }
@@ -188,3 +188,5 @@ export function useStageProgress({ enrollmentId, moduleId, totalStages = 6 }: Us
     isResourceViewed: (resId: string) => activeProgress.resourceViewStates[resId] === true,
   };
 }
+
+

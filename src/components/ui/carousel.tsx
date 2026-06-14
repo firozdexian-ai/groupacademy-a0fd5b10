@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import useEmblaCarousel, { type UseEmblaCarouselType } from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -38,9 +38,9 @@ function useCarousel() {
 }
 
 /**
- * GroUp Academy: Sequential Structural Media Browsing HUD (Carousel)
+ * GroUp Academy: Sequential Structural Media Browsing dashboard (Carousel)
  * Hardened responsive carousel engine built over Embla UI, ensuring self-clearing event listeners and fully compliant focus paths.
- * Version: Launch Candidate · Phase Z0 Lifecycle & Accessibility Hardened
+ * Version: Launch Candidate Â· Phase Z0 Lifecycle & Accessibility Hardened
  */
 const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & CarouselProps>(
   ({ orientation = "horizontal", opts, setApi, plugins, className, children, ...props }, ref) => {
@@ -242,3 +242,4 @@ const CarouselNext = React.forwardRef<HTMLButtonElement, React.ComponentProps<ty
 CarouselNext.displayName = "Carousel_Core_Next_Trigger_Node";
 
 export { type CarouselApi, Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext };
+

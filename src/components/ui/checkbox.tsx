@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Authoritative Validation Toggle Core Interface (Checkbox)
  * Hardened accessible form toggle control supporting high-fidelity state maps and zero Cumulative Layout Shift (CLS).
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
@@ -37,3 +37,4 @@ const Checkbox = React.forwardRef<
 Checkbox.displayName = "Checkbox_Core_Validation_Node";
 
 export { Checkbox };
+

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { getPaymentConfigSettings } from "@/domains/finance/repo/financeRepo";
 
 export type PaymentGateway = "whatsapp" | "stripe" | "both";
@@ -26,7 +26,7 @@ export function usePaymentConfig() {
       let settings: Array<{ key: string; value: string }>;
       try {
         settings = await getPaymentConfigSettings();
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Payment Configuration] Error loading gateway parameters from repository logs:", error);
         throw error;
       }
@@ -63,3 +63,5 @@ export function usePaymentConfig() {
     currency: data?.currency || "USD",
   };
 }
+
+

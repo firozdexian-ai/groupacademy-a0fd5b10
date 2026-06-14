@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+﻿import { useInfiniteQuery } from "@tanstack/react-query";
 import { getRankedGigsForTalent } from "@/domains/gigs/repo/gigsRepo";
 
 /**
@@ -37,15 +37,15 @@ export function useRankedGigs(talentId: string | null | undefined) {
     queryFn: async (context): Promise<RankedGig[]> => {
       const { pageParam } = context;
 
-      // HUD: EXECUTING_KEYSET_PAGINATED_GIG_INGRESS
-      let data: any[];
+      // dashboard: EXECUTING_KEYSET_PAGINATED_GIG_INGRESS
+      let data: unknown[];
       try {
         data = await getRankedGigsForTalent({
           talentId: talentId ?? null,
           cursor: pageParam,
           limit: PAGE_SIZE,
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] ANOMALY: get_ranked_gigs_for_talent RPC lookup failed.", {
           talentId: talentId ?? "ANONYMOUS",
           cursor: pageParam,
@@ -55,7 +55,7 @@ export function useRankedGigs(talentId: string | null | undefined) {
       }
 
       // Hardened Normalization Layer to shield layout structures against schema drifts
-      return (data || []).map((row: any) => ({
+      return (data || []).map((row: unknown) => ({
         gig_id: String(row.gig_id ?? ""),
         kind: String(row.kind ?? "standard"),
         title: String(row.title ?? "Untitled Opportunity"),
@@ -81,3 +81,5 @@ export function useRankedGigs(talentId: string | null | undefined) {
 
 // Internal type helper targeting clean infinite structure alignment
 type InfiniteDataWrapper = import("@tanstack/react-query").InfiniteData<RankedGig[], number | null>;
+
+

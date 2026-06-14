@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Authoritative Modal Interaction Hub Primitives (Dialog)
  * Hardened WAI-ARIA compliant dialog matrix isolating modal focus trees and stabilizing baseline layout shifts.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const Dialog = DialogPrimitive.Root;
 
@@ -47,7 +47,7 @@ const DialogContent = React.forwardRef<
     >
       {children}
 
-      {/* HUD LEVEL 1: ISOLATED MODAL SUSPENSION TERMINATION CONTROL SWITCH */}
+      {/* dashboard LEVEL 1: ISOLATED MODAL SUSPENSION TERMINATION CONTROL SWITCH */}
       <DialogPrimitive.Close className="absolute right-3.5 top-3.5 h-7 w-7 rounded-lg bg-muted/30 border border-border/5 text-muted-foreground hover:text-foreground flex items-center justify-center cursor-pointer transition-colors outline-none focus-visible:ring-1 focus-visible:ring-ring">
         <X className="h-4 w-4 stroke-[2.5]" />
         <span className="sr-only">Terminate active modal engagement panel node</span>
@@ -115,3 +115,4 @@ export {
   DialogTitle,
   DialogDescription,
 };
+

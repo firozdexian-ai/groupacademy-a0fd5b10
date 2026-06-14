@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+﻿import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -35,11 +35,11 @@ interface AchievementEntry {
 interface ProfileSectionEditorProps {
   section: SectionType;
   onClose: () => void;
-  onSave: (section: SectionType, data: any) => Promise<void>;
-  talent: any;
+  onSave: (section: SectionType, data: unknown) => Promise<void>;
+  talent: unknown;
 }
 
-const SECTION_META: Record<string, { title: string; icon: any }> = {
+const SECTION_META: Record<string, { title: string; icon: unknown }> = {
   about: { title: "About you", icon: ShieldCheck },
   experience: { title: "Work experience", icon: Zap },
   education: { title: "Education", icon: Zap },
@@ -51,7 +51,7 @@ const SECTION_META: Record<string, { title: string; icon: any }> = {
 /**
  * GroUp Academy: Unified Profile Section Ingress Orchestrator (ProfileSectionEditor)
  * An authoritative operational sandbox managing targeted sub-section modifications and workspace ledger updates.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function ProfileSectionEditor({ section, onClose, onSave, talent }: ProfileSectionEditorProps) {
   const queryClient = useQueryClient();
@@ -85,7 +85,7 @@ export function ProfileSectionEditor({ section, onClose, onSave, talent }: Profi
 
     const expData = Array.isArray(talent.experience) ? talent.experience : [];
     setExperience(
-      expData.map((exp: any) => ({
+      expData.map((exp: unknown) => ({
         company: String(exp?.company || ""),
         position: String(exp?.position || exp?.title || ""),
         startDate: String(exp?.startDate || exp?.start_date || ""),
@@ -96,7 +96,7 @@ export function ProfileSectionEditor({ section, onClose, onSave, talent }: Profi
 
     const eduData = Array.isArray(talent.education) ? talent.education : [];
     setEducation(
-      eduData.map((edu: any) => ({
+      eduData.map((edu: unknown) => ({
         institution: String(edu?.institution || ""),
         degree: String(edu?.degree || ""),
         fieldOfStudy: String(edu?.fieldOfStudy || edu?.field || ""),
@@ -106,11 +106,11 @@ export function ProfileSectionEditor({ section, onClose, onSave, talent }: Profi
     );
 
     const skillData = Array.isArray(talent.skills) ? talent.skills : [];
-    setSkills(skillData.map((s: any) => (typeof s === "string" ? s : String(s?.name || s))));
+    setSkills(skillData.map((s: unknown) => (typeof s === "string" ? s : String(s?.name || s))));
 
     const awardData = Array.isArray(talent.achievements) ? talent.achievements : [];
     setAchievements(
-      awardData.map((a: any) => ({
+      awardData.map((a: unknown) => ({
         title: String(a?.title || a?.name || ""),
         issuer: String(a?.issuer || ""),
         date: String(a?.date || ""),
@@ -119,7 +119,7 @@ export function ProfileSectionEditor({ section, onClose, onSave, talent }: Profi
 
     const langData = Array.isArray(talent.languages) ? talent.languages : [];
     setLanguages(
-      langData.map((l: any) => ({
+      langData.map((l: unknown) => ({
         language: String(l?.language || ""),
         proficiency: String(l?.proficiency || "Intermediate"),
       }))
@@ -134,7 +134,7 @@ export function ProfileSectionEditor({ section, onClose, onSave, talent }: Profi
     const dynamicToastTrackerId = toast.loading(`Saving...`);
 
     try {
-      let syncPayload: Record<string, any> = {};
+      let syncPayload: Record<string, unknown> = {};
       
       switch (section) {
         case "about":
@@ -168,7 +168,7 @@ export function ProfileSectionEditor({ section, onClose, onSave, talent }: Profi
         trackEvent("profile_section_save_success", { activeSectionType: section });
         onClose();
       }
-    } catch (caughtPipelineExceptionErr: any) {
+    } catch (caughtPipelineExceptionErr: unknown) {
       const formattedExceptionMsgStr = caughtPipelineExceptionErr instanceof Error 
         ? caughtPipelineExceptionErr.message 
         : String(caughtPipelineExceptionErr);
@@ -204,7 +204,7 @@ export function ProfileSectionEditor({ section, onClose, onSave, talent }: Profi
         side="bottom"
         className="h-[90vh] rounded-t-2xl border-t border-border/40 bg-background/95 backdrop-blur-xl flex flex-col p-5 sm:p-6 text-left antialiased transform-gpu select-none sm:select-text"
       >
-        {/* HUD LEVEL 1: OVERLAY CONTENT WORKSPACE ROW HEADER */}
+        {/* dashboard LEVEL 1: OVERLAY CONTENT WORKSPACE ROW HEADER */}
         <SheetHeader className="mb-4 text-left select-none shrink-0 leading-none w-full">
           <div className="flex items-center gap-2.5 leading-none w-full">
             <div className="h-7 w-7 rounded-lg bg-primary/10 border border-primary/5 text-primary flex items-center justify-center shrink-0 shadow-inner">
@@ -221,7 +221,7 @@ export function ProfileSectionEditor({ section, onClose, onSave, talent }: Profi
           </div>
         </SheetHeader>
 
-        {/* HUD LEVEL 2: SCROLL INTERACTIVE SECTION CANVAS ROW FORMS */}
+        {/* dashboard LEVEL 2: SCROLL INTERACTIVE SECTION CANVAS ROW FORMS */}
         <div className="flex-1 overflow-y-auto pr-1 outline-none space-y-4 w-full min-w-0 font-bold text-xs text-foreground">
           
           {/* SECTION TARGET A: ABOUT TEXTAREA AREA */}
@@ -232,7 +232,7 @@ export function ProfileSectionEditor({ section, onClose, onSave, talent }: Profi
                 value={about}
                 disabled={saving}
                 onChange={(e) => setAbout(e.target.value)}
-                placeholder="Write a short bio — your background, what you do, and what you're looking for…"
+                placeholder="Write a short bio â€” your background, what you do, and what you're looking forâ€¦"
                 className="min-h-[180px] w-full rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3.5 leading-relaxed italic resize-none shadow-inner"
               />
             </div>
@@ -348,7 +348,7 @@ export function ProfileSectionEditor({ section, onClose, onSave, talent }: Profi
                       onChange={(e) =>
                         setLanguages((p) => p.map((l, idx) => (idx === i ? { ...l, language: e.target.value } : l)))
                       }
-                      placeholder="Language (e.g. English, Spanish)…"
+                      placeholder="Language (e.g. English, Spanish)â€¦"
                     />
                     
                     <Select
@@ -386,7 +386,7 @@ export function ProfileSectionEditor({ section, onClose, onSave, talent }: Profi
           )}
         </div>
 
-        {/* HUD LEVEL 3: FOOTER ACTION CONFIRMATION OVERLAY TRACK BUTTON ROW */}
+        {/* dashboard LEVEL 3: FOOTER ACTION CONFIRMATION OVERLAY TRACK BUTTON ROW */}
         <DialogFooter className="mt-4 gap-2.5 sm:gap-0 select-none border-t border-border/10 pt-4 w-full shrink-0 flex items-center justify-end font-bold text-xs">
           <Button
             variant="ghost"
@@ -406,7 +406,7 @@ export function ProfileSectionEditor({ section, onClose, onSave, talent }: Profi
             {saving ? (
               <>
                 <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                <span>Saving…</span>
+                <span>Savingâ€¦</span>
               </>
             ) : (
               <>
@@ -420,3 +420,4 @@ export function ProfileSectionEditor({ section, onClose, onSave, talent }: Profi
     </Sheet>
   );
 }
+

@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as MenubarPrimitive from "@radix-ui/react-menubar";
 import { Check, ChevronRight, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Authoritative System Navigation Protocol Interface (Menubar)
  * Hardened high-density global layout bar managing macro command hubs and administrative action paths.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const MenubarMenu = MenubarPrimitive.Menu;
 const MenubarGroup = MenubarPrimitive.Group;
@@ -231,3 +231,4 @@ export {
   MenubarSub,
   MenubarShortcut,
 };
+

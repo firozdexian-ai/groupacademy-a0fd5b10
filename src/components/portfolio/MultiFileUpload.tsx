@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect, useMemo } from "react";
+﻿import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { uploadToBucketPublic } from "@/domains/profile/repo/profileRepo";
 import { Button } from "@/components/ui/button";
@@ -29,7 +29,7 @@ type UploadStatus = "idle" | "uploading" | "success" | "error";
 /**
  * GroUp Academy: Institutional Multi-Artifact Data Ingress System (MultiFileUpload)
  * An authoritative operational sandbox managing dynamic binary stream chunk storage commits and bucket token mapping.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export default function MultiFileUpload({
   bucket,
@@ -136,7 +136,7 @@ export default function MultiFileUpload({
         if (currentPassAbortSignal.aborted) throw new Error("SYNC_ABORTED");
 
         const targetActiveFile = targetedIngressQueue[indexPosition];
-        setStatusMessage(`Syncing byte layer artifact [${targetActiveFile.name.toUpperCase()}]…`);
+        setStatusMessage(`Syncing byte layer artifact [${targetActiveFile.name.toUpperCase()}]â€¦`);
 
         // 120,000ms Hardwired Network Latency Timeout Guard
         const structuralTimeoutGuardPromise = new Promise<never>((_, reject) => {
@@ -183,7 +183,7 @@ export default function MultiFileUpload({
           }
         }, 2000);
       }
-    } catch (caughtPipelineExceptionErr: any) {
+    } catch (caughtPipelineExceptionErr: unknown) {
       const parsingErrorStringMsg =
         caughtPipelineExceptionErr instanceof Error
           ? caughtPipelineExceptionErr.message
@@ -241,7 +241,7 @@ export default function MultiFileUpload({
 
   return (
     <div className="space-y-4 text-left max-w-full w-full transform-gpu antialiased">
-      {/* HUD LEVEL 1: TOP SUMMARY TEXT LABELS STRIP */}
+      {/* dashboard LEVEL 1: TOP SUMMARY TEXT LABELS STRIP */}
       <div className="flex items-center justify-between gap-4 px-0.5 select-none w-full leading-none">
         <div className="space-y-1.5 text-left flex flex-col justify-center min-w-0 flex-1 leading-none">
           <p className="text-xs font-bold text-primary uppercase tracking-wide leading-none select-all selection:bg-primary/10">
@@ -261,7 +261,7 @@ export default function MultiFileUpload({
         </Badge>
       </div>
 
-      {/* HUD LEVEL 2: COMPONENT CORE DRAG AND DROP INGRESS GATEWAY SLOT */}
+      {/* dashboard LEVEL 2: COMPONENT CORE DRAG AND DROP INGRESS GATEWAY SLOT */}
       {normalizedArtifactsCount < maxFiles && (
         <div
           onDragEnter={(e) => handleDragEventsHandshakePass(e, true)}
@@ -297,7 +297,7 @@ export default function MultiFileUpload({
             onChange={(e) => handleDataIngress(e.target.files)}
           />
 
-          {/* STREAM VIEW A: ACTIVE UPLOADING TASK HUD STATUS BAR */}
+          {/* STREAM VIEW A: ACTIVE UPLOADING TASK dashboard STATUS BAR */}
           {uploadStatus === "uploading" ? (
             <div className="flex flex-col items-center justify-center gap-4 animate-in zoom-in-99 w-full">
               <Loader2 className="h-6 w-6 animate-spin text-primary stroke-[2.5]" />
@@ -385,7 +385,7 @@ export default function MultiFileUpload({
         </div>
       )}
 
-      {/* HUD LEVEL 3: ARTIFACT INGESTION MATRIX REGISTRY SUMMARY ROW SHIELDS */}
+      {/* dashboard LEVEL 3: ARTIFACT INGESTION MATRIX REGISTRY SUMMARY ROW SHIELDS */}
       {normalizedArtifactsCount > 0 && (
         <div className="grid grid-cols-1 gap-2 w-full min-w-0 font-bold text-xs text-left animate-in slide-in-from-top-1 duration-200">
           {value.map((artifactItem, idx) => {
@@ -428,3 +428,5 @@ export default function MultiFileUpload({
     </div>
   );
 }
+
+

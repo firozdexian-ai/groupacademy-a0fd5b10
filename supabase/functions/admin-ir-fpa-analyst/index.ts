@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+﻿import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { augmentLastUserMessage } from "../_shared/attachments.ts";
 
 const corsHeaders = {
@@ -35,7 +35,7 @@ Deno.serve(async (req) => {
       { type: "function", function: { name: "outreach_activity", description: "IR outreach activity in last N days", parameters: { type: "object", properties: { days: { type: "number" } } } } },
     ];
 
-    let convo = [{ role: "system", content: SYSTEM }, ...messages];
+    const convo = [{ role: "system", content: SYSTEM }, ...messages];
     await augmentLastUserMessage(admin, convo, attachments);
     let final = "";
     for (let i = 0; i < 4; i++) {
@@ -76,7 +76,7 @@ Deno.serve(async (req) => {
   }
 });
 
-async function runTool(admin: any, name: string, args: any) {
+async function runTool(admin: unknown, name: string, args: unknown) {
   if (name === "mrr_targets_read") {
     const { data } = await admin.from("ir_mrr_targets").select("*").order("target_date", { ascending: true }).limit(24);
     return { targets: data || [] };
@@ -86,7 +86,7 @@ async function runTool(admin: any, name: string, args: any) {
       admin.from("vc_firms").select("status"),
       admin.from("investors").select("status"),
     ]);
-    const tally = (rows: any[] = []) => rows.reduce((a, r) => (a[r.status || "unknown"] = (a[r.status || "unknown"] || 0) + 1, a), {} as Record<string, number>);
+    const tally = (rows: unknown[] = []) => rows.reduce((a, r) => (a[r.status || "unknown"] = (a[r.status || "unknown"] || 0) + 1, a), {} as Record<string, number>);
     return { vcs: tally(vcs || []), investors: tally(invs || []) };
   }
   if (name === "credits_revenue_summary") {
@@ -107,6 +107,8 @@ async function runTool(admin: any, name: string, args: any) {
   return { error: "unknown tool" };
 }
 
-function json(body: any, status = 200) {
+function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 }
+
+

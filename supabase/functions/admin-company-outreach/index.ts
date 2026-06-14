@@ -1,4 +1,4 @@
-// Admin Company Outreach — invite uploaded company contacts who have no Gro10x account.
+﻿// Admin Company Outreach â€” invite uploaded company contacts who have no Gro10x account.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { augmentLastUserMessage } from "../_shared/attachments.ts";
 
@@ -83,7 +83,7 @@ Deno.serve(async (req) => {
     const admin = createClient(SUPA_URL, SERVICE_KEY);
     const { data: roleRows } = await admin
       .from("user_roles").select("role").eq("user_id", userData.user.id);
-    const roles = (roleRows ?? []).map((r: any) => r.role);
+    const roles = (roleRows ?? []).map((r: unknown) => r.role);
     if (!roles.includes("super_admin") && !roles.includes("admin")) {
       return json({ error: "forbidden" }, 403);
     }
@@ -91,7 +91,7 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const messages = body.messages ?? [];
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
-    const convo: any[] = [{ role: "system", content: SYSTEM }, ...messages];
+    const convo: unknown[] = [{ role: "system", content: SYSTEM }, ...messages];
     await augmentLastUserMessage(admin, convo, body.attachments);
 
     for (let step = 0; step < 5; step++) {
@@ -119,7 +119,7 @@ Deno.serve(async (req) => {
         convo.push(msg);
         for (const tc of msg.tool_calls) {
           const args = safeParse(tc.function?.arguments);
-          let toolResult: any = { error: "unknown tool" };
+          let toolResult: unknown = { error: "unknown tool" };
           try { toolResult = await runTool(admin, tc.function.name, args, userData.user.id); }
           catch (e) { toolResult = { error: String(e) }; }
           convo.push({
@@ -148,7 +148,7 @@ Deno.serve(async (req) => {
   }
 });
 
-async function runTool(admin: any, name: string, args: any, actorId: string) {
+async function runTool(admin: unknown, name: string, args: unknown, actorId: string) {
   switch (name) {
     case "outreach_queue_status": {
       const totals = await admin.from("contacts")
@@ -196,7 +196,7 @@ async function runTool(admin: any, name: string, args: any, actorId: string) {
       const { data: contacts } = await admin.from("contacts")
         .select("id, email, full_name, company_id, companies(name)").in("id", ids);
       let sent = 0; let skipped = 0;
-      const logs: any[] = [];
+      const logs: unknown[] = [];
       for (const c of contacts ?? []) {
         if (!c.email) { skipped++; continue; }
         try {
@@ -234,3 +234,5 @@ async function runTool(admin: any, name: string, args: any, actorId: string) {
     default: return { error: `unknown tool: ${name}` };
   }
 }
+
+

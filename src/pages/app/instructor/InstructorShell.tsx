@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { Navigate, Link, useSearchParams } from "react-router-dom";
 import {
   GraduationCap,
@@ -87,7 +87,7 @@ export default function InstructorShell() {
       >
         <div className="flex items-center gap-2.5">
           <InlineSpinner size="sm" />
-          <span>Loading workspace…</span>
+          <span>Loading workspaceâ€¦</span>
         </div>
       </div>
     );
@@ -108,7 +108,7 @@ export default function InstructorShell() {
           <div className="space-y-1 block">
             <p className="text-xs font-bold text-foreground uppercase tracking-wide">No active courses yet</p>
             <p className="text-[11px] font-semibold text-muted-foreground/60 leading-normal">
-              You don't have any active instructor courses or authoring assignments yet.
+              You don't have unknown active instructor courses or authoring assignments yet.
             </p>
           </div>
           <Button
@@ -320,9 +320,11 @@ function CreditsPanel({ credits }: CreditsProps) {
 
       <footer className="px-1 select-none pointer-events-none block leading-none w-full shrink-0 pt-1">
         <p className="font-mono text-[9px] font-bold uppercase tracking-wide text-muted-foreground/30 leading-normal tabular-nums">
-          AI credit usage: 0.3 cr per quiz question · 0.5 cr per scenario · 0.2 cr per rewrite · 0.1 cr per translation.
+          AI credit usage: 0.3 cr per quiz question Â· 0.5 cr per scenario Â· 0.2 cr per rewrite Â· 0.1 cr per translation.
         </p>
       </footer>
     </div>
   );
 }
+
+

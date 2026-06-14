@@ -1,5 +1,5 @@
-/**
- * KPI Strip Dashboard Component (Phase 10i — Hardened).
+﻿/**
+ * KPI Strip Dashboard Component (Phase 10i â€” Hardened).
  * Presents macro course metrics and tracking metrics layout arrays for admin panels.
  * Fully aligned with 2024 Highly Professional SaaS UI guidelines.
  */
@@ -58,3 +58,4 @@ export default function KPIStrip({ totalEnrollments, activeLast7d, completionRat
     </div>
   );
 }
+

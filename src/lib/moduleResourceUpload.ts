@@ -1,4 +1,4 @@
-import type { Database } from "@/integrations/supabase/types";
+﻿import type { Database } from "@/integrations/supabase/types";
 import { uploadModuleResource } from "@/domains/learning/repo/learningRepo";
 
 type ResourceType = Database["public"]["Enums"]["resource_type"];
@@ -47,7 +47,7 @@ export function detectResourceType(file: File): ResourceType {
   ) {
     return "slides";
   }
-  // Catch-all for docs / other formats — slides is the most permissive bucket.
+  // Catch-all for docs / other formats â€” slides is the most permissive bucket.
   return "slides";
 }
 
@@ -55,3 +55,4 @@ export function detectResourceType(file: File): ResourceType {
 export function titleFromFilename(name: string): string {
   return name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").trim();
 }
+

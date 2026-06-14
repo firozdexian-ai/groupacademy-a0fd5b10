@@ -1,4 +1,4 @@
-// Phase 4.5 — Daily sweep: overdue + due-soon (hardened)
+﻿//  â€” Daily sweep: overdue + due-soon (hardened)
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -9,7 +9,7 @@ const corsHeaders = {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
-  // 1. CRON_SECRET gate — block public/anonymous invocations
+  // 1. CRON_SECRET gate â€” block public/anonymous invocations
   const expected = Deno.env.get("CRON_SECRET");
   if (!expected) {
     return json({ error: "CRON_SECRET not configured" }, 500);
@@ -43,7 +43,7 @@ Deno.serve(async (req) => {
 
     if (overdueErr) throw new Error(`overdue update: ${overdueErr.message}`);
 
-    // 3. Due soon (next 72h) — skip rows already notified within dedup window
+    // 3. Due soon (next 72h) â€” skip rows already notified within dedup window
     const { data: dueSoon, error: dueSoonErr } = await supabase
       .from("learning_track_assignments")
       .select("id, user_id, due_at, last_due_soon_notified_at")
@@ -83,7 +83,7 @@ Deno.serve(async (req) => {
     };
     console.log("[cron-track-sweeps] summary:", JSON.stringify(summary));
     return json(summary, 200);
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[cron-track-sweeps] FATAL:", err?.message || err);
     return json({ ok: false, error: err?.message || String(err) }, 500);
   }
@@ -122,3 +122,5 @@ async function fireNotify(assignment_id: string, kind: string) {
     throw new Error(`notify-track-event ${kind} ${assignment_id} -> ${res.status}`);
   }
 }
+
+

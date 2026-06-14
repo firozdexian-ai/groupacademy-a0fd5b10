@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+﻿import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   listIrPipelineInvestors,
   updateIrInvestorStage,
@@ -138,3 +138,4 @@ export function useIRPipeline() {
 
   return { ...query, moveCard, updateInvestor };
 }
+

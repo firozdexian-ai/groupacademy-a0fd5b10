@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Gigs domain repository.
  *
  * Phase 10b: typed wrappers around `supabase.from(...)` for gigs-owned
@@ -15,9 +15,9 @@
  */
 import { supabase } from "@/integrations/supabase/client";
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Project Room (talent)
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function getProjectRoomBundle(projectId: string) {
   const [pRes, mRes, eRes, msgRes] = await Promise.all([
@@ -53,9 +53,9 @@ export async function insertProjectMessage(input: {
   if (error) throw error;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Reviewer Cockpit (talent)
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function getReviewerCockpit(talentId: string) {
   const [p, a] = await Promise.all([
@@ -69,9 +69,9 @@ export async function getReviewerCockpit(talentId: string) {
   return { profile: p.data, assignments: a.data ?? [] };
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Reviewer Program (admin)
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function getReviewerProgramBundle() {
   const [r, d, l] = await Promise.all([
@@ -95,9 +95,9 @@ export async function updateReviewerStatus(id: string, status: string): Promise<
   if (error) throw error;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Gig Matchmaker (admin)
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function getGigMatchFunnel() {
   const { data, error } = await supabase.from("gig_matches").select("status, gig_kind, score");
@@ -112,9 +112,9 @@ export async function countGigMatchDigests(): Promise<number> {
   return count ?? 0;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Gig Graph (admin) — multi-table master fetch + generic mutators
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Gig Graph (admin) â€” multi-table master fetch + generic mutators
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function getGigGraphSlice() {
   const [gigsRes, marketRes, courseRes, subRes, verifRes, walletRes] = await Promise.all([
@@ -178,22 +178,22 @@ export async function upsertGigGraphRow(
   payload: Record<string, unknown> & { id?: string },
 ): Promise<void> {
   if (payload.id) {
-    const { error } = await supabase.from(table as any).update(payload).eq("id", payload.id);
+    const { error } = await supabase.from(table as unknown).update(payload).eq("id", payload.id);
     if (error) throw error;
   } else {
-    const { error } = await supabase.from(table as any).insert(payload);
+    const { error } = await supabase.from(table as unknown).insert(payload);
     if (error) throw error;
   }
 }
 
 export async function deleteGigGraphRow(table: GigGraphTable, id: string): Promise<void> {
-  const { error } = await supabase.from(table as any).delete().eq("id", id);
+  const { error } = await supabase.from(table as unknown).delete().eq("id", id);
   if (error) throw error;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Talent submissions surface (MySubmissions + JobSharing flow)
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function getMyGigSubmissions(talentId: string) {
   const { data, error } = await supabase
@@ -215,14 +215,14 @@ export async function insertGigSubmission(payload: {
 }): Promise<{ id: string }> {
   const { data, error } = await supabase
     .from("gig_submissions")
-    .insert(payload as any)
+    .insert(payload as unknown)
     .select("id")
     .single();
   if (error) throw error;
   return data as { id: string };
 }
 
-// ─── Phase 10j.5k8: recommended bidders for a gig ─────────────────────────
+// â”€â”€â”€ Phase 10j.5k8: recommended bidders for a gig â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function listRecommendedGigBidders(
   gigId: string,
   gigKind: "marketplace" | "quick" = "marketplace",
@@ -239,11 +239,11 @@ export async function listRecommendedGigBidders(
     .order("score", { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 
-// ─── Phase 10j.5e: marketplace gigs (talent-facing) ───────────────────────
+// â”€â”€â”€ Phase 10j.5e: marketplace gigs (talent-facing) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getMarketplaceGigById(id: string) {
   const { data, error } = await supabase
     .from("marketplace_gigs")
@@ -251,7 +251,7 @@ export async function getMarketplaceGigById(id: string) {
     .eq("id", id)
     .maybeSingle();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function getMyMarketplaceBidForGig(gigId: string, talentId: string) {
@@ -261,7 +261,7 @@ export async function getMyMarketplaceBidForGig(gigId: string, talentId: string)
     .eq("gig_id", gigId)
     .eq("talent_id", talentId)
     .maybeSingle();
-  return (data as any) ?? null;
+  return (data as unknown) ?? null;
 }
 
 export async function listMarketplaceReviewsForGig(gigId: string) {
@@ -270,7 +270,7 @@ export async function listMarketplaceReviewsForGig(gigId: string) {
     .select("id, rating, comment, created_at, marketplace_contracts!inner(gig_id)")
     .eq("marketplace_contracts.gig_id", gigId)
     .order("created_at", { ascending: false });
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
 export async function insertMarketplaceBid(payload: {
@@ -279,8 +279,8 @@ export async function insertMarketplaceBid(payload: {
   bid_amount: number;
   cover_letter: string;
   estimated_days: number | null;
-}): Promise<{ error: any }> {
-  const { error } = await supabase.from("marketplace_bids").insert(payload as any);
+}): Promise<{ error: unknown }> {
+  const { error } = await supabase.from("marketplace_bids").insert(payload as unknown);
   return { error };
 }
 
@@ -289,53 +289,53 @@ export async function insertMarketplaceDeliverable(payload: {
   title: string;
   description: string | null;
   file_url: string | null;
-}): Promise<{ error: any }> {
-  const { error } = await supabase.from("marketplace_deliverables").insert(payload as any);
+}): Promise<{ error: unknown }> {
+  const { error } = await supabase.from("marketplace_deliverables").insert(payload as unknown);
   return { error };
 }
 
-// ─── Phase 10j.6a: gigs/projects RPC helpers ───────────────────────────────
+// â”€â”€â”€ Phase 10j.6a: gigs/projects RPC helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getCompanyProjectPipeline(_company_id: string) {
-  const { data, error } = await (supabase as any).rpc("get_company_project_pipeline", { _company_id });
+  const { data, error } = await (supabase as unknown).rpc("get_company_project_pipeline", { _company_id });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-export async function createGigProject(_payload: Record<string, any>) {
-  const { data, error } = await (supabase as any).rpc("create_gig_project", { _payload });
+export async function createGigProject(_payload: Record<string, unknown>) {
+  const { data, error } = await (supabase as unknown).rpc("create_gig_project", { _payload });
   if (error) throw error;
   return data;
 }
 
-export async function addProjectMilestone(_project_id: string, _payload: Record<string, any>) {
-  const { data, error } = await (supabase as any).rpc("add_project_milestone", { _project_id, _payload });
+export async function addProjectMilestone(_project_id: string, _payload: Record<string, unknown>) {
+  const { data, error } = await (supabase as unknown).rpc("add_project_milestone", { _project_id, _payload });
   if (error) throw error;
   return data;
 }
 
 export async function fundGigProject(_project_id: string): Promise<void> {
-  const { error } = await (supabase as any).rpc("fund_gig_project", { _project_id });
+  const { error } = await (supabase as unknown).rpc("fund_gig_project", { _project_id });
   if (error) throw error;
 }
 
 export async function getEmployerGigBids(p_gig_id: string) {
-  const { data, error } = await (supabase as any).rpc("get_employer_gig_bids", { p_gig_id });
+  const { data, error } = await (supabase as unknown).rpc("get_employer_gig_bids", { p_gig_id });
   if (error) throw error;
-  return (data ?? {}) as any;
+  return (data ?? {}) as unknown;
 }
 
 export async function acceptGigBid(p_bid_id: string, p_company_id: string) {
-  const { data, error } = await (supabase as any).rpc("accept_gig_bid", { p_bid_id, p_company_id });
+  const { data, error } = await (supabase as unknown).rpc("accept_gig_bid", { p_bid_id, p_company_id });
   if (error) throw error;
   return data;
 }
 
 export async function rejectMarketplaceBid(id: string): Promise<void> {
-  const { error } = await (supabase as any).from("marketplace_bids").update({ status: "rejected" }).eq("id", id);
+  const { error } = await (supabase as unknown).from("marketplace_bids").update({ status: "rejected" }).eq("id", id);
   if (error) throw error;
 }
 
-// ─── Phase 10j.5h2: gig match RPC wrappers ────────────────────────────────
+// â”€â”€â”€ Phase 10j.5h2: gig match RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function recordMatchEvent(matchId: string, event: "view" | "dismiss" | "click" | "accept" | "reject"): Promise<void> {
   const { error } = await supabase.rpc("record_match_event", { _match_id: matchId, _event: event });
   if (error) throw error;
@@ -344,10 +344,10 @@ export async function recordMatchEvent(matchId: string, event: "view" | "dismiss
 export async function matchGigsForTalent(talentId: string, limit = 20) {
   const { data, error } = await supabase.rpc("match_gigs_for_talent", { _talent_id: talentId, _limit: limit });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
-// ─── Phase 10j.5h5: ranked/hub RPC wrappers ───────────────────────────────
+// â”€â”€â”€ Phase 10j.5h5: ranked/hub RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getRankedGigsForTalent(args: {
   talentId: string | null;
   cursor: number | null;
@@ -359,20 +359,20 @@ export async function getRankedGigsForTalent(args: {
     _limit: args.limit,
   });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function getGigsHubDashboard() {
   const { data, error } = await supabase.rpc("get_gigs_hub_dashboard");
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
-// ─── Phase 10j.5h8: verification, matches, disputes RPC wrappers ──────────
+// â”€â”€â”€ Phase 10j.5h8: verification, matches, disputes RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function openVerificationAppeal(args: {
   verificationId: string;
   reason: string;
-  evidence?: any[];
+  evidence?: unknown[];
 }) {
   const { error } = await supabase.rpc("open_verification_appeal", {
     _verification_id: args.verificationId,
@@ -403,7 +403,7 @@ export async function openGigDispute(args: {
   openedByRole: string;
   reasonCode: string;
   narrative: string;
-  evidence?: any[];
+  evidence?: unknown[];
 }) {
   const { error } = await supabase.rpc("open_gig_dispute", {
     _gig_id: args.gigId,
@@ -426,7 +426,7 @@ export async function resolveDispute(args: { disputeId: string; verdict: string;
   if (error) throw error;
 }
 
-// ─── Phase 10j.5h9 ────────────────────────────────────────────────────────
+// â”€â”€â”€ Phase 10j.5h9 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function submitCalibrationAttempt(args: { passed: boolean }) {
   const { error } = await supabase.rpc("submit_calibration_attempt", {
     _score: args.passed ? 85 : 60,
@@ -435,7 +435,7 @@ export async function submitCalibrationAttempt(args: { passed: boolean }) {
   if (error) throw error;
 }
 
-export async function claimReviewAssignment<T = any>(assignmentId: string): Promise<T> {
+export async function claimReviewAssignment<T = unknown>(assignmentId: string): Promise<T> {
   const { data, error } = await supabase.rpc("claim_review_assignment", { _assignment_id: assignmentId });
   if (error) throw error;
   return data as T;
@@ -451,7 +451,7 @@ export async function submitReviewVerdict(args: {
   const { error } = await supabase.rpc("submit_review_verdict", {
     _assignment_id: args.assignmentId,
     _verdict: args.verdict,
-    _payload: (args.payload ?? {}) as any,
+    _payload: (args.payload ?? {}) as unknown,
     _confidence: args.confidence,
     _rationale: args.rationale,
   });
@@ -464,7 +464,7 @@ export async function submitMilestoneDeliverables(args: {
 }) {
   const { error } = await supabase.rpc("submit_milestone_deliverables", {
     _milestone_id: args.milestoneId,
-    _payload: args.payload as any,
+    _payload: args.payload as unknown,
   });
   if (error) throw error;
 }
@@ -475,14 +475,14 @@ export async function publishGigFromDraft(draftId: string): Promise<string> {
   return data as string;
 }
 
-export async function getTalentProjectWorkload<T = any>(talentId: string): Promise<T[]> {
+export async function getTalentProjectWorkload<T = unknown>(talentId: string): Promise<T[]> {
   const { data, error } = await supabase.rpc("get_talent_project_workload", { _talent_id: talentId });
   if (error) throw error;
   return ((data as unknown) as T[]) ?? [];
 }
 
 // -----------------------------------------------------------------------------
-// Storage helpers (Phase 10j.5i) — gig-submissions (public)
+// Storage helpers (Phase 10j.5i) â€” gig-submissions (public)
 // -----------------------------------------------------------------------------
 
 export async function uploadGigSubmission(
@@ -507,7 +507,7 @@ export async function removeGigSubmissions(paths: string[]): Promise<void> {
   if (error) throw error;
 }
 
-// ─── Phase 10j.5k10: availability + open marketplace gigs + shareable content ────
+// â”€â”€â”€ Phase 10j.5k10: availability + open marketplace gigs + shareable content â”€â”€â”€â”€
 export async function getTalentAvailability(talentId: string) {
   const { data, error } = await supabase
     .from("talent_availability")
@@ -515,7 +515,7 @@ export async function getTalentAvailability(talentId: string) {
     .eq("talent_id", talentId)
     .maybeSingle();
   if (error) throw error;
-  return data as any;
+  return data as unknown;
 }
 
 export async function upsertTalentAvailability(payload: {
@@ -526,7 +526,7 @@ export async function upsertTalentAvailability(payload: {
 }): Promise<void> {
   const { error } = await supabase
     .from("talent_availability")
-    .upsert(payload as any, { onConflict: "talent_id" });
+    .upsert(payload as unknown, { onConflict: "talent_id" });
   if (error) throw error;
 }
 
@@ -538,7 +538,7 @@ export async function listMyOpenMarketplaceGigs(userId: string, limit = 20) {
     .in("status", ["pending", "approved", "active", "in_progress"])
     .order("created_at", { ascending: false })
     .limit(limit);
-  return (data ?? []) as any[];
+  return (data ?? []) as unknown[];
 }
 
 export async function listShareableActiveContent() {
@@ -550,9 +550,9 @@ export async function listShareableActiveContent() {
     .eq("is_published", true)
     .eq("is_ready", true)
     .eq("is_private", false)
-    .in("content_type", types as any);
+    .in("content_type", types as unknown);
   if (error) throw error;
-  return ((data as any[]) ?? []).filter((c: any) => {
+  return ((data as unknown[]) ?? []).filter((c: unknown) => {
     if (c.content_type === "recorded_course") return true;
     if (!c.event_date) return false;
     return c.event_date >= cutoff;
@@ -580,8 +580,8 @@ export async function getMyMarketplaceBidsAndContracts(talentId: string) {
       .order("created_at", { ascending: false }),
   ]);
   return {
-    bids: (bids.data as any[]) ?? [],
-    contracts: (contracts.data as any[]) ?? [],
+    bids: (bids.data as unknown[]) ?? [],
+    contracts: (contracts.data as unknown[]) ?? [],
   };
 }
 
@@ -600,7 +600,7 @@ export async function listMarketplaceGigsCatalog(category?: string | null) {
   if (category) q = q.eq("skill_category", category);
   const { data, error } = await q;
   if (error) throw error;
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
 /**
@@ -612,7 +612,7 @@ export async function listVisibleGigDisputes() {
     .select("id, gig_id, reason_code, status, final_verdict, created_at, opened_by_role")
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
 /**
@@ -626,7 +626,7 @@ export async function listVisibleVerificationAppeals() {
     )
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return (data as any[]) ?? [];
+  return (data as unknown[]) ?? [];
 }
 
 /**
@@ -639,6 +639,8 @@ export async function getTalentVerificationStatus(talentId: string): Promise<str
     .eq("id", talentId)
     .maybeSingle();
   if (error) throw error;
-  return ((data as any)?.verification_status as string) || "unverified";
+  return ((data as unknown)?.verification_status as string) || "unverified";
 }
+
+
 

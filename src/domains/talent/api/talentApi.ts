@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Typed wrappers around talent-domain edge functions (Phase 9a/9b + 9h).
  */
 import { supabase } from "@/integrations/supabase/client";
@@ -91,3 +91,4 @@ export async function analyzeCareerAssessment(
     data ?? {},
   );
 }
+

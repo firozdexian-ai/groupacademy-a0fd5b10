@@ -1,5 +1,5 @@
-/**
- * HR Taxonomy Registry — Phase HR-Z1 Hardened
+﻿/**
+ * HR Taxonomy Registry â€” Phase HR-Z1 Hardened
  * CTO Version: May 2026
  * Fixes: W6 (AlertDialog Integration), Institutional UI Parity
  */
@@ -37,7 +37,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@/lib/utils";
 
 // --- Generic Registry Shell ---
-function HrRegistryShell({ title, description, icon: Icon, data, isLoading, columns, renderRow, onAdd }: any) {
+function HrRegistryShell({ title, description, icon: Icon, data, isLoading, columns, renderRow, onAdd }: unknown) {
  return (
  <div className="space-y-10 animate-in fade-in duration-700 p-4 md:p-6 text-left">
  <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
@@ -115,7 +115,7 @@ export function HrVerticalsTab() {
  } = useHrGraph();
  const [open, setOpen] = useState(false);
  const [purgeTarget, setPurgeTarget] = useState<string | null>(null);
- const [draft, setDraft] = useState<any>({});
+ const [draft, setDraft] = useState<unknown>({});
 
  return (
  <>
@@ -130,10 +130,10 @@ export function HrVerticalsTab() {
  setDraft({});
  setOpen(true);
  }}
- renderRow={(row: any) => (
+ renderRow={(row: unknown) => (
  <TableRow key={row.id} className="group hover:bg-primary/[0.02]">
  <TableCell className="py-5 pl-8 font-semibold text-sm font-medium">{row.name}</TableCell>
- <TableCell className="text-xs text-muted-foreground">{row.description || "—"}</TableCell>
+ <TableCell className="text-xs text-muted-foreground">{row.description || "â€”"}</TableCell>
  <TableCell className="text-right pr-8">
  <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
  <Button
@@ -213,7 +213,7 @@ export function HrFunctionsTab() {
  } = useHrGraph();
  const [open, setOpen] = useState(false);
  const [purgeTarget, setPurgeTarget] = useState<string | null>(null);
- const [draft, setDraft] = useState<any>({});
+ const [draft, setDraft] = useState<unknown>({});
 
  return (
  <>
@@ -228,11 +228,11 @@ export function HrFunctionsTab() {
  setDraft({});
  setOpen(true);
  }}
- renderRow={(row: any) => (
+ renderRow={(row: unknown) => (
  <TableRow key={row.id} className="group hover:bg-primary/[0.02]">
  <TableCell className="py-5 pl-8 font-semibold text-sm font-medium">{row.name}</TableCell>
  <TableCell className="text-xs font-bold uppercase text-muted-foreground">
- {hrGraphQuery.data?.verticals.find((v) => v.id === row.vertical_id)?.name || "—"}
+ {hrGraphQuery.data?.verticals.find((v) => v.id === row.vertical_id)?.name || "â€”"}
  </TableCell>
  <TableCell className="text-right pr-8">
  <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
@@ -315,7 +315,7 @@ export function HrTeamsTab() {
  } = useHrGraph();
  const [open, setOpen] = useState(false);
  const [purgeTarget, setPurgeTarget] = useState<string | null>(null);
- const [draft, setDraft] = useState<any>({});
+ const [draft, setDraft] = useState<unknown>({});
 
  return (
  <>
@@ -330,11 +330,11 @@ export function HrTeamsTab() {
  setDraft({});
  setOpen(true);
  }}
- renderRow={(row: any) => (
+ renderRow={(row: unknown) => (
  <TableRow key={row.id} className="group hover:bg-primary/[0.02]">
  <TableCell className="py-5 pl-8 font-semibold text-sm font-medium">{row.name}</TableCell>
  <TableCell className="text-xs font-bold uppercase text-muted-foreground">
- {hrGraphQuery.data?.functions.find((f) => f.id === row.function_id)?.name || "—"}
+ {hrGraphQuery.data?.functions.find((f) => f.id === row.function_id)?.name || "â€”"}
  </TableCell>
  <TableCell>
  <span className="font-mono text-[10px] bg-primary/10 text-primary px-2 py-1 rounded-md">
@@ -422,7 +422,7 @@ export function HrGradesTab() {
  } = useHrGraph();
  const [open, setOpen] = useState(false);
  const [purgeTarget, setPurgeTarget] = useState<string | null>(null);
- const [draft, setDraft] = useState<any>({});
+ const [draft, setDraft] = useState<unknown>({});
 
  return (
  <>
@@ -437,7 +437,7 @@ export function HrGradesTab() {
  setDraft({ level: 1 });
  setOpen(true);
  }}
- renderRow={(row: any) => (
+ renderRow={(row: unknown) => (
  <TableRow key={row.id} className="group hover:bg-primary/[0.02]">
  <TableCell className="py-5 pl-8">
  <span className="font-semibold text-muted-foreground/50 bg-muted/20 px-3 py-1 rounded-lg">
@@ -519,7 +519,7 @@ export function HrGradesTab() {
 }
 
 // --- Shared Purge Protocol ---
-function PurgeAlert({ targetId, onOpenChange, onConfirm }: any) {
+function PurgeAlert({ targetId, onOpenChange, onConfirm }: unknown) {
  return (
  <AlertDialog open={!!targetId} onOpenChange={(open) => !open && onOpenChange(null)}>
  <AlertDialogContent className="rounded-2xl border-4 bg-background">
@@ -550,3 +550,5 @@ function PurgeAlert({ targetId, onOpenChange, onConfirm }: any) {
  </AlertDialog>
  );
 }
+
+

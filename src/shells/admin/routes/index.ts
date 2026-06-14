@@ -1,4 +1,4 @@
-import type React from "react";
+﻿import type React from "react";
 import * as overview from "./overview";
 import * as talent from "./talent";
 import * as companies from "./companies";
@@ -17,11 +17,11 @@ import * as gtm from "./gtm";
 import * as misc from "./misc";
 
 /**
- * Group Academy — Administrative Core Tab Registry Matrix
+ * Group Academy â€” Administrative Core Tab Registry Matrix
  * Merges domain-specific dashboards into a unified lookup map driven by URL tab parameters.
  * Maintains chronological execution layers and configuration parameters safely.
  */
-export const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
+export const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<unknown>> = {
   ...overview.ROUTES,
   ...talent.ROUTES,
   ...companies.ROUTES,
@@ -58,3 +58,5 @@ export const TAB_TITLES: Record<string, string> = {
   ...gtm.TITLES,
   ...misc.TITLES,
 };
+
+

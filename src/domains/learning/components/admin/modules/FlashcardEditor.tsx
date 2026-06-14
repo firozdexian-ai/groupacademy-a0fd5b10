@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+﻿import { useState, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,7 +31,7 @@ import { cn } from "@/lib/utils";
 /**
  * Platform Logic: Knowledge Ingestion Terminal (Flashcard Editor)
  * High-fidelity orchestrator for artifact synthesis and logic-pair validation.
- * 2026 Standard: Executive Logic geometry with reinforced 3D kinetic preview.
+ * 2026 Standard:  geometry with reinforced 3D kinetic preview.
  */
 
 interface Flashcard {
@@ -109,7 +109,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
       const parsed = JSON.parse(jsonInput);
       if (!Array.isArray(parsed)) throw new Error("Registry Fault: Expected Array format");
 
-      const newCards: Flashcard[] = parsed.map((item: any) => ({
+      const newCards: Flashcard[] = parsed.map((item: unknown) => ({
         id: crypto.randomUUID(),
         front: item.front || item.Front || item.question || item.term || "",
         back: item.back || item.Back || item.answer || item.definition || "",
@@ -118,7 +118,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
       updateRegistry(newCards);
       setActiveTab("visual");
       toast.success(`Imported ${newCards.length} cards`);
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err.message || "Invalid Logic Schema");
     }
   };
@@ -134,7 +134,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
 
   return (
     <div className="space-y-6 animate-in fade-in duration-700">
-      {/* Executive HUD Header */}
+      {/* Executive dashboard Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-muted/20 p-6 rounded-2xl border border-border/60">
         <div className="flex items-center gap-4">
           <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border-2 border-primary/20 shadow-inner">
@@ -156,7 +156,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
         </Button>
       </div>
 
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full">
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as unknown)} className="w-full">
         <TabsList className="bg-muted/30 rounded-[20px] border border-border/60 p-1.5 mb-8 w-full max-w-md">
           <TabsTrigger
             value="visual"
@@ -271,7 +271,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
             <CardHeader className="p-8 border-b border-border/10 bg-muted/10 flex flex-row items-center justify-between">
               <div>
                 <CardTitle className="text-xl font-black uppercase tracking-tighter italic">
-                  Payload Synthesis
+                  Payload summary
                 </CardTitle>
                 <CardDescription className="text-[10px] font-bold">
                   Artifact raw logic schema
@@ -425,3 +425,5 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
     </div>
   );
 }
+
+

@@ -20,7 +20,7 @@ export function isValidUUID(str: string | null | undefined): boolean {
  */
 export function formatWhatsAppLink(phone: string | null): string | null {
   if (!phone) return null;
-  let cleaned = phone.replace(/[\s\-\(\)\+]/g, "");
+  const cleaned = phone.replace(/[\s\-()+]/g, "");
   if (cleaned.startsWith("880")) {
     return `https://wa.me/${cleaned}`;
   } else if (cleaned.startsWith("0")) {
@@ -45,3 +45,4 @@ export function extractFirstName(fullName: string): string {
   }
   return parts[0];
 }
+

@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Loader2, Sparkles, Check } from "lucide-react";
@@ -23,7 +23,7 @@ export function AICoverImageSheet({ open, onOpenChange, context, onApply }: Prop
  try {
  const res = await callContentAI<string[]>("image_prompt", context);
  setPrompts(res);
- } catch (e: any) { toast.error(e.message || "Failed"); }
+ } catch (e: unknown) { toast.error(e.message || "Failed"); }
  finally { setGenerating(false); }
  };
 
@@ -35,7 +35,7 @@ export function AICoverImageSheet({ open, onOpenChange, context, onApply }: Prop
  toast.success("Cover image applied");
  onOpenChange(false);
  setPrompts(null);
- } catch (e: any) { toast.error(e.message || "Failed"); }
+ } catch (e: unknown) { toast.error(e.message || "Failed"); }
  finally { setPicking(null); }
  };
 
@@ -64,3 +64,5 @@ export function AICoverImageSheet({ open, onOpenChange, context, onApply }: Prop
  </Sheet>
  );
 }
+
+

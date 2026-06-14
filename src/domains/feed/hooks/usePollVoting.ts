@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from "react";
+﻿import { useCallback, useMemo, useRef } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { insertPollVote } from "@/domains/feed/repo/feedRepo";
 import { useTalent } from "@/hooks/useTalent";
@@ -41,7 +41,7 @@ export function usePollVoting(postId: string, options: { id: string; text: strin
 
   // Calculate cumulative interaction statistics
   const totalVotes = useMemo(
-    () => Object.values(voteCounts).reduce((sum: number, current: any) => sum + Number(current || 0), 0),
+    () => Object.values(voteCounts).reduce((sum: number, current: unknown) => sum + Number(current || 0), 0),
     [voteCounts],
   );
 
@@ -75,7 +75,7 @@ export function usePollVoting(postId: string, options: { id: string; text: strin
     onSuccess: () => {
       toast({ title: "Vote recorded", description: "Your vote has been recorded." });
     },
-    onError: (err: any, optionId) => {
+    onError: (err: unknown, optionId) => {
       if (!talent?.id) return;
 
       // Log transaction execution failures to operational diagnostic panels
@@ -136,3 +136,4 @@ export function usePollVoting(postId: string, options: { id: string; text: strin
     isLoading: mutation.isPending,
   };
 }
+

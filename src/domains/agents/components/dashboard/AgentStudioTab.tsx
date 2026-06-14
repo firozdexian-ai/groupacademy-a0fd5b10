@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import {
   getStudioBundle,
   updateAiAgent,
@@ -84,9 +84,9 @@ interface KnowledgeSource {
 
 const AUDIENCES = ["talent", "company", "internal", "public"];
 const LEVELS = [
-  { v: 1, label: "Tier 1 — Free / Platform Concierge" },
-  { v: 2, label: "Tier 2 — Specialist / Premium Advisor" },
-  { v: 3, label: "Tier 3 — Expert / Executive Operator" },
+  { v: 1, label: "Tier 1 â€” Free / Platform Concierge" },
+  { v: 2, label: "Tier 2 â€” Specialist / Premium Advisor" },
+  { v: 3, label: "Tier 3 â€” Expert / Executive Operator" },
 ];
 const CANVAS_MODES = ["chat", "split", "fullscreen"];
 
@@ -105,8 +105,8 @@ export function AgentStudio() {
   const load = async () => {
     setLoading(true);
     const { agents: a, tools: t } = await getStudioBundle();
-    setAgents((a as any) ?? []);
-    setTools((t as any) ?? []);
+    setAgents((a as unknown) ?? []);
+    setTools((t as unknown) ?? []);
     setLoading(false);
   };
 
@@ -115,7 +115,7 @@ export function AgentStudio() {
     setSaving(true);
     try {
       await updateAiAgent(selected.id, patch);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setSaving(false);
       toast.error(error.message || "Something went wrong while updating configurations.");
       return;
@@ -148,7 +148,7 @@ export function AgentStudio() {
         allowed_tools: [],
         canvas_mode: "chat",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error(error.message || "Could not initialize agent instance.");
       return;
     }
@@ -165,7 +165,7 @@ export function AgentStudio() {
       toast.success("Agent instance deactivated and archived safely.");
       await load();
       setSelected(null);
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error(error.message || "Failed to archive agent workspace.");
     }
   };
@@ -582,7 +582,7 @@ function AgentDetailPanel({
               <div>
                 <h3 className="text-sm font-semibold text-amber-700">Monetization & Credit Settings</h3>
                 <p className="text-xs text-muted-foreground">
-                  Set connection boundaries and message token deduction values. 1 credit = ৳2 BDT.
+                  Set connection boundaries and message token deduction values. 1 credit = à§³2 BDT.
                 </p>
               </div>
             </div>
@@ -646,7 +646,7 @@ function AgentDetailPanel({
 
           {/* Brain Tab */}
           <TabsContent value="brain" className="p-6 outline-none">
-            <AgentBrainPanel agent={agent as any} onSaved={() => onSave({})} />
+            <AgentBrainPanel agent={agent as unknown} onSaved={() => onSave({})} />
           </TabsContent>
         </Tabs>
       </CardContent>
@@ -675,7 +675,7 @@ function KnowledgePanel({ agentId }: { agentId: string }) {
     setLoading(true);
     try {
       const data = await listAgentKnowledgeSources(agentId);
-      setSources(data as any);
+      setSources(data as unknown);
     } finally {
       setLoading(false);
     }
@@ -696,7 +696,7 @@ function KnowledgePanel({ agentId }: { agentId: string }) {
       setContent("");
       setUrl("");
       await load();
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(e.message ?? "Knowledge base ingestion failed. Try again.");
     } finally {
       setIngesting(false);
@@ -708,7 +708,7 @@ function KnowledgePanel({ agentId }: { agentId: string }) {
       await deleteAgentKnowledgeSource(id);
       toast.success("Knowledge reference source deleted successfully.");
       await load();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error(error.message || "Failed to clear knowledge reference.");
     }
   };
@@ -875,7 +875,7 @@ function CreateAgentDialog({
 }: {
   open: boolean;
   onClose: () => void;
-  onCreate: (form: any) => Promise<void>;
+  onCreate: (form: unknown) => Promise<void>;
 }) {
   const [form, setForm] = useState({
     agent_key: "",
@@ -1025,3 +1025,5 @@ function CreateAgentDialog({
     </Dialog>
   );
 }
+
+

@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Loader2, MessageSquare, ShieldAlert, Zap } from "lucide-react";
 import { AgentChatDialog } from "@/domains/agents/components/chat/AgentChatDialog";
@@ -24,7 +24,7 @@ interface AgentMetadata {
 /**
  * GroUp Academy: High-Fidelity Neural Interface Hub (AgentChat)
  * Hardened responsive communication node isolating asynchronous sessions and protecting runtime state loops from mounting thrash.
- * Version: Launch Candidate · Phase Z1 Production Architecture Locked
+ * Version: Launch Candidate Â· Phase Z1 Production Architecture Locked
  */
 export default function AgentChat() {
  const { agentKey: unverifiedAgentKeyStr } = useParams<{ agentKey: string }>();
@@ -248,3 +248,4 @@ export default function AgentChat() {
  </div>
  );
 }
+

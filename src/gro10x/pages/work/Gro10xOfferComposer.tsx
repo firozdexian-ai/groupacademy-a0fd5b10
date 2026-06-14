@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getApplicationOfferContext } from "@/domains/jobs/repo/jobsRepo";
 import { useCreateOffer, useSendOffer } from "@/hooks/useOffers";
@@ -32,7 +32,7 @@ export default function Gro10xOfferComposer() {
 
   useEffect(() => {
     (async () => {
-      const a: any = await getApplicationOfferContext(applicationId!);
+      const a: unknown = await getApplicationOfferContext(applicationId!);
       if (a) {
         setCompanyId(a.jobs.company_id);
         setTalentId(a.talent_id);
@@ -62,7 +62,7 @@ export default function Gro10xOfferComposer() {
         benefits: form.benefits || null,
         custom_note: form.custom_note || null,
         expires_at: form.expires_at ? new Date(form.expires_at).toISOString() : null,
-      } as any);
+      } as unknown);
       if (id && sendNow) await sendOfferM.mutateAsync({ offerId: id, applicationId: applicationId! });
       if (id) nav(`/gro10x/work/applications`);
     } finally {
@@ -112,3 +112,5 @@ export default function Gro10xOfferComposer() {
     </div>
   );
 }
+
+

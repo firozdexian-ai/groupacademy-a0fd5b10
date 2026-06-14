@@ -1,11 +1,11 @@
-import { useAbroadGraph } from "./hooks/useAbroadGraph";
+﻿import { useAbroadGraph } from "./hooks/useAbroadGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Languages, Activity, Mic, Users, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy — Career Abroad Management Dashboard: Language Lab Overview Terminal
+ * Group Academy â€” Career Abroad Management Dashboard: Language Lab Overview Terminal
  * Version: Phase 10i.2 Hardened (Production Candidate Edition)
  * Surface: /dashboard?tab=language-lab (Admin Command Center View)[cite: 2, 4]
  * Operations Mode: Automated Efficiency metric aggregator syncing real-time user ielts practice attempts[cite: 3].
@@ -136,3 +136,4 @@ function MetricTile({ label, value, icon: Icon, color, bg }: MetricTileProps) {
 }
 
 export default AbroadLanguageLabTab;
+

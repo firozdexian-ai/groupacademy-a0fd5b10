@@ -1,4 +1,4 @@
-/**
+﻿/**
  * GroUp Academy: Fiscal Credit Infrastructure
  * CTO Reference: Authoritative configuration for internal economy and service valuation.
  * Exchange Rate: 1 credit = $0.02 USD
@@ -93,28 +93,28 @@ export const CREDIT_CONFIG = {
 export type ServiceType = keyof typeof CREDIT_CONFIG.SERVICES;
 
 /**
- * HUD: Get the cost artifact for a service.
+ * dashboard: Get the cost artifact for a service.
  */
 export function getServiceCost(service: ServiceType): number {
   return CREDIT_CONFIG.SERVICES[service].cost;
 }
 
 /**
- * HUD: Convert credits to USD for checkout telemetry.
+ * dashboard: Convert credits to USD for checkout telemetry.
  */
 export function creditsToUSD(credits: number): number {
   return credits * CREDIT_CONFIG.CREDIT_TO_USD;
 }
 
 /**
- * HUD: Convert USD to credits (Floor-capped).
+ * dashboard: Convert USD to credits (Floor-capped).
  */
 export function usdToCredits(usd: number): number {
   return Math.floor(usd / CREDIT_CONFIG.CREDIT_TO_USD);
 }
 
 /**
- * HUD: Calculate course credit cost.
+ * dashboard: Calculate course credit cost.
  * Logic: Priority goes to explicit credit_cost, fallback to USD-ceiling.
  */
 export function getCourseCredits(priceUSD: number, creditCost?: number | null): number {
@@ -123,3 +123,4 @@ export function getCourseCredits(priceUSD: number, creditCost?: number | null): 
   }
   return Math.ceil(priceUSD / CREDIT_CONFIG.CREDIT_TO_USD);
 }
+

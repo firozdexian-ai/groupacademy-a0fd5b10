@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -104,7 +104,7 @@ type TabVariant = "for-you" | "tasks" | "course" | "client" | "work";
 const SKELETON_ROWS_ROSTER = [1, 2, 3, 4];
 
 /**
- * Gigs hub — talent landing page for finding and submitting gig work.
+ * Gigs hub â€” talent landing page for finding and submitting gig work.
  */
 export default function Gigs() {
  const navigateHook = useNavigate();
@@ -359,7 +359,7 @@ export default function Gigs() {
  />
  </div>
  <p className="font-mono text-[9px] font-bold uppercase tracking-tight text-muted-foreground/40 leading-none select-none pointer-events-none pl-0.5">
- Fast, one-tap tasks · Auto-reviewed · Instant credit payout
+ Fast, one-tap tasks Â· Auto-reviewed Â· Instant credit payout
  </p>
 
  <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 block w-full align-top">
@@ -372,13 +372,13 @@ export default function Gigs() {
  ))
  : gigsArray
  .filter(
- (g: any) => !debouncedSearchQueryStr || g.title.toLowerCase().includes(debouncedSearchQueryStr),
+ (g: unknown) => !debouncedSearchQueryStr || g.title.toLowerCase().includes(debouncedSearchQueryStr),
  )
- .map((gigItemRow: any) => (
+ .map((gigItemRow: unknown) => (
  <GigCard
  key={gigItemRow.id}
  gig={gigItemRow}
- userSubmissions={submissionCountsMap?.[gigItemRow.id] as any}
+ userSubmissions={submissionCountsMap?.[gigItemRow.id] as unknown}
  />
  ))}
  </div>
@@ -400,7 +400,7 @@ export default function Gigs() {
  />
  </div>
  <p className="font-mono text-[9px] font-bold uppercase tracking-tight text-muted-foreground/40 leading-none select-none pointer-events-none pl-0.5">
- Full courses to build · Multi-step subtasks · Higher payouts
+ Full courses to build Â· Multi-step subtasks Â· Higher payouts
  </p>
 
  <div className="space-y-2.5 block w-full align-top">
@@ -466,7 +466,7 @@ export default function Gigs() {
  <Coins className="h-3.5 w-3.5 stroke-[2] text-amber-500" />{" "}
  {projectItem.totalReward.toLocaleString()} total credits
  </span>
- <span className="opacity-30 block select-none shrink-0">•</span>
+ <span className="opacity-30 block select-none shrink-0">â€¢</span>
  <span className="text-primary tracking-normal font-semibold">
  Open to claim subtasks
  </span>
@@ -503,7 +503,7 @@ export default function Gigs() {
  />
  </div>
  <p className="font-mono text-[9px] font-bold uppercase tracking-tight text-muted-foreground/40 leading-none select-none pointer-events-none pl-0.5">
- Submit proposals · Negotiate scope · Set milestones and budgets
+ Submit proposals Â· Negotiate scope Â· Set milestones and budgets
  </p>
 
  <div className="space-y-2.5 block w-full align-top">
@@ -549,7 +549,7 @@ export default function Gigs() {
  <Coins className="h-3.5 w-3.5 stroke-[2] text-amber-500" />{" "}
  {marketItemNode.budget_amount.toLocaleString()} credits budget
  </span>
- <span className="opacity-30 block select-none shrink-0">•</span>
+ <span className="opacity-30 block select-none shrink-0">â€¢</span>
  <span className="flex items-center gap-1 shrink-0">
  <Send className="h-3.5 w-3.5 stroke-[2.2]" /> {marketItemNode.total_bids || 0} bids
  </span>
@@ -609,7 +609,7 @@ export default function Gigs() {
  ))
  ) : (
  <p className="font-sans text-xs italic font-medium text-muted-foreground/40 block py-1 px-0.5 select-none pointer-events-none">
- You haven't placed any bids yet.
+ You haven't placed unknown bids yet.
  </p>
  )}
  </div>
@@ -691,7 +691,7 @@ export default function Gigs() {
  <Textarea
  value={textDeliverableDescInput}
  onChange={(e) => setTextDeliverableDescInput(e.target.value)}
- placeholder="Add any notes about what's included, changes made, or things to review..."
+ placeholder="Add unknown notes about what's included, changes made, or things to review..."
  className="bg-background border border-border/60 focus-visible:ring-1 focus-visible:ring-ring rounded-lg text-xs sm:text-sm font-sans leading-relaxed resize-none p-2.5 min-h-[100px]"
  />
  </div>
@@ -733,3 +733,5 @@ export default function Gigs() {
  </div>
  );
 }
+
+

@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+﻿import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -93,7 +93,7 @@ export function UgcOverviewTab() {
                               Reported {report.scope?.replace("_", " ")}
                             </p>
                             <p className="text-xs text-muted-foreground truncate">Reason: {report.reason}</p>
-                            <code className="text-[10px] text-muted-foreground font-mono">ID: {report.scope_id?.substring(0, 8)}…</code>
+                            <code className="text-[10px] text-muted-foreground font-mono">ID: {report.scope_id?.substring(0, 8)}â€¦</code>
                           </div>
                         </div>
                         <div className="flex items-center gap-1 shrink-0">
@@ -160,3 +160,4 @@ function PulseBar({ label, value, max, color }: { label: string; value: number; 
 }
 
 export default UgcOverviewTab;
+

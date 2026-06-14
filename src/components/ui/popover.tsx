@@ -1,11 +1,11 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Authoritative Spatial Logic Disclosure Portal (Popover)
  * Hardened responsive popover terminal handling localized macro selection arrays and contextual state lookups.
- * Version: Launch Candidate · Phase Z0 Orientation & Layout Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Orientation & Layout Balance Lock
  */
 const Popover = PopoverPrimitive.Root;
 
@@ -34,3 +34,4 @@ const PopoverContent = React.forwardRef<
 PopoverContent.displayName = "Popover_Core_Content_Node";
 
 export { Popover, PopoverTrigger, PopoverContent };
+

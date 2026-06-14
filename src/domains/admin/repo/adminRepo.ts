@@ -1,5 +1,5 @@
-/**
- * Group Academy — Administrative Data Access Repository
+﻿/**
+ * Group Academy â€” Administrative Data Access Repository
  * Purpose: Unified generic CRUD wrapper providing a data routing layer over core taxonomy tables.
  * Isolates direct client invokes, enforces role verification gates, and links with telemetry frameworks.
  */
@@ -8,13 +8,13 @@ import { supabase } from "@/integrations/supabase/client";
 /**
  * Shared error handler and telemetry sink for tracking platform exceptions.
  */
-async function reportAdminAnomaly(action: string, error: any, context: Record<string, unknown> = {}) {
+async function reportAdminAnomaly(action: string, error: unknown, context: Record<string, unknown> = {}) {
   const errorMessage = error?.message || "Something went wrong. Our team has been notified.";
   console.error(`[Admin Infrastructure Error] Error during [${action}]: ${errorMessage}`, context);
 
   // Pipe directly into the immutable database events ledger for system auditing
   try {
-    await supabase.from("platform_events" as any).insert({
+    await supabase.from("platform_events" as unknown).insert({
       event_type: "admin_infrastructure_fault",
       severity: "error",
       payload: {
@@ -32,15 +32,15 @@ async function reportAdminAnomaly(action: string, error: any, context: Record<st
 /**
  * Fetches rows from a designated administrative database taxonomy table.
  */
-export async function listAdminTableRows(table: string): Promise<any[]> {
+export async function listAdminTableRows(table: string): Promise<unknown[]> {
   try {
     const { data, error } = await supabase
-      .from(table as any)
+      .from(table as unknown)
       .select("*")
       .order("created_at", { ascending: false });
 
     if (error) throw error;
-    return (data ?? []) as any[];
+    return (data ?? []) as unknown[];
   } catch (error) {
     await reportAdminAnomaly("listAdminTableRows", error, { table });
     throw new Error(`We couldn't load records from ${table}. Please refresh your dashboard.`);
@@ -55,10 +55,10 @@ export async function insertAdminTableRow(table: string, payload: Record<string,
     // Client-side authentication guard to guarantee session integrity before transport layers fire
     const {
       data: { user },
-    } = await supabase.auth.getUser();
+    } = await getCurrentUser();
     if (!user) throw new Error("Security check failed: You are unauthenticated.");
 
-    const { error } = await (supabase.from(table as any) as any).insert(payload);
+    const { error } = await (supabase.from(table as unknown) as unknown).insert(payload);
     if (error) throw error;
   } catch (error) {
     await reportAdminAnomaly("insertAdminTableRow", error, { table, payload });
@@ -73,11 +73,11 @@ export async function deleteAdminTableRow(table: string, id: string): Promise<vo
   try {
     const {
       data: { user },
-    } = await supabase.auth.getUser();
+    } = await getCurrentUser();
     if (!user) throw new Error("Security check failed: You are unauthenticated.");
 
     const { error } = await supabase
-      .from(table as any)
+      .from(table as unknown)
       .delete()
       .eq("id", id);
 
@@ -98,7 +98,7 @@ export async function userHasRole(userId: string, role: string): Promise<boolean
       .from("user_roles")
       .select("role")
       .eq("user_id", userId)
-      .eq("role", role as any)
+      .eq("role", role as unknown)
       .maybeSingle();
 
     if (error) throw error;
@@ -112,7 +112,7 @@ export async function userHasRole(userId: string, role: string): Promise<boolean
 /**
  * Identity email lookups utility used during system routing parameters.
  */
-export async function checkAuthEmail(lookup_email: string): Promise<any> {
+export async function checkAuthEmail(lookup_email: string): Promise<unknown> {
   try {
     const { data, error } = await supabase.rpc("check_auth_email", { lookup_email });
     if (error) throw error;
@@ -126,13 +126,16 @@ export async function checkAuthEmail(lookup_email: string): Promise<any> {
 /**
  * Consolidated command palette finder tool for B2B platform operations.
  */
-export async function gro10xGlobalSearch(_q: string, _limit = 6): Promise<any> {
+export async function gro10xGlobalSearch(_q: string, _limit = 6): Promise<unknown> {
   try {
     const { data, error } = await supabase.rpc("gro10x_global_search", { _q, _limit });
     if (error) throw error;
-    return (data ?? {}) as any;
+    return (data ?? {}) as unknown;
   } catch (error) {
     await reportAdminAnomaly("gro10xGlobalSearch", error, { searchQuery: _q });
     return { talents: [], companies: [], jobs: [] }; // Fallback to an empty schema structure cleanly
   }
 }
+
+
+

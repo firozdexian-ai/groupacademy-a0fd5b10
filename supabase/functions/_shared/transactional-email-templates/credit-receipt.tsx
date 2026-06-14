@@ -1,4 +1,4 @@
-import * as React from 'npm:react@18.3.1'
+﻿import * as React from 'npm:react@18.3.1'
 import {
   Body, Container, Head, Heading, Html, Preview, Text, Hr,
 } from 'npm:@react-email/components@0.0.22'
@@ -16,10 +16,10 @@ interface CreditReceiptProps {
 const CreditReceiptEmail = ({ name, amount, new_balance, transaction_type }: CreditReceiptProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Credit transaction receipt — {SITE_NAME}</Preview>
+    <Preview>Credit transaction receipt â€” {SITE_NAME}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Credit Transaction Receipt 🧾</Heading>
+        <Heading style={h1}>Credit Transaction Receipt ðŸ§¾</Heading>
         <Text style={text}>
           {name ? `Hi ${name},` : 'Hi there,'}
         </Text>
@@ -48,7 +48,7 @@ const CreditReceiptEmail = ({ name, amount, new_balance, transaction_type }: Cre
 
 export const template = {
   component: CreditReceiptEmail,
-  subject: 'Credit transaction receipt 🧾',
+  subject: 'Credit transaction receipt ðŸ§¾',
   displayName: 'Credit receipt',
   previewData: { name: 'Tanvir', amount: -25, new_balance: 225, transaction_type: 'Career Assessment' },
 } satisfies TemplateEntry
@@ -61,3 +61,4 @@ const receiptBox = { padding: '20px', backgroundColor: '#f8f9fa', borderRadius: 
 const receiptRow = { fontSize: '14px', color: '#333333', lineHeight: '1.6', margin: '0 0 8px' }
 const divider = { borderColor: '#e9ecef', margin: '12px 0' }
 const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+

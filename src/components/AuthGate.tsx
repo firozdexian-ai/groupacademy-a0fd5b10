@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+﻿import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,7 +20,7 @@ interface AuthGateProps {
 /**
  * GroUp Academy: Authoritative Session Access Control Gate (AuthGate)
  * Architectural security boundary intercepting untrusted path navigation and evaluating profile credentials.
- * Version: Launch Candidate · Phase Z0 Hardened Routing Guard Lock
+ * Version: Launch Candidate Â· Phase Z0 Hardened Routing Guard Lock
  */
 export function AuthGate({ children, redirectTo, message, authType = "ai" }: AuthGateProps) {
   const navigate = useNavigate();
@@ -68,7 +68,7 @@ export function AuthGate({ children, redirectTo, message, authType = "ai" }: Aut
       const {
         data: { session },
         error: auditError,
-      } = await supabase.auth.getSession();
+      } = await getCurrentSession();
       if (auditError) throw auditError;
 
       if (!session) {
@@ -79,7 +79,7 @@ export function AuthGate({ children, redirectTo, message, authType = "ai" }: Aut
           trackEvent("auth_gate_session_verified", { userId: session.user.id });
         }
       }
-    } catch (caughtPipelineExceptionErr: any) {
+    } catch (caughtPipelineExceptionErr: unknown) {
       const formattedExceptionMsgStr =
         caughtPipelineExceptionErr instanceof Error
           ? caughtPipelineExceptionErr.message
@@ -172,7 +172,7 @@ export function AuthGate({ children, redirectTo, message, authType = "ai" }: Aut
               Auditing Session Vector
             </span>
             <p className="text-xs font-semibold text-muted-foreground/60 block leading-none pt-1 tabular-nums italic">
-              {syncSeconds > 6 ? "Network congestion detected — processing records…" : "Verifying tracking parameters…"}
+              {syncSeconds > 6 ? "Network congestion detected â€” processing recordsâ€¦" : "Verifying tracking parametersâ€¦"}
             </p>
           </div>
         </div>
@@ -270,3 +270,6 @@ export function AuthGate({ children, redirectTo, message, authType = "ai" }: Aut
 }
 
 export default AuthGate;
+
+
+

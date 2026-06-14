@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -122,7 +122,7 @@ const Tile = React.memo(function Tile({ label, value, delta, icon, accent = "tex
 /**
  * GroUp Academy: Creator Engagement Telemetry Insights Panel (CreatorAnalytics)
  * Hardened statistics cockpit locking transaction metrics, calculating conversion funnels, and tracking performance indices safely.
- * Version: Launch Candidate · Phase Z1 Analytics Matrix Sealed
+ * Version: Launch Candidate Â· Phase Z1 Analytics Matrix Sealed
  */
 export default function CreatorAnalytics() {
  const { talent: talentProfileRecord } = useTalent();
@@ -174,7 +174,7 @@ export default function CreatorAnalytics() {
 
  return (
  <div className="min-h-screen bg-muted/10 pb-32 text-left antialiased block transform-gpu w-full">
- {/* HUD LEVEL 1: APPLICATION COCKPIT ACTION BAR HEADER */}
+ {/* dashboard LEVEL 1: APPLICATION COCKPIT ACTION BAR HEADER */}
  <div className="sticky top-0 z-50 bg-background/80 border-b border-border/40 select-none">
  <div className="max-w-2xl mx-auto px-4 h-12 flex items-center gap-3.5 leading-none w-full">
  <Button
@@ -196,7 +196,7 @@ export default function CreatorAnalytics() {
  </div>
 
  <div className="max-w-2xl mx-auto px-4 py-4 space-y-4 block w-full">
- {/* HUD LEVEL 2: CALENDAR TIMELINE SCOPE SELECT Tabs */}
+ {/* dashboard LEVEL 2: CALENDAR TIMELINE SCOPE SELECT Tabs */}
  <div className="w-full block shrink-0 select-none leading-none h-10">
  <Tabs
  value={String(activeDaysFilterInterval)}
@@ -220,7 +220,7 @@ export default function CreatorAnalytics() {
  </Tabs>
  </div>
 
- {/* HUD LEVEL 3: DISCRETE DATA INVENTORY CONDITIONAL CHECKPOINT BLOCKS */}
+ {/* dashboard LEVEL 3: DISCRETE DATA INVENTORY CONDITIONAL CHECKPOINT BLOCKS */}
  {isScorecardResolving ? (
  <div className="grid grid-cols-2 gap-2 select-none pointer-events-none w-full block">
  {SKELETON_ROWS_ROSTER.map((numericalIndex) => (
@@ -239,7 +239,7 @@ export default function CreatorAnalytics() {
  <div className="space-y-1 block max-w-xs mx-auto">
  <p className="text-xs font-bold text-foreground uppercase tracking-wide">No Posts Created</p>
  <p className="text-[11px] font-semibold text-muted-foreground/50 leading-normal">
- You haven't published any posts yet.
+ You haven't published unknown posts yet.
  </p>
  </div>
  <Button
@@ -254,7 +254,7 @@ export default function CreatorAnalytics() {
  </Card>
  ) : (
  <>
- {/* HUD LEVEL 4: SYSTEM DATA TILES PLACEMENT CONTAINER */}
+ {/* dashboard LEVEL 4: SYSTEM DATA TILES PLACEMENT CONTAINER */}
  <div className="grid grid-cols-2 gap-2 w-full block align-top">
  <Tile
  label="Impressions"
@@ -305,7 +305,7 @@ export default function CreatorAnalytics() {
  />
  </div>
 
- {/* HUD LEVEL 5: ENGAGEMENT PIPELINE CONVERSION FLOW CARD */}
+ {/* dashboard LEVEL 5: ENGAGEMENT PIPELINE CONVERSION FLOW CARD */}
  <Card className="rounded-lg border border-border/60 bg-card/40 shadow-none overflow-hidden block w-full">
  <CardContent className="p-4 space-y-4 block w-full leading-none">
  <h2 className="text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 select-none block leading-none pb-2 border-b border-border/5">
@@ -336,7 +336,7 @@ export default function CreatorAnalytics() {
  </CardContent>
  </Card>
 
- {/* HUD LEVEL 6: TOP LEVEL CONTENT PERFORMANCE MANIFEST TRACKS */}
+ {/* dashboard LEVEL 6: TOP LEVEL CONTENT PERFORMANCE MANIFEST TRACKS */}
  {resolvedTopPostsArray.length > 0 && (
  <Card className="rounded-lg border border-border/60 bg-card/40 shadow-none overflow-hidden block w-full">
  <CardContent className="p-3.5 space-y-3 block w-full leading-none">
@@ -352,7 +352,7 @@ export default function CreatorAnalytics() {
  className="block p-3 rounded-lg border border-border/50 bg-background/50 hover:border-border-foreground/10 transition-colors block w-full leading-none"
  >
  <p className="text-xs font-semibold text-foreground/80 leading-normal mb-2 select-text whitespace-normal break-words tracking-normal line-clamp-2 pr-1">
- {postRecordNode.snippet || "— No description provided —"}
+ {postRecordNode.snippet || "â€” No description provided â€”"}
  </p>
 
  {/* Analytical Sub-Metrics Label Rows */}
@@ -397,3 +397,5 @@ export default function CreatorAnalytics() {
 
 // Low-profile index tracking array initialization helper
 const SKELETON_ROWS_ROSTER = [1, 2, 3, 4, 5, 6];
+
+

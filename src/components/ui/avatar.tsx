@@ -1,11 +1,11 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Authoritative Profile Identity Asset Terminal (Avatar)
  * Hardened accessible component providing high-fidelity graphic avatars with graceful network loading fallbacks.
- * Version: Launch Candidate · Phase Z0 Architectural Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Architectural Balance Lock
  */
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
@@ -50,3 +50,4 @@ const AvatarFallback = React.forwardRef<
 AvatarFallback.displayName = "Avatar_Core_Fallback_Node";
 
 export { Avatar, AvatarImage, AvatarFallback };
+

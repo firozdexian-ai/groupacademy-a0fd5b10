@@ -1,4 +1,4 @@
-import { Droppable } from "@hello-pangea/dnd";
+﻿import { Droppable } from "@hello-pangea/dnd";
 import { formatUSD } from "@/lib/irConfig";
 import { PipelineCard } from "./PipelineCard";
 import { PipelineStage } from "../hooks/useIRPipeline";
@@ -8,8 +8,8 @@ interface Props {
   stage: PipelineStage;
   label: string;
   accent: string;
-  investors: any[];
-  onSelect?: (investor: any) => void;
+  investors: unknown[];
+  onSelect?: (investor: unknown) => void;
 }
 
 export function PipelineColumn({ stage, label, accent, investors, onSelect }: Props) {
@@ -72,3 +72,5 @@ export function PipelineColumn({ stage, label, accent, investors, onSelect }: Pr
     </div>
   );
 }
+
+

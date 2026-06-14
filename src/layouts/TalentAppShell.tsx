@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useTalent } from "@/hooks/useTalent";
 import { useAuth } from "@/hooks/useAuth";
@@ -140,7 +140,7 @@ export function TalentAppShell() {
         .from("user_roles")
         .select("id", { count: "exact", head: true })
         .eq("user_id", user.id)
-        .eq("role", "content_lead" as any);
+        .eq("role", "content_lead" as unknown);
       if (!cancelled) setIsContentLead((count ?? 0) > 0);
     })();
     return () => {
@@ -168,7 +168,7 @@ export function TalentAppShell() {
 
   return (
     <div className="min-h-screen bg-[#F3F2EF] dark:bg-background font-sans text-foreground transition-colors duration-300">
-      {/* --- HUD: TOP NAVIGATION PERIMETER --- */}
+      {/* --- dashboard: TOP NAVIGATION PERIMETER --- */}
       <header className="sticky top-0 z-50 bg-white dark:bg-background/95 dark:backdrop-blur-sm border-b border-border h-14 px-3 md:px-4 shadow-sm">
         <div className="max-w-7xl mx-auto h-full flex items-center justify-between gap-2">
           {/* MOBILE_VIEWPORT_SENTINEL */}
@@ -221,7 +221,7 @@ export function TalentAppShell() {
                             <span>Worldwide</span>
                           </span>
                         )}
-                        {talent?.phone && <span className="opacity-40">·</span>}
+                        {talent?.phone && <span className="opacity-40">Â·</span>}
                         {talent?.phone && <span>{talent.phone}</span>}
                       </p>
                       <p className="text-xs text-muted-foreground truncate mt-0.5">{talent?.email || ""}</p>
@@ -245,7 +245,7 @@ export function TalentAppShell() {
                         { icon: Coins, label: "Buy Credits", action: () => credits.open() },
                         { icon: Receipt, label: "Transactions", action: () => navigate("/app/transactions") },
                         { icon: Wallet, label: "Withdraw earnings", action: () => navigate("/app/withdrawals") },
-                        // B6: Creator Analytics hidden from nav — deep link /app/creator/analytics still resolves.
+                        // B6: Creator Analytics hidden from nav â€” deep link /app/creator/analytics still resolves.
                         { icon: Bookmark, label: "Saved Jobs", action: () => navigate("/app/saved") },
                         { icon: BookOpen, label: "My Learning", action: () => navigate("/app/learning/my-courses") },
                         { icon: Globe, label: "Study & Work Abroad", action: () => navigate("/app/abroad"), suffix: "New" },
@@ -284,7 +284,7 @@ export function TalentAppShell() {
                           },
                         },
                         
-                      ] as { icon: any; label: string; action: () => void; suffix?: string }[]).map(({ icon: Icon, label, action, suffix }) => (
+                      ] as { icon: unknown; label: string; action: () => void; suffix?: string }[]).map(({ icon: Icon, label, action, suffix }) => (
                         <button
                           key={label}
                           onClick={() => {
@@ -410,7 +410,7 @@ export function TalentAppShell() {
                     <AvatarImage src={talent?.profilePhotoUrl || ""} />
                     <AvatarFallback className="text-[10px]">ME</AvatarFallback>
                   </Avatar>
-                  <span className="text-[10px] font-medium mt-0.5">Me ▼</span>
+                  <span className="text-[10px] font-medium mt-0.5">Me â–¼</span>
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-72 p-2">
@@ -562,7 +562,7 @@ export function TalentAppShell() {
         </div>
       </header>
 
-      {/* --- HUD: MAIN_CONTENT_NODES --- */}
+      {/* --- dashboard: MAIN_CONTENT_NODES --- */}
       <main className="max-w-7xl mx-auto py-2 md:py-6 px-0 md:px-4 pb-24 md:pb-6">
         <RouteErrorBoundary fallbackPath="/app/feed" fallbackLabel="Back to home">
           <div key={location.pathname} className="animate-in fade-in slide-in-from-bottom-2 duration-300 transform-gpu">
@@ -571,17 +571,17 @@ export function TalentAppShell() {
         </RouteErrorBoundary>
       </main>
 
-      {/* GLOBAL: Credit Purchase Sheet (any component can open via useCreditPurchase) */}
+      {/* GLOBAL: Credit Purchase Sheet (unknown component can open via useCreditPurchase) */}
       <CreditPurchaseSheet
         isOpen={credits.isOpen}
         onClose={credits.close}
         currentBalance={balance}
       />
 
-      {/* GLOBAL: WhatsApp Floating Button — Restoring lost WhatsApp support action */}
+      {/* GLOBAL: WhatsApp Floating Button â€” Restoring lost WhatsApp support action */}
       <FloatingWhatsAppButton />
 
-      {/* --- HUD: MOBILE BOTTOM TAB BAR --- */}
+      {/* --- dashboard: MOBILE BOTTOM TAB BAR --- */}
       <nav
         className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-background border-t border-border px-2 flex items-center justify-around z-50 shadow-[0_-2px_8px_rgba(0,0,0,0.08)]"
         style={{
@@ -604,3 +604,5 @@ export function TalentAppShell() {
     </div>
   );
 }
+
+

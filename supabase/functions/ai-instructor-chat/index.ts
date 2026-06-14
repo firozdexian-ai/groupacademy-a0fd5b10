@@ -23,7 +23,7 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-    // HUD: Dual-Client Initialization
+    // dashboard: Dual-Client Initialization
     const supabaseAuth = createClient(SUPABASE_URL, Deno.env.get("SUPABASE_ANON_KEY")!, {
       global: { headers: { Authorization: authHeader } },
     });
@@ -41,7 +41,7 @@ serve(async (req) => {
 
     // Resolve talent (id + career profile fields for coach mode)
     let talentId: string | null = null;
-    let talentRow: any = null;
+    let talentRow: unknown = null;
     try {
       const { data: t } = await supabaseAdmin
         .from("talents")
@@ -52,11 +52,13 @@ serve(async (req) => {
         .maybeSingle();
       talentId = t?.id || null;
       talentRow = t || null;
-    } catch (_) {}
+    } catch (_) {
+      // Intentionally empty
+    }
 
     // PHASE: Hierarchical_Context_Hydration
     let systemPrompt = "You are a professional academic coach at GroUp Academy.";
-    let instructor: any = null;
+    let instructor: unknown = null;
 
     if (professionLineId) {
       const { data } = await supabaseAdmin
@@ -82,7 +84,7 @@ serve(async (req) => {
       }
     }
 
-    // PHASE: Curriculum_KB_Ingress (skip in career coach mode — noise for career chat)
+    // PHASE: Curriculum_KB_Ingress (skip in career coach mode â€” noise for career chat)
     if (instructor?.profession_line_id && !isCareerCoach) {
       const { data: courses } = await supabaseAdmin
         .from("content")
@@ -93,7 +95,7 @@ serve(async (req) => {
       if (courses) {
         const kb = courses
           .map(
-            (c) => `## ${c.title}\n${c.description}\nModules: ${c.course_modules.map((m: any) => m.title).join(", ")}`,
+            (c) => `## ${c.title}\n${c.description}\nModules: ${c.course_modules.map((m: unknown) => m.title).join(", ")}`,
           )
           .join("\n\n");
         systemPrompt += `\n\nCURRICULUM KNOWLEDGE BASE:\n${kb.substring(0, 10000)}`;
@@ -127,9 +129,9 @@ You are this talent's personal Career Coach. Coach toward their goal. Be direct,
           _content_id: contentId || null,
         });
         if (ctx) {
-          const weak = (ctx.weak_topics || []).map((t: any) => `${t.tag} (${Math.round(t.mastery * 100)}%)`).join(", ") || "none";
-          const strong = (ctx.strong_topics || []).map((t: any) => `${t.tag} (${Math.round(t.mastery * 100)}%)`).join(", ") || "none";
-          const creds = (ctx.credentials || []).map((c: any) => `${c.tag}:${c.level}`).join(", ") || "none";
+          const weak = (ctx.weak_topics || []).map((t: unknown) => `${t.tag} (${Math.round(t.mastery * 100)}%)`).join(", ") || "none";
+          const strong = (ctx.strong_topics || []).map((t: unknown) => `${t.tag} (${Math.round(t.mastery * 100)}%)`).join(", ") || "none";
+          const creds = (ctx.credentials || []).map((c: unknown) => `${c.tag}:${c.level}`).join(", ") || "none";
           const last = ctx.last_scenario
             ? `${ctx.last_scenario.tag} (${Math.round((ctx.last_scenario.mastery || 0) * 100)}%)`
             : "none";
@@ -169,8 +171,10 @@ Coach toward weak topics first. Reference their wins by name. If they ask "what 
     return new Response(response.body, {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
-  } catch (err: any) {
-    console.error("[Sentinel] INSTRUCTOR_CHAT_FAULT:", err);
+  } catch (err: unknown) {
+    console.error("[guard] INSTRUCTOR_CHAT_FAULT:", err);
     return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: corsHeaders });
   }
 });
+
+

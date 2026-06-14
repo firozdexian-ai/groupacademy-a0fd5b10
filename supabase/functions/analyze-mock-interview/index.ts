@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+﻿import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -100,8 +100,8 @@ serve(async (req) => {
     }
 
     // Build the analysis prompt
-    const questionsWithAnswers = interview.questions.map((q: any, index: number) => {
-      const answer = interview.answers.find((a: any) => a.questionId === q.id);
+    const questionsWithAnswers = interview.questions.map((q: unknown, index: number) => {
+      const answer = interview.answers.find((a: unknown) => a.questionId === q.id);
       return {
         questionNumber: index + 1,
         question: q.question,
@@ -130,7 +130,7 @@ ${interview.job_description}
 INTERVIEW QUESTIONS AND CANDIDATE ANSWERS:
 ${questionsWithAnswers
   .map(
-    (qa: any) => `
+    (qa: unknown) => `
 Question ${qa.questionNumber} (${qa.category}):
 "${qa.question}"
 
@@ -278,7 +278,7 @@ Respond ONLY with valid JSON in this exact format:
 
     // Fire-and-forget: send service completion email
     if (interview.talent_id) {
-      const summary = `Selection: ${analysis.selectionPercentage}% — ${analysis.performanceLevel}. ${(analysis.strengths || []).slice(0, 2).join(", ")}`;
+      const summary = `Selection: ${analysis.selectionPercentage}% â€” ${analysis.performanceLevel}. ${(analysis.strengths || []).slice(0, 2).join(", ")}`;
       fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${supabaseServiceKey}` },
@@ -309,3 +309,5 @@ Respond ONLY with valid JSON in this exact format:
     });
   }
 });
+
+

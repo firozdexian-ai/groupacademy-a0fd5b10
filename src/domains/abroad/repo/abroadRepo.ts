@@ -1,34 +1,34 @@
-/**
- * Group Academy — Abroad Domain Repository Layer
+﻿/**
+ * Group Academy â€” Abroad Domain Repository Layer
  * Version: Phase 10i.2 Hardened (Production Candidate)
  * Security Profile: Restricts execution boundaries, enforces tenant/user filters, handles transactional state mapping.
  */
 import { supabase } from "@/integrations/supabase/client";
 
-// ─── GENERIC SYSTEM GRAPH HELPERS ─────────────────────────────────────────
-export async function upsertGraphRow(table: string, payload: any): Promise<void> {
+// â”€â”€â”€ GENERIC SYSTEM GRAPH HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function upsertGraphRow(table: string, payload: unknown): Promise<void> {
   if (payload?.id) {
     const { id, ...patch } = payload;
     const { error } = await supabase
-      .from(table as any)
+      .from(table as unknown)
       .update(patch)
       .eq("id", id);
     if (error) throw error;
   } else {
-    const { error } = await supabase.from(table as any).insert(payload);
+    const { error } = await supabase.from(table as unknown).insert(payload);
     if (error) throw error;
   }
 }
 
 export async function deleteGraphRow(table: string, id: string): Promise<void> {
   const { error } = await supabase
-    .from(table as any)
+    .from(table as unknown)
     .delete()
     .eq("id", id);
   if (error) throw error;
 }
 
-// ─── ABROAD MASTER COCKPIT GRAPH (ADMIN) ──────────────────────────────────
+// â”€â”€â”€ ABROAD MASTER COCKPIT GRAPH (ADMIN) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getAbroadGraphMaster() {
   const [appsRes, programsRes, roadmapsRes, agentsRes, ieltsRes, resourcesRes] = await Promise.all([
     supabase
@@ -80,21 +80,21 @@ export async function getAbroadGraphMaster() {
   };
 }
 
-// ─── ROADMAP INTAKE PIPELINES (TALENT-FACING) ─────────────────────────────
-export async function insertRoadmapContactLead(payload: Record<string, any>): Promise<{ error: any | null }> {
-  const { error } = await supabase.from("contacts").insert([payload as any]);
+// â”€â”€â”€ ROADMAP INTAKE PIPELINES (TALENT-FACING) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function insertRoadmapContactLead(payload: Record<string, unknown>): Promise<{ error: unknown | null }> {
+  const { error } = await supabase.from("contacts").insert([payload as unknown]);
   return { error };
 }
 
-export async function insertStudyAbroadRoadmap(payload: Record<string, any>): Promise<{ id: string }> {
-  const { data, error } = await supabase.from("study_abroad_roadmaps").insert([payload as any]).select("id").maybeSingle();
+export async function insertStudyAbroadRoadmap(payload: Record<string, unknown>): Promise<{ id: string }> {
+  const { data, error } = await supabase.from("study_abroad_roadmaps").insert([payload as unknown]).select("id").maybeSingle();
 
   if (error) throw error;
   if (!data) throw new Error("ROADMAP_INSERT_FAILED: Target entity allocation failed.");
   return { id: data.id };
 }
 
-// ─── MANAGEMENT LAYERS & STATE CONTROLLERS ───────────────────────────────
+// â”€â”€â”€ MANAGEMENT LAYERS & STATE CONTROLLERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getActiveCounsellorByUser(userId: string): Promise<{ user_id: string } | null> {
   const { data, error } = await supabase
     .from("abroad_counsellors")
@@ -139,7 +139,7 @@ export async function advanceAbroadStage(args: { applicationId: string; nextStag
   if (error) throw error;
 }
 
-// ─── LIVE PROGRAM DISCOVERY ENGINE ────────────────────────────────────────
+// â”€â”€â”€ LIVE PROGRAM DISCOVERY ENGINE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function listActiveStudyAbroadPrograms(args: { country?: string; degree?: string; search?: string }) {
   let query = supabase
     .from("study_abroad_programs")
@@ -209,7 +209,7 @@ export async function listDestinationAgentMessages(countryCode: string, limit = 
   return data ?? [];
 }
 
-// ─── IELTS DRILL LAYERS & LANGUAGE LABS ──────────────────────────────────
+// â”€â”€â”€ IELTS DRILL LAYERS & LANGUAGE LABS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getIeltsStreakByUser(userId: string) {
   const { data, error } = await supabase
     .from("ielts_streaks")
@@ -278,7 +278,7 @@ export async function listActiveLanguageInstructorsByCode(languageCode: string) 
 export async function listAbroadApplicationsForCurrentUser(userId?: string) {
   let resolvedUserId = userId;
   if (!resolvedUserId) {
-    const { data: auth } = await supabase.auth.getUser();
+    const { data: auth } = await getCurrentUser();
     resolvedUserId = auth.user?.id;
   }
   if (!resolvedUserId) return [];
@@ -293,10 +293,10 @@ export async function listAbroadApplicationsForCurrentUser(userId?: string) {
   return data ?? [];
 }
 
-// ─── SCHOOL DETAIL (TALENT-FACING) ────────────────────────────────────────
+// â”€â”€â”€ SCHOOL DETAIL (TALENT-FACING) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function getSchoolBySlugWithAcademy(slug: string) {
   const { data, error } = await supabase
-    .from("schools" as any)
+    .from("schools" as unknown)
     .select("id, name, slug, description, academies(name, slug)")
     .eq("slug", slug)
     .maybeSingle();
@@ -306,7 +306,7 @@ export async function getSchoolBySlugWithAcademy(slug: string) {
 
 export async function listProfessionCategoriesForSchool(schoolId: string) {
   const { data, error } = await supabase
-    .from("profession_categories" as any)
+    .from("profession_categories" as unknown)
     .select("id, name, slug, description, icon, career_outcome, school_id, ai_instructors(id, name)")
     .eq("school_id", schoolId);
   if (error) throw error;
@@ -319,9 +319,12 @@ export async function insertInstructorConnectionRequest(payload: {
   profession_id: string;
   instructor_id: string | null;
   message: string | null;
-}): Promise<{ error: any | null }> {
+}): Promise<{ error: unknown | null }> {
   const { error } = await supabase
-    .from("instructor_connection_requests" as any)
-    .insert([payload as any]);
+    .from("instructor_connection_requests" as unknown)
+    .insert([payload as unknown]);
   return { error };
 }
+
+
+

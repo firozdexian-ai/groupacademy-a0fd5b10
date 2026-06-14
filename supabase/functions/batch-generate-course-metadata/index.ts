@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+﻿import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -8,11 +8,11 @@ const corsHeaders = {
 };
 
 async function generateMetadata(
-  courses: any[],
-  supabase: any
+  courses: unknown[],
+  supabase: unknown
 ): Promise<{ updated: number; skipped: number }> {
-  const courseList = courses.map((c: any, i: number) => {
-    const moduleTitles = (c.modules || []).map((m: any) => m.title).join(", ");
+  const courseList = courses.map((c: unknown, i: number) => {
+    const moduleTitles = (c.modules || []).map((m: unknown) => m.title).join(", ");
     return `${i + 1}. Course ID: ${c.id}\n   Title: "${c.title}"\n   Program: "${c.programName}"\n   Level: "${c.levelName || 'General'}"\n   Modules (${c.modules?.length || 0}): ${moduleTitles}\n   Has Description: ${(c.description || "").length > 50 ? "yes" : "no"}\n   Has Objectives: ${c.learning_objectives?.length ? "yes" : "no"}`;
   }).join("\n\n");
 
@@ -143,13 +143,13 @@ serve(async (req) => {
       .from("profession_categories").select("id, name").eq("school_id", school_id);
     if (!programs?.length) return new Response(JSON.stringify({ updated: 0, skipped: 0, remaining: 0, total: 0 }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
-    const programIds = programs.map((p: any) => p.id);
-    const programMap = Object.fromEntries(programs.map((p: any) => [p.id, p.name]));
+    const programIds = programs.map((p: unknown) => p.id);
+    const programMap = Object.fromEntries(programs.map((p: unknown) => [p.id, p.name]));
 
     // Get levels for context
     const { data: levels } = await supabase
       .from("profession_levels").select("id, name").in("profession_category_id", programIds);
-    const levelMap = Object.fromEntries((levels || []).map((l: any) => [l.id, l.name]));
+    const levelMap = Object.fromEntries((levels || []).map((l: unknown) => [l.id, l.name]));
 
     const { data: allCourses } = await supabase
       .from("content").select("id, title, description, learning_objectives, estimated_hours, profession_line_id, profession_level_id")
@@ -157,7 +157,7 @@ serve(async (req) => {
     const totalAll = (allCourses || []).length;
 
     // Filter courses needing metadata (no description OR no objectives)
-    const pendingCourses = (allCourses || []).filter((c: any) =>
+    const pendingCourses = (allCourses || []).filter((c: unknown) =>
       (c.description || "").length < 50 || !c.learning_objectives?.length || !c.estimated_hours
     );
 
@@ -167,17 +167,17 @@ serve(async (req) => {
     }
 
     // Fetch modules for each course in batch
-    const batchIds = batch.map((c: any) => c.id);
+    const batchIds = batch.map((c: unknown) => c.id);
     const { data: modules } = await supabase
       .from("course_modules").select("id, title, content_id").in("content_id", batchIds).order("display_order");
 
-    const modulesByContent: Record<string, any[]> = {};
+    const modulesByContent: Record<string, unknown[]> = {};
     for (const m of (modules || [])) {
       if (!modulesByContent[m.content_id]) modulesByContent[m.content_id] = [];
       modulesByContent[m.content_id].push(m);
     }
 
-    const enrichedBatch = batch.map((c: any) => ({
+    const enrichedBatch = batch.map((c: unknown) => ({
       ...c,
       programName: programMap[c.profession_line_id] || "Unknown",
       levelName: levelMap[c.profession_level_id] || "",
@@ -190,7 +190,7 @@ serve(async (req) => {
     const { data: freshCourses } = await supabase
       .from("content").select("id, description, learning_objectives, estimated_hours")
       .in("profession_line_id", programIds).limit(1000);
-    const freshRemaining = (freshCourses || []).filter((c: any) =>
+    const freshRemaining = (freshCourses || []).filter((c: unknown) =>
       (c.description || "").length < 50 || !c.learning_objectives?.length || !c.estimated_hours
     ).length;
 
@@ -198,7 +198,7 @@ serve(async (req) => {
       JSON.stringify({ updated: result.updated, skipped: result.skipped, remaining: freshRemaining, total: totalAll }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("batch-generate-course-metadata error:", e);
     const status = e?.status || 500;
     if (status === 429 || status === 402) {
@@ -207,3 +207,5 @@ serve(async (req) => {
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
+
+

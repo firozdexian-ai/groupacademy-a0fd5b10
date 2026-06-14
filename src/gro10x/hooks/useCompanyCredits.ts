@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Returns the current Gro10x company's credit balance + a 90-day ledger.
  * Reads `company_credits` and `company_credit_transactions` via the
  * companies repo under the new member-read RLS policies.
@@ -80,3 +80,4 @@ export function useCompanyCredits() {
     isLoading: companyQuery.isLoading || balanceQuery.isLoading,
   };
 }
+

@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useRef, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import { adminSupportAssistant } from "@/domains/agents/api/agentsApi";
 import { trackError } from "@/lib/errorTracking";
 
 /**
- * Group Academy — Career Guidance System: Agent Chat Dialog Terminal
+ * Group Academy â€” Career Guidance System: Agent Chat Dialog Terminal
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/guidance (Student Chat Interface Viewport)
  * Operations Mode: Automated Efficiency student assistant backed by system anomaly forwarding.
@@ -23,7 +23,7 @@ export interface AgentChatDialogProps {
     id: string;
     name: string;
     color?: string;
-    icon?: any;
+    icon?: unknown;
     avatarUrl?: string | null;
   };
   messages: AgentMessage[];
@@ -57,7 +57,7 @@ export function AgentChatDialog({
         error,
         context: `Agent: ${agent.id} | ${context}`,
       });
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.warn("[Telemetry Fail] Anomaly report dropped:", e.message);
     }
   };
@@ -77,7 +77,7 @@ export function AgentChatDialog({
       setIsSyncing(true);
       setInput("");
       await onSendMessage(cleanInput);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setInput(cleanInput);
       await reportAnomaly(err.message, "Chat Message Submission Failure");
     } finally {
@@ -266,3 +266,5 @@ function CtaMessageRenderer({ content, defaultCountry = "US" }: { content: strin
 }
 
 export default AgentChatDialog;
+
+

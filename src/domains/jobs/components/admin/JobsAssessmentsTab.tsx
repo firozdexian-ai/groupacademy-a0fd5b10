@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useJobsGraph } from "./hooks/useJobsGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,7 @@ export function JobsAssessmentsTab() {
  } = useJobsGraph();
  const { data, isLoading } = jobsGraphQuery;
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ status: "pending", score: 0 });
+ const [draft, setDraft] = useState<unknown>({ status: "pending", score: 0 });
 
  return (
  <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
@@ -218,3 +218,5 @@ export function JobsAssessmentsTab() {
 }
 
 export default JobsAssessmentsTab;
+
+

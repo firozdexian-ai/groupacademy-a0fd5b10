@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useLearningGraph } from "./hooks/useLearningGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,8 +20,8 @@ export function LearningCohortsTab() {
  } = useLearningGraph();
  const { data, isLoading } = learningGraphQuery;
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ status: "upcoming" });
- const [sessionsRow, setSessionsRow] = useState<any>(null);
+ const [draft, setDraft] = useState<unknown>({ status: "upcoming" });
+ const [sessionsRow, setSessionsRow] = useState<unknown>(null);
 
  return (
  <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
@@ -249,7 +249,7 @@ export function LearningCohortsTab() {
  <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl p-6 border border-border/60">
  <DialogHeader>
  <DialogTitle className="text-xl font-medium italic tracking-tight text-accent flex items-center gap-2">
- <Video className="h-5 w-5" /> Live Sessions — {sessionsRow?.name}
+ <Video className="h-5 w-5" /> Live Sessions â€” {sessionsRow?.name}
  </DialogTitle>
  </DialogHeader>
  {sessionsRow?.content_id && (
@@ -265,3 +265,5 @@ export function LearningCohortsTab() {
 }
 
 export default LearningCohortsTab;
+
+

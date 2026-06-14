@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+﻿import React, { useState, useMemo } from "react";
 import {
   Sparkles,
   Target,
@@ -14,7 +14,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy — Career Guidance System: Marketplace Category Filter Node
+ * Group Academy â€” Career Guidance System: Marketplace Category Filter Node
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/marketplace?tab=all (Filter Navigation Shell)
  * Operations Mode: High-performance category selection matrix handling responsive overlay drawers.
@@ -198,3 +198,4 @@ const FilterTile = React.forwardRef<HTMLButtonElement, FilterTileProps>(
 FilterTile.displayName = "FilterTile";
 
 export default AgentFilters;
+

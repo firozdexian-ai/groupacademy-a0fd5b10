@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+﻿import { useEffect, useState, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getTalentUserIdById } from "@/domains/talent/repo/talentRepo";
 import { getInstructorRecentEarningsCount } from "@/domains/learning/repo/learningRepo";
@@ -15,7 +15,7 @@ interface ActiveInstructorChipProps {
 /**
  * GroUp Academy: Instructor Activity Verification Badge Surfer (ActiveInstructorChip)
  * An authoritative operational utility auditing recent ledger activity indexes to verify premium mentor roles.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function ActiveInstructorChip({ talentId, className = "" }: ActiveInstructorChipProps) {
   const queryClient = useQueryClient();
@@ -104,3 +104,4 @@ export function ActiveInstructorChip({ talentId, className = "" }: ActiveInstruc
     </Badge>
   );
 }
+

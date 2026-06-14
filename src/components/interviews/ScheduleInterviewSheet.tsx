@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +23,7 @@ interface Props {
 /**
  * GroUp Academy: Recruitment Evaluation Node (ScheduleInterviewSheet)
  * CTO Reference: Authoritative orchestration drawer dispatching multi-slot availability options.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function ScheduleInterviewSheet({ open, onOpenChange, applicationId, companyId, talentId, onCreated }: Props) {
   const createInterview = useCreateInterview();
@@ -124,7 +124,7 @@ export function ScheduleInterviewSheet({ open, onOpenChange, applicationId, comp
       setLink("");
       setLocation("");
       setNote("");
-    } catch (err: any) {
+    } catch (err: unknown) {
       const parsedExceptionMsg = err instanceof Error ? err.message : String(err);
 
       // 2. Incident Ingestion: Forward processing failures straight to administrative monitoring systems
@@ -327,7 +327,7 @@ export function ScheduleInterviewSheet({ open, onOpenChange, applicationId, comp
             {isMutationProcessing ? (
               <>
                 <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                <span>Transmitting Matrix Parameters…</span>
+                <span>Transmitting Matrix Parametersâ€¦</span>
               </>
             ) : (
               <span>Dispatch Evaluation Windows to Candidate</span>
@@ -338,3 +338,5 @@ export function ScheduleInterviewSheet({ open, onOpenChange, applicationId, comp
     </Sheet>
   );
 }
+
+

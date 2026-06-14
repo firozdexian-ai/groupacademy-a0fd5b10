@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bot, LayoutGrid, LucideIcon } from "lucide-react";
@@ -25,7 +25,7 @@ interface QuickAgent {
 const VISIBLE_LIMIT = 4;
 
 /**
- * Quick Actions Grid — Personalized navigation shortcuts to the user's most active AI assistants.
+ * Quick Actions Grid â€” Personalized navigation shortcuts to the user's most active AI assistants.
  * Pulls recent chat engagement analytics to pin frequent companions, appending popular platform agents as fallbacks.
  */
 export function QuickActionsGrid() {
@@ -100,7 +100,7 @@ export function QuickActionsGrid() {
         appendAgentBatch(allAgents.map((a) => a.agent_key) || []);
 
         return result;
-      } catch (queryErr: any) {
+      } catch (queryErr: unknown) {
         // Log query extraction failures safely to operational diagnostic panels
         trackError(queryErr instanceof Error ? queryErr : String(queryErr), {
           component: "QuickActionsGrid",
@@ -225,3 +225,4 @@ export function QuickActionsGrid() {
     </>
   );
 }
+

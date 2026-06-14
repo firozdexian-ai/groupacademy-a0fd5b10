@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { authoringReviewDigest } from "@/domains/learning/api/learningApi";
 
 /**
@@ -32,10 +32,10 @@ export function useModuleReviewBadge(moduleId: string | null | undefined): Modul
     // Performance Baseline: 5-minute stability mapping to protect edge computation budgets
     staleTime: 5 * 60 * 1000,
     queryFn: async (): Promise<Omit<ModuleReviewBadge, "loading">> => {
-      // HUD: INVOKING_AUTHORING_REVIEW_DIGEST_EDGE
+      // dashboard: INVOKING_AUTHORING_REVIEW_DIGEST_EDGE
       const data = await authoringReviewDigest({ mode: "single", module_id: moduleId, days: 30 });
 
-      const summary = ((data as any)?.summary as DigestSummary) ?? null;
+      const summary = ((data as unknown)?.summary as DigestSummary) ?? null;
       const flagged = summary ? (summary.flagged_quiz ?? 0) + (summary.flagged_scenarios ?? 0) : 0;
 
       return {
@@ -56,3 +56,5 @@ export function useModuleReviewBadge(moduleId: string | null | undefined): Modul
     loading: isLoading,
   };
 }
+
+

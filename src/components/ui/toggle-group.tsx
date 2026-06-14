@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
 import { type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
@@ -12,7 +12,7 @@ const ToggleGroupContext = React.createContext<VariantProps<typeof toggleVariant
 /**
  * GroUp Academy: Authoritative Toggle Selection Segment Protocol (ToggleGroup)
  * Hardened WAI-ARIA compliant layout button row ensuring zero visual layout shifts during option selections.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const ToggleGroup = React.forwardRef<
   React.ElementRef<typeof ToggleGroupPrimitive.Root>,
@@ -61,3 +61,4 @@ const ToggleGroupItem = React.forwardRef<
 ToggleGroupItem.displayName = "ToggleGroup_Core_Item_Node";
 
 export { ToggleGroup, ToggleGroupItem };
+

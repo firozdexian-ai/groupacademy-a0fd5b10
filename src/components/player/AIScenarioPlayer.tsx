@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+﻿import { useState, useEffect, useRef, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -43,7 +43,7 @@ const DIFFICULTY_CONFIG = {
 /**
  * GroUp Academy: AI Scenario Simulation Node (AIScenarioPlayer)
  * An authoritative operational sandbox layer parsing open-ended responses against automated cognitive model guidelines.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function AIScenarioPlayer({ scenario, professionLineId, onComplete, className }: AIScenarioPlayerProps) {
   const queryClient = useQueryClient();
@@ -107,7 +107,7 @@ Response Protocol: ONLY JSON object matching this schema. Do not prefix or appen
         ],
         professionLineId,
         contextType: "scenario_evaluation",
-      } as any);
+      } as unknown);
 
       clearTimeout(timeoutFallbackId);
 
@@ -136,7 +136,7 @@ Response Protocol: ONLY JSON object matching this schema. Do not prefix or appen
           onComplete(verifiedFeedbackDataObject.score);
         }
       }
-    } catch (globalCatchErr: any) {
+    } catch (globalCatchErr: unknown) {
       clearTimeout(timeoutFallbackId);
       const isRequestAborted = globalCatchErr instanceof Error && globalCatchErr.name === "AbortError";
       const calculatedExceptionMessageString = isRequestAborted
@@ -176,7 +176,7 @@ Response Protocol: ONLY JSON object matching this schema. Do not prefix or appen
         className,
       )}
     >
-      {/* HUD LEVEL 1: TOP PANEL TRACK HEADING CONTAINER */}
+      {/* dashboard LEVEL 1: TOP PANEL TRACK HEADING CONTAINER */}
       <CardHeader className="p-4 sm:p-5 border-b border-border/10 bg-muted/10 select-none leading-none w-full">
         <div className="flex items-center justify-between gap-4 w-full leading-none">
           <div className="space-y-1 flex flex-col justify-center leading-none min-w-0 flex-1">
@@ -201,7 +201,7 @@ Response Protocol: ONLY JSON object matching this schema. Do not prefix or appen
       </CardHeader>
 
       <CardContent className="p-4 sm:p-5 space-y-4 w-full min-w-0 flex flex-col justify-center">
-        {/* HUD LEVEL 2: IMMUTABLE SCENARIO TASK DISPLAY CARD */}
+        {/* dashboard LEVEL 2: IMMUTABLE SCENARIO TASK DISPLAY CARD */}
         <div className="grid grid-cols-1 gap-3.5 p-4 rounded-xl border border-border/40 bg-muted/10 shadow-inner relative overflow-hidden select-none w-full shrink-0">
           <Zap className="absolute -bottom-6 -right-6 h-24 w-24 text-primary opacity-[0.02] transform rotate-12 pointer-events-none" />
 
@@ -228,7 +228,7 @@ Response Protocol: ONLY JSON object matching this schema. Do not prefix or appen
           </div>
         </div>
 
-        {/* HUD LEVEL 3: DYNAMIC OPTIONAL HINT PANEL SEGMENT LIST */}
+        {/* dashboard LEVEL 3: DYNAMIC OPTIONAL HINT PANEL SEGMENT LIST */}
         {hasHints && !feedback && (
           <div className="w-full text-left select-none shrink-0 leading-none">
             <Button
@@ -269,7 +269,7 @@ Response Protocol: ONLY JSON object matching this schema. Do not prefix or appen
           </div>
         )}
 
-        {/* HUD LEVEL 4: INTERACTIVE INPUT PANEL VS EVALUATED FEEDBACK OVERLAY DASHBOARD */}
+        {/* dashboard LEVEL 4: INTERACTIVE INPUT PANEL VS EVALUATED FEEDBACK OVERLAY DASHBOARD */}
         {!feedback ? (
           <div className="space-y-4 w-full min-w-0 flex flex-col justify-center text-left animate-in fade-in duration-200">
             <div className="space-y-1.5 w-full leading-none text-left select-none">
@@ -302,7 +302,7 @@ Response Protocol: ONLY JSON object matching this schema. Do not prefix or appen
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                  <span>Processing Cognitive Evaluation Manifest…</span>
+                  <span>Processing Cognitive Evaluation Manifestâ€¦</span>
                 </>
               ) : (
                 <>
@@ -315,7 +315,7 @@ Response Protocol: ONLY JSON object matching this schema. Do not prefix or appen
         ) : (
           /* SECTION B: MULTI-LEVEL COGNITIVE FEEDBACK SCORE GRAPH DISPLAY DECK */
           <div className="space-y-5 w-full min-w-0 flex flex-col justify-center text-left animate-in zoom-in-99 duration-300">
-            {/* SCORE CHIP PANEL HUD CONTAINER */}
+            {/* SCORE CHIP PANEL dashboard CONTAINER */}
             <div className="flex flex-col items-center justify-center p-6 rounded-xl bg-muted/20 border border-border/10 shadow-sm relative overflow-hidden select-none text-center w-full shrink-0">
               <div
                 className={cn(
@@ -423,3 +423,5 @@ Response Protocol: ONLY JSON object matching this schema. Do not prefix or appen
     </Card>
   );
 }
+
+

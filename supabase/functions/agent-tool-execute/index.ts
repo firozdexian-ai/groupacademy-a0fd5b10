@@ -1,10 +1,10 @@
-// agent-tool-execute: central dispatcher that lets agents call registered tools.
+﻿// agent-tool-execute: central dispatcher that lets agents call registered tools.
 // Validates JWT, looks up the tool by tool_key, validates input against the
 // stored JSON schema (required + enum + type), and invokes either an RPC or
 // another edge function. Logs the call for telemetry.
 //
 // Request:  { agent_key: string, tool_key: string, input: object, thread_id?: string }
-// Response: { ok: boolean, result?: any, error?: string }
+// Response: { ok: boolean, result?: unknown, error?: string }
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -66,16 +66,16 @@ serve(async (req) => {
     if (!binding) return json({ ok: false, error: "tool_not_bound_to_agent" }, 403);
 
     // ---------- JSON-schema validation (required + type + enum) ----------
-    const schema = (tool.input_schema ?? {}) as any;
+    const schema = (tool.input_schema ?? {}) as unknown;
     const validation = validate(input, schema);
     if (!validation.ok) return json({ ok: false, error: `invalid_input:${validation.error}` }, 400);
 
     // ---------- Dispatch ----------
-    let result: any;
+    let result: unknown;
     if (tool.handler_kind === "rpc") {
       const fn = String(tool.handler_ref || tool.tool_key);
       const args = mapInputToRpcArgs(fn, input);
-      const { data, error } = await userClient.rpc(fn as any, args);
+      const { data, error } = await userClient.rpc(fn as unknown, args);
       if (error) return json({ ok: false, error: error.message }, 400);
       result = data;
     } else if (tool.handler_kind === "edge_function") {
@@ -96,7 +96,7 @@ serve(async (req) => {
       return json({ ok: false, error: `unsupported_handler:${tool.handler_kind}` }, 400);
     }
 
-    // Telemetry — fire and forget
+    // Telemetry â€” fire and forget
     admin.from("agent_credit_events").insert({
       agent_id: agent.id,
       subject_kind: "talent",
@@ -121,15 +121,15 @@ function json(b: unknown, status: number) {
   });
 }
 
-// Map sanitized JSON input → RPC argument names (p_<key>) used by our SECURITY DEFINER fns.
+// Map sanitized JSON input â†’ RPC argument names (p_<key>) used by our SECURITY DEFINER fns.
 function mapInputToRpcArgs(_fn: string, input: Record<string, unknown>) {
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(input)) out[`p_${k}`] = v;
   return out;
 }
 
-// Minimal JSON-schema validator — covers what we register: required, type, enum, minimum, minItems.
-function validate(input: any, schema: any): { ok: true } | { ok: false; error: string } {
+// Minimal JSON-schema validator â€” covers what we register: required, type, enum, minimum, minItems.
+function validate(input: unknown, schema: unknown): { ok: true } | { ok: false; error: string } {
   if (!schema || typeof schema !== "object") return { ok: true };
   if (schema.type === "object") {
     if (typeof input !== "object" || input === null || Array.isArray(input)) {
@@ -146,7 +146,7 @@ function validate(input: any, schema: any): { ok: true } | { ok: false; error: s
       const ps = props[k];
       if (!ps) continue;
       const sub = validate(v, ps);
-      if (!sub.ok) return { ok: false, error: `${k}.${(sub as any).error}` };
+      if (!sub.ok) return { ok: false, error: `${k}.${(sub as unknown).error}` };
     }
     return { ok: true };
   }
@@ -179,3 +179,5 @@ function validate(input: any, schema: any): { ok: true } | { ok: false; error: s
   }
   return { ok: true };
 }
+
+

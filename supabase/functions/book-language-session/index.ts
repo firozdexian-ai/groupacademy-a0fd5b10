@@ -1,4 +1,4 @@
-// Book a language session — validates, creates booking, generates Jitsi room
+﻿// Book a language session â€” validates, creates booking, generates Jitsi room
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -60,11 +60,13 @@ Deno.serve(async (req) => {
     if (error) return json({ error: error.message }, 500);
 
     return json({ ok: true, booking });
-  } catch (e: any) {
+  } catch (e: unknown) {
     return json({ error: e?.message ?? "unknown" }, 500);
   }
 });
 
-function json(b: any, status = 200) {
+function json(b: unknown, status = 200) {
   return new Response(JSON.stringify(b), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 }
+
+

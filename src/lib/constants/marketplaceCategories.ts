@@ -1,4 +1,4 @@
-// Aligned with the 6 schools of the Freelancing Academy
+﻿// Aligned with the 6 schools of the Freelancing Academy
 export const MARKETPLACE_SCHOOLS = [
   {
     value: "digital_freelancing",
@@ -41,3 +41,4 @@ export const MARKETPLACE_SCHOOLS = [
 export const MARKETPLACE_SCHOOL_MAP = Object.fromEntries(
   MARKETPLACE_SCHOOLS.map((s) => [s.value, s])
 );
+

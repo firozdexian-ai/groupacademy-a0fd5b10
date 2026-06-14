@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Coins, RefreshCw, Trophy } from "lucide-react";
@@ -58,7 +58,7 @@ export function FeedHeader({ talentName, talentPhoto, talentProfession, onRefres
       .toUpperCase() || "?";
 
   const country = talent?.country;
-  const subtitle = [talentProfession, country].filter(Boolean).join(" · ");
+  const subtitle = [talentProfession, country].filter(Boolean).join(" Â· ");
 
   const isLight = textMode === "light";
   const textCls = isLight ? "text-white" : "text-foreground";

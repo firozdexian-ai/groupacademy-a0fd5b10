@@ -1,11 +1,11 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+﻿import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, stripe-signature",
 };
 
-async function getWebhookSecret(adminClient: any): Promise<string | null> {
+async function getWebhookSecret(adminClient: unknown): Promise<string | null> {
   const envSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
   if (envSecret) return envSecret;
 
@@ -145,7 +145,7 @@ Deno.serve(async (req) => {
     await supabase.from("notifications").insert({
       talent_id: talentId,
       type: "reward",
-      title: `${credits} credits added! 💳`,
+      title: `${credits} credits added! ðŸ’³`,
       message: `Your purchase of ${credits} credits has been confirmed.`,
       icon: "coins",
       link: "/app/transactions",
@@ -161,3 +161,5 @@ Deno.serve(async (req) => {
     return new Response("Webhook handler error", { status: 500 });
   }
 });
+
+

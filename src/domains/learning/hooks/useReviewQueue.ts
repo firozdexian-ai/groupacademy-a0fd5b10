@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { learnerReviewQueue } from "@/domains/learning/api/learningApi";
 
 /**
@@ -63,7 +63,7 @@ export function useReviewQueue(opts?: UseReviewQueueOptions) {
     // Performance Baseline: 30-second stability window protecting edge infrastructure costs
     staleTime: 30 * 1000,
     queryFn: async (): Promise<ReviewQueueResponse> => {
-      // HUD: INVOKING_LEARNER_REVIEW_QUEUE_EDGE_ORCHESTRATOR
+      // dashboard: INVOKING_LEARNER_REVIEW_QUEUE_EDGE_ORCHESTRATOR
       const data = await learnerReviewQueue({
         limit,
         items_per_topic: itemsPerTopic,
@@ -74,7 +74,7 @@ export function useReviewQueue(opts?: UseReviewQueueOptions) {
       interface EdgeResponseWrapper {
         error?: string;
         message?: string;
-        topics?: any[];
+        topics?: unknown[];
         total_due?: number;
         now?: string;
       }
@@ -99,3 +99,5 @@ export function useReviewQueue(opts?: UseReviewQueueOptions) {
     reload: queryResult.refetch,
   };
 }
+
+

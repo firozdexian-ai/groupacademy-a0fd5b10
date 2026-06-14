@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import {
   listEnrollmentsForContent,
   listCourseModulesForContent,
@@ -99,7 +99,7 @@ export function useCoursePerformance(contentId: string | undefined) {
         const funnel = [
           { label: "Enrolled", value: totalEnrollments },
           { label: "Started", value: started },
-          { label: "Mid (≥50%)", value: mid },
+          { label: "Mid (â‰¥50%)", value: mid },
           { label: "Completed", value: completed },
         ];
 
@@ -128,7 +128,7 @@ export function useCoursePerformance(contentId: string | undefined) {
             .map((s) => {
               const ev = s.evaluation;
               if (!ev) return null;
-              const v = typeof ev === "object" ? Number((ev as any).score) : null;
+              const v = typeof ev === "object" ? Number((ev as unknown).score) : null;
               return Number.isFinite(v) ? v : null;
             })
             .filter((v): v is number => v !== null);
@@ -154,7 +154,7 @@ export function useCoursePerformance(contentId: string | undefined) {
           };
         });
 
-        // Recent activity (last 10) — fetch talent names lazily
+        // Recent activity (last 10) â€” fetch talent names lazily
         type RecentRaw = { kind: "enroll" | "quiz" | "scenario"; at: string; talent_id: string; detail: string };
         const recentRaw: RecentRaw[] = [
           ...enrollments
@@ -169,7 +169,7 @@ export function useCoursePerformance(contentId: string | undefined) {
             kind: "quiz" as const,
             at: q.created_at,
             talent_id: q.talent_id,
-            detail: `Quiz · ${q.score ?? 0}%`,
+            detail: `Quiz Â· ${q.score ?? 0}%`,
           })),
           ...scenarioRuns.map((s) => ({
             kind: "scenario" as const,
@@ -183,7 +183,7 @@ export function useCoursePerformance(contentId: string | undefined) {
           .slice(0, 10);
 
         const talentIds = Array.from(new Set(recentRaw.map((r) => r.talent_id)));
-        let nameMap = new Map<string, string>();
+        const nameMap = new Map<string, string>();
         if (talentIds.length) {
           const talents = await listTalentNamesByIds(talentIds);
           talents.forEach((t) => nameMap.set(t.id, t.full_name ?? "Unknown"));
@@ -206,7 +206,7 @@ export function useCoursePerformance(contentId: string | undefined) {
           modules: moduleStats,
           recent,
         });
-      } catch (e: any) {
+      } catch (e: unknown) {
         if (!cancelled) setError(e.message ?? "Failed to load performance");
       } finally {
         if (!cancelled) setLoading(false);
@@ -237,7 +237,7 @@ export function modulesToCsv(modules: ModuleStat[]): string {
     "scenario_pool_avg_quality",
     "scenario_pool_served",
   ];
-  const escape = (v: any) => {
+  const escape = (v: unknown) => {
     const s = v == null ? "" : String(v);
     return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   };
@@ -263,3 +263,5 @@ export function modulesToCsv(modules: ModuleStat[]): string {
   );
   return [headers.join(","), ...rows].join("\n");
 }
+
+

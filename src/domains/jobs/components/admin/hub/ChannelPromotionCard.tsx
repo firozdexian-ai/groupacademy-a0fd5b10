@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { getCurrentUserId } from "@/lib/auth";
 import { listJobChannelPosts, insertJobChannelPost } from "@/domains/jobs/repo/jobsRepo";
 import { generateJobShareCaption } from "@/domains/jobs/api/jobsApi";
@@ -85,7 +85,7 @@ export function ChannelPromotionCard({ job }: Props) {
 
       setCaptions((c) => ({ ...c, [channel]: data?.caption || "" }));
       toast.success("Intelligence Extracted: Caption optimized.", { id: toastId });
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error("Neural Fault: " + err.message, { id: toastId });
     } finally {
       setGenerating(false);
@@ -101,7 +101,7 @@ export function ChannelPromotionCard({ job }: Props) {
         posted_by: uid || null,
         caption: captions[channel] || null,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       return toast.error("Error: " + error.message);
     }
 
@@ -118,7 +118,7 @@ export function ChannelPromotionCard({ job }: Props) {
               {job.title}
             </CardTitle>
             <CardDescription className="text-[10px] font-bold mt-1">
-              Syndication Node — {job.company_name}
+              Syndication Node â€” {job.company_name}
             </CardDescription>
           </div>
           <Badge
@@ -218,3 +218,5 @@ export function ChannelPromotionCard({ job }: Props) {
     </Card>
   );
 }
+
+

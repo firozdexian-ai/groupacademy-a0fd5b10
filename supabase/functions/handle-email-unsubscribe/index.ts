@@ -1,4 +1,4 @@
-import { createClient } from 'npm:@supabase/supabase-js@2'
+﻿import { createClient } from 'npm:@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
           token = body.token
         }
       } catch {
-        // Fall through — token stays from query param
+        // Fall through â€” token stays from query param
       }
     }
   }
@@ -128,3 +128,4 @@ Deno.serve(async (req) => {
 
   return jsonResponse({ success: true })
 })
+

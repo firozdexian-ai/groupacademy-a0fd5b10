@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { updateAiAgent, insertNotification, listAgentsByMarketplaceStatus } from "@/domains/agents/repo/agentsRepo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { CheckCircle2, XCircle, Store, Loader2, User2, Building2, Terminal, Shie
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy — Career Guidance System: Marketplace Approval Review Dashboard Component
+ * Group Academy â€” Career Guidance System: Marketplace Approval Review Dashboard Component
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/command-center?tab=marketplace (Moderator Control Area)
  * Operations Mode: Human-in-the-loop validation canvas approving developer or partner assets.
@@ -55,7 +55,7 @@ export function AgentMarketplaceReview() {
       ]);
       setPending(p as PendingAgent[]);
       setRecent(r as PendingAgent[]);
-    } catch (err: any) {
+    } catch (err: unknown) {
       trackError("agent-marketplace-review-fetch-failure", { error: err.message });
     } finally {
       setLoading(false);
@@ -95,7 +95,7 @@ export function AgentMarketplaceReview() {
 
       toast({ title: status === "approved" ? "Profile published to public marketplace" : "Listing request rejected" });
       await load();
-    } catch (e: any) {
+    } catch (e: unknown) {
       trackError("agent-marketplace-review-action-failure", { error: e.message, agentId: agent.id, status });
       toast({ title: "Verification update failed", description: e.message, variant: "destructive" });
     } finally {
@@ -353,3 +353,5 @@ export function AgentMarketplaceReview() {
 }
 
 export default AgentMarketplaceReview;
+
+

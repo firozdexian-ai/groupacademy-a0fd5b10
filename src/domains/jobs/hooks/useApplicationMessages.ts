@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+﻿import { useEffect, useState, useCallback } from "react";
 import { getCurrentUser } from "@/lib/auth";
 import { toast } from "sonner";
 import {
@@ -86,4 +86,5 @@ export function useApplicationMessages(applicationId: string | undefined) {
 
   return { messages, loading, send, markRead, reload: load };
 }
+
 

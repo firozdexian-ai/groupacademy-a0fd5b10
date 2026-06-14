@@ -65,7 +65,7 @@ serve(async (req) => {
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
     // Get match details
-    let match: any;
+
 
     // We need to fetch the session created_by to verify ownership
     const query = supabaseAdmin
@@ -86,7 +86,7 @@ serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    match = data;
+    const match = data;
 
     // 2. SECURITY: Ownership Check
     // Ensure the session belongs to the requesting user
@@ -224,7 +224,7 @@ Analyze this candidate's fit for the position and provide your assessment.`;
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error in score-talent-match:", error);
     return new Response(JSON.stringify({ error: error?.message || "Internal server error" }), {
       status: 500,
@@ -232,3 +232,5 @@ Analyze this candidate's fit for the position and provide your assessment.`;
     });
   }
 });
+
+

@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -93,7 +93,7 @@ interface CompetitionDetailProps {
 /**
  * GroUp Academy: Authoritative Arena Challenge Dashboard (CompetitionDetail)
  * Hardened responsive environment processing portfolio entry updates and locking temporal interval calculations defensively.
- * Version: Launch Candidate · Phase Z1 Integration Stability Locked
+ * Version: Launch Candidate Â· Phase Z1 Integration Stability Locked
  */
 export default function CompetitionDetail({ inlineSlug, onBack }: CompetitionDetailProps) {
  const { slug: urlSlugStr } = useParams<{ slug: string }>();
@@ -183,7 +183,7 @@ export default function CompetitionDetail({ inlineSlug, onBack }: CompetitionDet
  const targetDeadlineDate = new Date(activeChallengeItem.submission_deadline);
  const currentSystemDate = new Date();
 
- const rangeStr = `${format(onsetDate, "MMM d")} – ${format(ceilingDate, "MMM d")}`;
+ const rangeStr = `${format(onsetDate, "MMM d")} â€“ ${format(ceilingDate, "MMM d")}`;
  const deadlineStr = format(targetDeadlineDate, "MMM d");
  const deltaDays = differenceInDays(targetDeadlineDate, currentSystemDate);
 
@@ -235,7 +235,7 @@ export default function CompetitionDetail({ inlineSlug, onBack }: CompetitionDet
  return (
  <div className={cn(PAGE_SHELL, "text-left antialiased block transform-gpu w-full space-y-4 pb-32")}>
  
- {/* HUD LEVEL 1: APPLICATION HEADER NAVIGATION ACTIONS BAR */}
+ {/* dashboard LEVEL 1: APPLICATION HEADER NAVIGATION ACTIONS BAR */}
  <header className="flex items-center gap-2 select-none leading-none w-full shrink-0">
  <Button 
  type="button"
@@ -251,14 +251,14 @@ export default function CompetitionDetail({ inlineSlug, onBack }: CompetitionDet
  </span>
  </header>
 
- {/* HUD LEVEL 2: DETAILED CHALLENGE MEDIA CANVAS MATRICES */}
+ {/* dashboard LEVEL 2: DETAILED CHALLENGE MEDIA CANVAS MATRICES */}
  {activeChallengeItem.featured_image && (
  <div className="aspect-[16/9] relative rounded-xl overflow-hidden bg-muted border border-border/40 w-full block select-none shadow-2xs shrink-0 pointer-events-none">
  <img src={activeChallengeItem.featured_image} alt="" className="w-full h-full object-cover block" />
  </div>
  )}
 
- {/* HUD LEVEL 3: SYLLABUS DIRECTORY DATA OVERVIEW BLOCK */}
+ {/* dashboard LEVEL 3: SYLLABUS DIRECTORY DATA OVERVIEW BLOCK */}
  <div className="space-y-1 block w-full leading-none">
  <div className="flex items-center gap-2 flex-wrap select-none pointer-events-none leading-none">
  <Badge 
@@ -284,7 +284,7 @@ export default function CompetitionDetail({ inlineSlug, onBack }: CompetitionDet
  </h1>
  </div>
 
- {/* HUD LEVEL 4: TABULAR TIME METRICS BLOCK GRID ELEMENTS */}
+ {/* dashboard LEVEL 4: TABULAR TIME METRICS BLOCK GRID ELEMENTS */}
  <div className="grid grid-cols-3 gap-2 select-none pointer-events-none leading-none w-full block shrink-0 pt-0.5">
  <div className="rounded-lg border border-border/60 p-2.5 bg-muted/20 leading-none space-y-1 block flex-1 min-w-0">
  <div className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-wide flex items-center gap-1 leading-none">
@@ -313,7 +313,7 @@ export default function CompetitionDetail({ inlineSlug, onBack }: CompetitionDet
  </div>
  </div>
 
- {/* HUD LEVEL 5: CORE ASSIGNMENT INTRO TEXT SPECIFICATIONS */}
+ {/* dashboard LEVEL 5: CORE ASSIGNMENT INTRO TEXT SPECIFICATIONS */}
  <div className="space-y-1.5 block w-full leading-none">
  <h3 className={cn(SECTION_TITLE, "text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 select-none block leading-none pb-1.5 border-b border-border/5")}>About Challenge Target</h3>
  <p className="text-xs sm:text-sm text-foreground/80 font-medium leading-relaxed block select-text whitespace-pre-wrap tracking-normal">
@@ -321,7 +321,7 @@ export default function CompetitionDetail({ inlineSlug, onBack }: CompetitionDet
  </p>
  </div>
 
- {/* HUD LEVEL 6: COMPLIANCE CODE COMPILATION PREREQUISITES RULES */}
+ {/* dashboard LEVEL 6: COMPLIANCE CODE COMPILATION PREREQUISITES RULES */}
  {activeChallengeItem.rules && (
  <div className="space-y-1.5 block w-full leading-none">
  <h3 className={cn(SECTION_TITLE, "text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 select-none block leading-none pb-1.5 border-b border-border/5")}>Evaluation Boundaries & Rules</h3>
@@ -333,7 +333,7 @@ export default function CompetitionDetail({ inlineSlug, onBack }: CompetitionDet
  </div>
  )}
 
- {/* HUD LEVEL 7: CRITERIA ALLOCATION INCENTIVE DRAWING ROWS */}
+ {/* dashboard LEVEL 7: CRITERIA ALLOCATION INCENTIVE DRAWING ROWS */}
  {resolvedPrizesListArray.length > 0 && (
  <div className="space-y-1.5 block w-full leading-none">
  <h3 className={cn(SECTION_TITLE, "text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 select-none block leading-none pb-1.5 border-b border-border/5 flex items-center gap-1.5")}>
@@ -356,7 +356,7 @@ export default function CompetitionDetail({ inlineSlug, onBack }: CompetitionDet
  </div>
  )}
 
- {/* HUD LEVEL 8: SUBMISSION ARTIFACT MANIFEST RESPONSE STATUS BOX */}
+ {/* dashboard LEVEL 8: SUBMISSION ARTIFACT MANIFEST RESPONSE STATUS BOX */}
  {candidateSubmissionPayload && (
  <Card className={cn(CARD, "rounded-lg border border-emerald-500/20 bg-emerald-500/[0.01] shadow-none overflow-hidden block w-full animate-in fade-in duration-200")}>
  <CardContent className="p-3.5 space-y-2.5 block w-full leading-none">
@@ -389,7 +389,7 @@ export default function CompetitionDetail({ inlineSlug, onBack }: CompetitionDet
  </Card>
  )}
 
- {/* HUD LEVEL 9: COMPLIANCE INTERACTIVE DIALOG MODAL TRANSITIONS GATEWAY */}
+ {/* dashboard LEVEL 9: COMPLIANCE INTERACTIVE DIALOG MODAL TRANSITIONS GATEWAY */}
  {isChallengeActiveToSubmit && (
  <Dialog open={isSubmitSheetOpen} onOpenChange={setIsSubmitSheetOpen}>
  <DialogTrigger asChild>

@@ -1,5 +1,5 @@
-/**
- * /gro10x/offerings — Company services & products catalog editor.
+﻿/**
+ * /gro10x/offerings â€” Company services & products catalog editor.
  * Owners/admins can CRUD; the same data is read by the public company page.
  */
 import { useState } from "react";
@@ -41,7 +41,7 @@ export default function Gro10xOfferings() {
     );
   }
 
-  if (isLoading) return <div className="p-6 text-center text-sm text-slate-400">Loading…</div>;
+  if (isLoading) return <div className="p-6 text-center text-sm text-slate-400">Loadingâ€¦</div>;
   if (!companyId) {
     return (
       <div className="max-w-md md:max-w-5xl mx-auto p-6 text-center">
@@ -63,11 +63,11 @@ export default function Gro10xOfferings() {
       <header className="sticky top-0 z-10 bg-[#0B1220]/95 backdrop-blur-md border-b border-white/5 px-4 pt-3 pb-2 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold tracking-tight">Offerings</h1>
-          <p className={`text-xs ${GRO10X_MUTED}`}>What your company sells · {list.length}</p>
+          <p className={`text-xs ${GRO10X_MUTED}`}>What your company sells Â· {list.length}</p>
         </div>
         {canEdit && (
           <button
-            onClick={() => setEditing({ kind: "service", currency: "USD", is_active: true } as any)}
+            onClick={() => setEditing({ kind: "service", currency: "USD", is_active: true } as unknown)}
             className="rounded-full bg-[#33E1E4] text-[#06121A] p-2"
             aria-label="Add offering"
           >
@@ -84,7 +84,7 @@ export default function Gro10xOfferings() {
             <p className="text-xs text-slate-500 mt-1">
               {canEdit
                 ? "Add your first service or product so prospects, the AI sales agent, and your team know what you sell."
-                : "Your company hasn't published any offerings yet."}
+                : "Your company hasn't published unknown offerings yet."}
             </p>
           </div>
         )}
@@ -158,10 +158,10 @@ export default function Gro10xOfferings() {
           onClose={() => setEditing(null)}
           onSave={async (payload) => {
             try {
-              await upsert.mutateAsync(payload as any);
+              await upsert.mutateAsync(payload as unknown);
               toast.success("Saved");
               setEditing(null);
-            } catch (e: any) {
+            } catch (e: unknown) {
               toast.error(e?.message ?? "Could not save");
             }
           }}
@@ -175,7 +175,7 @@ export default function Gro10xOfferings() {
 function priceRange(o: CompanyOffering) {
   const sym = o.currency === "USD" ? "$" : o.currency + " ";
   if (o.price_min && o.price_max && o.price_min !== o.price_max) {
-    return `${sym}${Number(o.price_min).toLocaleString()}–${Number(o.price_max).toLocaleString()}`;
+    return `${sym}${Number(o.price_min).toLocaleString()}â€“${Number(o.price_max).toLocaleString()}`;
   }
   const v = o.price_min ?? o.price_max!;
   return `${sym}${Number(v).toLocaleString()}`;
@@ -193,7 +193,7 @@ function OfferingEditor({
   saving: boolean;
 }) {
   const [name, setName] = useState(initial.name ?? "");
-  const [kind, setKind] = useState<"service" | "product">((initial.kind as any) ?? "service");
+  const [kind, setKind] = useState<"service" | "product">((initial.kind as unknown) ?? "service");
   const [tagline, setTagline] = useState(initial.tagline ?? "");
   const [description, setDescription] = useState(initial.description ?? "");
   const [priceMin, setPriceMin] = useState(initial.price_min?.toString() ?? "");
@@ -217,7 +217,7 @@ function OfferingEditor({
       unit: unit.trim() || null,
       tags: tags.split(",").map((s) => s.trim()).filter(Boolean),
       is_active: isActive,
-    } as any);
+    } as unknown);
   };
 
   return (
@@ -286,7 +286,7 @@ function OfferingEditor({
             onClick={submit}
             className="w-full rounded-full bg-[#33E1E4] text-[#06121A] py-2.5 text-sm font-semibold disabled:opacity-50"
           >
-            {saving ? "Saving…" : "Save"}
+            {saving ? "Savingâ€¦" : "Save"}
           </button>
         </div>
       </div>
@@ -317,3 +317,5 @@ function Field({
     </label>
   );
 }
+
+

@@ -1,7 +1,7 @@
-/**
+﻿/**
  * GroUp Academy: Academy Hub Surface (AcademyView)
  * CTO Reference: Authoritative directory for academic tracks and school departments.
- * Version: Launch Candidate · Phase Z0 Hardened · Patch 0.1
+ * Version: Launch Candidate Â· Phase Z0 Hardened Â· Patch 0.1
  * Enhancements: GPU performance grid, agentic Dean chat bindings, dynamic academy directory.
  */
 import { useNavigate } from "react-router-dom";
@@ -16,7 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { trackEvent } from "@/lib/errorTracking";
 import { useCredits } from "@/domains/finance/hooks/useCredits";
 
-const iconMap: Record<string, any> = {
+const iconMap: Record<string, unknown> = {
   executive: Users,
   freelancing: Briefcase,
   entrepreneurship: Rocket,
@@ -34,7 +34,7 @@ export function AcademyView() {
 
   const academiesList = useMemo(() => {
     if (!data?.academies) return [];
-    return data.academies.map((ac: any) => ({
+    return data.academies.map((ac: unknown) => ({
       id: ac.academy_type || ac.slug || ac.id,
       title: ac.name,
       icon: iconMap[ac.academy_type] || getIcon(ac.icon) || GraduationCap,
@@ -134,3 +134,5 @@ export function AcademyView() {
     </div>
   );
 }
+
+

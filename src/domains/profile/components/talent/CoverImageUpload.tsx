@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { uploadPortfolioFile } from "@/domains/profile/repo/profileRepo";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ interface CoverImageUploadProps {
 /**
  * GroUp Academy: Visual Portfolio Cover Artifact Ingress Node (CoverImageUpload)
  * An authoritative operational sandbox managing image validation metrics and remote object storage chunk commits.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function CoverImageUpload({ currentUrl, onImageChange }: CoverImageUploadProps) {
   const queryClient = useQueryClient();
@@ -63,7 +63,7 @@ export function CoverImageUpload({ currentUrl, onImageChange }: CoverImageUpload
 
     setIsUploading(true);
     trackEvent("cover_image_upload_initiated", { fileType: targetFileItem.type });
-    const dynamicToastTrackerId = toast.loading("Uploading cover image…");
+    const dynamicToastTrackerId = toast.loading("Uploading cover imageâ€¦");
 
     try {
       const fileExtensionString = targetFileItem.name.split(".").pop();
@@ -86,7 +86,7 @@ export function CoverImageUpload({ currentUrl, onImageChange }: CoverImageUpload
         toast.success("Cover image updated.", { id: dynamicToastTrackerId });
         trackEvent("cover_image_upload_success");
       }
-    } catch (caughtPipelineExceptionErr: any) {
+    } catch (caughtPipelineExceptionErr: unknown) {
       const formattedExceptionMsgStr =
         caughtPipelineExceptionErr instanceof Error
           ? caughtPipelineExceptionErr.message
@@ -110,7 +110,7 @@ export function CoverImageUpload({ currentUrl, onImageChange }: CoverImageUpload
 
   const handleTermination = async () => {
     trackEvent("cover_image_purge_requested");
-    const dynamicToastTrackerId = toast.loading("Removing cover image…");
+    const dynamicToastTrackerId = toast.loading("Removing cover imageâ€¦");
 
     try {
       // Invalidate dashboard queries to reflect changes in real time
@@ -130,7 +130,7 @@ export function CoverImageUpload({ currentUrl, onImageChange }: CoverImageUpload
 
   return (
     <div className="space-y-4 text-left max-w-full w-full transform-gpu antialiased">
-      {/* HUD LEVEL 1: DRAG CAPTURE INTERACTIVE PREVIEW PANEL EDGE */}
+      {/* dashboard LEVEL 1: DRAG CAPTURE INTERACTIVE PREVIEW PANEL EDGE */}
       <div
         role="button"
         onClick={() => !isUploading && fileInputRef.current?.click()}
@@ -169,7 +169,7 @@ export function CoverImageUpload({ currentUrl, onImageChange }: CoverImageUpload
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 backdrop-blur-md z-20 animate-in fade-in duration-200">
             <Loader2 className="h-5 w-5 animate-spin text-primary stroke-[2.5]" />
             <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary mt-2 animate-pulse leading-none">
-              Uploading…
+              Uploadingâ€¦
             </p>
           </div>
         )}
@@ -185,7 +185,7 @@ export function CoverImageUpload({ currentUrl, onImageChange }: CoverImageUpload
         onChange={handleHandshakeSelect}
       />
 
-      {/* HUD LEVEL 2: MANAGEMENT COMMAND ACTIONS ROW STRIP */}
+      {/* dashboard LEVEL 2: MANAGEMENT COMMAND ACTIONS ROW STRIP */}
       <div className="flex items-center justify-between gap-4 select-none font-bold text-xs w-full shrink-0 leading-none">
         <div className="flex items-center gap-2 font-bold text-xs">
           <Button
@@ -221,3 +221,5 @@ export function CoverImageUpload({ currentUrl, onImageChange }: CoverImageUpload
     </div>
   );
 }
+
+

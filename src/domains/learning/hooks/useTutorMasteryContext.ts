@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { getTutorMasteryContext } from "@/domains/learning/repo/learningRepo";
 import { useTalent } from "@/hooks/useTalent";
@@ -59,7 +59,7 @@ export function useTutorMasteryContext(opts?: UseTutorMasteryContextOptions) {
   const moduleIdParam = opts?.moduleId || null;
   const contentIdParam = opts?.contentId || null;
 
-  // HUD: SECURE_REFERENCE_ISOLATED_QUERY_KEY
+  // dashboard: SECURE_REFERENCE_ISOLATED_QUERY_KEY
   const queryKey = useMemo(
     () => ["tutor-mastery-ctx", talentId, moduleIdParam, contentIdParam, isEnabled],
     [talentId, moduleIdParam, contentIdParam, isEnabled],
@@ -73,15 +73,15 @@ export function useTutorMasteryContext(opts?: UseTutorMasteryContextOptions) {
     queryFn: async (): Promise<TutorMasteryContext | null> => {
       if (!talentId) return null;
 
-      // HUD: EXECUTING_AI_TUTOR_CONTEXT_RPC_INGRESS
-      let data: any;
+      // dashboard: EXECUTING_AI_TUTOR_CONTEXT_RPC_INGRESS
+      let data: unknown;
       try {
         data = await getTutorMasteryContext({
           talentId,
           moduleId: moduleIdParam,
           contentId: contentIdParam,
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] ANOMALY: get_tutor_mastery_context RPC lookup failed.", {
           talentId,
           moduleId: moduleIdParam,
@@ -92,11 +92,11 @@ export function useTutorMasteryContext(opts?: UseTutorMasteryContextOptions) {
       }
 
 
-      const raw = (data as any) || {};
+      const raw = (data as unknown) || {};
 
       // Defensive Parsing: Map and normalize weak topic capability context maps safely
       const normalizedWeak: WeakTopicContext[] = Array.isArray(raw.weak_topics)
-        ? raw.weak_topics.map((t: any) => ({
+        ? raw.weak_topics.map((t: unknown) => ({
             tag: String(t?.tag ?? "General Tag"),
             mastery: Number(t?.mastery ?? 0),
             attempts: Number(t?.attempts ?? 1),
@@ -105,7 +105,7 @@ export function useTutorMasteryContext(opts?: UseTutorMasteryContextOptions) {
 
       // Defensive Parsing: Map and normalize strong topic capability context maps safely
       const normalizedStrong: StrongTopicContext[] = Array.isArray(raw.strong_topics)
-        ? raw.strong_topics.map((t: any) => ({
+        ? raw.strong_topics.map((t: unknown) => ({
             tag: String(t?.tag ?? "General Tag"),
             mastery: Number(t?.mastery ?? 0),
           }))
@@ -113,7 +113,7 @@ export function useTutorMasteryContext(opts?: UseTutorMasteryContextOptions) {
 
       // Defensive Parsing: Map and normalize verifiable micro-badge arrays uniformly
       const normalizedCredentials: CredentialContext[] = Array.isArray(raw.credentials)
-        ? raw.credentials.map((c: any) => ({
+        ? raw.credentials.map((c: unknown) => ({
             tag: String(c?.tag ?? "Verified Competency"),
             level: String(c?.level ?? "foundational"),
           }))
@@ -128,7 +128,7 @@ export function useTutorMasteryContext(opts?: UseTutorMasteryContextOptions) {
           }
         : null;
 
-      // HUD: DATA_NORMALIZATION_VALIDATION_COMPLETED
+      // dashboard: DATA_NORMALIZATION_VALIDATION_COMPLETED
       return {
         weak_topics: normalizedWeak,
         strong_topics: normalizedStrong,
@@ -139,3 +139,5 @@ export function useTutorMasteryContext(opts?: UseTutorMasteryContextOptions) {
     },
   });
 }
+
+

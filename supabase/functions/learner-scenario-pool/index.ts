@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+﻿import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -132,7 +132,7 @@ Deno.serve(async (req) => {
           model: "google/gemini-3-flash-preview",
           messages: [
             { role: "system", content: "Evaluate the learner's performance against the rubric. Score each criterion 0-100 with brief feedback." },
-            { role: "user", content: `Rubric: ${JSON.stringify(body.rubric)}\nConversation:\n${(body.conversation || []).map((m: any) => `${m.role}: ${m.content}`).join("\n")}` },
+            { role: "user", content: `Rubric: ${JSON.stringify(body.rubric)}\nConversation:\n${(body.conversation || []).map((m: unknown) => `${m.role}: ${m.content}`).join("\n")}` },
           ],
           tools: [{
             type: "function",
@@ -169,3 +169,5 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
+
+

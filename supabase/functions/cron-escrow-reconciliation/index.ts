@@ -1,4 +1,4 @@
-// Daily: invariant check on escrow accounts; alert on drift.
+﻿// Daily: invariant check on escrow accounts; alert on drift.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
 
@@ -6,7 +6,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
-  const drift: any[] = [];
+  const drift: unknown[] = [];
   const { data: accounts } = await admin.from("gig_escrow_accounts").select("*");
   for (const a of accounts || []) {
     const { data: ledger } = await admin
@@ -27,3 +27,5 @@ Deno.serve(async (req) => {
   }
   return new Response(JSON.stringify({ ok: true, drift }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
 });
+
+

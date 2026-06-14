@@ -24,7 +24,7 @@ export function useLearningGraph() {
     queryFn: async () => {
       const slice = await getLearningGraphSlice();
       return {
-        content: (slice.content ?? []).map((c: any) => ({
+        content: (slice.content ?? []).map((c: unknown) => ({
           id: c.id,
           title: c.title,
           content_type: c.content_type,
@@ -43,9 +43,9 @@ export function useLearningGraph() {
     },
   });
 
-  const createUpsertMutation = (table: LearningGraphTable, entityName: string) =>
+  const useCreateUpsertMutation = (table: LearningGraphTable, entityName: string) =>
     useMutation({
-      mutationFn: (payload: any) => upsertLearningGraphRow(table, payload),
+      mutationFn: (payload: unknown) => upsertLearningGraphRow(table, payload),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["learning_graph_master"] });
         toast.success(`${entityName} synchronized successfully.`);
@@ -53,7 +53,7 @@ export function useLearningGraph() {
       onError: (e: Error) => toast.error(`Sync Failed: ${e.message}`),
     });
 
-  const createDeleteMutation = (table: LearningGraphTable, entityName: string) =>
+  const useCreateDeleteMutation = (table: LearningGraphTable, entityName: string) =>
     useMutation({
       mutationFn: (id: string) => deleteLearningGraphRow(table, id),
       onSuccess: () => {
@@ -66,19 +66,21 @@ export function useLearningGraph() {
   return {
     learningGraphQuery,
     mutations: {
-      upsertContent: createUpsertMutation("content", "Content Node"),
-      deleteContent: createDeleteMutation("content", "Content Node"),
-      upsertEnrollment: createUpsertMutation("enrollments", "Enrollment Record"),
-      deleteEnrollment: createDeleteMutation("enrollments", "Enrollment Record"),
-      upsertCohort: createUpsertMutation("cohorts", "Cohort Instance"),
-      deleteCohort: createDeleteMutation("cohorts", "Cohort Instance"),
-      upsertCourseBrief: createUpsertMutation("course_briefs", "Course Brief"),
-      deleteCourseBrief: createDeleteMutation("course_briefs", "Course Brief"),
-      upsertSession: createUpsertMutation("course_sessions", "Course Session"),
-      deleteSession: createDeleteMutation("course_sessions", "Course Session"),
-      upsertPayout: createUpsertMutation("instructor_payout_requests", "Payout Request"),
-      deletePayout: createDeleteMutation("instructor_payout_requests", "Payout Request"),
+      upsertContent: useCreateUpsertMutation("content", "Content Node"),
+      deleteContent: useCreateDeleteMutation("content", "Content Node"),
+      upsertEnrollment: useCreateUpsertMutation("enrollments", "Enrollment Record"),
+      deleteEnrollment: useCreateDeleteMutation("enrollments", "Enrollment Record"),
+      upsertCohort: useCreateUpsertMutation("cohorts", "Cohort Instance"),
+      deleteCohort: useCreateDeleteMutation("cohorts", "Cohort Instance"),
+      upsertCourseBrief: useCreateUpsertMutation("course_briefs", "Course Brief"),
+      deleteCourseBrief: useCreateDeleteMutation("course_briefs", "Course Brief"),
+      upsertSession: useCreateUpsertMutation("course_sessions", "Course Session"),
+      deleteSession: useCreateDeleteMutation("course_sessions", "Course Session"),
+      upsertPayout: useCreateUpsertMutation("instructor_payout_requests", "Payout Request"),
+      deletePayout: useCreateDeleteMutation("instructor_payout_requests", "Payout Request"),
     },
   };
 }
+
+
 

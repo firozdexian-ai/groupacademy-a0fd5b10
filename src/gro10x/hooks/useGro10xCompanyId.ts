@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { getActiveCompanyIdForUser } from "@/domains/companies/repo/companiesRepo";
 
@@ -12,3 +12,4 @@ export function useGro10xCompanyId() {
     queryFn: async () => getActiveCompanyIdForUser(user!.id),
   });
 }
+

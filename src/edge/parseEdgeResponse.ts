@@ -1,9 +1,9 @@
-import type { ZodType } from "zod";
+﻿import type { ZodType } from "zod";
 import { EdgeFunctionError } from "./EdgeFunctionError";
 
 /**
  * Validate an edge-function response payload against a zod schema.
- * Throws `EdgeFunctionError` if the wire shape drifts — turning silent
+ * Throws `EdgeFunctionError` if the wire shape drifts â€” turning silent
  * casts into loud, typed failures at the call site.
  */
 export function parseEdgeResponse<T>(
@@ -15,3 +15,4 @@ export function parseEdgeResponse<T>(
   if (!parsed.success) throw new EdgeFunctionError(fnName, parsed.error);
   return parsed.data;
 }
+

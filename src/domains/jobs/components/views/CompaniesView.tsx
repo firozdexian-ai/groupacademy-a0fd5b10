@@ -1,7 +1,7 @@
-/**
+﻿/**
  * GroUp Academy: Employer CRM Surface Selector (CompaniesView)
  * CTO Reference: Authoritative component for candidate-to-employer subscription tracking.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  * Enhancements: GPU performance acceleration, digital workforce logging, layout stabilization.
  */
 import { useEffect } from "react";
@@ -42,7 +42,7 @@ export function CompaniesView({ companies }: Props) {
         </div>
         <p className="text-sm font-semibold text-foreground/90 tracking-tight">No companies hiring right now</p>
         <p className="text-xs text-muted-foreground/80 max-w-xs mx-auto leading-relaxed">
-          Check back soon — new employers post roles and connect with talent every day.
+          Check back soon â€” new employers post roles and connect with talent every day.
         </p>
         <Button
           size="sm"
@@ -113,3 +113,4 @@ export function CompaniesView({ companies }: Props) {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,9 +11,9 @@ import {
 } from "@/domains/gigs/repo/gigsRepo";
 
 export function ReviewerProgramTab() {
-  const [reviewers, setReviewers] = useState<any[]>([]);
-  const [disputes, setDisputes] = useState<any[]>([]);
-  const [insights, setInsights] = useState<any>({});
+  const [reviewers, setReviewers] = useState<unknown[]>([]);
+  const [disputes, setDisputes] = useState<unknown[]>([]);
+  const [insights, setInsights] = useState<unknown>({});
   const [loading, setLoading] = useState(true);
 
   const load = async () => {
@@ -22,10 +22,10 @@ export function ReviewerProgramTab() {
       const { reviewers: r, disputes: d, assignments: l } = await getReviewerProgramBundle();
       setReviewers(r);
       setDisputes(d);
-      const s: any = { offered: 0, claimed: 0, submitted: 0, expired: 0 };
-      l.forEach((x: any) => { s[x.status] = (s[x.status] || 0) + 1; });
+      const s: unknown = { offered: 0, claimed: 0, submitted: 0, expired: 0 };
+      l.forEach((x: unknown) => { s[x.status] = (s[x.status] || 0) + 1; });
       setInsights(s);
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(e?.message ?? "Failed to load reviewer program.");
     } finally {
       setLoading(false);
@@ -38,7 +38,7 @@ export function ReviewerProgramTab() {
       await updateReviewerStatus(id, status);
       toast.success("Updated");
       load();
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(e?.message ?? "Update failed");
     }
   };
@@ -48,12 +48,12 @@ export function ReviewerProgramTab() {
       await resolveDisputeRpc({ disputeId: id, verdict, notes: "Admin override" });
       toast.success("Resolved");
       load();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error(error?.message ?? "Resolve failed");
     }
   };
 
-  if (loading) return <div className="p-4 text-sm text-muted-foreground">Loading…</div>;
+  if (loading) return <div className="p-4 text-sm text-muted-foreground">Loadingâ€¦</div>;
   return (
     <Tabs defaultValue="reviewers">
       <TabsList>
@@ -66,8 +66,8 @@ export function ReviewerProgramTab() {
         {reviewers.map(r => (
           <Card key={r.id} className="p-3 flex items-center justify-between text-sm">
             <div>
-              <div className="font-medium">{r.talent_id.slice(0,8)} · {r.tier}</div>
-              <div className="text-xs text-muted-foreground">accuracy {r.accuracy}% · {r.items_resolved} items · {r.status}</div>
+              <div className="font-medium">{r.talent_id.slice(0,8)} Â· {r.tier}</div>
+              <div className="text-xs text-muted-foreground">accuracy {r.accuracy}% Â· {r.items_resolved} items Â· {r.status}</div>
             </div>
             <div className="flex gap-1">
               {r.status !== "active" && <Button size="sm" variant="outline" onClick={() => setStatus(r.id, "active")}>Activate</Button>}
@@ -109,3 +109,5 @@ export function ReviewerProgramTab() {
     </Tabs>
   );
 }
+
+

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+﻿import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLearningGraph } from "./hooks/useLearningGraph";
 import { listInstructorsLite } from "@/domains/learning/repo/learningRepo";
@@ -21,7 +21,7 @@ export function LearningPayoutsTab() {
  } = useLearningGraph();
  const { data, isLoading } = learningGraphQuery;
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ status: "pending", amount: 0 });
+ const [draft, setDraft] = useState<unknown>({ status: "pending", amount: 0 });
 
  const instructorsQ = useQuery({
    queryKey: ["instructors-lite-lookup"],
@@ -29,7 +29,7 @@ export function LearningPayoutsTab() {
  });
 
  const instructorsById = useMemo(
-   () => Object.fromEntries((instructorsQ.data ?? []).map((ins: any) => [ins.id, ins.full_name])),
+   () => Object.fromEntries((instructorsQ.data ?? []).map((ins: unknown) => [ins.id, ins.full_name])),
    [instructorsQ.data]
  );
 
@@ -91,7 +91,7 @@ export function LearningPayoutsTab() {
  </TableCell>
  </TableRow>
  ) : (
- data?.payouts?.map((row: any) => (
+ data?.payouts?.map((row: unknown) => (
  <TableRow key={row.id} className="group hover:bg-success/[0.02]">
  <TableCell className="py-6 pl-8">
  <div className="flex items-center gap-3">
@@ -193,7 +193,7 @@ export function LearningPayoutsTab() {
   <SelectValue placeholder="SELECT AN INSTRUCTOR" />
   </SelectTrigger>
   <SelectContent>
-  {instructorsQ.data?.map((ins: any) => (
+  {instructorsQ.data?.map((ins: unknown) => (
   <SelectItem key={ins.id} value={ins.id} className="font-bold text-xs uppercase">
   {ins.full_name}
   </SelectItem>
@@ -259,3 +259,5 @@ export function LearningPayoutsTab() {
 }
 
 export default LearningPayoutsTab;
+
+

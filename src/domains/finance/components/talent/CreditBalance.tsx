@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+﻿import { useMemo } from "react";
 import { Coins, Zap, ShieldCheck, TrendingUp } from "lucide-react";
 import { useCredits } from "@/domains/finance/hooks/useCredits";
 import { Button } from "@/components/ui/button";

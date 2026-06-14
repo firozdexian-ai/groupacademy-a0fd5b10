@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentSession } from "@/lib/auth";
@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Dynamic Webinar Ingress Pipeline Hub (WebinarLanding)
  * Hardened marketing entry node tracking incoming affiliate links and insulating local time translations from hydration drift.
- * Version: Launch Candidate · Phase Z0 Execution Stability Locked
+ * Version: Launch Candidate Â· Phase Z0 Execution Stability Locked
  */
 export default function WebinarLanding() {
   const { slug: unverifiedRouteSlugStr } = useParams<{ slug: string }>();
@@ -144,7 +144,7 @@ export default function WebinarLanding() {
 
   return (
     <div className="max-w-xl mx-auto px-4 py-6 sm:py-8 pb-24 space-y-4 sm:space-y-5 text-left antialiased block transform-gpu w-full">
-      {/* HUD LEVEL 1: BRANDED MEDIA DISPLAY CAP CLIPS */}
+      {/* dashboard LEVEL 1: BRANDED MEDIA DISPLAY CAP CLIPS */}
       <div className="rounded-xl border border-border/60 bg-card overflow-hidden block relative aspect-video select-none pointer-events-none shrink-0 w-full shadow-2xs">
         {verifiedWebinarDataRecord.cover_image_url ? (
           <img
@@ -159,7 +159,7 @@ export default function WebinarLanding() {
         )}
       </div>
 
-      {/* HUD LEVEL 2: SPECIFICATION METADATA SEGMENTS */}
+      {/* dashboard LEVEL 2: SPECIFICATION METADATA SEGMENTS */}
       <div className="space-y-1.5 block leading-none w-full">
         <Badge className="font-mono text-[9px] font-extrabold uppercase tracking-wide rounded px-1.5 h-5 pt-0.5 pointer-events-none select-none bg-primary text-primary-foreground shrink-0">
           LIVE WEBINAR
@@ -175,7 +175,7 @@ export default function WebinarLanding() {
         )}
       </div>
 
-      {/* HUD LEVEL 3: TIMING LOGS SPECIFICATIONS CARD */}
+      {/* dashboard LEVEL 3: TIMING LOGS SPECIFICATIONS CARD */}
       <Card className="rounded-xl border border-border/60 bg-card shadow-none block w-full overflow-hidden">
         <CardContent className="p-4 space-y-3.5 text-xs sm:text-sm font-semibold leading-none text-foreground/80 w-full block">
           {/* Calendar Sync Tracks */}
@@ -226,7 +226,7 @@ export default function WebinarLanding() {
         </CardContent>
       </Card>
 
-      {/* HUD LEVEL 4: ABSTRACT DESCRIPTION SECTION OVERVIEWS */}
+      {/* dashboard LEVEL 4: ABSTRACT DESCRIPTION SECTION OVERVIEWS */}
       {verifiedWebinarDataRecord.description && (
         <Card className="rounded-xl border border-border/60 bg-card/20 shadow-none block w-full overflow-hidden">
           <CardContent className="p-4 text-xs sm:text-sm font-medium text-foreground/80 leading-relaxed select-text block w-full whitespace-pre-line">
@@ -238,7 +238,7 @@ export default function WebinarLanding() {
         </Card>
       )}
 
-      {/* HUD LEVEL 5: COMPLIANCE INGRESS INCENTIVE CONTEXT FOOT CTA */}
+      {/* dashboard LEVEL 5: COMPLIANCE INGRESS INCENTIVE CONTEXT FOOT CTA */}
       <Card className="rounded-xl border border-border/60 bg-linear-to-r from-card via-card/40 to-background shadow-none block w-full overflow-hidden">
         <CardContent className="p-4 space-y-4 w-full block text-left leading-none">
           <div className="flex items-center gap-2 select-none pointer-events-none leading-none">
@@ -279,3 +279,4 @@ export default function WebinarLanding() {
     </div>
   );
 }
+

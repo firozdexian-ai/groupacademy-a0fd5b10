@@ -1,5 +1,5 @@
-/**
- * Analytics domain — typed edge function wrappers (Phase 9g - Hardened).
+﻿/**
+ * Analytics domain â€” typed edge function wrappers (Phase 9g - Hardened).
  * Houses edge contract dispatchers for the Report Builder and Business Analyst (Nia) agents.
  * Automates token propagation, schemas parsing, and React Query cache invalidation mapping.
  */
@@ -33,7 +33,7 @@ export async function adminReportBuilder(
     // Acquire active session token to maintain hard architectural token verification checks
     const {
       data: { session },
-    } = await supabase.auth.getSession();
+    } = await getCurrentSession();
 
     const { data, error } = await supabase.functions.invoke("admin-report-builder", {
       body: req,
@@ -48,7 +48,7 @@ export async function adminReportBuilder(
       data: parsedData,
       invalidate: ["admin-report-builder", "admin-reports", "overview-reports"],
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[Digital Workforce Anomaly] Report builder generation failure:", err);
     throw new Error(err.message || "Something went wrong while compiling your report. Please check parameters.");
   }
@@ -63,7 +63,7 @@ export async function adminAnalystQuery(
   try {
     const {
       data: { session },
-    } = await supabase.auth.getSession();
+    } = await getCurrentSession();
 
     const { data, error } = await supabase.functions.invoke("admin-analyst", {
       body: req,
@@ -78,7 +78,7 @@ export async function adminAnalystQuery(
       data: parsedData,
       invalidate: ["admin-analyst", "platform-metrics", "overview-analyst"],
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[Digital Workforce Anomaly] Business analyst processing failure:", err);
     throw new Error("The analytics engine couldn't calculate these platform metrics right now.");
   }
@@ -95,3 +95,6 @@ export {
   type LifetimeOverviewPayload,
   type AnalystMetricPeriod,
 } from "../repo/analyticsRepo";
+
+
+

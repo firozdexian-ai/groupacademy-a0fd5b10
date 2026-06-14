@@ -1,7 +1,7 @@
-/**
+﻿/**
  * GroUp Academy: Profile Completeness Gate Control Node
  * CTO Reference: Authoritative presentation intercept container guarding personalized talent job matching profiles.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +13,7 @@ import { Sparkles, ArrowRight, CheckCircle2, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Props {
-  talent: any;
+  talent: unknown;
 }
 
 interface Step {
@@ -159,3 +159,5 @@ export function ProfileCompletenessGate({ talent }: Props) {
     </Card>
   );
 }
+
+

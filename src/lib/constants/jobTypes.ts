@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Centralized job-related constants for consistency across the Jobs feature
  */
 
@@ -85,3 +85,4 @@ export function isDeadlinePassed(deadline: string | null): boolean {
   if (!deadline) return false;
   return new Date(deadline) < new Date();
 }
+

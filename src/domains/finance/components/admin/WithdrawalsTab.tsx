@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { listAdminWithdrawalRequests } from "@/domains/finance/repo/financeRepo";
 import { processWithdrawal as processWithdrawalEdge } from "@/domains/finance/api/financeApi";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,7 +18,7 @@ interface Row {
   talent_id: string;
   amount_credits: number;
   method: string;
-  payout_details: any;
+  payout_details: unknown;
   status: "pending" | "approved" | "paid" | "rejected";
   admin_notes: string | null;
   created_at: string;
@@ -43,7 +43,7 @@ export function WithdrawalsTab() {
     setLoading(true);
     try {
       const data = await listAdminWithdrawalRequests();
-      setRows((data as any) || []);
+      setRows((data as unknown) || []);
     } catch (err) {
       console.error("[Payout Operations] Failed to retrieve withdrawal rows:", err);
       toast.error("Could not sync payout request balances from accounting logs.");
@@ -69,7 +69,7 @@ export function WithdrawalsTab() {
       toast.success(`Payout request successfully marked as ${action_status}`);
       setNoteDraft((prev) => ({ ...prev, [id]: "" }));
       load();
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("[Payout Operations] State modification failure:", e);
       toast.error(e.message || "An error occurred while attempting to process this payout request.");
     } finally {
@@ -268,3 +268,5 @@ export function WithdrawalsTab() {
 }
 
 export default WithdrawalsTab;
+
+

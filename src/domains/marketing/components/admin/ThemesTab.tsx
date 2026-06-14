@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useMarketingGraph } from "./hooks/useMarketingGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { ImageUpload } from "@/components/ImageUpload";
 
-const defaultDraft: any = {
+const defaultDraft: unknown = {
  name: "",
  priority: 0,
  media_type: "gradient",
@@ -29,7 +29,7 @@ export function ThemesTab() {
  const { data, isLoading } = marketingGraphQuery;
 
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>(defaultDraft);
+ const [draft, setDraft] = useState<unknown>(defaultDraft);
 
  return (
  <div className="space-y-6 animate-in fade-in duration-700">
@@ -70,7 +70,7 @@ export function ThemesTab() {
  ) : data?.themes?.length === 0 ? (
  <TableRow><TableCell colSpan={4} className="text-center py-12 italic uppercase font-black text-xs tracking-widest opacity-30">Zero themes detected.</TableCell></TableRow>
  ) : (
- data?.themes?.map((row: any) => (
+ data?.themes?.map((row: unknown) => (
  <TableRow key={row.id}>
  <TableCell>
  <div className="flex items-center gap-3">
@@ -231,3 +231,5 @@ export function ThemesTab() {
 }
 
 export default ThemesTab;
+
+

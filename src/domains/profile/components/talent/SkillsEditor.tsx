@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef, KeyboardEvent } from "react";
+﻿import { useState, useEffect, useMemo, useRef, KeyboardEvent } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +17,7 @@ interface SkillsEditorProps {
 /**
  * GroUp Academy: Technical Skill Matrix Ingress Control Terminal (SkillsEditor)
  * An authoritative operational sandbox managing technical skills, micro-credentials, and match vectors.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function SkillsEditor({ skills = [], onChange }: SkillsEditorProps) {
   const queryClient = useQueryClient();
@@ -99,7 +99,7 @@ export function SkillsEditor({ skills = [], onChange }: SkillsEditorProps) {
 
   return (
     <div className="space-y-4 text-left max-w-full w-full transform-gpu antialiased">
-      {/* HUD LEVEL 1: TOP PANEL TRACK HEADING BLOCK */}
+      {/* dashboard LEVEL 1: TOP PANEL TRACK HEADING BLOCK */}
       <div className="space-y-1.5 text-left flex flex-col justify-center min-w-0 select-none w-full leading-none shrink-0 h-8">
         <Label className="text-sm sm:text-base font-bold text-foreground uppercase tracking-wide flex items-center gap-2 leading-none block truncate">
           <Target className="h-4 w-4 text-primary stroke-[2.2] shrink-0 animate-pulse" />
@@ -110,13 +110,13 @@ export function SkillsEditor({ skills = [], onChange }: SkillsEditorProps) {
         </p>
       </div>
 
-      {/* HUD LEVEL 2: RECTILINEAR ENTRY DISPATCH BOX STRIP */}
+      {/* dashboard LEVEL 2: RECTILINEAR ENTRY DISPATCH BOX STRIP */}
       <div className="flex gap-2.5 items-center w-full shrink-0 font-bold text-xs select-none">
         <div className="relative flex-1 group/input min-w-0 h-10 flex items-center">
           <Input
             value={inputValue}
             onKeyDown={handleTerminalInputKeyDown}
-            placeholder="Add a skill (e.g. React, Python, DevOps)…"
+            placeholder="Add a skill (e.g. React, Python, DevOps)â€¦"
             onChange={(e) => setInputValue(e.target.value)}
             className="h-10 rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground pl-9 pr-3 shadow-inner w-full block focus-visible:ring-1 focus-visible:ring-ring select-text uppercase placeholder:normal-case placeholder:tracking-normal placeholder:font-medium placeholder:text-muted-foreground/30"
           />
@@ -134,7 +134,7 @@ export function SkillsEditor({ skills = [], onChange }: SkillsEditorProps) {
         </Button>
       </div>
 
-      {/* HUD LEVEL 3: GRID TEXT TAG LAYOUT CANVAS BLOCK */}
+      {/* dashboard LEVEL 3: GRID TEXT TAG LAYOUT CANVAS BLOCK */}
       <div className="min-h-[100px] p-4 rounded-xl border border-border/40 bg-card/20 backdrop-blur-xs flex items-center justify-start text-left w-full min-w-0 shadow-inner overflow-hidden">
         {safeSkillsCollection.length === 0 ? (
           /* COLD START VACANT MATRIX HOVER INDICATOR */
@@ -174,7 +174,7 @@ export function SkillsEditor({ skills = [], onChange }: SkillsEditorProps) {
         )}
       </div>
 
-      {/* HUD LEVEL 4: INTELLIGENCE SYSTEM EXECUTING OVERLAY ASSISTANCE RIBBON */}
+      {/* dashboard LEVEL 4: INTELLIGENCE SYSTEM EXECUTING OVERLAY ASSISTANCE RIBBON */}
       <div className="flex items-start gap-3 p-3.5 rounded-xl bg-primary/[0.01] border border-primary/10 select-none text-left w-full shadow-sm shrink-0">
         <Sparkles className="h-4 w-4 text-primary shrink-0 mt-0.5 stroke-[2.2]" />
         <p className="text-[10px] font-semibold text-muted-foreground uppercase leading-relaxed tracking-wide">
@@ -185,3 +185,4 @@ export function SkillsEditor({ skills = [], onChange }: SkillsEditorProps) {
     </div>
   );
 }
+

@@ -1,8 +1,8 @@
-import React from "react";
+﻿import React from "react";
 
 /**
- * AI Agents Domain Routing Registry — Agent OS Command Center
- * Version: Launch Candidate · Phase Z0 Hardened (Code Freeze)
+ * AI Agents Domain Routing Registry â€” Agent OS Command Center
+ * Version: Launch Candidate Â· Phase Z0 Hardened (Code Freeze)
  * Infrastructure: Digital Workforce Connected Telemetry Shell Map
  * 
  * Rules: This configuration unifies all 15 specialized system subsections,
@@ -10,7 +10,7 @@ import React from "react";
  * Existing keys, route designations, and title mappings are strictly immutable.
  */
 
-export const ROUTES: Record<string, React.LazyExoticComponent<any>> = {
+export const ROUTES: Record<string, React.LazyExoticComponent<unknown>> = {
   // --- CORE SYSTEM COMMAND INTERFACE (Keep) ---
   "agents-command-center": React.lazy(() =>
     import("@/pages/dashboard/WorkforceCommandCenter").then((m) => ({ default: m.WorkforceCommandCenter })),
@@ -78,3 +78,4 @@ export const TITLES: Record<string, string> = {
   "agents-sessions": "Chat Logs",
   "agents-insights": "Agent Metrics",
 };
+

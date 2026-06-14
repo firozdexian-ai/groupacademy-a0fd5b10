@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
 import { ArrowLeft, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TalentMirrorPanel } from "@/domains/learning/components/talent/TalentMirrorPanel";
@@ -47,7 +47,7 @@ export default function TalentMirror() {
 function ErrorBoundary({ children, onError }: { children: React.ReactNode; onError: (e: Error) => void }) {
  try {
  return <>{children}</>;
- } catch (e: any) {
+ } catch (e: unknown) {
  onError(e);
  return (
  <div className="p-12 text-center border-2 border-dashed rounded-2xl space-y-4">
@@ -57,3 +57,5 @@ function ErrorBoundary({ children, onError }: { children: React.ReactNode; onErr
  );
  }
 }
+
+

@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,9 +34,9 @@ interface ProfessionCategory {
 const SALARY_ANALYSIS_COST = 50;
 
 /**
- * GroUp Academy: AI Salary Synthesis & Market Telemetry Setup (AppSalaryAnalysisSetup)
+ * GroUp Academy: AI Salary summary & Market Telemetry Setup (AppSalaryAnalysisSetup)
  * Hardened responsive entry cockpit processing dynamic resume uploads and checking credit gate parameters defensively.
- * Version: Launch Candidate · Phase Z1 Transaction Matrix Sealed
+ * Version: Launch Candidate Â· Phase Z1 Transaction Matrix Sealed
  */
 export default function AppSalaryAnalysisSetup() {
  const navigateHook = useNavigate();
@@ -102,7 +102,7 @@ export default function AppSalaryAnalysisSetup() {
  if (dbCategoriesPayload && isThreadActive) {
  setProfessionCategoriesArray(dbCategoriesPayload as unknown as ProfessionCategory[]);
  }
- } catch (pipelineException: any) {
+ } catch (pipelineException: unknown) {
  if (isThreadActive) {
  console.error("Failed to load profession categories:", pipelineException);
  }
@@ -193,7 +193,7 @@ export default function AppSalaryAnalysisSetup() {
  const isCreditHandshakeSettled = await deductCredits(
  "SALARY_ANALYSIS",
  undefined,
- "AI Salary Synthesis Market Analysis Run",
+ "AI Salary summary Market Analysis Run",
  );
  if (!isCreditHandshakeSettled) throw new Error("Credit transaction block handshake failure.");
 
@@ -254,7 +254,7 @@ export default function AppSalaryAnalysisSetup() {
 
  return (
  <div className="max-w-3xl mx-auto px-4 py-6 space-y-6 text-left antialiased block transform-gpu w-full pb-24">
- {/* HUD LEVEL 1: OVERVIEW COMPLIANCE INTERFACE NAVIGATION BAR */}
+ {/* dashboard LEVEL 1: OVERVIEW COMPLIANCE INTERFACE NAVIGATION BAR */}
  <header className="flex items-center justify-between select-none leading-none w-full shrink-0">
  <Button
  type="button"
@@ -279,13 +279,13 @@ export default function AppSalaryAnalysisSetup() {
  className="rounded-xl border border-dashed border-primary/20 bg-card/10 block w-full shadow-none"
  />
 
- {/* HUD LEVEL 2: COMPOSITE DISCOVERY HEADER PANELS */}
+ {/* dashboard LEVEL 2: COMPOSITE DISCOVERY HEADER PANELS */}
  <div className="text-center max-w-lg mx-auto space-y-2 select-none pointer-events-none leading-none pb-2 block">
  <div className="h-11 w-11 bg-primary/5 border border-primary/10 rounded-xl flex items-center justify-center mx-auto rotate-2 shadow-2xs text-primary shrink-0">
  <Target className="h-5 w-5 stroke-[2.2]" />
  </div>
  <h1 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-foreground leading-none pt-1">
- Market Intelligence Salary Synthesis
+ Market Intelligence Salary summary
  </h1>
  <p className="text-[11px] sm:text-xs font-semibold text-muted-foreground/60 leading-normal block max-w-sm mx-auto">
  Deploy algorithmic salary benchmarking metrics mapping candidate credentials against specialized enterprise
@@ -293,7 +293,7 @@ export default function AppSalaryAnalysisSetup() {
  </p>
  </div>
 
- {/* HUD LEVEL 3: INPUT OPERATIONAL CARD COMPONENT STRUCTURES */}
+ {/* dashboard LEVEL 3: INPUT OPERATIONAL CARD COMPONENT STRUCTURES */}
  <Card className="rounded-lg border border-border/60 bg-card/40 overflow-hidden block w-full shadow-none">
  <CardHeader className="p-4 border-b border-border/5 bg-muted/20 flex flex-row items-center justify-between w-full select-none shrink-0 leading-none">
  <CardTitle className="text-xs sm:text-sm font-bold uppercase tracking-wide text-foreground leading-none flex items-center gap-2 m-0">
@@ -393,7 +393,7 @@ export default function AppSalaryAnalysisSetup() {
  Candidate Experience Portfolio Registry (CV)
  </Label>
 
- <Tabs value={cvInputMode} onValueChange={(v) => setCvInputMode(v as any)} className="w-full block">
+ <Tabs value={cvInputMode} onValueChange={(v) => setCvInputMode(v as unknown)} className="w-full block">
  <TabsList className="grid w-full grid-cols-3 p-1 h-10 bg-muted/40 rounded-lg border border-border/10 select-none mb-4">
  {hasExistingCvOnFile && (
  <TabsTrigger
@@ -470,7 +470,7 @@ export default function AppSalaryAnalysisSetup() {
  {cvFileState ? cvFileState.name : "Select Resume Specification File"}
  </p>
  <p className="font-mono text-[9px] font-bold text-muted-foreground/30 uppercase tracking-wide block leading-none">
- Isolated PDF, DOC or DOCX Allocation • Cap Limit Constraint: 10.0 MB
+ Isolated PDF, DOC or DOCX Allocation â€¢ Cap Limit Constraint: 10.0 MB
  </p>
  </div>
  </div>
@@ -507,7 +507,7 @@ export default function AppSalaryAnalysisSetup() {
  onClose={handleCloseCreditGateModal}
  onConfirm={handleCloseCreditGateModal}
  onBuyCredits={handleOpenPurchaseSheetFromModal}
- serviceName="Salary Synthesis Market Diagnostic"
+ serviceName="Salary summary Market Diagnostic"
  cost={SALARY_ANALYSIS_COST}
  currentBalance={balance}
  />
@@ -519,3 +519,5 @@ export default function AppSalaryAnalysisSetup() {
  </div>
  );
 }
+
+

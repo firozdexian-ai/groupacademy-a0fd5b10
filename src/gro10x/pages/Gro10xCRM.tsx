@@ -1,6 +1,6 @@
-/**
- * /gro10x/crm — Lightweight Kanban-style CRM.
- * Stages: new → contacted → qualified → proposal → won/lost.
+﻿/**
+ * /gro10x/crm â€” Lightweight Kanban-style CRM.
+ * Stages: new â†’ contacted â†’ qualified â†’ proposal â†’ won/lost.
  * Uses `company_leads` + `company_lead_activities` (member-scoped RLS).
  */
 import { useState } from "react";
@@ -66,7 +66,7 @@ export default function Gro10xCRM() {
     enabled: !!companyId,
     queryFn: async (): Promise<Lead[]> => {
       const data = await listCompanyLeads(companyId!);
-      return data.map((r: any) => ({ ...r, value_usd: Number(r.value_usd ?? 0) }));
+      return data.map((r: unknown) => ({ ...r, value_usd: Number(r.value_usd ?? 0) }));
     },
   });
 
@@ -84,7 +84,7 @@ export default function Gro10xCRM() {
       qc.invalidateQueries({ queryKey: ["company-leads", companyId] });
       setShowNew(false);
     },
-    onError: (e: any) => toast.error(e.message),
+    onError: (e: unknown) => toast.error(e.message),
   });
 
   const updateStage = useMutation({
@@ -108,7 +108,7 @@ export default function Gro10xCRM() {
     );
   }
 
-  if (isLoading) return <Gro10xLoading label="Loading CRM…" />;
+  if (isLoading) return <Gro10xLoading label="Loading CRMâ€¦" />;
   if (!companyId) {
     return (
       <div className="max-w-md md:max-w-5xl mx-auto p-6 text-center">
@@ -205,7 +205,7 @@ export default function Gro10xCRM() {
               <div className="min-w-0">
                 <p className="text-sm font-medium text-slate-100 truncate">{l.name}</p>
                 <p className="text-xs text-slate-400 truncate">
-                  {l.company_name || l.title || l.email || "—"}
+                  {l.company_name || l.title || l.email || "â€”"}
                 </p>
               </div>
               <ChevronRight className="h-4 w-4 text-slate-500 shrink-0" />
@@ -280,7 +280,7 @@ function NewLeadSheet({
           onClick={() => onSubmit({ name, email, company_name: company, source, value_usd: Number(value) || 0 })}
           className="w-full rounded-full bg-[#33E1E4] text-[#06121A] py-2.5 text-sm font-semibold disabled:opacity-50"
         >
-          {submitting ? "Saving…" : "Add lead"}
+          {submitting ? "Savingâ€¦" : "Add lead"}
         </button>
       </div>
     </div>
@@ -324,7 +324,7 @@ function LeadDetail({
 
   const updateLead = useMutation({
     mutationFn: async (patch: Partial<Lead>) => {
-      await updateCompanyLead(lead.id, patch as any);
+      await updateCompanyLead(lead.id, patch as unknown);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["company-leads", companyId] });
@@ -364,7 +364,7 @@ function LeadDetail({
         <div className="sticky top-0 bg-[#0B1220] border-b border-white/5 px-4 py-3 flex items-center justify-between">
           <div className="min-w-0">
             <h2 className="text-base font-semibold truncate">{lead.name}</h2>
-            <p className="text-xs text-slate-400 truncate">{lead.company_name || lead.email || "—"}</p>
+            <p className="text-xs text-slate-400 truncate">{lead.company_name || lead.email || "â€”"}</p>
           </div>
           <button onClick={onClose}><X className="h-4 w-4 text-slate-400" /></button>
         </div>
@@ -406,11 +406,11 @@ function LeadDetail({
               onChange={(e) => {
                 const v = e.target.value;
                 setOfferingId(v);
-                updateLead.mutate({ offering_id: (v || null) as any });
+                updateLead.mutate({ offering_id: (v || null) as unknown });
               }}
               className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm text-slate-100 focus:border-[#33E1E4] outline-none"
             >
-              <option value="">— None —</option>
+              <option value="">â€” None â€”</option>
               {(offerings.data ?? []).map((o) => (
                 <option key={o.id} value={o.id}>
                   {o.name} ({o.kind})
@@ -427,7 +427,7 @@ function LeadDetail({
               onChange={(e) => setNextStep(e.target.value)}
               onBlur={() => {
                 if ((lead.next_step ?? "") !== nextStep) {
-                  updateLead.mutate({ next_step: (nextStep.trim() || null) as any });
+                  updateLead.mutate({ next_step: (nextStep.trim() || null) as unknown });
                 }
               }}
               placeholder="e.g. Follow up Tuesday with proposal"
@@ -441,7 +441,7 @@ function LeadDetail({
               value={note}
               onChange={(e) => setNote(e.target.value)}
               rows={2}
-              placeholder="Quick note about this lead…"
+              placeholder="Quick note about this leadâ€¦"
               className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-[#33E1E4] outline-none"
             />
             <button
@@ -459,7 +459,7 @@ function LeadDetail({
               {(activitiesQuery.data ?? []).length === 0 && (
                 <p className="text-xs text-slate-500">No activity yet.</p>
               )}
-              {(activitiesQuery.data ?? []).map((a: any) => (
+              {(activitiesQuery.data ?? []).map((a: unknown) => (
                 <div key={a.id} className="rounded-lg bg-white/5 border border-white/10 p-2.5">
                   <p className="text-[10px] text-slate-500 uppercase tracking-wide">{a.activity_type}</p>
                   <p className="text-xs text-slate-200 whitespace-pre-wrap mt-0.5">{a.body}</p>
@@ -473,3 +473,5 @@ function LeadDetail({
     </div>
   );
 }
+
+

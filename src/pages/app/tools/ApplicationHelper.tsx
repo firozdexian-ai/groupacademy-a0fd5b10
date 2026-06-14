@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ClipboardList, Loader2, Sparkles, Coins, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ import { generateApplicationAnswers } from "@/domains/jobs/api/jobsApi";
 import { InlineSpinner } from "@/components/common/InlineSpinner";
 
 /**
- * Application Answer Sheet — paste application questions, get tailored answers
+ * Application Answer Sheet â€” paste application questions, get tailored answers
  * grounded in the user's profile.
  */
 export default function ApplicationHelper() {
@@ -68,7 +68,7 @@ export default function ApplicationHelper() {
  <h1 className="text-xl font-bold">Application answers</h1>
  </div>
  <p className="text-xs text-muted-foreground">
- Paste application questions — we'll draft answers grounded in your profile.
+ Paste application questions â€” we'll draft answers grounded in your profile.
  </p>
  </header>
 
@@ -130,3 +130,4 @@ export default function ApplicationHelper() {
  </div>
  );
 }
+

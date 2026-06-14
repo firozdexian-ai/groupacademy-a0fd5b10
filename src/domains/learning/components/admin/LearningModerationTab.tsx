@@ -1,5 +1,5 @@
-/**
- * Admin Learn → Moderation tab.
+﻿/**
+ * Admin Learn â†’ Moderation tab.
  */
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
@@ -23,7 +23,7 @@ const SCOPE_TO_TABLE: Record<string, ModerationTable> = {
 };
 
 export function LearningModerationTab() {
-  const [rows, setRows] = useState<any[]>([]);
+  const [rows, setRows] = useState<unknown[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -74,3 +74,5 @@ export function LearningModerationTab() {
 }
 
 export default LearningModerationTab;
+
+

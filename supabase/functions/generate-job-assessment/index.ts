@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+﻿import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -28,7 +28,7 @@ serve(async (req) => {
     if (!jobId || !talentId) throw new Error("Job ID and Talent ID are required");
 
     // 1. CTO AUDIT FIX: Idempotency Check (High Priority #4)
-    // Check for ANY existing assessment for this job + talent to prevent duplicates
+    // Check for unknown existing assessment for this job + talent to prevent duplicates
     const { data: existingAssessment } = await supabaseAdmin
       .from("job_assessments")
       .select("id, status")
@@ -105,7 +105,7 @@ serve(async (req) => {
       throw new Error("AI returned an empty response. Please try again.");
     }
 
-    let parsedQuestions: any;
+    let parsedQuestions: unknown;
     try {
       const cleanJson = String(rawContent).replace(/```json|```/g, "").trim();
       parsedQuestions = JSON.parse(cleanJson);
@@ -146,7 +146,7 @@ serve(async (req) => {
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("[Fatal Assessment Gen Error]:", error.message);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
@@ -154,3 +154,5 @@ serve(async (req) => {
     });
   }
 });
+
+

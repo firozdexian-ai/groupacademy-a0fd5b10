@@ -1,6 +1,6 @@
-// 3.2.b — Issue skill credentials
+﻿// 3.2.b â€” Issue skill credentials
 // Walks the caller's talent_skill_profile and mints/upgrades credentials
-// via public.issue_skill_credential(). Idempotent — safe to call after
+// via public.issue_skill_credential(). Idempotent â€” safe to call after
 // every quiz submit or scenario evaluation.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
 
     if (profErr) return json(500, { error: profErr.message });
 
-    const newly_issued: any[] = [];
+    const newly_issued: unknown[] = [];
     const existing_codes = new Set<string>();
 
     // snapshot existing credentials so we can detect "newly issued"
@@ -76,7 +76,7 @@ Deno.serve(async (req) => {
         console.error("issue_skill_credential error", error);
         continue;
       }
-      if (cred && !existing_codes.has((cred as any).verify_code)) {
+      if (cred && !existing_codes.has((cred as unknown).verify_code)) {
         newly_issued.push(cred);
       }
     }
@@ -87,3 +87,5 @@ Deno.serve(async (req) => {
     return json(500, { error: String(e) });
   }
 });
+
+

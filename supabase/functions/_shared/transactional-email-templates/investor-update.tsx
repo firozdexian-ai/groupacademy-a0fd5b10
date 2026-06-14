@@ -1,4 +1,4 @@
-import * as React from 'npm:react@18.3.1'
+﻿import * as React from 'npm:react@18.3.1'
 import {
   Body, Container, Head, Heading, Html, Preview, Text,
 } from 'npm:@react-email/components@0.0.22'
@@ -15,10 +15,10 @@ interface InvestorUpdateProps {
 const InvestorUpdateEmail = ({ name, content }: InvestorUpdateProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>{SITE_NAME} — Investor Update</Preview>
+    <Preview>{SITE_NAME} â€” Investor Update</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>{SITE_NAME} — Investor Update</Heading>
+        <Heading style={h1}>{SITE_NAME} â€” Investor Update</Heading>
         <Text style={text}>
           {name ? `Dear ${name},` : 'Dear Investor,'}
         </Text>
@@ -39,7 +39,7 @@ const InvestorUpdateEmail = ({ name, content }: InvestorUpdateProps) => (
 
 export const template = {
   component: InvestorUpdateEmail,
-  subject: (data: Record<string, any>) => data.subject || `${SITE_NAME} Investor Update`,
+  subject: (data: Record<string, unknown>) => data.subject || `${SITE_NAME} Investor Update`,
   displayName: 'Investor update',
   previewData: { name: 'John', subject: 'Q1 Growth Update', content: 'We are pleased to share our Q1 results...' },
 } satisfies TemplateEntry
@@ -50,3 +50,5 @@ const h1 = { fontSize: '22px', fontWeight: 'bold' as const, color: '#333333', ma
 const text = { fontSize: '14px', color: '#677280', lineHeight: '1.6', margin: '0 0 16px' }
 const contentBlock = { fontSize: '14px', color: '#333333', lineHeight: '1.8', margin: '0 0 20px', whiteSpace: 'pre-wrap' as const }
 const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+
+

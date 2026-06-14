@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { trackServiceClick } from "@/domains/analytics/repo/analyticsRepo";
 import { Sparkles } from "lucide-react";
@@ -41,7 +41,7 @@ export default function PublicServiceLanding() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background selection:bg-primary/10">
       <div className="text-center space-y-6 animate-in fade-in duration-700">
-        {/* Branding HUD */}
+        {/* Branding dashboard */}
         <div className="relative w-16 h-16 mx-auto mb-8">
           <div className="absolute inset-0 rounded-2xl bg-primary/10 animate-ping" />
           <div className="relative h-16 w-16 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-center shadow-2xl">
@@ -66,3 +66,4 @@ export default function PublicServiceLanding() {
     </div>
   );
 }
+

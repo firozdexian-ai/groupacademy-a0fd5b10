@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { getCertificateByVerifyCode } from "@/domains/learning/repo/learningRepo";
 import { format } from "date-fns";
@@ -113,7 +113,7 @@ export default function VerifyCertificate() {
               <div className="absolute top-0 left-0 w-full h-2 bg-emerald-500" />
 
               <CardContent className="p-10 md:p-14 space-y-12">
-                {/* Status HUD */}
+                {/* Status dashboard */}
                 <div className="flex flex-col items-center gap-4">
                   <div className="relative">
                     <div className="absolute inset-0 rounded-full bg-emerald-500/20 animate-ping opacity-40" />
@@ -218,3 +218,4 @@ export default function VerifyCertificate() {
     </div>
   );
 }
+

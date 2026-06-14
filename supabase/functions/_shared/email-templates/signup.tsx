@@ -1,4 +1,4 @@
-/// <reference types="npm:@types/react@18.3.1" />
+﻿/// <reference types="npm:@types/react@18.3.1" />
 
 import * as React from 'npm:react@18.3.1'
 
@@ -29,10 +29,10 @@ export const SignupEmail = ({
 }: SignupEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Welcome aboard — confirm your email for GroUp Academy</Preview>
+    <Preview>Welcome aboard â€” confirm your email for GroUp Academy</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Welcome to GroUp Academy! 🎉</Heading>
+        <Heading style={h1}>Welcome to GroUp Academy! ðŸŽ‰</Heading>
         <Text style={text}>
           Thanks for joining{' '}
           <Link href={siteUrl} style={link}>
@@ -85,3 +85,4 @@ const button = {
   fontWeight: '600' as const,
 }
 const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+

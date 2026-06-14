@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getCurrentUser } from "@/lib/auth";
 import { userHasRole } from "@/domains/admin/repo/adminRepo";
@@ -76,7 +76,7 @@ export default function ReportCard() {
       const user = await getCurrentUser();
       if (!user) return navigate("/auth");
 
-      let enrollment: any;
+      let enrollment: unknown;
       try {
         enrollment = await getEnrollmentWithStudentAndContent(enrollmentId!);
       } catch {
@@ -102,8 +102,8 @@ export default function ReportCard() {
       });
 
       const cert = await getCertificateMinimalByEnrollment(enrollmentId!);
-      if (cert) setCertificate(cert as any);
-    } catch (err: any) {
+      if (cert) setCertificate(cert as unknown);
+    } catch (err: unknown) {
       setLoadError(err.message);
     } finally {
       setLoading(false);
@@ -128,7 +128,7 @@ export default function ReportCard() {
     if (result) {
       const cert = await getCertificateById(result.id);
       if (cert) {
-        setCertificate(cert as any);
+        setCertificate(cert as unknown);
         toast.success("Identity Verified: Certificate Generated.");
       }
     }
@@ -168,7 +168,7 @@ export default function ReportCard() {
     <div className="min-h-screen bg-muted/20 flex flex-col selection:bg-primary/10">
       <Navbar />
       <main className="flex-1 container max-w-5xl mx-auto px-6 py-12 space-y-8 animate-in fade-in duration-700">
-        {/* Navigation HUD */}
+        {/* Navigation dashboard */}
         <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-4">
           <div className="space-y-2">
             <Button
@@ -263,7 +263,7 @@ export default function ReportCard() {
         {/* Engineering Footnote */}
         <footer className="text-center pt-8">
           <p className="text-[9px] font-black uppercase tracking-[0.4em] text-muted-foreground/30">
-            Artifact Timestamp: {new Date(reportData!.quiz_attempt.completed_at).toISOString()} • Node Integrity: High
+            Artifact Timestamp: {new Date(reportData!.quiz_attempt.completed_at).toISOString()} â€¢ Node Integrity: High
           </p>
         </footer>
       </main>
@@ -273,3 +273,5 @@ export default function ReportCard() {
     </div>
   );
 }
+
+

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+﻿import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -63,7 +63,7 @@ export default function JobAssessmentResults() {
   const isPollingActive = useRef(false);
 
   const [progress, setProgress] = useState(0);
-  const [analysisStage, setAnalysisStage] = useState("Getting things ready…");
+  const [analysisStage, setAnalysisStage] = useState("Getting things readyâ€¦");
 
   const fetchResults = useCallback(
     async (isPoll = false) => {
@@ -101,10 +101,10 @@ export default function JobAssessmentResults() {
 
   // 2. Linear Progress Bar Text Updates
   useEffect(() => {
-    if (progress < 30) setAnalysisStage("Reading your answers…");
-    else if (progress < 60) setAnalysisStage("Scoring your responses…");
-    else if (progress < 85) setAnalysisStage("Mapping skills…");
-    else setAnalysisStage("Finalizing your report…");
+    if (progress < 30) setAnalysisStage("Reading your answersâ€¦");
+    else if (progress < 60) setAnalysisStage("Scoring your responsesâ€¦");
+    else if (progress < 85) setAnalysisStage("Mapping skillsâ€¦");
+    else setAnalysisStage("Finalizing your reportâ€¦");
   }, [progress]);
 
   // 3. Fake Progress Incrementor Loop
@@ -443,3 +443,4 @@ export default function JobAssessmentResults() {
     </div>
   );
 }
+

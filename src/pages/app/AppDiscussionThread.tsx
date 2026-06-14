@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { Link, useParams } from "react-router-dom";
 import { ChevronLeft, Send, Loader2, CheckCircle2, Flag, Inbox } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -37,7 +37,7 @@ interface ThreadDataResponse {
 /**
  * GroUp Academy: Authoritative Thread Conversation Engine (AppDiscussionThread)
  * Hardened real-time feedback board preventing runtime thread execution stalling and anchoring absolute date contexts.
- * Version: Launch Candidate · Phase Z1 State Block Hardened
+ * Version: Launch Candidate Â· Phase Z1 State Block Hardened
  */
 export default function AppDiscussionThread() {
  const { cohortId: unverifiedCohortIdStr, threadId: unverifiedThreadIdStr } = useParams<{ cohortId: string; threadId: string }>();
@@ -64,7 +64,7 @@ export default function AppDiscussionThread() {
  body: capturedInputString,
  });
  toast({ title: "Reply posted", description: "Your message was added to the thread." });
- } catch (mutationExceptionPayload: any) {
+ } catch (mutationExceptionPayload: unknown) {
  toast({
  title: "Couldn't post reply",
  description: mutationExceptionPayload.message || "Something went wrong. Please try again.",
@@ -130,7 +130,7 @@ export default function AppDiscussionThread() {
  return (
  <div className="max-w-2xl mx-auto px-4 py-4 pb-32 text-left antialiased block transform-gpu w-full">
  
- {/* HUD LEVEL 1: APPLICATION BACKTRACK ROUTER LINE HEADER */}
+ {/* dashboard LEVEL 1: APPLICATION BACKTRACK ROUTER LINE HEADER */}
  <header className="block w-full select-none pb-2 border-b border-border/10">
  <Link 
  to={`/app/cohorts/${unverifiedCohortIdStr}/discussions`} 
@@ -147,7 +147,7 @@ export default function AppDiscussionThread() {
  </p>
  </header>
 
- {/* HUD LEVEL 2: TOP LEVEL ABSTRACT PROBLEM BODY SPEC CARD */}
+ {/* dashboard LEVEL 2: TOP LEVEL ABSTRACT PROBLEM BODY SPEC CARD */}
  <main className="mt-4 space-y-3 block w-full">
  <Card className="rounded-lg border border-border/60 bg-card/40 shadow-none overflow-hidden block w-full">
  <CardContent className="p-3.5 space-y-2 block w-full leading-none">
@@ -160,7 +160,7 @@ export default function AppDiscussionThread() {
  </CardContent>
  </Card>
 
- {/* HUD LEVEL 3: CHILD FEEDBACK ALLOCATION POST BLOCKS */}
+ {/* dashboard LEVEL 3: CHILD FEEDBACK ALLOCATION POST BLOCKS */}
  <div className="space-y-2 block w-full">
  {activePostsArray.map((postItemNode) => (
  <Card 
@@ -207,7 +207,7 @@ export default function AppDiscussionThread() {
  </div>
  </main>
 
- {/* HUD LEVEL 4: STICKY BOTTOM INPUT OPERATION MESSAGE CONSOLE */}
+ {/* dashboard LEVEL 4: STICKY BOTTOM INPUT OPERATION MESSAGE CONSOLE */}
  {!coreThreadItem.is_locked && (
  <div className="fixed bottom-0 left-0 right-0 p-3 bg-background/95 border-t border-border/40 select-none z-20 pb-[max(env(safe-area-inset-bottom),0.75rem)]">
  <div className="max-w-2xl mx-auto flex gap-2.5 leading-none w-full block">
@@ -239,3 +239,4 @@ export default function AppDiscussionThread() {
  </div>
  );
 }
+

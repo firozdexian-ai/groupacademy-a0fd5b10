@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+﻿import { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,7 +16,7 @@ const AUTH_SYNC_TIMEOUT_MS = 5000;
 /**
  * GroUp Academy: Institutional Navigation Command Deck Terminal (Navbar)
  * Authoritative system entry point managing identity checks, dynamic theme swaps, and navigation route pipelines.
- * Version: Launch Candidate · Phase Z0 Hardened Header Lock
+ * Version: Launch Candidate Â· Phase Z0 Hardened Header Lock
  */
 export function Navbar() {
   const navigate = useNavigate();
@@ -66,7 +66,7 @@ export function Navbar() {
         setIsAdmin(calculatedAdminStatusBool);
         trackEvent("navbar_role_verification_complete", { isAdmin: calculatedAdminStatusBool });
       }
-    } catch (caughtPipelineExceptionErr: any) {
+    } catch (caughtPipelineExceptionErr: unknown) {
       clearTimeout(pipelineTimeoutTrackerId);
       if (caughtPipelineExceptionErr?.name !== "AbortError") {
         trackError(caughtPipelineExceptionErr, {
@@ -85,7 +85,7 @@ export function Navbar() {
     trackEvent("navbar_identity_audit_initiated");
 
     try {
-      const liveSessionFetchRequestPromise = supabase.auth.getSession();
+      const liveSessionFetchRequestPromise = getCurrentSession();
       const diagnosticTimeoutBarrierPromise = new Promise<null>((resolveNode) =>
         setTimeout(() => resolveNode(null), AUTH_SYNC_TIMEOUT_MS),
       );
@@ -155,12 +155,12 @@ export function Navbar() {
 
   return (
     <header className="w-full sticky top-0 z-50 border-b border-border/40 bg-card/60 backdrop-blur-md select-none text-left antialiased transform-gpu">
-      {/* HUD LEVEL 1: TOP PANEL METRIC GLOW ACCENT LINE */}
+      {/* dashboard LEVEL 1: TOP PANEL METRIC GLOW ACCENT LINE */}
       <div className="absolute top-0 left-0 w-full h-[1.5px] bg-gradient-to-r from-transparent via-primary/40 to-transparent opacity-40 pointer-events-none" />
 
       <div className="container mx-auto px-4 sm:px-6 py-3.5">
         <div className="flex items-center justify-between w-full min-w-0">
-          {/* HUD LEVEL 2: CORPORATE LOGO EMBLEM ACTION ROUTER */}
+          {/* dashboard LEVEL 2: CORPORATE LOGO EMBLEM ACTION ROUTER */}
           <button
             type="button"
             onClick={() => {
@@ -177,7 +177,7 @@ export function Navbar() {
             />
           </button>
 
-          {/* HUD LEVEL 3: DESKTOP MASTER MANAGEMENT DECISION GRID ROW */}
+          {/* dashboard LEVEL 3: DESKTOP MASTER MANAGEMENT DECISION GRID ROW */}
           <nav
             className="hidden md:flex items-center gap-3 font-bold text-xs select-none"
             aria-label="Desktop structural command navigation"
@@ -229,7 +229,7 @@ export function Navbar() {
             )}
           </nav>
 
-          {/* HUD LEVEL 4: MOBILE LAYER COLLAPSE CONTROLLER SECTOR BUTTON */}
+          {/* dashboard LEVEL 4: MOBILE LAYER COLLAPSE CONTROLLER SECTOR BUTTON */}
           <Button
             type="button"
             size="icon"
@@ -242,7 +242,7 @@ export function Navbar() {
           </Button>
         </div>
 
-        {/* HUD LEVEL 5: COMPACT VERTICAL MOBILE DROP DOWN OVERLAY TRACK SHEET */}
+        {/* dashboard LEVEL 5: COMPACT VERTICAL MOBILE DROP DOWN OVERLAY TRACK SHEET */}
         {mobileMenuOpen && (
           <nav
             className="md:hidden pt-4 pb-2 flex flex-col gap-2 border-t border-border/10 mt-3 font-bold text-xs select-none text-left animate-in slide-in-from-top-3 duration-200"
@@ -309,3 +309,6 @@ export function Navbar() {
     </header>
   );
 }
+
+
+

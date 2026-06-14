@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+﻿import { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   uploadPaymentProof,
@@ -336,8 +336,8 @@ export function InvoicesTab() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-5 border-y border-border/40">
                 <div className="space-y-3.5">
-                  <DetailRow label="User Account" value={selected.talents?.full_name || "—"} />
-                  <DetailRow label="Email Link" value={selected.talents?.email || "—"} />
+                  <DetailRow label="User Account" value={selected.talents?.full_name || "â€”"} />
+                  <DetailRow label="Email Link" value={selected.talents?.email || "â€”"} />
                   <DetailRow label="Channel Ingress" value={selected.channel || "Manual"} />
                   <DetailRow label="Current Status" value={STATUS_BADGE[selected.status]?.label || selected.status} />
                 </div>
@@ -486,7 +486,7 @@ function DetailRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-function ApproveDialog({ open, onOpenChange, invoice, onDone }: any) {
+function ApproveDialog({ open, onOpenChange, invoice, onDone }: unknown) {
   const [method, setMethod] = useState("bkash");
   const [reference, setReference] = useState("");
   const [notes, setNotes] = useState("");
@@ -513,7 +513,7 @@ function ApproveDialog({ open, onOpenChange, invoice, onDone }: any) {
       if (!result?.success) throw new Error(result?.error || "Fulfillment request rejected");
       toast.success(`Successfully added ${result.credits_added} credits to account`, { id: toastId });
       onDone();
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error("Execution error: " + err.message, { id: toastId });
     } finally {
       setSubmitting(false);
@@ -591,7 +591,7 @@ function ApproveDialog({ open, onOpenChange, invoice, onDone }: any) {
   );
 }
 
-function CancelDialog({ open, onOpenChange, invoice, onDone }: any) {
+function CancelDialog({ open, onOpenChange, invoice, onDone }: unknown) {
   const [reason, setReason] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -601,7 +601,7 @@ function CancelDialog({ open, onOpenChange, invoice, onDone }: any) {
       await cancelInvoice({ invoiceId: invoice.id, reason: reason || null });
       toast.success("Invoice cancelled successfully");
       onDone();
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error("Operation failed: " + err.message);
     } finally {
       setSubmitting(false);
@@ -645,3 +645,5 @@ function CancelDialog({ open, onOpenChange, invoice, onDone }: any) {
 }
 
 export default InvoicesTab;
+
+

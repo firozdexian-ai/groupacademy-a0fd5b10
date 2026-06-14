@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { Flame, Sparkles, TrendingUp, Trophy, Zap } from "lucide-react";
 import { trackEvent } from "@/lib/errorTracking";
 import { cn } from "@/lib/utils";
@@ -126,3 +126,4 @@ export function LearningStatsRow({ streak, hoursLearned, coursesCompleted, class
     </div>
   );
 }
+

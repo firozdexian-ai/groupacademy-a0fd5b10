@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+﻿import { useEffect, useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { listContentForModulePicker } from "@/domains/learning/repo/learningRepo";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,7 @@ import ModuleManagement from "@/pages/ModuleManagement";
 
 /**
  * Dashboard "Modules" tab.
- * If a contentId is in the URL (?id=…), embed the existing ModuleManagement.
+ * If a contentId is in the URL (?id=â€¦), embed the existing ModuleManagement.
  * Otherwise show a course picker so admins can pick which course's modules to manage.
  */
 interface CourseRow {
@@ -43,7 +43,7 @@ export default function ModulePickerPanel({ contentId: contentIdProp, onClose }:
       setLoading(true);
       try {
         const data = await listContentForModulePicker(200);
-        if (!cancelled) setCourses((data as any) ?? []);
+        if (!cancelled) setCourses((data as unknown) ?? []);
       } catch {
         if (!cancelled) setCourses([]);
       } finally {
@@ -95,7 +95,7 @@ export default function ModulePickerPanel({ contentId: contentIdProp, onClose }:
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Search courses by title…"
+          placeholder="Search courses by titleâ€¦"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="pl-9 h-10 rounded-xl"
@@ -162,3 +162,5 @@ export default function ModulePickerPanel({ contentId: contentIdProp, onClose }:
     </div>
   );
 }
+
+

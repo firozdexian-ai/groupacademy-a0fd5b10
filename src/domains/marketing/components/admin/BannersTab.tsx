@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { getCurrentUser } from "@/lib/auth";
 import {
   listBannersWithContent,
@@ -25,7 +25,7 @@ import { cn } from "@/lib/utils";
 /**
  * Platform Logic: Visual Logic Controller (Banner Manager)
  * High-fidelity orchestrator for promotional artifacts and UI entry points.
- * 2026 Standard: Executive Logic geometry with reinforced placement telemetry.
+ * 2026 Standard:  geometry with reinforced placement telemetry.
  */
 
 type PlacementType = "carousel" | "hero" | "learning" | "agents_marketplace";
@@ -89,7 +89,7 @@ export const BannerManager = () => {
     try {
       const bannersData = await withTimeout(listBannersWithContent(), TIMEOUTS.DEFAULT, "Registry Link Timeout");
 
-      const typedBanners = (bannersData as any[]).map((banner) => ({
+      const typedBanners = (bannersData as unknown[]).map((banner) => ({
         ...banner,
         placement: banner.placement as PlacementType,
       })) as Banner[];
@@ -98,7 +98,7 @@ export const BannerManager = () => {
 
       const contentData = await withTimeout(listPublishedContentTitles(), TIMEOUTS.DEFAULT, "Logic Source Timeout");
       setAvailableContent(contentData || []);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setLoadError(error.message || "Failed to synchronize banners");
       toast.error("Transmission Error: Sync failed");
     } finally {
@@ -150,7 +150,7 @@ export const BannerManager = () => {
         end_at: "",
       });
       loadRegistryData();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error(error.message || "Error: Deployment failed");
     }
   };
@@ -160,7 +160,7 @@ export const BannerManager = () => {
       await withTimeout(setBannerActive(bannerId, !isActive), TIMEOUTS.DEFAULT, "Logic State Update Timeout");
       toast.success(`Node ${!isActive ? "Activated" : "Terminated"}`);
       loadRegistryData();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error("Could not update");
     }
   };
@@ -171,7 +171,7 @@ export const BannerManager = () => {
       await withTimeout(deleteBannerRepo(bannerId), TIMEOUTS.DEFAULT, "Delete timed out");
       toast.success("Deleted");
       loadRegistryData();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error("Purge Failed: Artifact locked by protocol");
     }
   };
@@ -202,7 +202,7 @@ export const BannerManager = () => {
                 Add a banner
               </CardTitle>
               <CardDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
-                1536×512px image (3:1 ratio)
+                1536Ã—512px image (3:1 ratio)
               </CardDescription>
             </div>
           </div>
@@ -339,7 +339,7 @@ export const BannerManager = () => {
                       {newBanner.media_type === "video" ? "Video URL (MP4)" : "GIF URL"}
                     </Label>
                     <Input
-                      placeholder="https://…"
+                      placeholder="https://â€¦"
                       value={newBanner.media_url}
                       onChange={(e) => setNewBanner({ ...newBanner, media_url: e.target.value })}
                       className="h-12 rounded-2xl border-2 bg-background/50"
@@ -356,7 +356,7 @@ export const BannerManager = () => {
                       Poster Frame URL (optional)
                     </Label>
                     <Input
-                      placeholder="https://…"
+                      placeholder="https://â€¦"
                       value={newBanner.poster_url}
                       onChange={(e) => setNewBanner({ ...newBanner, poster_url: e.target.value })}
                       className="h-12 rounded-2xl border-2 bg-background/50"
@@ -370,7 +370,7 @@ export const BannerManager = () => {
                       External Link URL (optional)
                     </Label>
                     <Input
-                      placeholder="https://…"
+                      placeholder="https://â€¦"
                       value={newBanner.link_url}
                       onChange={(e) => setNewBanner({ ...newBanner, link_url: e.target.value })}
                       className="h-12 rounded-2xl border-2 bg-background/50"
@@ -530,3 +530,5 @@ export const BannerManager = () => {
 };
 
 export { BannerManager as BannersTab };
+
+

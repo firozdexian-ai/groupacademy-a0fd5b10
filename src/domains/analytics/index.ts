@@ -1,4 +1,4 @@
-// Overview
+﻿// Overview
 export { AgentAnomalyFeed } from "./components/admin/overview/AgentAnomalyFeed";
 export { AnalystChatTab } from "./components/admin/overview/AnalystChatTab";
 export { LifetimeOverviewTab } from "./components/admin/overview/LifetimeOverviewTab";
@@ -15,3 +15,4 @@ export { default as PoolHealthCard } from "./components/admin/performance/PoolHe
 export { default as RecentActivityList } from "./components/admin/performance/RecentActivityList";
 
 export * from "./api/manifest";
+

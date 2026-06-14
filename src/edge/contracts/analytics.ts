@@ -1,5 +1,5 @@
-/**
- * Analytics domain — edge function contracts (Phase 9g).
+﻿/**
+ * Analytics domain â€” edge function contracts (Phase 9g).
  */
 import { z } from "zod";
 
@@ -34,3 +34,4 @@ export const AdminAnalystResponseSchema = z
   })
   .passthrough();
 export type AdminAnalystResponse = z.infer<typeof AdminAnalystResponseSchema>;
+

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+﻿import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +19,7 @@ const SYNC_COOLDOWN_TIMEFRAME_DAYS = 7;
 /**
  * GroUp Academy: PWA Mobile Native Synchronization Ingress (PWAInstallPrompt)
  * Authoritative interceptor capturing application installation queries and managing local deployment cooldown caches.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function PWAInstallPrompt() {
   const queryClient = useQueryClient();
@@ -64,7 +64,7 @@ export function PWAInstallPrompt() {
 
     // Phase 3: WebKit/iOS Instructional User Agent Analysis Parsing Pass
     const targetUserAgentSignatureStr = typeof navigator !== "undefined" ? navigator.userAgent : "";
-    const isIOSDetectedBool = /iPad|iPhone|iPod/.test(targetUserAgentSignatureStr) && !(window as any).MSStream;
+    const isIOSDetectedBool = /iPad|iPhone|iPod/.test(targetUserAgentSignatureStr) && !(window as unknown).MSStream;
     const isSafariDetectedBool =
       /Safari/.test(targetUserAgentSignatureStr) && !/CriOS|Chrome/.test(targetUserAgentSignatureStr);
 
@@ -142,13 +142,13 @@ export function PWAInstallPrompt() {
   return (
     <div className="fixed bottom-24 left-4 right-4 z-[100] font-bold text-xs select-none transform-gpu animate-in slide-in-from-bottom-5 fade-in duration-300 max-w-md mx-auto">
       <div className="relative rounded-xl border border-border/40 bg-card/95 backdrop-blur-xl p-4 sm:p-5 shadow-xl overflow-hidden text-left flex flex-col justify-center">
-        {/* HUD LEVEL 1: TOP ATMOSPHERIC SYNCHRONIZATION LIGHT BLOB */}
+        {/* dashboard LEVEL 1: TOP ATMOSPHERIC SYNCHRONIZATION LIGHT BLOB */}
         <div
           className="absolute -right-6 -top-6 h-20 w-20 bg-primary/5 blur-2xl rounded-full pointer-events-none select-none"
           aria-hidden="true"
         />
 
-        {/* HUD LEVEL 2: CLOSE DISMISS OVERLAY TRIGGER CONTROL ACTION BUTTON */}
+        {/* dashboard LEVEL 2: CLOSE DISMISS OVERLAY TRIGGER CONTROL ACTION BUTTON */}
         <button
           type="button"
           onClick={handleRegistryDismissalProtocol}
@@ -158,7 +158,7 @@ export function PWAInstallPrompt() {
           <X className="h-4 w-4 stroke-[2.5]" />
         </button>
 
-        {/* HUD LEVEL 3: COMPOSITE METADATA IDENTIFICATION CONTAINER SPLIT VIEW */}
+        {/* dashboard LEVEL 3: COMPOSITE METADATA IDENTIFICATION CONTAINER SPLIT VIEW */}
         <div className="flex items-start gap-3.5 mb-4 w-full min-w-0 pr-6">
           <div className="relative shrink-0 select-none pointer-events-none">
             <div className="h-11 w-11 rounded-xl bg-primary/10 border border-primary/5 text-primary flex items-center justify-center shadow-inner">
@@ -180,7 +180,7 @@ export function PWAInstallPrompt() {
           </div>
         </div>
 
-        {/* HUD LEVEL 4: PLATFORM INTERACTIVE CONTEXT FORKING INTERACTION STRIPS */}
+        {/* dashboard LEVEL 4: PLATFORM INTERACTIVE CONTEXT FORKING INTERACTION STRIPS */}
         {isIOSDevicePlatform ? (
           /* SAFARI / WEBKIT TARGET CHANNEL DIRECTIONS SLAT */
           <div className="flex items-center gap-2.5 bg-primary/[0.01] rounded-xl px-3 py-2.5 border border-primary/10 select-none leading-none text-left w-full min-w-0 shadow-xs h-9 shrink-0">
@@ -202,7 +202,7 @@ export function PWAInstallPrompt() {
           </Button>
         )}
 
-        {/* HUD LEVEL 5: OVERLAY BOTTOM OMNIPRESENCE SHIELD RIBBON FOOTER */}
+        {/* dashboard LEVEL 5: OVERLAY BOTTOM OMNIPRESENCE SHIELD RIBBON FOOTER */}
         <div className="flex items-center justify-center gap-1.5 py-1 opacity-25 select-none pointer-events-none tracking-normal font-bold text-[8px] text-muted-foreground/50 font-mono leading-none shrink-0 uppercase w-full mt-3">
           <ShieldCheck className="h-3 w-3 stroke-[2.5]" />
           <span>Neural Ingress Matrix Pipeline Sync Core Verified</span>
@@ -211,3 +211,5 @@ export function PWAInstallPrompt() {
     </div>
   );
 }
+
+

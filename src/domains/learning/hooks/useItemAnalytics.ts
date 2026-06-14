@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { instructorItemAnalytics } from "@/domains/learning/api/learningApi";
 
 /**
@@ -67,9 +67,10 @@ export function useItemAnalytics(moduleId: string | null, days = 30) {
     enabled: !!moduleId,
     staleTime: 5 * 60 * 1000, // 5-minute psychometric stability baseline
     queryFn: async (): Promise<ItemAnalytics> => {
-      // HUD: INVOKING_EDGE_ANALYTICS_ENGINE
+      // dashboard: INVOKING_EDGE_ANALYTICS_ENGINE
       const data = await instructorItemAnalytics({ module_id: moduleId, days });
       return data as unknown as ItemAnalytics;
     },
   });
 }
+

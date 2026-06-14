@@ -1,4 +1,4 @@
-// Plain-English status summary for a project.
+﻿// Plain-English status summary for a project.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         messages: [
-          { role: "system", content: "Write a concise 4-6 sentence status update for a B2B managed project. Mention progress, escrow position (held/released), upcoming due dates, and any blockers." },
+          { role: "system", content: "Write a concise 4-6 sentence status update for a B2B managed project. Mention progress, escrow position (held/released), upcoming due dates, and unknown blockers." },
           { role: "user", content: JSON.stringify(ctx) },
         ],
       }),
@@ -46,3 +46,5 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: corsHeaders });
   }
 });
+
+

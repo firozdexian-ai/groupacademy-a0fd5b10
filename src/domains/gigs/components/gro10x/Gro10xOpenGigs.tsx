@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { listMyOpenMarketplaceGigs } from "@/domains/gigs/repo/gigsRepo";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +23,7 @@ export function Gro10xOpenGigs() {
   return (
     <div className="px-4 pt-4">
       <p className={`text-[11px] uppercase tracking-wider ${GRO10X_MUTED} mb-2`}>
-        Your gigs · {gigs.length}
+        Your gigs Â· {gigs.length}
       </p>
       <div className="space-y-2">
         {gigs.map((g) => (
@@ -38,9 +38,9 @@ export function Gro10xOpenGigs() {
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium truncate">{g.title}</p>
               <p className={`text-[11px] ${GRO10X_MUTED}`}>
-                {g.total_bids ?? 0} bid{(g.total_bids ?? 0) === 1 ? "" : "s"} ·{" "}
+                {g.total_bids ?? 0} bid{(g.total_bids ?? 0) === 1 ? "" : "s"} Â·{" "}
                 {g.selected_bid_id ? "awarded" : g.status}
-                {g.budget_amount ? ` · ${g.budget_amount}cr` : ""}
+                {g.budget_amount ? ` Â· ${g.budget_amount}cr` : ""}
               </p>
             </div>
             <ChevronRight className="h-4 w-4 text-muted-foreground" />
@@ -50,3 +50,4 @@ export function Gro10xOpenGigs() {
     </div>
   );
 }
+

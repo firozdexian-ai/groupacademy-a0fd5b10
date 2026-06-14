@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -121,7 +121,7 @@ export default function SessionEdit() {
         duration_minutes: session.duration_minutes,
         meeting_link: session.meeting_link || "",
         recording_link: session.recording_link || "",
-        status: session.status as any,
+        status: session.status as unknown,
       });
     }
   }, [session, form]);
@@ -149,7 +149,7 @@ export default function SessionEdit() {
       toast.success("Session logic synchronized.");
       navigate("/sessions");
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       toast.error(`Update failed: ${err.message}`);
     },
   });
@@ -182,7 +182,7 @@ export default function SessionEdit() {
   return (
     <div className="min-h-screen bg-muted/20 pb-20 selection:bg-primary/10">
       <main className="container max-w-3xl mx-auto py-12 px-6 space-y-8 animate-in fade-in duration-700">
-        {/* Navigation HUD */}
+        {/* Navigation dashboard */}
         <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div className="space-y-1">
             <Button
@@ -302,7 +302,7 @@ export default function SessionEdit() {
                   />
                 </div>
 
-                {/* Scheduling HUD */}
+                {/* Scheduling dashboard */}
                 <div className="grid md:grid-cols-2 gap-6 p-6 rounded-2xl bg-muted/30 border border-border/10">
                   <FormField
                     control={form.control}
@@ -522,3 +522,5 @@ export default function SessionEdit() {
     </div>
   );
 }
+
+

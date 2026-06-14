@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+﻿import { useState, useEffect, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { listAssessmentQuestionsForCategory } from "@/domains/learning/repo/learningRepo";
 import { toast } from "sonner";
@@ -25,7 +25,7 @@ interface Question {
   id: string;
   question_text: string;
   question_type: "single_choice" | "multiple_choice" | "scale" | "text";
-  options: any;
+  options: unknown;
   weight: number;
   category: string;
   display_order: number;
@@ -34,13 +34,13 @@ interface Question {
 interface AssessmentStepperProps {
   categoryId: string;
   categoryName: string;
-  onComplete: (answers: Record<string, any>) => void;
+  onComplete: (answers: Record<string, unknown>) => void;
   onBack: () => void;
 }
 
 export function AssessmentStepper({ categoryId, categoryName, onComplete, onBack }: AssessmentStepperProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, any>>({});
+  const [answers, setAnswers] = useState<Record<string, unknown>>({});
   const registryKey = useMemo(() => `assessment_sync_v3_${categoryId}`, [categoryId]);
 
   // --- SENSOR: QUESTIONS_REGISTRY_QUERY_NODE ---
@@ -53,8 +53,8 @@ export function AssessmentStepper({ categoryId, categoryName, onComplete, onBack
     queryKey: ["assessment-questions", categoryId],
     staleTime: 5 * 60 * 1000, // 5-minute stability caching protect database aggregate paths
     queryFn: async (): Promise<Question[]> => {
-      // HUD: EXECUTING_DIAGNOSTIC_QUESTIONS_INGRESS_SELECT
-      let data: any[] = [];
+      // dashboard: EXECUTING_DIAGNOSTIC_QUESTIONS_INGRESS_SELECT
+      let data: unknown[] = [];
       try {
         data = await listAssessmentQuestionsForCategory(categoryId);
       } catch (error) {
@@ -62,7 +62,7 @@ export function AssessmentStepper({ categoryId, categoryName, onComplete, onBack
         throw error;
       }
 
-      return (data || []).map((row: any) => ({
+      return (data || []).map((row: unknown) => ({
         id: String(row.id),
         question_text: String(row.question_text ?? "Untitled question"),
         question_type: String(row.question_type) as Question["question_type"],
@@ -110,7 +110,7 @@ export function AssessmentStepper({ categoryId, categoryName, onComplete, onBack
     }
   }, [answers, currentIndex, registryKey, questions.length]);
 
-  const executeSelection = useCallback((questionId: string, value: any) => {
+  const executeSelection = useCallback((questionId: string, value: unknown) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
   }, []);
 
@@ -143,7 +143,7 @@ export function AssessmentStepper({ categoryId, categoryName, onComplete, onBack
     }
 
     if (currentIndex === questions.length - 1) {
-      // HUD: FINALIZING_TELEMETRY_INGRESS_COMMIT
+      // dashboard: FINALIZING_TELEMETRY_INGRESS_COMMIT
       localStorage.removeItem(registryKey);
       onComplete(answers);
     } else {
@@ -151,7 +151,7 @@ export function AssessmentStepper({ categoryId, categoryName, onComplete, onBack
     }
   };
 
-  const normalizeOptionsRegistry = useCallback((optionsArray: any[]): Array<{ value: string; label: string }> => {
+  const normalizeOptionsRegistry = useCallback((optionsArray: unknown[]): Array<{ value: string; label: string }> => {
     if (!optionsArray || !Array.isArray(optionsArray)) return [];
     return optionsArray.map((opt, idx) => {
       if (typeof opt === "object" && opt !== null && opt.value) {
@@ -213,7 +213,7 @@ export function AssessmentStepper({ categoryId, categoryName, onComplete, onBack
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 animate-in slide-in-from-bottom-4 duration-1000 text-left select-none">
-      {/* HUD: TRAJECTORY_PROGRESS_METRICS */}
+      {/* dashboard: TRAJECTORY_PROGRESS_METRICS */}
       <div className="mb-10 space-y-4">
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-3">
@@ -326,7 +326,7 @@ export function AssessmentStepper({ categoryId, categoryName, onComplete, onBack
             </div>
           )}
 
-          {/* HUD: NAVIGATION_ACTIONS_DECK */}
+          {/* dashboard: NAVIGATION_ACTIONS_DECK */}
           <div className="flex justify-between gap-4 pt-8 border-t-2 border-border/10">
             <Button
               type="button"
@@ -357,3 +357,5 @@ export function AssessmentStepper({ categoryId, categoryName, onComplete, onBack
     </div>
   );
 }
+
+

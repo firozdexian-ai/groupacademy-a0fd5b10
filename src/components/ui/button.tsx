@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Technical Interactive Action Trigger Nodes (Button)
  * Hardened action control terminal enforcing kinetic scale feedback, uniform stroke depths, and semantic color balance.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-[10px] sm:text-xs font-mono font-extrabold uppercase tracking-wider select-none antialiased transition-all duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-30 [&_svg]:pointer-events-none [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0 transform-gpu cursor-pointer active:scale-[0.995] selection:bg-transparent tracking-wide shrink-0",
@@ -59,3 +59,4 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button_Core_Interaction_Node";
 
 export { Button, buttonVariants };
+

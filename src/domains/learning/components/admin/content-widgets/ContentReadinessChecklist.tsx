@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -66,7 +66,7 @@ export default function ContentReadinessChecklist({
       setBusy(false);
       toast.success("Readiness recomputed");
       onRecomputed?.();
-    } catch (error: any) {
+    } catch (error: unknown) {
       setBusy(false);
       toast.error(error?.message ?? "Recompute failed");
     }
@@ -76,7 +76,7 @@ export default function ContentReadinessChecklist({
     setBusy(true);
     try {
       await setContentPublished(contentId, true);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setBusy(false);
       return toast.error(err?.message ?? "Force publish failed");
     }
@@ -87,7 +87,7 @@ export default function ContentReadinessChecklist({
   };
 
   const statusLabel = sum.blockers > 0
-    ? `Inactive — ${sum.blockers} blocker${sum.blockers === 1 ? "" : "s"}`
+    ? `Inactive â€” ${sum.blockers} blocker${sum.blockers === 1 ? "" : "s"}`
     : sum.warnings > 0
     ? `Active with ${sum.warnings} warning${sum.warnings === 1 ? "" : "s"}`
     : "Ready to go live";
@@ -146,7 +146,7 @@ export default function ContentReadinessChecklist({
             <p className="text-[9px] font-black text-warning">Modules blocking</p>
             {moduleAudit.slice(0, 5).map((m) => (
               <p key={m.id} className="text-[10px] text-muted-foreground">
-                <span className="font-semibold text-foreground">{m.title}</span> — {m.reason}
+                <span className="font-semibold text-foreground">{m.title}</span> â€” {m.reason}
               </p>
             ))}
             {moduleAudit.length > 5 && (
@@ -190,3 +190,5 @@ export default function ContentReadinessChecklist({
     </Card>
   );
 }
+
+

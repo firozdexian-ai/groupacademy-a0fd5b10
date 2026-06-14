@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
   markAssessmentAccessCodeUsed,
@@ -77,8 +77,8 @@ function CareerAssessmentContent() {
   const [emailCheckError, setEmailCheckError] = useState<string | null>(null);
   const [categories, setCategories] = useState<ProfessionCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<ProfessionCategory | null>(null);
-  const [answers, setAnswers] = useState<Record<string, any>>({});
-  const [existingAssessment, setExistingAssessment] = useState<any>(null);
+  const [answers, setAnswers] = useState<Record<string, unknown>>({});
+  const [existingAssessment, setExistingAssessment] = useState<unknown>(null);
   const [accessCode, setAccessCode] = useState("");
   const [validatingCode, setValidatingCode] = useState(false);
   const [daysRemaining, setDaysRemaining] = useState(0);
@@ -140,7 +140,7 @@ function CareerAssessmentContent() {
       await markAssessmentAccessCodeUsed(codeData.id);
       toast.success("Retake Authorized.");
       setStep("profession");
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err.message);
     } finally {
       setValidatingCode(false);
@@ -426,3 +426,5 @@ export default function CareerAssessment() {
     </AuthGate>
   );
 }
+
+

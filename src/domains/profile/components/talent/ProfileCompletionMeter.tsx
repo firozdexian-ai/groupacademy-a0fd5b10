@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+﻿import { useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -39,7 +39,7 @@ interface CompletionItem {
 /**
  * GroUp Academy: Talent Readiness Telemetry Monitor (ProfileCompletionMeter)
  * An authoritative operational sandbox layer tracking complete profile verification and artifact ingestion tracks.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function ProfileCompletionMeter({ talent, variant = "full", showActions = true }: ProfileCompletionMeterProps) {
   const navigate = useNavigate();
@@ -374,3 +374,4 @@ export function ProfileCompletionMeter({ talent, variant = "full", showActions =
     </Card>
   );
 }
+

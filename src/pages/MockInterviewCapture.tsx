@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { updateMockInterview } from "@/domains/marketing/repo/marketingRepo";
 import { getMockInterviewById } from "@/domains/marketing/repo/marketingRepo";
@@ -32,7 +32,7 @@ export default function MockInterviewCapture() {
   const { talent, addServiceUsed } = useTalent();
   const { canAfford, deductCredits, getServiceCost, balance } = useCredits();
 
-  const [interview, setInterview] = useState<any>(null);
+  const [interview, setInterview] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -131,8 +131,8 @@ export default function MockInterviewCapture() {
       </div>
     );
 
-  const answered = (interview?.answers as any[])?.length || 0;
-  const total = (interview?.questions as any[])?.length || 0;
+  const answered = (interview?.answers as unknown[])?.length || 0;
+  const total = (interview?.questions as unknown[])?.length || 0;
 
   return (
     <div className="min-h-screen bg-background flex flex-col selection:bg-primary/10">
@@ -232,3 +232,5 @@ export default function MockInterviewCapture() {
     </div>
   );
 }
+
+

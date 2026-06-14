@@ -1,6 +1,6 @@
-import React from "react";
+﻿import React from "react";
 
-export const ROUTES: Record<string, React.LazyExoticComponent<any>> = {
+export const ROUTES: Record<string, React.LazyExoticComponent<unknown>> = {
   institutions: React.lazy(() =>
     import("@/domains/institutions/components/admin/StakeholderRegistry").then((m) => ({ default: m.InstitutionsManager })),
   ),
@@ -29,3 +29,5 @@ export const TITLES: Record<string, string> = {
   "inst-reps": "Representatives",
   "inst-events": "Events & competitions",
 };
+
+

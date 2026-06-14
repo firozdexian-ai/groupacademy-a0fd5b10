@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { getTalentLifetimeCredits } from "@/domains/talent/repo/talentRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { computeCareerLevel } from "@/lib/careerLevels";
@@ -30,10 +30,10 @@ export function useCareerLevel() {
         return { lifetime_volume: 0, lifetime_earned: 0, lifetime_spent: 0, transaction_count: 0 };
       }
 
-      let data: any = null;
+      let data: unknown = null;
       try {
         data = await getTalentLifetimeCredits(talent.id);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: talent_lifetime_credits query failed sync.", {
           talentId: talent.id,
           error: error?.message,
@@ -42,7 +42,7 @@ export function useCareerLevel() {
         throw error;
       }
 
-      const row = data as any;
+      const row = data as unknown;
       return {
         lifetime_volume: Number(row?.lifetime_volume ?? 0),
         lifetime_earned: Number(row?.lifetime_earned ?? 0),
@@ -64,3 +64,5 @@ export function useCareerLevel() {
     queryError: error,
   };
 }
+
+

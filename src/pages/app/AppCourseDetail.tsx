@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -59,7 +59,7 @@ interface SubComponentProps {
 /**
  * GroUp Academy: Authoritative Curriculum Discovery Engine (AppCourseDetail)
  * Hardened course profile board securing asynchronous database queries and isolating module sorting tracks.
- * Version: Launch Candidate · Phase Z1 Production Contract Locked
+ * Version: Launch Candidate Â· Phase Z1 Production Contract Locked
  */
 export default function AppCourseDetail({ inlineSlug, onBack }: AppCourseDetailProps) {
  const { slug: urlSlugStr } = useParams<{ slug: string }>();
@@ -155,7 +155,7 @@ export default function AppCourseDetail({ inlineSlug, onBack }: AppCourseDetailP
 
  return (
  <div className={cn(PAGE_SHELL, "text-left antialiased block transform-gpu w-full space-y-4")}>
- {/* HUD LEVEL 1: ADMINISTRATIVE HUB CONTROL BAR */}
+ {/* dashboard LEVEL 1: ADMINISTRATIVE HUB CONTROL BAR */}
  <header className="flex items-center gap-2 select-none leading-none w-full shrink-0">
  <Button
  type="button"
@@ -176,7 +176,7 @@ export default function AppCourseDetail({ inlineSlug, onBack }: AppCourseDetailP
  </span>
  </header>
 
- {/* HUD LEVEL 2: AUTHORITATIVE COVER MATRICES CANVAS */}
+ {/* dashboard LEVEL 2: AUTHORITATIVE COVER MATRICES CANVAS */}
  {contentQueryResponse.cover_image_url && (
  <div className="aspect-video relative rounded-xl overflow-hidden bg-muted border border-border/40 w-full block select-none shadow-2xs shrink-0">
  <img
@@ -198,7 +198,7 @@ export default function AppCourseDetail({ inlineSlug, onBack }: AppCourseDetailP
  </div>
  )}
 
- {/* HUD LEVEL 3: SYLLABUS DISCLOSURE DATA METADATA BLOCK */}
+ {/* dashboard LEVEL 3: SYLLABUS DISCLOSURE DATA METADATA BLOCK */}
  <div className="space-y-1.5 block w-full leading-none">
  <div className="flex items-center gap-2 flex-wrap select-none pointer-events-none leading-none">
  <Badge
@@ -235,10 +235,10 @@ export default function AppCourseDetail({ inlineSlug, onBack }: AppCourseDetailP
  )}
  </div>
 
- {/* HUD LEVEL 4: INTERACTIVE WEBINAR AND class CONSOLE TRIGGERS */}
+ {/* dashboard LEVEL 4: INTERACTIVE WEBINAR AND class CONSOLE TRIGGERS */}
  {isLiveSessionContentType && <LiveSessionPanels course={contentQueryResponse} />}
 
- {/* HUD LEVEL 5: CREDENTIAL CERTIFICATE DATA OVERVIEW MATRICES */}
+ {/* dashboard LEVEL 5: CREDENTIAL CERTIFICATE DATA OVERVIEW MATRICES */}
  <Card
  className={cn(CARD, "rounded-lg bg-primary/[0.01] border-primary/20 shadow-none overflow-hidden block w-full")}
  >
@@ -252,7 +252,7 @@ export default function AppCourseDetail({ inlineSlug, onBack }: AppCourseDetailP
  Verified Completion Certificate Manifest
  </p>
  <p className="font-mono text-sm font-medium text-muted-foreground/40 leading-none block uppercase tracking-tight tabular-nums">
- Persistent Access Rights Mapped · {compiledSortedModulesList.length.toString()} Total Modules Tracking
+ Persistent Access Rights Mapped Â· {compiledSortedModulesList.length.toString()} Total Modules Tracking
  Rows
  </p>
  </div>
@@ -262,7 +262,7 @@ export default function AppCourseDetail({ inlineSlug, onBack }: AppCourseDetailP
  </CardContent>
  </Card>
 
- {/* HUD LEVEL 6: COMPREHENSIVE RECONCILED CHAPTER DIRECTORIES */}
+ {/* dashboard LEVEL 6: COMPREHENSIVE RECONCILED CHAPTER DIRECTORIES */}
  <div className="space-y-2 block w-full">
  <div className="flex items-center justify-between select-none pointer-events-none leading-none w-full shrink-0">
  <h3
@@ -385,8 +385,8 @@ function RecordedEnrollCta({ course }: SubComponentProps) {
  ) : (
  <span>
  {computedTotalCreditsCost > 0
- ? `Enroll · ${computedTotalCreditsCost.toLocaleString()} credits`
- : "Enroll · Free"}
+ ? `Enroll Â· ${computedTotalCreditsCost.toLocaleString()} credits`
+ : "Enroll Â· Free"}
  </span>
  )}
  </Button>
@@ -400,7 +400,9 @@ function LiveSessionPanels({ course }: SubComponentProps) {
  const { enrollment: liveSessionEnrollmentRecord } = useEnrollment(course.id);
 
  if (liveSessionEnrollmentRecord) {
- return <JoinLivePanel course={course as any} />;
+ return <JoinLivePanel course={course as unknown} />;
  }
- return <WebinarEnrollPanel course={course as any} />;
+ return <WebinarEnrollPanel course={course as unknown} />;
 }
+
+

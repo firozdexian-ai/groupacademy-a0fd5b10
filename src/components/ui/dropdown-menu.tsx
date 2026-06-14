@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import { Check, ChevronRight, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Technical Command Disclosure Interface Panel (DropdownMenu)
  * Hardened responsive popover terminal handling localized navigation lookups and context theme variables.
- * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ * Version: Launch Candidate Â· Phase Z0 Geometric Balance Lock
  */
 const DropdownMenu = DropdownMenuPrimitive.Root;
 const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
@@ -201,3 +201,4 @@ export {
   DropdownMenuSubTrigger,
   DropdownMenuRadioGroup,
 };
+

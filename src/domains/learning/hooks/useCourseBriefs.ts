@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listCourseBriefs, insertCourseBrief } from "@/domains/learning/repo/learningRepo";
 import { createInstructorJobFromBrief } from "@/domains/learning/api/learningApi";
 import { useAuth } from "@/hooks/useAuth";
@@ -15,7 +15,7 @@ export type CourseBrief = {
   id: string;
   title: string;
   summary: string | null;
-  syllabus: any;
+  syllabus: unknown;
   mode: "recorded" | "live_cohort" | "hybrid";
   language: string;
   duration_weeks: number | null;
@@ -23,7 +23,7 @@ export type CourseBrief = {
   budget_amount: number | null;
   budget_currency: string;
   revenue_share_pct: number;
-  required_skills: any;
+  required_skills: unknown;
   status: "draft" | "open" | "filled" | "archived" | "closed";
   content_id: string | null;
   instructor_job_id: string | null;
@@ -44,7 +44,7 @@ export function useCourseBriefs() {
       try {
         const data = await listCourseBriefs();
         return (data ?? []) as unknown as CourseBrief[];
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Digital Workforce] FAULT: course_briefs table selection failure.", {
           message: error?.message,
           code: error?.code,
@@ -68,7 +68,7 @@ export function useCreateBrief() {
         throw new Error("UNAUTHORIZED_IDENTITY_NODE: Authentication required to create brief.");
       }
 
-      // HUD: ATOMIC_INGRESS_TRANSACTION
+      // dashboard: ATOMIC_INGRESS_TRANSACTION
       const data = await insertCourseBrief({ ...input, created_by: user.id });
       if (!data) {
         // Enforce fallback transparency if row is hidden via strict RLS settings
@@ -80,7 +80,7 @@ export function useCreateBrief() {
       qc.invalidateQueries({ queryKey: ["course-briefs"] });
       toast.success("Brief saved");
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       console.error("[Digital Workforce] ANOMALY: course_brief creation transaction dropout.", {
         userId: user?.id,
         message: err.message,
@@ -98,15 +98,15 @@ export function usePublishBrief() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (briefId: string) => {
-      // HUD: CORE_SWARM_PROVISIONING_TRIGGER
+      // dashboard: CORE_SWARM_PROVISIONING_TRIGGER
       const data = await createInstructorJobFromBrief({ brief_id: briefId });
       return data;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["course-briefs"] });
-      toast.success("Brief published — instructor job is now open");
+      toast.success("Brief published â€” instructor job is now open");
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       // Digital Workforce Sensor: Critical interceptor for background orchestration faults
       console.error("[Digital Workforce] ANOMALY: create-instructor-job-from-brief edge runtime failure.", {
         briefId: err.brief_id,
@@ -116,3 +116,5 @@ export function usePublishBrief() {
     },
   });
 }
+
+

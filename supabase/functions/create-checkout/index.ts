@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+﻿import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,7 +13,7 @@ const BUNDLES = [
   { credits: 2500, price: 3750 },  // $37.50
 ];
 
-async function getStripeSecretKey(adminClient: any): Promise<string | null> {
+async function getStripeSecretKey(adminClient: unknown): Promise<string | null> {
   // Try env var first
   const envKey = Deno.env.get("STRIPE_SECRET_KEY");
   if (envKey) return envKey;
@@ -61,7 +61,7 @@ Deno.serve(async (req) => {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const { data: { user }, error: userError } = await supabase.auth.getUser(
+    const { data: { user }, error: userError } = await getCurrentUser(
       authHeader.replace("Bearer ", "")
     );
     if (userError || !user) {
@@ -118,7 +118,7 @@ Deno.serve(async (req) => {
         "cancel_url": cancelUrl || `${req.headers.get("origin")}/app/feed?checkout=cancelled`,
         "line_items[0][price_data][currency]": "usd",
         "line_items[0][price_data][product_data][name]": `${credits} Credits`,
-        "line_items[0][price_data][product_data][description]": `GroUp Academy credit bundle — ${credits} credits`,
+        "line_items[0][price_data][product_data][description]": `GroUp Academy credit bundle â€” ${credits} credits`,
         "line_items[0][price_data][unit_amount]": String(priceInCents),
         "line_items[0][quantity]": "1",
         "customer_email": talent.email,
@@ -161,3 +161,6 @@ Deno.serve(async (req) => {
     );
   }
 });
+
+
+

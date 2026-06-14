@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getSkillCredentialByVerifyCode } from "@/domains/learning/repo/learningRepo";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { BadgeCheck, Award, Trophy, ShieldCheck, ShieldAlert, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const LEVEL_META: Record<string, { icon: any; label: string; tone: string }> = {
+const LEVEL_META: Record<string, { icon: unknown; label: string; tone: string }> = {
   foundational: { icon: BadgeCheck, label: "Foundational", tone: "text-primary" },
   proficient: { icon: Award, label: "Proficient", tone: "text-success-green" },
   expert: { icon: Trophy, label: "Expert", tone: "text-amber-500" },
@@ -15,7 +15,7 @@ const LEVEL_META: Record<string, { icon: any; label: string; tone: string }> = {
 export default function VerifySkillCredential() {
   const { code } = useParams<{ code: string }>();
   const [loading, setLoading] = useState(true);
-  const [credential, setCredential] = useState<any>(null);
+  const [credential, setCredential] = useState<unknown>(null);
 
   useEffect(() => {
     if (!code) return;
@@ -28,7 +28,7 @@ export default function VerifySkillCredential() {
 
   useEffect(() => {
     if (!credential) return;
-    document.title = `Verified credential — ${credential.topic_tag.replace(/_/g, " ")}`;
+    document.title = `Verified credential â€” ${credential.topic_tag.replace(/_/g, " ")}`;
     const ld = document.createElement("script");
     ld.type = "application/ld+json";
     ld.text = JSON.stringify({
@@ -60,7 +60,7 @@ export default function VerifySkillCredential() {
         <p className="text-sm text-muted-foreground">
           This credential is invalid, has been revoked, or the link is incorrect.
         </p>
-        <Link to="/" className="text-sm text-primary hover:underline">← Back to home</Link>
+        <Link to="/" className="text-sm text-primary hover:underline">â† Back to home</Link>
       </div>
     );
   }
@@ -108,3 +108,5 @@ function Row({ label, value, mono }: { label: string; value: string; mono?: bool
     </div>
   );
 }
+
+

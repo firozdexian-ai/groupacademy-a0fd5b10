@@ -1,6 +1,6 @@
-import React from "react";
+﻿import React from "react";
 
-export const ROUTES: Record<string, React.LazyExoticComponent<any>> = {
+export const ROUTES: Record<string, React.LazyExoticComponent<unknown>> = {
   "gigs-overview": React.lazy(() => import("@/domains/gigs/components/admin/GigOverviewTab").then(m => ({ default: m.GigOverviewTab }))),
   "gigs-scoper": React.lazy(() =>
     import("@/shells/admin/components/AdminTabPlaceholder").then((m) => ({
@@ -8,7 +8,7 @@ export const ROUTES: Record<string, React.LazyExoticComponent<any>> = {
         React.createElement(m.AdminTabPlaceholder, {
           tabKey: "gigs-scoper",
           title: "AI scoper queue",
-          note: "Auto-scoped gig briefs awaiting admin review. The dedicated scoper queue is reserved — for now check Marketplace and Quick Actions.",
+          note: "Auto-scoped gig briefs awaiting admin review. The dedicated scoper queue is reserved â€” for now check Marketplace and Quick Actions.",
         }),
     })),
   ),
@@ -38,3 +38,5 @@ export const TITLES: Record<string, string> = {
   "gigs-matchmaker": "Matchmaker",
   "gigs-workers-wallet": "Workers wallet",
 };
+
+

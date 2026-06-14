@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -70,7 +70,7 @@ const CONTENT_TYPE_ICONS: Record<string, React.ComponentType<{ className?: strin
 /**
  * GroUp Academy: IELTS Specialized Coaching Dashboard (IELTSPrep)
  * Hardened responsive module listing, securing credit-gated artifact unlocks, and isolating network mutation threads.
- * Version: Launch Candidate · Phase Z1 Production Contract Locked
+ * Version: Launch Candidate Â· Phase Z1 Production Contract Locked
  */
 export default function IELTSPrep() {
  const navigateHook = useNavigate();
@@ -158,7 +158,7 @@ export default function IELTSPrep() {
 
  return (
  <div className={cn(PAGE_SHELL_WIDE, "max-w-3xl mx-auto space-y-6 antialiased block transform-gpu w-full")}>
- {/* HUD LEVEL 1: APPLICATION HEADER MODULE DESCRIPTION COCKPIT */}
+ {/* dashboard LEVEL 1: APPLICATION HEADER MODULE DESCRIPTION COCKPIT */}
  <header className="block w-full leading-none">
  <Button
  variant="ghost"
@@ -179,7 +179,7 @@ export default function IELTSPrep() {
  </p>
  </header>
 
- {/* HUD LEVEL 2: MOCK EXAM GATEWAY CARD */}
+ {/* dashboard LEVEL 2: MOCK EXAM GATEWAY CARD */}
  <Card
  className={cn(
  CARD,
@@ -206,7 +206,7 @@ export default function IELTSPrep() {
  </CardContent>
  </Card>
 
- {/* HUD LEVEL 3: SECTION FILTERING TAXONOMY PILLS */}
+ {/* dashboard LEVEL 3: SECTION FILTERING TAXONOMY PILLS */}
  <div className="grid grid-cols-4 gap-2 w-full block">
  {SECTION_DIRECTORY.map((s) => {
  const isActive = activeSectionState === s.id;
@@ -229,7 +229,7 @@ export default function IELTSPrep() {
  })}
  </div>
 
- {/* HUD LEVEL 4: RESOURCE REGISTRY DIRECTORY LISTING */}
+ {/* dashboard LEVEL 4: RESOURCE REGISTRY DIRECTORY LISTING */}
  <div className="space-y-2 block w-full">
  {isSectionCacheResolving ? (
  [1, 2, 3].map((idx) => (
@@ -314,7 +314,7 @@ export default function IELTSPrep() {
  )}
  </div>
 
- {/* HUD LEVEL 5: TRANSACTIONAL GATEWAY MODAL LAYERS */}
+ {/* dashboard LEVEL 5: TRANSACTIONAL GATEWAY MODAL LAYERS */}
  <CreditGateModal
  isOpen={isCreditGateOpen}
  onClose={() => setIsCreditGateOpen(false)}
@@ -336,3 +336,4 @@ export default function IELTSPrep() {
  </div>
  );
 }
+

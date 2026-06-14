@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
@@ -36,7 +36,7 @@ const CATEGORIES_DIRECTORY = ["all", "career", "productivity", "writing", "resea
 /**
  * GroUp Academy: Authoritative AI Agent Marketplace (AgentMarketplace)
  * Hardened registry matrix managing async telemetry lookup states and shielding filter maps from structural drift.
- * Version: Launch Candidate · Phase Z0 Lifecycle Insulation Hardened
+ * Version: Launch Candidate Â· Phase Z0 Lifecycle Insulation Hardened
  */
 export default function AgentMarketplace() {
  const [agentsRegistryPayload, setAgentsRegistryPayload] = React.useState<MarketAgent[]>([]);
@@ -115,7 +115,7 @@ export default function AgentMarketplace() {
 
  return (
  <div className="container max-w-5xl px-4 py-6 space-y-5 pb-24 text-left antialiased block transform-gpu w-full">
- {/* HUD LEVEL 1: DIRECTORY INDEX PLATFORM HEADER */}
+ {/* dashboard LEVEL 1: DIRECTORY INDEX PLATFORM HEADER */}
  <header className="space-y-1 block leading-none select-none pointer-events-none border-b border-border/10 pb-4 w-full shrink-0">
  <div className="flex items-center gap-2 leading-none w-full shrink-0">
  <Sparkles className="h-5 w-5 text-primary stroke-[2.2] shrink-0 animate-pulse" />
@@ -124,12 +124,12 @@ export default function AgentMarketplace() {
  </h1>
  </div>
  <p className="text-xs sm:text-sm font-semibold text-muted-foreground/60 leading-normal block">
- Deploy specialised computational expert modules instantly. Operates on localized credit draw paths — zero
+ Deploy specialised computational expert modules instantly. Operates on localized credit draw paths â€” zero
  ongoing membership obligations.
  </p>
  </header>
 
- {/* HUD LEVEL 2: LIVE TEXT ENTRY FILTER BOARD */}
+ {/* dashboard LEVEL 2: LIVE TEXT ENTRY FILTER BOARD */}
  <div className="relative w-full block shrink-0">
  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 stroke-[2.2] select-none pointer-events-none" />
  <Input
@@ -141,7 +141,7 @@ export default function AgentMarketplace() {
  />
  </div>
 
- {/* HUD LEVEL 3: TAB CATEGORY SELECTION CONTROL STRUT */}
+ {/* dashboard LEVEL 3: TAB CATEGORY SELECTION CONTROL STRUT */}
  <div className="w-full block shrink-0">
  <Tabs value={activeCategoryFilter} onValueChange={setActiveCategoryFilter} className="w-full">
  <TabsList className="flex flex-wrap h-auto gap-1 bg-muted/30 border border-border/10 p-1 rounded-xl justify-start w-full">
@@ -158,7 +158,7 @@ export default function AgentMarketplace() {
  </Tabs>
  </div>
 
- {/* HUD LEVEL 4: GRID RESOLUTION SWITCH VIEWPORTS */}
+ {/* dashboard LEVEL 4: GRID RESOLUTION SWITCH VIEWPORTS */}
  {isDataLayerLoading ? (
  <div
  role="status"
@@ -294,3 +294,4 @@ function AgentTile({ agent, featured }: AgentTileProps) {
  </Link>
  );
 }
+

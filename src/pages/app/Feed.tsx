@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+﻿import { useEffect, useRef } from "react";
 import { Loader2 } from "lucide-react";
 import { useFeedRecommendations } from "@/domains/feed/hooks/useFeedRecommendations";
 import { FeedHeader } from "@/domains/feed/components/talent/FeedHeader";
@@ -15,7 +15,7 @@ import { TopHypedWidget } from "@/domains/feed/components/talent/TopHypedWidget"
 import { useTalent } from "@/hooks/useTalent";
 
 /**
- * /app/feed — Talent social feed.
+ * /app/feed â€” Talent social feed.
  * Hardened to support responsive desktop grid layouts with sticky side panels
  * and realtime insert notifications.
  */
@@ -72,8 +72,8 @@ export default function Feed() {
         <div className="lg:col-span-8 space-y-4">
           <FeedHeader
             talentName={talent?.fullName || "You"}
-            talentPhoto={(talent as any)?.profilePhotoUrl || (talent as any)?.profile_photo_url || null}
-            talentProfession={(talent as any)?.customProfession || (talent as any)?.custom_profession || null}
+            talentPhoto={(talent as unknown)?.profilePhotoUrl || (talent as unknown)?.profile_photo_url || null}
+            talentProfession={(talent as unknown)?.customProfession || (talent as unknown)?.custom_profession || null}
             onRefresh={refresh}
             isRefreshing={isRefreshing}
           />
@@ -98,7 +98,7 @@ export default function Feed() {
             <div className="space-y-4">
               {items.map((item) => (
                 item.type === "post" ? (
-                  <PostCard key={`${item.type}-${item.id}`} post={item as any} />
+                  <PostCard key={`${item.type}-${item.id}`} post={item as unknown} />
                 ) : (
                   <FeedCardRedesigned
                     key={`${item.type}-${item.id}`}
@@ -115,7 +115,7 @@ export default function Feed() {
 
           {isFetchingNextPage && (
             <div className="flex items-center justify-center gap-2 py-4 text-xs text-muted-foreground">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" /> Loading more…
+              <Loader2 className="h-3.5 w-3.5 animate-spin" /> Loading moreâ€¦
             </div>
           )}
         </div>
@@ -133,3 +133,5 @@ export default function Feed() {
     </div>
   );
 }
+
+

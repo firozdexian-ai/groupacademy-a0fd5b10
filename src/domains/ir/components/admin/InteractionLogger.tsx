@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
  Dialog,
@@ -26,7 +26,7 @@ import { InlineSpinner } from "@/components/common/InlineSpinner";
 /**
  * GroUp Academy: Investor Interaction Intelligence Logger
  * CTO Reference: Primary ingestion node for stakeholder sentiment and engagement tracking.
- * 2024 Standard: Executive Logic geometry with reinforced interaction analysis.
+ * 2024 Standard:  geometry with reinforced interaction analysis.
  */
 
 interface InteractionLoggerProps {
@@ -54,7 +54,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
  mutationFn: async () => {
  if (!investorId) throw new Error("Registry Fault: Investor ID missing.");
 
- const updatePayload: any = { last_contacted_at: new Date().toISOString() };
+ const updatePayload: unknown = { last_contacted_at: new Date().toISOString() };
  if (formData.interaction_type === "reply_received" && formData.content) {
  updatePayload.last_feedback_summary = formData.content.slice(0, 500);
  }
@@ -81,7 +81,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
  queryClient.invalidateQueries({ queryKey: ["ir-investor-detail", investorId] });
  queryClient.invalidateQueries({ queryKey: ["ir-investors"] });
  },
- onError: (error: any) => {
+ onError: (error: unknown) => {
  toast.error("System Error: Interaction sync failed. " + error.message);
  },
  });
@@ -251,7 +251,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
  }
  >
  {point.toUpperCase()}
- <span className="opacity-40 group-hover:opacity-100 transition-opacity">×</span>
+ <span className="opacity-40 group-hover:opacity-100 transition-opacity">Ã—</span>
  </Badge>
  ))}
  </div>
@@ -305,10 +305,12 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
  ) : (
  <ShieldCheck className="h-5 w-5 fill-current" />
  )}
- {saveMutation.isPending ? "Saving…" : "Save interaction"}
+ {saveMutation.isPending ? "Savingâ€¦" : "Save interaction"}
  </Button>
  </DialogFooter>
  </DialogContent>
  </Dialog>
  );
 }
+
+

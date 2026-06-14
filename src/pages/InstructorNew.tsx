@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { insertInstructor } from "@/domains/learning/repo/learningRepo";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
@@ -65,7 +65,7 @@ const InstructorNew = () => {
 
       toast.success("Identity Created: New instructor node active.");
       navigate("/instructors");
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error(error.message || "Blueprint creation failed.");
     } finally {
       setIsLoading(false);
@@ -288,3 +288,5 @@ const InstructorNew = () => {
 };
 
 export default InstructorNew;
+
+

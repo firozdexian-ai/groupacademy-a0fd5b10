@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { GRO10X_MUTED } from "../lib/tokens";
@@ -13,7 +13,7 @@ import { Gro10xPeopleTab } from "../components/Gro10xPeopleTab";
 type Tab = "hiring" | "talents" | "sourcing" | "crm" | "people";
 
 /**
- * Gro10x Activities hub — three tabs covering hiring, talents the company
+ * Gro10x Activities hub â€” three tabs covering hiring, talents the company
  * has interacted with, and the lightweight B2B CRM.
  */
 export default function Gro10xWork() {
@@ -21,7 +21,7 @@ export default function Gro10xWork() {
   const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>("hiring");
   // Extract company_id from user metadata for People tab
-  const companyId = (user as any)?.user_metadata?.company_id as string | undefined;
+  const companyId = (user as unknown)?.user_metadata?.company_id as string | undefined;
 
   if (!user) {
     return (
@@ -106,3 +106,5 @@ function TabBtn({
     </button>
   );
 }
+
+

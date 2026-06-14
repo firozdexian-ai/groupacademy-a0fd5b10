@@ -1,4 +1,4 @@
-import {
+﻿import {
   Briefcase,
   FileText,
   Mic,
@@ -130,3 +130,4 @@ export type AgentId = typeof AI_AGENTS[number]["id"];
 export const getAgentById = (id: string): AIAgent | undefined => {
   return AI_AGENTS.find((agent) => agent.id === id);
 };
+

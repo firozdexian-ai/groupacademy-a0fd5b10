@@ -1,1 +1,2 @@
-export * from "@/domains/gigs/components/gro10x/Gro10xOpenGigs";
+﻿export * from "@/domains/gigs/components/gro10x/Gro10xOpenGigs";
+

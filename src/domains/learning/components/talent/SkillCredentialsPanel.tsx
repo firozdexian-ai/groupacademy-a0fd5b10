@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+﻿import { useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +13,7 @@ import { useTalent } from "@/hooks/useTalent";
 import { usePublicProfileSettings } from "@/domains/profile/hooks/usePublicProfileSettings";
 import { useToast } from "@/hooks/use-toast";
 
-const LEVEL_META: Record<SkillCredential["level"], { icon: any; label: string; tone: string }> = {
+const LEVEL_META: Record<SkillCredential["level"], { icon: unknown; label: string; tone: string }> = {
   foundational: {
     icon: BadgeCheck,
     label: "Foundational",
@@ -34,7 +34,7 @@ const LEVEL_META: Record<SkillCredential["level"], { icon: any; label: string; t
 /**
  * GroUp Academy: Psychometric Verification Ledger Node (SkillCredentialsPanel)
  * CTO Reference: Authoritative panel validating candidate competency scores and orchestrating multi-channel social verification routes.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function SkillCredentialsPanel({ compact = false, limit }: { compact?: boolean; limit?: number }) {
   const queryClient = useQueryClient();
@@ -138,7 +138,7 @@ export function SkillCredentialsPanel({ compact = false, limit }: { compact?: bo
 
   return (
     <Card className="w-full text-left rounded-2xl border border-border/40 bg-card/60 backdrop-blur-md shadow-sm antialiased transform-gpu overflow-hidden">
-      {/* HUD HEADER: REGISTRY META INFORMATION SECTION */}
+      {/* dashboard HEADER: REGISTRY META INFORMATION SECTION */}
       <CardHeader className="p-4 pb-2 select-none border-b border-border/10 bg-muted/20">
         <CardTitle className="text-xs font-bold text-foreground/90 uppercase tracking-wider flex items-center justify-between gap-4 w-full">
           <div className="flex items-center gap-2">
@@ -154,7 +154,7 @@ export function SkillCredentialsPanel({ compact = false, limit }: { compact?: bo
         </CardTitle>
       </CardHeader>
 
-      {/* HUD CONTENT: INTERACTIVE STREAM CONTAINER AREA */}
+      {/* dashboard CONTENT: INTERACTIVE STREAM CONTAINER AREA */}
       <CardContent className="p-4 space-y-3 w-full min-w-0 flex flex-col font-bold text-xs tracking-tight">
         <div className="space-y-2 w-full min-w-0">
           {items.map((credentialItem) => {
@@ -189,7 +189,7 @@ export function SkillCredentialsPanel({ compact = false, limit }: { compact?: bo
                   {!compact && (
                     <p className="text-[11px] font-semibold text-muted-foreground/80 tracking-tight truncate text-ellipsis select-all leading-none pt-0.5">
                       <span>{meta.label}</span> &bull;{" "}
-                      <span>{(credentialItem as any).content?.title || "Across courses"}</span> &bull;{" "}
+                      <span>{(credentialItem as unknown).content?.title || "Across courses"}</span> &bull;{" "}
                       <span className="font-mono text-[10px] bg-muted/40 border px-1 rounded shadow-sm leading-none inline-block tabular-nums">
                         {calculatedMasteryScore}% mastery
                       </span>
@@ -216,7 +216,7 @@ export function SkillCredentialsPanel({ compact = false, limit }: { compact?: bo
           })}
         </div>
 
-        {/* HUD FOOTER: WORKSPACE MANAGEMENT CONTROLS LINKING STRIP */}
+        {/* dashboard FOOTER: WORKSPACE MANAGEMENT CONTROLS LINKING STRIP */}
         <div className="space-y-2 pt-2 border-t border-border/10 w-full select-none text-center">
           {limit && data.length > limit && (
             <Link
@@ -254,3 +254,5 @@ export function SkillCredentialsPanel({ compact = false, limit }: { compact?: bo
     </Card>
   );
 }
+
+

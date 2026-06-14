@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { getCurrentUser } from "@/lib/auth";
 import { getNextBestTool } from "@/domains/jobs/repo/jobsRepo";
 import type { ToolKey } from "./useToolRuns";
@@ -25,7 +25,7 @@ export function useNextBestTool() {
       try {
         const data = await getNextBestTool(user.id);
         return data as unknown as NextBestTool;
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Failed to load next-best tool recommendation", {
           userId: user.id,
           message: error?.message,
@@ -35,3 +35,5 @@ export function useNextBestTool() {
     },
   });
 }
+
+

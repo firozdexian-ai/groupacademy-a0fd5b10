@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,7 @@ const POPULAR_ISO = ["BD", "IN", "AE", "SA", "US", "GB", "CA"];
 /**
  * GroUp Academy: Technical Multi-National Communication Hub Terminal (PhoneInput)
  * Hardened composite combobox input sealing telephone route prefix state maps against ISO-2 index collisions.
- * Version: Launch Candidate · Phase Z0 Collision & Layout Shifting Hardened
+ * Version: Launch Candidate Â· Phase Z0 Collision & Layout Shifting Hardened
  */
 export function PhoneInput({
   value,
@@ -174,3 +174,4 @@ function CountryItem({
     </CommandItem>
   );
 }
+

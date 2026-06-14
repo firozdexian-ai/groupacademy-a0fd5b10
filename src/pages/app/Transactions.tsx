@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+﻿import { useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -58,7 +58,7 @@ export default function Transactions() {
  const [selectedMonth, setSelectedMonth] = useState(() => startOfMonth(new Date()));
 
  // Digital Workforce Anomaly Protocol[cite: 6]
- const reportAnomaly = async (event: string, context: any) => {
+ const reportAnomaly = async (event: string, context: unknown) => {
  console.error(`[Digital Workforce Anomaly] ${event}`, context);
  await adminSupportAssistant({ type: "ledger_sync_error", event, context });
  };
@@ -194,3 +194,5 @@ export default function Transactions() {
  </div>
  );
 }
+
+

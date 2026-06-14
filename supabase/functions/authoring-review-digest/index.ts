@@ -1,8 +1,8 @@
-// Authoring review digest — phase 3.6
+﻿// Authoring review digest â€” phase 3.6
 // Modes:
-//   single  → returns digest for one module_id
-//   course  → returns digest for all modules in one content_id
-//   weekly  → loops every published course, sends emails to primary instructor and admins
+//   single  â†’ returns digest for one module_id
+//   course  â†’ returns digest for all modules in one content_id
+//   weekly  â†’ loops every published course, sends emails to primary instructor and admins
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
   if (!token) return json({ error: "unauthenticated" }, 401);
 
   const admin = createClient(supabaseUrl, serviceKey);
-  let isService = token === serviceKey;
+  const isService = token === serviceKey;
   let uid: string | null = null;
   if (!isService) {
     const userClient = createClient(supabaseUrl, anonKey, {
@@ -64,7 +64,7 @@ Deno.serve(async (req) => {
       _module_id: moduleId, _days: days,
     });
     if (error) throw new Error(error.message);
-    return data as any;
+    return data as unknown;
   };
 
   if (mode === "single") {
@@ -77,7 +77,7 @@ Deno.serve(async (req) => {
     const { data: mods = [] } = await admin
       .from("course_modules").select("id").eq("content_id", body.content_id);
     const digests = [];
-    for (const m of mods ?? []) digests.push(await fetchDigest((m as any).id));
+    for (const m of mods ?? []) digests.push(await fetchDigest((m as unknown).id));
     return json({ content_id: body.content_id, modules: digests });
   }
 
@@ -89,17 +89,17 @@ Deno.serve(async (req) => {
       .eq("is_published", true);
     const periodEnd = new Date();
     const periodStart = new Date(periodEnd.getTime() - days * 86400_000);
-    const sent: any[] = [];
+    const sent: unknown[] = [];
 
     for (const c of courses ?? []) {
-      const courseId = (c as any).id;
+      const courseId = (c as unknown).id;
       const { data: mods = [] } = await admin
         .from("course_modules").select("id").eq("content_id", courseId);
       if (!(mods?.length)) continue;
 
-      const digests: any[] = [];
+      const digests: unknown[] = [];
       for (const m of mods!) {
-        try { digests.push(await fetchDigest((m as any).id)); } catch (_) { /* skip */ }
+        try { digests.push(await fetchDigest((m as unknown).id)); } catch (_) { /* skip */ }
       }
       const flagged = digests.filter(d => {
         const s = d?.summary ?? {};
@@ -124,7 +124,7 @@ Deno.serve(async (req) => {
         period_start: periodStart.toISOString(),
         period_end: periodEnd.toISOString(),
         channel: recipientEmail ? "email" : "in_app",
-        metadata: { course_title: (c as any).title, modules: flagged.length },
+        metadata: { course_title: (c as unknown).title, modules: flagged.length },
       });
 
       if (!body.dry_run && recipientEmail) {
@@ -136,7 +136,7 @@ Deno.serve(async (req) => {
               idempotencyKey: `authoring-digest-${courseId}-${periodStart.toISOString().slice(0,10)}`,
               templateData: {
                 name: recipientName,
-                courseTitle: (c as any).title,
+                courseTitle: (c as unknown).title,
                 totalFlagged,
                 modulesCount: flagged.length,
                 modules: flagged.slice(0, 5).map(d => ({
@@ -148,7 +148,7 @@ Deno.serve(async (req) => {
             },
           });
         } catch (e) {
-          console.warn("digest email failed", courseId, (e as any)?.message);
+          console.warn("digest email failed", courseId, (e as unknown)?.message);
         }
       }
 
@@ -162,3 +162,5 @@ Deno.serve(async (req) => {
 
   return json({ error: "invalid_mode" }, 400);
 });
+
+

@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getInterviewById, listInterviewSlots } from "@/domains/jobs/repo/jobsRepo";
 import { useConfirmInterviewSlot } from "@/hooks/useInterviews";
@@ -39,7 +39,7 @@ interface SlotConfirmationPayload {
 /**
  * GroUp Academy: Technical Interview Slot Scheduling Engine (AppInterviewSchedule)
  * Hardened responsive tracking wizard capturing parallel database handshakes and insulating lookups from undefined crash points.
- * Version: Launch Candidate · Phase Z1 Integration Stability Locked
+ * Version: Launch Candidate Â· Phase Z1 Integration Stability Locked
  */
 export default function AppInterviewSchedule() {
  const { id: unverifiedApplicationIdStr, interviewId: unverifiedInterviewIdStr } = useParams<{
@@ -203,7 +203,7 @@ export default function AppInterviewSchedule() {
 
  return (
  <div className="max-w-xl mx-auto px-4 py-4 space-y-4 text-left antialiased block transform-gpu w-full">
- {/* HUD LEVEL 1: APP SHELL BACKWARD NAVIGATION LINK HUB */}
+ {/* dashboard LEVEL 1: APP SHELL BACKWARD NAVIGATION LINK HUB */}
  <div className="block select-none leading-none w-full shrink-0">
  <Button
  type="button"
@@ -217,7 +217,7 @@ export default function AppInterviewSchedule() {
  </Button>
  </div>
 
- {/* HUD LEVEL 2: CALENDAR SELECTION DISPLAY MANAGEMENT CONTAINER */}
+ {/* dashboard LEVEL 2: CALENDAR SELECTION DISPLAY MANAGEMENT CONTAINER */}
  <Card className="rounded-xl border border-border/60 bg-card/40 overflow-hidden block w-full shadow-none">
  <CardContent className="p-4 space-y-3.5 block w-full leading-none">
  <div className="flex items-center gap-2.5 select-none pointer-events-none leading-none w-full block shrink-0">
@@ -232,7 +232,7 @@ export default function AppInterviewSchedule() {
  variant="secondary"
  className="font-mono text-[9px] font-extrabold uppercase px-1.5 h-4.5 rounded pt-0.5 leading-none shrink-0 border border-border/5"
  >
- VARIANT: {interviewRecordData.mode.toUpperCase()} · DURATION:{" "}
+ VARIANT: {interviewRecordData.mode.toUpperCase()} Â· DURATION:{" "}
  {interviewRecordData.duration_min.toString()} MIN
  </Badge>
  </div>
@@ -243,7 +243,7 @@ export default function AppInterviewSchedule() {
  </p>
  )}
 
- {/* HUD LEVEL 3: STATE SECTOR SELECTION VIEWPORTS ROUTER */}
+ {/* dashboard LEVEL 3: STATE SECTOR SELECTION VIEWPORTS ROUTER */}
  {isInterviewConfirmedFlag ? (
  <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/[0.01] p-3 leading-normal block w-full">
  <div className="flex items-start gap-2 text-xs sm:text-sm font-semibold text-foreground leading-tight block w-full">
@@ -266,7 +266,7 @@ export default function AppInterviewSchedule() {
  rel="noopener noreferrer"
  className="font-mono text-[10px] font-black uppercase tracking-wide text-primary hover:underline inline-flex items-center gap-1.5 leading-none"
  >
- <span>Launch Encrypted Meeting Link Endpoint</span> <span>→</span>
+ <span>Launch Encrypted Meeting Link Endpoint</span> <span>â†’</span>
  </a>
  </div>
  )}
@@ -314,3 +314,4 @@ export default function AppInterviewSchedule() {
  </div>
  );
 }
+

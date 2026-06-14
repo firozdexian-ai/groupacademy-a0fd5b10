@@ -19,7 +19,7 @@ Deno.serve(async (req) => {
     const { data: a } = await admin.from("gig_review_assignments").select("*").eq("id", assignment_id).maybeSingle();
     if (!a) throw new Error("assignment not found");
 
-    let context: any = { kind: a.kind };
+    let context: unknown = { kind: a.kind };
     if (a.kind === "escalation") {
       const { data: v } = await admin.from("gig_verifications").select("*").eq("id", a.source_id).maybeSingle();
       const { data: g } = v?.gig_id ? await admin.from("gigs").select("title,description,acceptance_criteria,credit_reward").eq("id", v.gig_id).maybeSingle() : { data: null };
@@ -39,14 +39,16 @@ Deno.serve(async (req) => {
           body: JSON.stringify({
             model: "google/gemini-2.5-flash",
             messages: [
-              { role: "system", content: "You produce neutral one-paragraph reviewer briefs for gig adjudication. ≤150 words." },
+              { role: "system", content: "You produce neutral one-paragraph reviewer briefs for gig adjudication. â‰¤150 words." },
               { role: "user", content: JSON.stringify(context).slice(0, 6000) },
             ],
           }),
         });
         const j = await resp.json();
         brief = j?.choices?.[0]?.message?.content || brief;
-      } catch (_) {}
+      } catch (_) {
+        // Intentionally empty
+      }
     }
 
     return new Response(JSON.stringify({ brief, context }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
@@ -54,3 +56,5 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
+
+

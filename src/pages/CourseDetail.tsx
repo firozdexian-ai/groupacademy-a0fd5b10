@@ -85,8 +85,8 @@ const CourseDetail = () => {
   const [course, setCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isEnrolling, setIsEnrolling] = useState(false);
-  const [user, setUser] = useState<any>(null);
-  const [studentProfile, setStudentProfile] = useState<any>(null);
+  const [user, setUser] = useState<unknown>(null);
+  const [studentProfile, setStudentProfile] = useState<unknown>(null);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [showAccessCodeDialog, setShowAccessCodeDialog] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -116,7 +116,7 @@ const CourseDetail = () => {
   const fetchCourse = async () => {
     setLoadingError(null);
     try {
-      const data = await withTimeout<any>(
+      const data = await withTimeout<unknown>(
         getContentBySlugPublished(slug!),
         TIMEOUTS.DEFAULT,
         "Network timeout: Course unreachable",
@@ -130,14 +130,14 @@ const CourseDetail = () => {
       if (source) await trackContentClick({ contentId: data.id, source });
       if (ref) {
         localStorage.setItem("course_ref", ref);
-        try { await trackCourseReferralClick({ contentId: data.id, refCode: ref }); } catch {}
+        try { await trackCourseReferralClick({ contentId: data.id, refCode: ref }); } catch { /* ignore */ }
       }
 
       if (user && studentProfile?.id) {
         const enrollmentId = await findEnrollmentIdForStudentAndContent(studentProfile.id, data.id);
         setIsEnrolled(!!enrollmentId);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setLoadingError(err.message);
     } finally {
       setIsLoading(false);
@@ -158,7 +158,7 @@ const CourseDetail = () => {
       toast.success("Enrollment Synchronized");
       setIsEnrolled(true);
       navigate("/my-learning");
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error("Enrollment failed");
     } finally {
       setIsEnrolling(false);
@@ -185,7 +185,7 @@ const CourseDetail = () => {
         toast.success("Account created. Completing enrollment...");
         window.location.reload(); // Refresh to establish session
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err.message);
     } finally {
       setIsEnrolling(false);
@@ -440,3 +440,5 @@ const CourseDetail = () => {
 };
 
 export default CourseDetail;
+
+

@@ -1,4 +1,4 @@
-import { Dialog, DialogPortal, DialogOverlay } from "@/components/ui/dialog";
+﻿import { Dialog, DialogPortal, DialogOverlay } from "@/components/ui/dialog";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
 import { Sparkles, LogOut } from "lucide-react";
@@ -14,7 +14,7 @@ interface AccountUpgradeModalProps {
  * Uncloseable gate shown to talents who completed signup before the new
  * onboarding fields existed. They re-run the short wizard to fill in the
  * missing details. A small "Sign out" escape hatch keeps users from being
- * permanently locked out if any lookup data is unavailable.
+ * permanently locked out if unknown lookup data is unavailable.
  */
 export function AccountUpgradeModal({ open, onComplete }: AccountUpgradeModalProps) {
   const { signOut } = useAuth();
@@ -50,7 +50,7 @@ export function AccountUpgradeModal({ open, onComplete }: AccountUpgradeModalPro
               </div>
             </div>
 
-            {/* Escape hatch — talents stuck on this gate (e.g. lookup data
+            {/* Escape hatch â€” talents stuck on this gate (e.g. lookup data
                 missing) can always sign out and contact support. */}
             <button
               type="button"
@@ -69,3 +69,5 @@ export function AccountUpgradeModal({ open, onComplete }: AccountUpgradeModalPro
     </Dialog>
   );
 }
+
+

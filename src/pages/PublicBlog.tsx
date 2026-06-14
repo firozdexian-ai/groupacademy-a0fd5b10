@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { listPublishedBlogPosts } from "@/domains/marketing/repo/marketingRepo";
@@ -264,3 +264,4 @@ export default function PublicBlog() {
     </PublicLayout>
   );
 }
+

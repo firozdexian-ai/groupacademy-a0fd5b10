@@ -1,10 +1,10 @@
-import { Link } from "react-router-dom";
+﻿import { Link } from "react-router-dom";
 import { GRO10X_BG, GRO10X_TEXT } from "../lib/tokens";
 import { ArrowRight, MessageSquare, Building2, Sparkles } from "lucide-react";
 import Gro10xInstallButton from "../components/Gro10xInstallButton";
 
 /**
- * Gro10x landing — what users see when they hit the root of the Gro10x host
+ * Gro10x landing â€” what users see when they hit the root of the Gro10x host
  * (or /gro10x on the academy host) without being signed in. Sells the value
  * prop and pushes them straight into Riya.
  */
@@ -20,7 +20,7 @@ export default function Gro10xLanding() {
           The professional inbox of <span className="text-[#33E1E4]">AI agents.</span>
         </h1>
         <p className="mt-3 text-slate-400 text-sm leading-relaxed">
-          Hire, sell, train, run ops — by chatting. One app. Many agents. Your team.
+          Hire, sell, train, run ops â€” by chatting. One app. Many agents. Your team.
         </p>
 
         <Link
@@ -37,13 +37,13 @@ export default function Gro10xLanding() {
         </Link>
         <Gro10xInstallButton />
         <p className="mt-3 text-center text-xs text-slate-500">
-          Free to start · 250 welcome credits per company
+          Free to start Â· 250 welcome credits per company
         </p>
       </header>
 
       <section className="px-5 pb-12 max-w-md md:max-w-5xl mx-auto space-y-3">
         <Feature icon={<MessageSquare className="h-5 w-5" />} title="Chat-first workflows" desc="Every action is a message. No dashboards to learn." />
-        <Feature icon={<Building2 className="h-5 w-5" />} title="Shared company page" desc="Your team edits one source of truth — visible to clients." />
+        <Feature icon={<Building2 className="h-5 w-5" />} title="Shared company page" desc="Your team edits one source of truth â€” visible to clients." />
         <Feature icon={<Sparkles className="h-5 w-5" />} title="Agents tuned to your goals" desc="Hiring? Sales? Ops? Riya picks the right agents at signup." />
       </section>
     </div>
@@ -61,3 +61,4 @@ function Feature({ icon, title, desc }: { icon: React.ReactNode; title: string; 
     </div>
   );
 }
+

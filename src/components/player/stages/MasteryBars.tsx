@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+﻿import { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -37,7 +37,7 @@ function masteryLabel(m: number) {
 /**
  * GroUp Academy: Psychometric Skill Vector Mastery Display (MasteryBars)
  * An authoritative engine visualizing granular candidate competency tiers and tracking attempt thresholds.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate Â· Phase Z0 Hardened
  */
 export function MasteryBars({ moduleId, topN = 5 }: MasteryBarsProps) {
   // Monitor psychometric competency bar views via analytics telemetry indicators
@@ -100,7 +100,7 @@ export function MasteryBars({ moduleId, topN = 5 }: MasteryBarsProps) {
 
   return (
     <Card className="w-full text-left rounded-2xl border border-border/40 bg-card/40 backdrop-blur-md shadow-sm antialiased transform-gpu overflow-hidden">
-      {/* HUD HEADER: CALIBRATION METRIC PLOTS TITLE SECTION */}
+      {/* dashboard HEADER: CALIBRATION METRIC PLOTS TITLE SECTION */}
       <CardHeader className="p-4 pb-2 select-none border-b border-border/10 bg-muted/20">
         <CardTitle className="text-xs font-bold text-foreground/80 uppercase tracking-wider flex items-center gap-2 leading-none w-full">
           <Brain className="h-4 w-4 text-primary stroke-[2.2] shrink-0 animate-pulse" />
@@ -108,13 +108,13 @@ export function MasteryBars({ moduleId, topN = 5 }: MasteryBarsProps) {
         </CardTitle>
       </CardHeader>
 
-      {/* HUD CONTENT: TRACK INDICES MATRIX CONTAINER */}
+      {/* dashboard CONTENT: TRACK INDICES MATRIX CONTAINER */}
       <CardContent className="p-4 space-y-3.5 w-full min-w-0 flex flex-col font-bold text-xs tracking-tight text-foreground/90">
         {loading ? (
           <div className="flex items-center gap-2 py-4 text-muted-foreground select-none leading-none w-full">
             <Loader2 className="h-4 w-4 animate-spin text-primary stroke-[2.5]" />
             <span className="text-[10px] font-extrabold uppercase tracking-wider pl-0.5 animate-pulse">
-              Hydrating Psychometric Competency Ledger…
+              Hydrating Psychometric Competency Ledgerâ€¦
             </span>
           </div>
         ) : topCalculatedRows.length === 0 ? (
@@ -180,3 +180,4 @@ export function MasteryBars({ moduleId, topN = 5 }: MasteryBarsProps) {
     </Card>
   );
 }
+

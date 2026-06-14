@@ -1,5 +1,5 @@
-/**
- * Companies Overview — B2B Operational Intelligence Dashboard
+﻿/**
+ * Companies Overview â€” B2B Operational Intelligence Dashboard
  * CTO Version: May 2026 (Hardened & Feature Restored)
  * Fixes: A1 (Query Storm), A2 (Funnel Logic), R2 (Missing Imports)
  * Features: Restored Detailed Aisha Funnel & Market Breakdowns
@@ -165,7 +165,7 @@ export function CompaniesOverviewTab() {
   );
 }
 
-function FunnelRow({ label, value, max, color }: any) {
+function FunnelRow({ label, value, max, color }: unknown) {
   const pct = Math.round((value / (max || 1)) * 100);
   return (
     <div className="space-y-2">
@@ -188,8 +188,8 @@ function FunnelRow({ label, value, max, color }: any) {
   );
 }
 
-function CardBreakdown({ title, icon: Icon, data, color }: any) {
-  const max = Math.max(1, ...data.map((d: any) => d.value));
+function CardBreakdown({ title, icon: Icon, data, color }: unknown) {
+  const max = Math.max(1, ...data.map((d: unknown) => d.value));
   const gradient = color === "blue" ? "from-blue-400 to-indigo-600" : "from-indigo-400 to-violet-600";
 
   return (
@@ -204,7 +204,7 @@ function CardBreakdown({ title, icon: Icon, data, color }: any) {
         {data.length === 0 ? (
           <p className="text-center text-[10px] font-semibold opacity-20 uppercase py-10">No records found</p>
         ) : (
-          data.map((d: any) => (
+          data.map((d: unknown) => (
             <div key={d.label} className="space-y-1.5 group">
               <div className="flex justify-between items-end text-sm px-1">
                 <span className="truncate pr-4 font-semibold uppercase text-[10px] tracking-widest text-muted-foreground group-hover:text-primary transition-colors">
@@ -230,3 +230,4 @@ function CardBreakdown({ title, icon: Icon, data, color }: any) {
     </Card>
   );
 }
+

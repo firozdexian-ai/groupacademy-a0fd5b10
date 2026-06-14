@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+﻿import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -23,8 +23,8 @@ interface Body {
   };
 }
 
-async function callAI(messages: any[], tools?: any[], toolChoice?: any) {
-  const body: any = { model: "google/gemini-3-flash-preview", messages };
+async function callAI(messages: unknown[], tools?: unknown[], toolChoice?: unknown) {
+  const body: unknown = { model: "google/gemini-3-flash-preview", messages };
   if (tools) { body.tools = tools; body.tool_choice = toolChoice; }
   const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
@@ -164,3 +164,5 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
+
+
