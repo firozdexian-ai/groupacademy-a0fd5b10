@@ -6,7 +6,7 @@ export interface GtmCountry { id: string; iso2: string; name: string; tier: stri
 export interface GtmRegion { id: string; country_id: string; name: string; code: string | null; }
 export interface GtmCity { id: string; region_id: string; name: string; is_active: boolean; }
 export interface GtmCluster { id: string; name: string; description: string | null; countries: string[]; cities: string[]; }
-export interface KnowledgePack { id: string; country_code: string; title: string; kind: string; is_published: boolean; }
+export interface KnowledgePack { id: string; country_code: string; title: string; kind: string; is_published: boolean; body_markdown: string; source_url: string | null; display_order: number; valid_through: string | null; }
 
 const client = supabase as any;
 
@@ -52,12 +52,13 @@ export function useGtmGraph() {
   const gtmGraphQuery = useQuery({
     queryKey: ["gtm_graph_master"],
     queryFn: async () => {
-      const [countriesRes, regionsRes, citiesRes, clustersRes, knowledgeRes] = await Promise.all([
+      const [countriesRes, regionsRes, citiesRes, clustersRes, knowledgeRes, destinationsRes] = await Promise.all([
         client.from("gtm_countries").select("*").order("name"),
         client.from("gtm_regions").select("*").order("name"),
         client.from("gtm_cities").select("*").order("name"),
         client.from("gtm_clusters").select("*").order("name"),
         client.from("country_knowledge_packs").select("*").order("display_order"),
+        client.from("destination_agents").select("country_code, display_name").order("display_name"),
       ]);
 
       if (countriesRes.error) throw countriesRes.error;
@@ -65,6 +66,7 @@ export function useGtmGraph() {
       if (citiesRes.error) throw citiesRes.error;
       if (clustersRes.error) throw clustersRes.error;
       if (knowledgeRes.error) throw knowledgeRes.error;
+      if (destinationsRes.error) throw destinationsRes.error;
 
       return {
         countries: countriesRes.data as GtmCountry[],
@@ -72,6 +74,7 @@ export function useGtmGraph() {
         cities: citiesRes.data as GtmCity[],
         clusters: clustersRes.data as GtmCluster[],
         knowledgePacks: knowledgeRes.data as KnowledgePack[],
+        destinations: destinationsRes.data as Array<{ country_code: string; display_name: string }>,
       };
     },
   });

@@ -18,10 +18,10 @@ import { ConfirmPurge } from "@/platform/admin/ui/ConfirmPurge";
 export function GtmKnowledgeTab() {
  const { gtmGraphQuery, mutations: { upsertKnowledgePack, deleteKnowledgePack } } = useGtmGraph();
  const [open, setOpen] = useState(false);
- const [draft, setDraft] = useState<any>({ is_published: false, kind: "general", display_order: 0 });
+ const [draft, setDraft] = useState<any>({ is_published: false, kind: "visa", display_order: 0, body_markdown: "" });
 
  const packs = gtmGraphQuery.data?.knowledgePacks ?? [];
- const countries = gtmGraphQuery.data?.countries ?? [];
+ const destinations = gtmGraphQuery.data?.destinations ?? [];
 
  return (
  <div className="space-y-6">
@@ -37,7 +37,7 @@ export function GtmKnowledgeTab() {
  </p>
  </div>
  <Button
- onClick={() => { setDraft({ is_published: false, kind: "general", display_order: 0 }); setOpen(true); }}
+ onClick={() => { setDraft({ is_published: false, kind: "visa", display_order: 0, body_markdown: "" }); setOpen(true); }}
  className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-indigo-500/20 bg-indigo-600 hover:bg-indigo-700 text-white"
  >
  <Plus className="h-4 w-4" /> Inject Content
@@ -78,7 +78,7 @@ export function GtmKnowledgeTab() {
  <TableCell>
  <div className="flex items-center gap-2">
  <Globe className="h-3.5 w-3.5 text-muted-foreground" />
- {countries.find((c: any) => c.iso2 === row.country_code)?.name || row.country_code}
+ {destinations.find((d: any) => d.country_code === row.country_code)?.display_name || row.country_code}
  </div>
  </TableCell>
  <TableCell>
@@ -139,12 +139,12 @@ export function GtmKnowledgeTab() {
 
  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
  <div className="space-y-2">
- <Label className="text-[10px] font-black text-muted-foreground ml-1">Target Country</Label>
+ <Label className="text-[10px] font-black text-muted-foreground ml-1">Target Country (Destination)</Label>
  <Select value={draft.country_code || ""} onValueChange={(v) => setDraft({ ...draft, country_code: v })}>
  <SelectTrigger className="h-12 rounded-xl border"><SelectValue placeholder="Select country" /></SelectTrigger>
  <SelectContent>
- {countries.map((c: any) => (
- <SelectItem key={c.iso2} value={c.iso2}>{c.name} ({c.iso2})</SelectItem>
+ {destinations.map((d: any) => (
+ <SelectItem key={d.country_code} value={d.country_code}>{d.display_name} ({d.country_code})</SelectItem>
  ))}
  </SelectContent>
  </Select>
@@ -152,13 +152,15 @@ export function GtmKnowledgeTab() {
 
  <div className="space-y-2">
  <Label className="text-[10px] font-black text-muted-foreground ml-1">Classification</Label>
- <Select value={draft.kind || "general"} onValueChange={(v) => setDraft({ ...draft, kind: v })}>
+ <Select value={draft.kind || "visa"} onValueChange={(v) => setDraft({ ...draft, kind: v })}>
  <SelectTrigger className="h-12 rounded-xl border"><SelectValue /></SelectTrigger>
  <SelectContent>
- <SelectItem value="general">General</SelectItem>
  <SelectItem value="visa">Visa & Legal</SelectItem>
- <SelectItem value="housing">Housing</SelectItem>
- <SelectItem value="employment">Employment</SelectItem>
+ <SelectItem value="scholarship">Scholarship & Funding</SelectItem>
+ <SelectItem value="cost">Cost of Living</SelectItem>
+ <SelectItem value="process">Relocation Process</SelectItem>
+ <SelectItem value="policy">Official Policies</SelectItem>
+ <SelectItem value="other">Other Information</SelectItem>
  </SelectContent>
  </Select>
  </div>
@@ -202,7 +204,7 @@ export function GtmKnowledgeTab() {
  </Tabs>
  </div>
 
- <div className="grid grid-cols-2 gap-4">
+ <div className="grid grid-cols-3 gap-4">
  <div className="space-y-2">
  <Label className="text-[10px] font-black text-muted-foreground ml-1">Source URL (Optional)</Label>
  <Input placeholder="https://" value={draft.source_url || ""} onChange={(e) => setDraft({ ...draft, source_url: e.target.value })} className="h-12 rounded-xl border font-mono text-xs bg-background/50" />
@@ -210,6 +212,10 @@ export function GtmKnowledgeTab() {
  <div className="space-y-2">
  <Label className="text-[10px] font-black text-muted-foreground ml-1">Sort Priority</Label>
  <Input type="number" placeholder="0" value={draft.display_order || 0} onChange={(e) => setDraft({ ...draft, display_order: Number(e.target.value) })} className="h-12 rounded-xl border font-black bg-background/50" />
+ </div>
+ <div className="space-y-2">
+ <Label className="text-[10px] font-black text-muted-foreground ml-1">Valid Through (Optional)</Label>
+ <Input type="date" value={draft.valid_through || ""} onChange={(e) => setDraft({ ...draft, valid_through: e.target.value || null })} className="h-12 rounded-xl border font-mono text-xs bg-background/50" />
  </div>
  </div>
  </div>

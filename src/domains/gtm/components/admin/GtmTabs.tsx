@@ -241,7 +241,7 @@ export function GtmCountriesTab() {
  <Input
  value={draft.iso2 || ""}
  onChange={(e) =>
- setDraft({ ...draft, iso2: e.target.value.toUpperCase().slice(0, 2) })
+ setDraft({ ...draft, iso2: e.target.value.replace(/[^A-Za-z]/g, "").toUpperCase().slice(0, 2) })
  }
  className="h-12 rounded-xl border font-black font-mono text-center"
  maxLength={2}
@@ -431,11 +431,14 @@ export function GtmCitiesTab() {
  setDraft({ is_active: true });
  setOpen(true);
  }}
- renderRow={(row: any) => (
+ renderRow={(row: any) => {
+ const region = gtmGraphQuery.data?.regions.find((r) => r.id === row.region_id);
+ const country = region ? gtmGraphQuery.data?.countries.find((c) => c.id === region.country_id) : null;
+ return (
  <TableRow key={row.id}>
  <TableCell className="font-bold">{row.name}</TableCell>
  <TableCell className="text-sm">
- {gtmGraphQuery.data?.regions.find((r) => r.id === row.region_id)?.name || "—"}
+ {region ? `${region.name} ${country ? `(${country.iso2})` : ""}` : "—"}
  </TableCell>
  <TableCell>
  <Badge
@@ -456,7 +459,8 @@ export function GtmCitiesTab() {
  />
  </TableCell>
  </TableRow>
- )}
+ );
+ }}
  />
 
  <Dialog open={open} onOpenChange={setOpen}>
@@ -480,11 +484,14 @@ export function GtmCitiesTab() {
  <SelectValue placeholder="Select region" />
  </SelectTrigger>
  <SelectContent>
- {gtmGraphQuery.data?.regions.map((r) => (
+ {gtmGraphQuery.data?.regions.map((r) => {
+ const country = gtmGraphQuery.data?.countries.find((c) => c.id === r.country_id);
+ return (
  <SelectItem key={r.id} value={r.id}>
- {r.name}
+ {r.name} {country ? `(${country.name})` : ""}
  </SelectItem>
- ))}
+ );
+ })}
  </SelectContent>
  </Select>
  </div>
@@ -760,13 +767,14 @@ function ClusterCityPicker({
  {selectedCities.map((id) => {
  const c = eligibleCities.find((x) => x.id === id) || cities.find((x) => x.id === id);
  if (!c) return null;
+ const region = regions.find((r) => r.id === c.region_id);
  return (
  <Badge
  key={id}
  variant="outline"
  className="text-[10px] gap-1 pr-1 border-blue-500/40"
  >
- {c.name}
+ {c.name} {region ? `(${region.name})` : ""}
  <button
  onClick={() => toggle(id)}
  className="hover:bg-destructive/20 rounded-sm p-0.5"
@@ -780,7 +788,9 @@ function ClusterCityPicker({
  </div>
  )}
  <div className="max-h-40 overflow-y-auto rounded-xl border p-2 grid grid-cols-2 gap-1">
- {eligibleCities.map((c) => (
+ {eligibleCities.map((c) => {
+ const region = regions.find((r) => r.id === c.region_id);
+ return (
  <button
  key={c.id}
  type="button"
@@ -792,13 +802,13 @@ function ClusterCityPicker({
  : "hover:bg-muted",
  )}
  >
- {c.name}
+ {c.name} {region ? `(${region.name})` : ""}
  </button>
- ))}
+ );
+ })}
  </div>
  </>
  )}
  </div>
  );
 }
-
