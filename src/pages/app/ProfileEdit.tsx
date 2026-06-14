@@ -114,40 +114,102 @@ export default function ProfileEdit() {
  setIsDirty(true);
  }, []);
 
- const handleCVUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
- const file = e.target.files?.[0];
- if (!file || !talent) return;
+  const handleCVUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !talent) return;
 
- setUploadingCV(true);
- try {
- const fileName = `${talent.id}/cv-${Date.now()}.${file.name.split(".").pop()}`;
- const { publicUrl } = await uploadPortfolioFile(fileName, file, { upsert: true });
- setCvUrl(publicUrl);
- setIsDirty(true);
- setParsingCV(true);
+    setUploadingCV(true);
+    try {
+      const fileName = `${talent.id}/cv-${Date.now()}.${file.name.split(".").pop()}`;
+      const { publicUrl } = await uploadPortfolioFile(fileName, file, { upsert: true });
+      setCvUrl(publicUrl);
+      setIsDirty(true);
+      setParsingCV(true);
 
- const parseResult: any = await parseCv({ cvUrl: publicUrl });
+      const parseResult: any = await parseCv({ cvUrl: publicUrl });
 
- if (parseResult?.success) {
- const parsed = parseResult.parsed ?? {};
- setFormData((prev) => ({
- ...prev,
- fullName: parsed.full_name || prev.fullName,
- phone: parsed.phone || prev.phone,
- }));
- await updateTalent({ cvUrl: publicUrl, cvParsedAt: new Date().toISOString() } as any);
- toast.success("We pulled your info from the CV.");
- } else {
- toast.success("CV uploaded.");
- }
- } catch (error) {
- trackError(error, { area: "ProfileEdit.handleCVUpload" });
- toast.error("Couldn't read that CV — try a different file.");
- } finally {
- setUploadingCV(false);
- setParsingCV(false);
- }
- };
+      if (parseResult?.success) {
+        const parsed = parseResult.parsed ?? {};
+        
+        // Map top-level fields
+        const updatedForm = {
+          ...formData,
+          fullName: parsed.full_name || parsed.fullName || formData.fullName,
+          phone: parsed.phone || formData.phone,
+          linkedinUrl: parsed.linkedin_url || parsed.linkedinUrl || formData.linkedinUrl,
+          customProfession: parsed.custom_profession || parsed.customProfession || formData.customProfession,
+        };
+        setFormData(updatedForm);
+
+        // Normalize and set Experience
+        let normalizedExperience: ExperienceEntry[] = experience;
+        if (Array.isArray(parsed.experience) && parsed.experience.length) {
+          normalizedExperience = parsed.experience.map((exp: any) => ({
+            company: exp.company || "",
+            position: exp.position || exp.title || "",
+            startDate: exp.startDate || exp.duration || "",
+            endDate: exp.endDate || "",
+            description: exp.description || "",
+          }));
+          setExperience(normalizedExperience);
+        }
+
+        // Normalize and set Education
+        let normalizedEducation: EducationEntry[] = education;
+        if (Array.isArray(parsed.education) && parsed.education.length) {
+          normalizedEducation = parsed.education.map((edu: any) => ({
+            institution: edu.institution || "",
+            degree: edu.degree || "",
+            fieldOfStudy: edu.fieldOfStudy || edu.field || "",
+            startYear: edu.startYear || "",
+            endYear: edu.endYear || "",
+          }));
+          setEducation(normalizedEducation);
+        }
+
+        // Normalize and set Skills
+        let normalizedSkills: string[] = skills;
+        if (Array.isArray(parsed.skills) && parsed.skills.length) {
+          normalizedSkills = parsed.skills
+            .map((s: any) => {
+              const nameVal = typeof s === "string" ? s : s?.name || "";
+              return nameVal.trim();
+            })
+            .filter(Boolean);
+          setSkills(normalizedSkills);
+        }
+
+        const updatePayload: Record<string, any> = {
+          ...updatedForm,
+          experience: normalizedExperience,
+          education: normalizedEducation,
+          skills: normalizedSkills.map((name) => ({ name })),
+          cvUrl: publicUrl,
+          cvParsedAt: new Date().toISOString(),
+        };
+
+        const categoryId = parseResult.professionCategoryId || parsed.professionCategoryId;
+        if (categoryId) {
+          updatePayload.professionCategoryId = categoryId;
+        }
+
+        await updateTalent(updatePayload as any);
+        await refreshTalent();
+        setIsDirty(false);
+        toast.success("We pulled your info from the CV.");
+      } else {
+        await updateTalent({ cvUrl: publicUrl, cvParsedAt: new Date().toISOString() } as any);
+        await refreshTalent();
+        toast.success("CV uploaded.");
+      }
+    } catch (error) {
+      trackError(error, { area: "ProfileEdit.handleCVUpload" });
+      toast.error("Couldn't read that CV — try a different file.");
+    } finally {
+      setUploadingCV(false);
+      setParsingCV(false);
+    }
+  };
 
  const handleSubmit = async (e: React.FormEvent) => {
  e.preventDefault();

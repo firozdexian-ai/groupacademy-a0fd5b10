@@ -140,7 +140,7 @@ export function InlineCVUpload({ onUploadComplete }: { onUploadComplete?: () => 
         await updateTalent({ cvUrl: publicUrl });
         toast.success("Resume uploaded successfully.");
       } else {
-        const parsed = parseResult.parsed as ParsedCVData;
+        const parsed = parseResult.parsed as any;
         const updatePayload: Record<string, any> = {
           cvUrl: publicUrl,
           cvParsedAt: new Date().toISOString(),
@@ -154,14 +154,31 @@ export function InlineCVUpload({ onUploadComplete }: { onUploadComplete?: () => 
           updatePayload.phone = parsed.phone.trim();
         }
         if (parsed.skills?.length && !talent.skills?.length) {
-          updatePayload.skills = parsed.skills.map((s) => s.trim()).filter(Boolean);
+          updatePayload.skills = parsed.skills
+            .map((s: any) => {
+              const nameVal = typeof s === "string" ? s : s?.name || "";
+              return { name: nameVal.trim() };
+            })
+            .filter((s: any) => s.name);
         }
 
         if (parsed.experience?.length && (!talent.experience || (talent.experience as any[]).length === 0)) {
-          updatePayload.experience = parsed.experience.map((exp) => ({
+          updatePayload.experience = parsed.experience.map((exp: any) => ({
             company: exp.company?.trim() || "Company",
-            position: exp.title?.trim() || "Role",
+            position: exp.position || exp.title?.trim() || "Role",
+            startDate: exp.startDate || exp.duration || "",
+            endDate: exp.endDate || "",
             description: exp.description?.trim() || "",
+          }));
+        }
+
+        if (parsed.education?.length && (!talent.education || (talent.education as any[]).length === 0)) {
+          updatePayload.education = parsed.education.map((edu: any) => ({
+            institution: edu.institution?.trim() || "Institution",
+            degree: edu.degree?.trim() || "Degree",
+            fieldOfStudy: edu.fieldOfStudy || edu.field || "",
+            startYear: edu.startYear || "",
+            endYear: edu.endYear || "",
           }));
         }
 

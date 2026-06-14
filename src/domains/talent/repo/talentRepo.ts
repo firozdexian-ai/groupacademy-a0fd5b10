@@ -815,7 +815,7 @@ export async function listTalentMiniProfilesByUserIds(userIds: string[]): Promis
   if (!userIds.length) return [];
   const { data } = await supabase
     .from("talents")
-    .select("user_id, full_name, profile_photo_url, custom_profession")
+    .select("user_id, full_name, profile_photo_url, custom_profession, public_handle")
     .in("user_id", userIds);
   return (data ?? []) as any[];
 }
@@ -860,7 +860,7 @@ export async function listTalentsBasicByIds(ids: string[]) {
   if (!ids.length) return [] as any[];
   const { data } = await supabase
     .from("talents")
-    .select("id, user_id, full_name, custom_profession, profile_photo_url")
+    .select("id, user_id, full_name, custom_profession, profile_photo_url, public_handle")
     .in("id", ids);
   return (data ?? []) as any[];
 }

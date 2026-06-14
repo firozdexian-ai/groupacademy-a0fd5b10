@@ -17,6 +17,7 @@ interface Row {
   full_name: string | null;
   profession: string | null;
   photo: string | null;
+  public_handle?: string | null;
   source: "applicant" | "shortlist";
   last_at: string;
   job_title?: string;
@@ -69,6 +70,7 @@ export default function Gro10xTalents() {
           full_name: tt.full_name,
           profession: tt.custom_profession,
           photo: tt.profile_photo_url,
+          public_handle: tt.public_handle,
           source: "applicant",
           last_at: a.created_at,
           job_title: a.jobs?.title,
@@ -85,6 +87,7 @@ export default function Gro10xTalents() {
           full_name: tt.full_name,
           profession: tt.custom_profession,
           photo: tt.profile_photo_url,
+          public_handle: tt.public_handle,
           source: "shortlist",
           last_at: s.created_at,
         });
@@ -132,8 +135,17 @@ export default function Gro10xTalents() {
               (r.full_name || "?").charAt(0).toUpperCase()
             )}
           </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium truncate">{r.full_name || "Unnamed talent"}</p>
+          <div className="min-w-0 flex-1 text-left">
+            {r.public_handle ? (
+              <Link
+                to={`/t/${r.public_handle}`}
+                className="text-sm font-medium hover:underline hover:text-[#33E1E4] text-slate-100"
+              >
+                {r.full_name || "Unnamed talent"}
+              </Link>
+            ) : (
+              <p className="text-sm font-medium truncate text-slate-100">{r.full_name || "Unnamed talent"}</p>
+            )}
             <p className={`text-[11px] ${GRO10X_MUTED} truncate`}>
               {r.profession || "Talent"}
               {r.job_title ? ` · applied to ${r.job_title}` : r.source === "shortlist" ? " · shortlisted" : ""}

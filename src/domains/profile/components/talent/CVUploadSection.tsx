@@ -182,26 +182,59 @@ export function CVUploadSection() {
       }
 
       // PROFILE HYDRATION LAYER: Commit parsed matrices down configuration rows
-      if (edgeFunctionResponsePayload?.success && edgeFunctionResponsePayload?.parsedData) {
-        const parsedNodePayload: ParsedCVData = edgeFunctionResponsePayload.parsedData;
+      if (edgeFunctionResponsePayload?.success && edgeFunctionResponsePayload?.parsed) {
+        const parsedNodePayload: any = edgeFunctionResponsePayload.parsed;
         const compiledSyncPayloadBlock: Record<string, any> = {
           cvUrl: generatedPublicCvUrlStr,
           cvParsedAt: new Date().toISOString(),
         };
 
-        if (parsedNodePayload.fullName) compiledSyncPayloadBlock.fullName = parsedNodePayload.fullName.trim();
-        if (parsedNodePayload.phone) compiledSyncPayloadBlock.phone = parsedNodePayload.phone.trim();
-        if (Array.isArray(parsedNodePayload.education) && parsedNodePayload.education.length)
-          compiledSyncPayloadBlock.education = parsedNodePayload.education;
-        if (Array.isArray(parsedNodePayload.experience) && parsedNodePayload.experience.length)
-          compiledSyncPayloadBlock.experience = parsedNodePayload.experience;
-        if (Array.isArray(parsedNodePayload.skills) && parsedNodePayload.skills.length)
-          compiledSyncPayloadBlock.skills = parsedNodePayload.skills;
-        if (parsedNodePayload.linkedinUrl) compiledSyncPayloadBlock.linkedinUrl = parsedNodePayload.linkedinUrl.trim();
-        if (parsedNodePayload.customProfession)
-          compiledSyncPayloadBlock.customProfession = parsedNodePayload.customProfession.trim();
-        if (parsedNodePayload.professionCategoryId)
-          compiledSyncPayloadBlock.professionCategoryId = parsedNodePayload.professionCategoryId;
+        const nameVal = parsedNodePayload.full_name || parsedNodePayload.fullName;
+        if (nameVal) compiledSyncPayloadBlock.fullName = nameVal.trim();
+
+        const phoneVal = parsedNodePayload.phone;
+        if (phoneVal) compiledSyncPayloadBlock.phone = phoneVal.trim();
+
+        const linkedinVal = parsedNodePayload.linkedin_url || parsedNodePayload.linkedinUrl;
+        if (linkedinVal) compiledSyncPayloadBlock.linkedinUrl = linkedinVal.trim();
+
+        const customProfVal = parsedNodePayload.custom_profession || parsedNodePayload.customProfession;
+        if (customProfVal) compiledSyncPayloadBlock.customProfession = customProfVal.trim();
+
+        const categoryId = edgeFunctionResponsePayload.professionCategoryId || parsedNodePayload.professionCategoryId;
+        if (categoryId) compiledSyncPayloadBlock.professionCategoryId = categoryId;
+
+        // Normalize Experience: map position (fallback to title) and start/end dates (fallback to duration)
+        if (Array.isArray(parsedNodePayload.experience) && parsedNodePayload.experience.length) {
+          compiledSyncPayloadBlock.experience = parsedNodePayload.experience.map((exp: any) => ({
+            company: exp.company || "",
+            position: exp.position || exp.title || "",
+            startDate: exp.startDate || exp.duration || "",
+            endDate: exp.endDate || "",
+            description: exp.description || "",
+          }));
+        }
+
+        // Normalize Education: map fieldOfStudy (fallback to field)
+        if (Array.isArray(parsedNodePayload.education) && parsedNodePayload.education.length) {
+          compiledSyncPayloadBlock.education = parsedNodePayload.education.map((edu: any) => ({
+            institution: edu.institution || "",
+            degree: edu.degree || "",
+            fieldOfStudy: edu.fieldOfStudy || edu.field || "",
+            startYear: edu.startYear || "",
+            endYear: edu.endYear || "",
+          }));
+        }
+
+        // Normalize Skills: map string array to array of objects with name property
+        if (Array.isArray(parsedNodePayload.skills) && parsedNodePayload.skills.length) {
+          compiledSyncPayloadBlock.skills = parsedNodePayload.skills
+            .map((s: any) => {
+              const nameVal = typeof s === "string" ? s : s?.name || "";
+              return { name: nameVal.trim() };
+            })
+            .filter((s: any) => s.name);
+        }
 
         await updateTalent(compiledSyncPayloadBlock);
         trackEvent("cv_ingress_profile_hydrated_completely");

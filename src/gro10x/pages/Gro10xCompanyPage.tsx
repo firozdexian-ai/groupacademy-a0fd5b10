@@ -39,6 +39,7 @@ interface Member {
   full_name?: string | null;
   profile_photo_url?: string | null;
   custom_profession?: string | null;
+  public_handle?: string | null;
 }
 
 interface Job {
@@ -101,6 +102,7 @@ export default function Gro10xCompanyPage() {
           full_name: talents[m.user_id]?.full_name ?? null,
           profile_photo_url: talents[m.user_id]?.profile_photo_url ?? null,
           custom_profession: talents[m.user_id]?.custom_profession ?? null,
+          public_handle: talents[m.user_id]?.public_handle ?? null,
         })),
       );
 
@@ -268,7 +270,7 @@ export default function Gro10xCompanyPage() {
             {members.map((m, i) => (
               <Link
                 key={i}
-                to={m.user_id ? `/app/profile/${m.user_id}` : "#"}
+                to={m.public_handle ? `/t/${m.public_handle}` : "#"}
                 className={`${GRO10X_PANEL} border border-white/10 rounded-xl p-2 text-center hover:bg-white/5`}
               >
                 <div className="h-10 w-10 mx-auto rounded-full bg-[#0B1220] border border-white/10 grid place-items-center text-xs overflow-hidden">

@@ -43,6 +43,7 @@ interface CVSuggestion {
   role?: string | null;
   company?: string | null;
   skills?: string[];
+  name?: string | null;
 }
 
 interface CollectedData {
@@ -148,10 +149,12 @@ export function useGro10xAuthChat() {
         // Best-effort: parse to extract role + company suggestions
         let suggestion: CVSuggestion = {};
         try {
-          const parsed: any = await parseCv({ cvUrl, mode: "lite" } as any);
-          if (parsed) {
+          const parseResult: any = await parseCv({ cvUrl, mode: "lite" } as any);
+          if (parseResult?.success && parseResult.parsed) {
+            const parsed = parseResult.parsed;
             suggestion = {
-              role: parsed.current_role || parsed.headline || parsed.role || null,
+              name: parsed.full_name || parsed.fullName || null,
+              role: parsed.current_role || parsed.title || parsed.position || parsed.role || null,
               company: parsed.current_company || parsed.company || null,
               skills: parsed.skills || [],
             };
@@ -163,7 +166,7 @@ export function useGro10xAuthChat() {
         setData((d) => ({
           ...d,
           cvUrl,
-          name: d.name || (suggestion as any).full_name || d.name,
+          name: d.name || suggestion.name || d.name,
           role: suggestion.role || d.role,
           companyName: suggestion.company || d.companyName,
         }));
