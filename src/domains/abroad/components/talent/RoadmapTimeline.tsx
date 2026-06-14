@@ -1,4 +1,4 @@
-﻿import { useMemo } from "react";
+import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Calendar, Zap, ArrowRight, Loader2 } from "lucide-react";
@@ -124,14 +124,6 @@ export function RoadmapTimeline({
                               className={cn(
                                 "mt-1.5 h-1.5 w-1.5 rounded-full shrink-0 transition-all group-hover:scale-150",
                                 isCompleted ? "bg-emerald-500" : isCurrent ? "bg-primary" : "bg-muted-foreground/30",
-                              )}
-                            />
-                            <span
-                              className={cn(
-                                "text-xs font-medium leading-relaxed transition-colors",
-                                isCompleted
-                                  ? "text-muted-foreground line-through opacity-50"
-                                  : "text-foreground/80 group-hover:text-primary",
                               )}
                             />
                             <span

@@ -1,4 +1,4 @@
-﻿import { useMemo } from "react";
+import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
@@ -166,8 +166,19 @@ export function AbroadOverviewTab() {
                             >
                               Talent: {app.talent_user_id.substring(0, 8)}
                             </Badge>
-                            <Badge className="bg-amber-500/10 text-amber-700 hover:bg-amber-500/10 border-none font-bold uppercase text-[9px] tracking-wider px-2.5 py-0.5 rounded-full">
-                              Awaiting Review
+                            <Badge
+                              className={cn(
+                                "border-none font-bold uppercase text-[9px] tracking-wider px-2.5 py-0.5 rounded-full",
+                                app.status === "accepted"
+                                  ? "bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/10"
+                                  : app.status === "rejected"
+                                    ? "bg-rose-500/10 text-rose-700 hover:bg-rose-500/10"
+                                    : app.status === "reviewing"
+                                      ? "bg-amber-500/10 text-amber-700 hover:bg-amber-500/10"
+                                      : "bg-amber-500/10 text-amber-700 hover:bg-amber-500/10"
+                              )}
+                            >
+                              {app.status === "reviewing" ? "Reviewing" : app.status === "pending" ? "Pending" : app.status}
                             </Badge>
                           </div>
                         </div>
