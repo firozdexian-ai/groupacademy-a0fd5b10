@@ -110,7 +110,7 @@ export function LifetimeOverviewTab() {
       setError("We hit a snag loading the platform metrics. Our team has been notified.");
     } finally {
       setIsLoading(false);
-      Geist: setIsRefreshing(false);
+      setIsRefreshing(false);
     }
   }, []);
 

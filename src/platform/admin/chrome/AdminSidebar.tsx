@@ -2,6 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useMemo, useEffect } from "react";
 import {
   Flag,
+  Flame,
   LayoutDashboard,
   BookOpen,
   Video,
@@ -114,6 +115,7 @@ const navGroups: NavGroup[] = [
       { title: "Quarterly", value: "overview-quarter", icon: BarChart },
       { title: "Business Analyst", value: "overview-analyst", icon: Sparkles },
       { title: "Report Builder", value: "overview-reports", icon: FileText },
+      { title: "Demand Signals", value: "signals-waitlist", icon: Flame },
     ],
   },
   {
