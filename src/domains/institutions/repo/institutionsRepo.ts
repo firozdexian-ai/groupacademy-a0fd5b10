@@ -96,7 +96,13 @@ export interface ListInstitutionChildOpts {
 }
 
 export async function listInstitutionChildRows(opts: ListInstitutionChildOpts): Promise<any[]> {
-  let query = supabase.from(opts.table as any).select("*");
+  let query;
+  if (opts.table === "institution_representatives") {
+    query = supabase.from("institution_representatives").select("*, club:institution_clubs(id, name)");
+  } else {
+    query = supabase.from(opts.table as any).select("*");
+  }
+
   if (opts.instFilter !== "all") query = query.eq("institution_id", opts.instFilter);
 
   if (opts.table === "institution_events") {

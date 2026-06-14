@@ -242,48 +242,68 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
  </Badge>
  )}
  </div>
- <div className="flex flex-wrap items-center gap-2">
- <span className="text-sm font-medium text-muted-foreground flex items-center gap-1.5 bg-muted/30 px-2 py-0.5 rounded-md">
- <Building2 className="h-3 w-3" /> {institutionsById[r.institution_id] ?? "Independent"}
- </span>
- </div>
- {/* R3 Fix: Rich Data Display for Reps/Clubs/Events */}
- <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-sm font-medium text-muted-foreground/60 uppercase">
- {r.role && (
- <span className="flex items-center gap-1">
- <Users className="h-3 w-3" /> {r.role}
- </span>
+  <div className="flex flex-wrap items-center gap-2">
+  <span className="text-sm font-medium text-muted-foreground flex items-center gap-1.5 bg-muted/30 px-2 py-0.5 rounded-md">
+  <Building2 className="h-3 w-3" /> {institutionsById[r.institution_id] ?? "Independent"}
+  </span>
+  {table === "institution_representatives" && r.club?.name && (
+  <Badge
+  variant="outline"
+  className="font-semibold text-[10px] uppercase border bg-amber-500/10 text-amber-600 border-amber-500/20 px-2 py-0.5 rounded-md"
+  >
+  {r.club.name}
+  </Badge>
+  )}
+  </div>
+  {/* R3 Fix: Rich Data Display for Reps/Clubs/Events */}
+  <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-sm font-medium text-muted-foreground/60 uppercase">
+  {r.role && (
+  <span className="flex items-center gap-1">
+  <Users className="h-3 w-3" /> {r.role}
+  </span>
+  )}
+  {r.email && (
+  <span className="flex items-center gap-1 text-blue-500/80">
+  <Mail className="h-3 w-3" /> {r.email}
+  </span>
+  )}
+  {r.phone && (
+  <span className="flex items-center gap-1">
+  <Phone className="h-3 w-3" /> {r.phone}
+  </span>
+  )}
+  {r.department && (
+  <span className="flex items-center gap-1">
+  <Network className="h-3 w-3" /> Dept: {r.department}
+  </span>
+  )}
+  {r.location && (
+  <span className="flex items-center gap-1">
+  <MapPin className="h-3 w-3" /> {r.location}
+  </span>
+  )}
+  {table === "institution_events" && r.starts_at && (
+  <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-md normal-case border border-emerald-500/20">
+  <Clock className="h-3 w-3" />
+  {format(new Date(r.starts_at), "MMM d, yyyy h:mm a")}
+  {r.ends_at && ` - ${format(new Date(r.ends_at), "MMM d, yyyy h:mm a")}`}
+  </span>
+  )}
+  {r.url && (
+  <a
+  href={r.url}
+  target="_blank"
+  className="flex items-center gap-1 text-primary hover:underline normal-case"
+  >
+  <Globe className="h-3 w-3" /> Link
+  </a>
+  )}
+  </div>
+ {r.notes && (
+ <blockquote className="mt-3 pl-3 border-l-2 border-primary/20 text-xs italic text-muted-foreground/75 whitespace-pre-wrap">
+ {r.notes}
+ </blockquote>
  )}
- {r.email && (
- <span className="flex items-center gap-1 text-blue-500/80">
- <Mail className="h-3 w-3" /> {r.email}
- </span>
- )}
- {r.phone && (
- <span className="flex items-center gap-1">
- <Phone className="h-3 w-3" /> {r.phone}
- </span>
- )}
- {r.department && (
- <span className="flex items-center gap-1">
- <Network className="h-3 w-3" /> Dept: {r.department}
- </span>
- )}
- {r.location && (
- <span className="flex items-center gap-1">
- <MapPin className="h-3 w-3" /> {r.location}
- </span>
- )}
- {r.url && (
- <a
- href={r.url}
- target="_blank"
- className="flex items-center gap-1 text-primary hover:underline"
- >
- <Globe className="h-3 w-3" /> Link
- </a>
- )}
- </div>
  </div>
  </div>
  <div className="flex gap-2">
@@ -324,7 +344,7 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
  <Label className="text-[10px] font-medium ml-1">Parent Institution *</Label>
  <Select
  value={draft.institution_id ?? ""}
- onValueChange={(v) => setDraft({ ...draft, institution_id: v })}
+ onValueChange={(v) => setDraft({ ...draft, institution_id: v, ...(table === "institution_representatives" ? { club_id: NONE_SENTINEL } : {}) })}
  >
  <SelectTrigger className="h-12 rounded-xl border font-bold">
  <SelectValue placeholder="Link to institution" />

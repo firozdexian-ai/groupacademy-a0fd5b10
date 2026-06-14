@@ -4,7 +4,7 @@
  * ir_email_communications (per-investor email history); render recent
  * communication timeline beneath the composer.
  */
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,11 +14,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { getCurrentSession } from "@/lib/auth";
-import { logOutreachAndEmail, listIrEmailCommunications } from "@/domains/ir/repo/irRepo";
+import { logOutreachAndEmail, listIrEmailCommunications, listInvestors } from "@/domains/ir/repo/irRepo";
 import { Send, X, ShieldCheck, Mail, Loader2, ExternalLink, History, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { InlineSpinner } from "@/components/common/InlineSpinner";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface EmailComposerProps {
   selectedInvestor?: { id?: string; email: string; full_name?: string };
@@ -116,9 +117,26 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
   const [body, setBody] = useState("");
   const [emailType, setEmailType] = useState("update");
   const [isDeploying, setIsDeploying] = useState(false);
+  const [localInvestorId, setLocalInvestorId] = useState<string | null>(null);
+
+  const investorsQ = useQuery({
+    queryKey: ["ir-investors-list"],
+    queryFn: () => listInvestors(),
+    enabled: !selectedInvestor,
+  });
+
+  const resolvedInvestor = useMemo(() => {
+    if (selectedInvestor) {
+      return selectedInvestor;
+    }
+    if (!investorsQ.data || !localInvestorId) {
+      return undefined;
+    }
+    return investorsQ.data.find((inv: any) => inv.id === localInvestorId);
+  }, [selectedInvestor, investorsQ.data, localInvestorId]);
 
   const handleLogAndOpenClient = async () => {
-    if (!selectedInvestor?.email) {
+    if (!resolvedInvestor?.email) {
       toast.error("Error: Recipient identity undefined.");
       return;
     }
@@ -140,13 +158,13 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
         outreach: {
           channel: "email",
           target_type: "investor",
-          target_label: selectedInvestor.full_name || selectedInvestor.email,
+          target_label: resolvedInvestor.full_name || resolvedInvestor.email,
           subject,
           body,
           created_by: session.user.id,
         },
         email: {
-          investor_id: selectedInvestor.id ?? null,
+          investor_id: resolvedInvestor.id ?? null,
           email_type: emailType,
           subject,
           content: body,
@@ -158,7 +176,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
       });
 
       // 3. Native handshake (mailto)
-      const mailtoUrl = `mailto:${selectedInvestor.email}?subject=${encodeURIComponent(
+      const mailtoUrl = `mailto:${resolvedInvestor.email}?subject=${encodeURIComponent(
         subject,
       )}&body=${encodeURIComponent(body)}`;
       window.open(mailtoUrl, "_blank");
@@ -176,8 +194,8 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
   };
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-[1fr_400px] gap-6">
-      <div className="space-y-6 p-8 rounded-2xl border border-border/60 bg-card shadow-sm animate-in zoom-in-95 duration-300 text-left">
+    <div className="grid grid-cols-1 xl:grid-cols-[1fr_400px] gap-6 text-left">
+      <div className="space-y-6 p-8 rounded-2xl border border-border/60 bg-card shadow-sm animate-in zoom-in-95 duration-300">
         <div className="flex justify-between items-start border-b border-border/10 pb-6">
           <div className="space-y-1">
             <h3 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-3">
@@ -201,19 +219,43 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
           <label className="text-[10px] font-semibold uppercase italic tracking-widest text-primary ml-2 flex items-center gap-2">
             <Mail className="h-3 w-3" /> Target Identity
           </label>
-          <div className="relative">
-            <Input
-              value={selectedInvestor?.email || ""}
-              disabled
-              placeholder="SELECT AN INVESTOR FROM THE REGISTRY..."
-              className="h-12 rounded-xl border-2 font-bold bg-muted/30 border-border/40 pl-4 text-foreground/80"
-            />
-            {selectedInvestor?.full_name && (
-              <Badge className="absolute right-3 top-1/2 -translate-y-1/2 bg-primary/10 text-primary border-none font-semibold text-[9px] px-3">
-                {selectedInvestor.full_name.toUpperCase()}
-              </Badge>
-            )}
-          </div>
+          {selectedInvestor ? (
+            <div className="relative">
+              <Input
+                value={selectedInvestor.email}
+                disabled
+                placeholder="SELECT AN INVESTOR FROM THE REGISTRY..."
+                className="h-12 rounded-xl border-2 font-bold bg-muted/30 border-border/40 pl-4 text-foreground/80"
+              />
+              {selectedInvestor.full_name && (
+                <Badge className="absolute right-3 top-1/2 -translate-y-1/2 bg-primary/10 text-primary border-none font-semibold text-[9px] px-3">
+                  {selectedInvestor.full_name.toUpperCase()}
+                </Badge>
+              )}
+            </div>
+          ) : (
+            <Select
+              value={localInvestorId ?? ""}
+              onValueChange={setLocalInvestorId}
+            >
+              <SelectTrigger className="h-12 rounded-xl border-2 font-bold bg-card border-border/40 text-foreground/80 text-left">
+                <SelectValue placeholder="SELECT AN INVESTOR RECIPIENT..." />
+              </SelectTrigger>
+              <SelectContent>
+                {investorsQ.isLoading ? (
+                  <SelectItem value="loading" disabled>Loading investors...</SelectItem>
+                ) : investorsQ.data?.length === 0 ? (
+                  <SelectItem value="empty" disabled>No investors registered</SelectItem>
+                ) : (
+                  investorsQ.data?.map((inv: any) => (
+                    <SelectItem key={inv.id} value={inv.id} className="uppercase font-bold text-[10px]">
+                      {inv.full_name ? `${inv.full_name} (${inv.email})` : inv.email}
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-[1fr_180px] gap-3">
@@ -260,10 +302,10 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
 
         <Button
           onClick={handleLogAndOpenClient}
-          disabled={isDeploying || !subject.trim() || !body.trim() || !selectedInvestor?.email}
+          disabled={isDeploying || !subject.trim() || !body.trim() || !resolvedInvestor?.email}
           className={cn(
             "w-full h-16 rounded-xl text-sm font-medium gap-3 shadow-sm transition-all",
-            isDeploying || !subject.trim() || !body.trim() || !selectedInvestor?.email
+            isDeploying || !subject.trim() || !body.trim() || !resolvedInvestor?.email
               ? "bg-muted text-muted-foreground border border-border/40 cursor-not-allowed"
               : "bg-gradient-to-r from-primary via-primary to-primary hover:scale-[1.02] text-primary-foreground shadow-primary/20",
           )}
@@ -279,11 +321,11 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
           <div>
             <h4 className="text-sm font-semibold uppercase italic tracking-tight">Communication History</h4>
             <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
-              {selectedInvestor?.id ? "this investor · last 10" : "global · last 10"}
+              {resolvedInvestor?.id ? "this investor · last 10" : "global · last 10"}
             </p>
           </div>
         </div>
-        <CommunicationHistory investorId={selectedInvestor?.id} />
+        <CommunicationHistory investorId={resolvedInvestor?.id} />
       </aside>
     </div>
   );

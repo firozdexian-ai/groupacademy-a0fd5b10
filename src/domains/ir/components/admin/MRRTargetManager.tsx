@@ -101,6 +101,28 @@ export function MRRTargetManager() {
  onError: (error: any) => toast.error("Transmission Fault: " + error.message),
  });
 
+ // MUTATION: Close Period Lock
+ const closePeriodMutation = useMutation({
+ mutationFn: async () => {
+ const payload: any = {
+ month: currentMonth,
+ mrr_target_usd: mrrTarget,
+ service_mix: serviceMix,
+ target_paying_users: targetPayingUsers,
+ target_churn_rate: targetChurnRate,
+ notes: notes || null,
+ is_closed: true,
+ };
+ if (target?.id) payload.id = target.id;
+ await upsertMonthlyTarget(payload);
+ },
+ onSuccess: () => {
+ toast.success("Period closed and locked successfully.");
+ queryClient.invalidateQueries({ queryKey: ["ir-target"] });
+ },
+ onError: (error: any) => toast.error("Lock Protocol Failure: " + error.message),
+ });
+
  const totalMixPercent = Object.values(serviceMix).reduce((sum, v) => sum + v, 0);
  const serviceTargets = calculateServiceTargets(mrrTarget, serviceMix);
  const autoKPIs = calculateAutoKPIs(mrrTarget, targetPayingUsers > 0 ? mrrTarget / targetPayingUsers : 20);
@@ -160,9 +182,13 @@ export function MRRTargetManager() {
  <AlertDialogCancel className="h-14 rounded-xl border font-semibold uppercase text-xs px-8">
  Cancel
  </AlertDialogCancel>
- <AlertDialogAction className="h-14 rounded-xl bg-destructive hover:bg-destructive/90 font-semibold uppercase text-[10px] tracking-tight px-10 shadow-lg shadow-destructive/20 gap-2">
- <Lock className="h-4 w-4" /> Confirm Termination
- </AlertDialogAction>
+ <AlertDialogAction
+  onClick={() => closePeriodMutation.mutate()}
+  disabled={closePeriodMutation.isPending}
+  className="h-14 rounded-xl bg-destructive hover:bg-destructive/90 font-semibold uppercase text-[10px] tracking-tight px-10 shadow-lg shadow-destructive/20 gap-2"
+  >
+  <Lock className="h-4 w-4" /> {closePeriodMutation.isPending ? "Locking..." : "Confirm Termination"}
+  </AlertDialogAction>
  </AlertDialogFooter>
  </div>
  </AlertDialogContent>
