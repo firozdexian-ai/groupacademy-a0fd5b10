@@ -53,12 +53,15 @@ export function HrOnboardingTab() {
  const { data, isLoading } = useQuery({
  queryKey: ["hr_onboarding"],
  queryFn: async () => {
- // W4 Fix: Ensure we are joining correctly to pull talent names via user_id link
+ // W-4 Fix: Map by talent_id first (primary), then user_id (fallback) so members
+ // without auth accounts are resolved by talent linkage instead of shown as orphaned.
  const { tasks, workforce } = await getHrOnboardingMaster();
 
  const userMap = new Map<string, string>();
  workforce.forEach((w: any) => {
- if (w.user_id) userMap.set(w.user_id, w.talents?.full_name || "Unknown Agent");
+ const name = w.talents?.full_name || "Unknown Agent";
+ if (w.talent_id) userMap.set(w.talent_id, name);
+ if (w.user_id) userMap.set(w.user_id, name);
  });
 
  return { tasks, userMap, workforce };

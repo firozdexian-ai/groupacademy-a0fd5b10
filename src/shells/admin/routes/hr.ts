@@ -10,6 +10,8 @@ export const ROUTES: Record<string, React.LazyExoticComponent<any>> = {
   "hr-targets": React.lazy(() => import("@/domains/workforce/components/admin/HrTargetsTab").then((m) => ({ default: m.HrTargetsTab }))),
   "hr-onboarding": React.lazy(() => import("@/domains/workforce/components/admin/HrOnboardingTab").then((m) => ({ default: m.HrOnboardingTab }))),
   "hr-payroll": React.lazy(() => import("@/domains/workforce/components/admin/HrPayrollTab").then((m) => ({ default: m.HrPayrollTab }))),
+  // W-1: WorkforceFleet (Digital Agent Fleet) now accessible via admin tab system
+  "hr-fleet": React.lazy(() => import("@/pages/admin/WorkforceFleet")),
 };
 
 export const TITLES: Record<string, string> = {
@@ -24,4 +26,5 @@ export const TITLES: Record<string, string> = {
   "hr-targets": "Targets & incentives",
   "hr-onboarding": "Onboarding",
   "hr-payroll": "Rewards & payroll",
+  "hr-fleet": "Digital Agent Fleet",
 };

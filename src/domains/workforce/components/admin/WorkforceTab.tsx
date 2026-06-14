@@ -4,11 +4,13 @@
  * Fixes: W1 (Restored Dialogs), W2 (Team/Grade Wiring), W3 (RPC Adoption), W5 (Purged Fragments)
  */
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { sanitizeIlike } from "@/lib/supabaseQuery";
 import {
  searchTalentsByNameOrEmail,
  insertWorkforceMember,
  getWorkforceDashboard,
+ updateWorkforceMember,
 } from "@/domains/workforce/repo/workforceRepo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -35,7 +37,7 @@ import {
  Coins,
  TrendingUp,
  UserCog,
- 
+ Pencil,
  Zap,
  ShieldCheck,
  MapPin,
@@ -88,6 +90,22 @@ export function WorkforceManager() {
  });
 
  const [kpis, setKpis] = useState({ total: 0, active: 0, totalCommission: 0, totalAssigned: 0 });
+ const [editMember, setEditMember] = useState<any | null>(null);
+ const [editForm, setEditForm] = useState<any>({});
+ const queryClient = useQueryClient();
+
+ const saveMemberEdit = useMutation({
+  mutationFn: async (patch: any) => {
+   const { id, ...rest } = patch;
+   await updateWorkforceMember(id, rest);
+  },
+  onSuccess: () => {
+   toast.success("Member updated");
+   setEditMember(null);
+   fetchMembers();
+  },
+  onError: (e: Error) => toast.error(e.message),
+ });
 
  // W3 Fix: Adoption of high-performance dashboard RPC
  const fetchMembers = useCallback(async () => {
@@ -230,11 +248,12 @@ export function WorkforceManager() {
  <Table>
  <TableHeader className="bg-muted/10 text-[10px] font-semibold">
  <TableRow className="border-b">
- <TableHead className="py-6 pl-8">Executive Identity</TableHead>
- <TableHead>Assignment / Grade</TableHead>
- <TableHead className="text-center">Managed</TableHead>
- <TableHead className="text-center">Yield</TableHead>
- <TableHead className="text-right pr-8">Status</TableHead>
+  <TableHead className="py-6 pl-8">Executive Identity</TableHead>
+  <TableHead>Assignment / Grade</TableHead>
+  <TableHead className="text-center">Managed</TableHead>
+  <TableHead className="text-center">Yield</TableHead>
+  <TableHead className="text-center">Status</TableHead>
+  <TableHead className="text-right pr-8">Actions</TableHead>
  </TableRow>
  </TableHeader>
  <TableBody>
@@ -266,7 +285,7 @@ export function WorkforceManager() {
  <TableCell className="text-center">
  <span className="font-semibold text-success italic">₵{m.commission_earned}</span>
  </TableCell>
- <TableCell className="text-right pr-8">
+ <TableCell className="text-center">
  <Badge
  className={cn(
  "font-black text-[9px] uppercase italic rounded-full px-4",
@@ -275,6 +294,25 @@ export function WorkforceManager() {
  >
  {m.status}
  </Badge>
+ </TableCell>
+ <TableCell className="text-right pr-8">
+ <Button
+ size="icon"
+ variant="ghost"
+ aria-label="Edit member"
+ onClick={() => {
+ setEditMember(m);
+ setEditForm({
+ id: m.id,
+ role_type: m.role_type,
+ status: m.status,
+ city: m.city || "",
+ });
+ }}
+ className="hover:bg-primary/10"
+ >
+ <Pencil className="h-4 w-4" />
+ </Button>
  </TableCell>
  </TableRow>
  ))}
@@ -419,6 +457,67 @@ export function WorkforceManager() {
  >
  {saving ? <InlineSpinner size="sm" /> : <ShieldCheck className="h-4 w-4" />} Authorize
  Deployment
+ </Button>
+ </DialogFooter>
+ </div>
+ </DialogContent>
+ </Dialog>
+
+ {/* W-5: EDIT MEMBER DIALOG */}
+ <Dialog open={!!editMember} onOpenChange={(o) => !o && setEditMember(null)}>
+ <DialogContent className="max-w-lg rounded-2xl border-4 p-0 overflow-hidden shadow-sm bg-background">
+ <div className="h-2 w-full bg-primary" />
+ <div className="p-8 space-y-6 text-left">
+ <DialogHeader>
+ <DialogTitle className="text-2xl font-semibold">Edit Workforce Member</DialogTitle>
+ <DialogDescription className="text-sm text-muted-foreground/60">
+ Update role, status, or location for{" "}
+ <span className="font-semibold text-foreground">{editMember?.talent_name || "this member"}</span>.
+ </DialogDescription>
+ </DialogHeader>
+
+ <div className="space-y-4">
+ <div className="space-y-2">
+ <Label className="text-[10px] font-semibold uppercase ml-1">Role Type</Label>
+ <Select value={editForm.role_type || ""} onValueChange={(v) => setEditForm({ ...editForm, role_type: v })}>
+ <SelectTrigger className="h-12 border rounded-xl"><SelectValue /></SelectTrigger>
+ <SelectContent>
+ {Object.entries(ROLE_LABELS).map(([k, v]) => (
+ <SelectItem key={k} value={k} className="font-bold text-xs uppercase">{v}</SelectItem>
+ ))}
+ </SelectContent>
+ </Select>
+ </div>
+ <div className="space-y-2">
+ <Label className="text-[10px] font-semibold uppercase ml-1">Status</Label>
+ <Select value={editForm.status || ""} onValueChange={(v) => setEditForm({ ...editForm, status: v })}>
+ <SelectTrigger className="h-12 border rounded-xl"><SelectValue /></SelectTrigger>
+ <SelectContent>
+ <SelectItem value="active">Active</SelectItem>
+ <SelectItem value="probation">Probation</SelectItem>
+ <SelectItem value="inactive">Inactive</SelectItem>
+ </SelectContent>
+ </Select>
+ </div>
+ <div className="space-y-2">
+ <Label className="text-[10px] font-semibold uppercase ml-1">Location / City</Label>
+ <Input
+ value={editForm.city || ""}
+ onChange={(e) => setEditForm({ ...editForm, city: e.target.value })}
+ placeholder="e.g. Dhaka"
+ className="h-12 border rounded-xl"
+ />
+ </div>
+ </div>
+
+ <DialogFooter className="pt-4 border-t">
+ <Button variant="ghost" onClick={() => setEditMember(null)} className="h-12 rounded-xl font-semibold uppercase text-[10px]">Cancel</Button>
+ <Button
+ onClick={() => saveMemberEdit.mutate(editForm)}
+ disabled={saveMemberEdit.isPending}
+ className="h-12 px-10 rounded-2xl font-semibold uppercase italic text-[11px] gap-2 bg-primary text-primary-foreground"
+ >
+ {saveMemberEdit.isPending ? <InlineSpinner size="sm" /> : <ShieldCheck className="h-4 w-4" />} Save Changes
  </Button>
  </DialogFooter>
  </div>

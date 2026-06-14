@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { GRO10X_BG, GRO10X_PANEL, GRO10X_TEXT, GRO10X_MUTED } from "@/gro10x/lib/tokens";
 import { trackError } from "@/lib/errorTracking";
 import { QuickActionsGrid } from "@/domains/feed/components/talent/QuickActionsGrid";
+import { WorkforceAssignmentCard } from "@/domains/workforce/components/talent/WorkforceAssignmentCard";
 
 export default function TalentHome() {
  const navigate = useNavigate();
@@ -117,6 +118,9 @@ export default function TalentHome() {
 
  {/* Quick actions — personalized AI agent shortcuts */}
  <QuickActionsGrid />
+
+ {/* Workforce Assignment — shown only when talent is a GRO10X staff member */}
+ {talent?.id && <WorkforceAssignmentCard talentId={talent.id} />}
 
                 {/* B6: Employer pitches surface hidden — route /app/pitches still resolves via deep link. */}
 

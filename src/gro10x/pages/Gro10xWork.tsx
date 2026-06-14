@@ -8,8 +8,9 @@ import Gro10xTalents from "./work/Gro10xTalents";
 import Gro10xCRM from "./Gro10xCRM";
 import Gro10xSourcing from "./sourcing/Gro10xSourcing";
 import { Gro10xOpenGigs } from "../components/Gro10xOpenGigs";
+import { Gro10xPeopleTab } from "../components/Gro10xPeopleTab";
 
-type Tab = "hiring" | "talents" | "sourcing" | "crm";
+type Tab = "hiring" | "talents" | "sourcing" | "crm" | "people";
 
 /**
  * Gro10x Activities hub — three tabs covering hiring, talents the company
@@ -19,6 +20,8 @@ export default function Gro10xWork() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>("hiring");
+  // Extract company_id from user metadata for People tab
+  const companyId = (user as any)?.user_metadata?.company_id as string | undefined;
 
   if (!user) {
     return (
@@ -57,6 +60,9 @@ export default function Gro10xWork() {
           <TabBtn active={tab === "talents"}  onClick={() => setTab("talents")}>Talents</TabBtn>
           <TabBtn active={tab === "sourcing"} onClick={() => setTab("sourcing")}>Sourcing</TabBtn>
           <TabBtn active={tab === "crm"}      onClick={() => setTab("crm")}>CRM</TabBtn>
+          {companyId && (
+            <TabBtn active={tab === "people"} onClick={() => setTab("people")}>People</TabBtn>
+          )}
         </div>
       </header>
 
@@ -73,6 +79,7 @@ export default function Gro10xWork() {
       {tab === "talents" && <Gro10xTalents />}
       {tab === "sourcing" && <Gro10xSourcing />}
       {tab === "crm" && <Gro10xCRM />}
+      {tab === "people" && companyId && <Gro10xPeopleTab companyId={companyId} />}
     </div>
   );
 }

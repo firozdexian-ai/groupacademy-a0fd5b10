@@ -1,1 +1,21 @@
-export const workforceApi = {} as const;
+export {
+  getHrGraphMaster,
+  getHrOnboardingMaster,
+  getHrPayrollMaster,
+  getWorkforceDashboard,
+  listHrTargets,
+  upsertHrTarget,
+  deleteHrTarget,
+  listActiveWorkforceMembersWithName,
+  searchTalentsByNameOrEmail,
+  insertWorkforceMember,
+  updateWorkforceMember,
+  getWorkforceMembersForCompany,
+  getMyWorkforceAssignment,
+  listWorkforceChannelConnections,
+  listWorkforceRoutingRules,
+  upsertWorkforceChannelConnection,
+  upsertWorkforceRoutingRule,
+  deleteWorkforceChannelConnection,
+  deleteWorkforceRoutingRule,
+} from "../repo/workforceRepo";

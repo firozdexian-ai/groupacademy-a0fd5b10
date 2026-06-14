@@ -61,12 +61,16 @@ export function HrPayrollTab() {
  const { data, isLoading } = useQuery({
  queryKey: ["hr_payroll"],
  queryFn: async () => {
- // W4 Fix: Accurate Workforce-to-Talent join
+ // W-3 Fix: Build talentMap keyed by talent_id (not user_id) so members without auth
+ // accounts (linked only via talent_id) are resolved correctly.
  const { runs: runsData, workforce } = await getHrPayrollMaster();
 
- const userMap = new Map<string, string>();
+ const talentMap = new Map<string, string>();
  workforce.forEach((w: any) => {
- if (w.user_id) userMap.set(w.user_id, (w.talents as any)?.full_name || "Unknown Agent");
+ // Primary key: talent_id; fallback: user_id for backwards compat
+ const name = (w.talents as any)?.full_name || "Unknown Agent";
+ if (w.talent_id) talentMap.set(w.talent_id, name);
+ if (w.user_id) talentMap.set(w.user_id, name);
  });
 
  const runs = runsData;
@@ -82,7 +86,9 @@ export function HrPayrollTab() {
  return {
  runs,
  groupedRuns,
- userMap,
+ talentMap,
+ // keep 'userMap' as alias so table rows still work
+ userMap: talentMap,
  workforce,
  totalDisbursed: runs.filter((r) => r.status === "paid").reduce((s, r) => s + Number(r.total_amount || 0), 0),
  pendingLiability: runs
@@ -94,6 +100,10 @@ export function HrPayrollTab() {
 
  const upsertPayroll = useMutation({
  mutationFn: async (payload: any) => {
+ // W-11: Validate date range before committing
+ if (!payload.period_start || !payload.period_end) {
+ throw new Error("Pay period start and end dates are required.");
+ }
  const total = Number(payload.base_amount || 0) + Number(payload.incentive_amount || 0);
  const finalPayload = { ...payload, total_amount: total };
  await upsertGraphRow("hr_payroll_runs", finalPayload);
@@ -359,7 +369,7 @@ export function HrPayrollTab() {
  Abort
  </Button>
  <Button
- disabled={!draft.user_id || upsertPayroll.isPending}
+ disabled={!draft.user_id || !draft.period_start || !draft.period_end || upsertPayroll.isPending}
  onClick={() => upsertPayroll.mutate(draft)}
  className="h-12 px-10 rounded-2xl font-medium italic text-[11px] gap-2 shadow-sm bg-success text-success-foreground flex-1"
  >
@@ -387,7 +397,7 @@ function KpiTile({ icon: Icon, label, value, accent }: any) {
  <div>
  <p className="text-[10px] font-black text-muted-foreground/60 italic">{label}</p>
  <p className={cn("text-3xl font-black tracking-tighter italic", accentText)}>
- ${value?.toLocaleString() || "0"}
+ ₵{value?.toLocaleString() || "0"}
  </p>
  </div>
  </Card>

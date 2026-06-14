@@ -18,3 +18,4 @@ export type {
   HrTeam,
   HrGrade,
 } from "./components/admin/hooks/useHrGraph";
+export { updateWorkforceMember, getWorkforceMembersForCompany, getMyWorkforceAssignment } from "./repo/workforceRepo";

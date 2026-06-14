@@ -211,6 +211,19 @@ export function HrTargetsTab() {
  <p className="text-[10px] font-mono text-muted-foreground/60 mt-1">
  GOAL: {t.target_value}
  </p>
+ {typeof t.current_value === "number" && t.target_value > 0 && (
+ <div className="mt-2 space-y-0.5">
+ <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+ <div
+ className="h-full rounded-full bg-gradient-to-r from-primary to-success transition-all"
+ style={{ width: `${Math.min(100, Math.round((t.current_value / t.target_value) * 100))}%` }}
+ />
+ </div>
+ <p className="text-[9px] font-mono text-muted-foreground/50">
+ {t.current_value} / {t.target_value} ({Math.min(100, Math.round((t.current_value / t.target_value) * 100))}%)
+ </p>
+ </div>
+ )}
  </TableCell>
  <TableCell>
  <div className="flex flex-col gap-1">
@@ -338,6 +351,19 @@ export function HrTargetsTab() {
  />
  </div>
  <div className="space-y-2">
+ <Label className="text-[10px] font-black">Current Value (Actual)</Label>
+ <Input
+ type="number"
+ value={draft.current_value ?? ""}
+ onChange={(e) => setDraft({ ...draft, current_value: Number(e.target.value) })}
+ className="h-14 rounded-xl border font-black text-lg bg-muted/20"
+ placeholder="0"
+ />
+ </div>
+ </div>
+
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+ <div className="space-y-2">
  <Label className="text-[10px] font-black">Incentive Yield (₵)</Label>
  <Input
  type="number"
@@ -346,9 +372,6 @@ export function HrTargetsTab() {
  className="h-14 rounded-xl border border-success/30 font-black text-lg bg-success/5 text-success"
  />
  </div>
- </div>
-
- <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
  <div className="space-y-2">
  <Label className="text-[10px] font-black">Start Window</Label>
  <Input

@@ -260,3 +260,54 @@ export async function deleteHrTarget(id: string): Promise<void> {
   const { error } = await (supabase as any).from("hr_targets").delete().eq("id", id);
   if (error) throw error;
 }
+
+// ─── Workforce Member Edit (W-5) ──────────────────────────────────────────
+export async function updateWorkforceMember(
+  id: string,
+  patch: Partial<{
+    role_type: string;
+    status: string;
+    city: string | null;
+    team_id: string | null;
+    grade_id: string | null;
+  }>,
+): Promise<void> {
+  const { error } = await (supabase as any)
+    .from("workforce_members")
+    .update(patch)
+    .eq("id", id);
+  if (error) throw error;
+}
+
+// ─── Gro10x B2B — Company Workforce (W-7) ────────────────────────────────
+/**
+ * Fetches active workforce members associated with a specific company.
+ * Joins via the talents table which carries company_id.
+ */
+export async function getWorkforceMembersForCompany(companyId: string): Promise<any[]> {
+  const { data, error } = await (supabase as any)
+    .from("workforce_members")
+    .select(
+      "id, role_type, status, city, grade_id, team_id, talent_id, talents(full_name, email, company_id), hr_teams(name), hr_grades(name, level)",
+    )
+    .eq("talents.company_id", companyId)
+    .eq("status", "active");
+  if (error) throw error;
+  return (data ?? []).filter((m: any) => m.talents !== null) as any[];
+}
+
+// ─── Talent Shell — My Workforce Assignment (W-8) ────────────────────────
+/**
+ * Returns the workforce assignment record for the logged-in talent, if any.
+ */
+export async function getMyWorkforceAssignment(talentId: string): Promise<any | null> {
+  const { data, error } = await (supabase as any)
+    .from("workforce_members")
+    .select(
+      "id, role_type, status, city, grade_id, team_id, hr_teams(name, function_id, hr_functions(name, vertical_id, hr_verticals(name))), hr_grades(name, level)",
+    )
+    .eq("talent_id", talentId)
+    .maybeSingle();
+  if (error) throw error;
+  return data ?? null;
+}
