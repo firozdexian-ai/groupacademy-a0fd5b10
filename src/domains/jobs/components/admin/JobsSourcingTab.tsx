@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useJobsGraph } from "./hooks/useJobsGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -164,23 +165,48 @@ export function JobsSourcingTab() {
  <Label className="text-[10px] font-black text-primary ml-1">
  Job Node ID
  </Label>
- <Input
- placeholder="UUID"
- value={draft.job_id || ""}
- onChange={(e) => setDraft({ ...draft, job_id: e.target.value })}
- className="h-14 rounded-xl border font-mono text-xs"
- />
+          <Select
+            value={draft.job_id || ""}
+            onValueChange={(v) => setDraft({ ...draft, job_id: v })}
+          >
+            <SelectTrigger className="h-14 rounded-xl border font-mono text-xs">
+              <SelectValue placeholder="Select Job" />
+            </SelectTrigger>
+            <SelectContent>
+              {data?.jobs?.map((job: any) => (
+                <SelectItem key={job.id} value={job.id}>
+                  {job.title} ({job.id.substring(0, 8)})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
  </div>
  <div className="space-y-2">
  <Label className="text-[10px] font-black text-primary ml-1">
  Talent Node ID
  </Label>
- <Input
- placeholder="UUID"
- value={draft.talent_id || ""}
- onChange={(e) => setDraft({ ...draft, talent_id: e.target.value })}
- className="h-14 rounded-xl border font-mono text-xs"
- />
+          <Select
+            value={draft.talent_id || ""}
+            onValueChange={(v) => setDraft({ ...draft, talent_id: v })}
+          >
+            <SelectTrigger className="h-14 rounded-xl border font-mono text-xs">
+              <SelectValue placeholder="Select Talent" />
+            </SelectTrigger>
+            <SelectContent>
+              {useQuery({
+                queryKey: ["talents-lite"],
+                queryFn: async () => {
+                  const mod = await import("@/domains/talent/repo/talentRepo");
+                  const { data } = await mod.talentRepo.listTalentsLite(200);
+                  return data;
+                },
+              }).data?.map((t: any) => (
+                <SelectItem key={t.id} value={t.id}>
+                  {t.full_name} ({t.id.substring(0, 8)})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
  </div>
  </div>
  <div className="space-y-2">

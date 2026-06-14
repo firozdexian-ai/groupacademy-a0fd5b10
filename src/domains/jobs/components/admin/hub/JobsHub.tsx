@@ -5,11 +5,16 @@ import { JobsApplicationsTab } from "./JobsApplicationsTab";
 import { JobsOutreachTab } from "./JobsOutreachTab";
 import { JobsUploadTab } from "./JobsUploadTab";
 import { Badge } from "@/components/ui/badge";
+import { useJobsGraph } from "@/domains/jobs/components/admin/hooks/useJobsGraph";
 
 /**
  * Jobs Hub — unified admin command center for jobs, applications, outreach, and uploads.
  */
 export function JobsHub() {
+  const { jobsGraphQuery } = useJobsGraph();
+  const data = jobsGraphQuery.data;
+  const conversionRate = data && data.jobs.length ? Math.round((data.applications?.length ?? 0) / data.jobs.length * 100) : 0;
+
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* HUB HEADER */}
@@ -28,7 +33,7 @@ export function JobsHub() {
             variant="outline"
             className="h-12 px-6 rounded-2xl border-2 font-semibold gap-2 text-primary bg-background/50 uppercase"
           >
-            <BarChart3 className="h-4 w-4" /> 2.5% conversion
+            <BarChart3 className="h-4 w-4" /> {conversionRate}% conversion
           </Badge>
         </div>
       </div>
