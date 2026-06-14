@@ -3,14 +3,14 @@
  */
 import { supabase } from "@/integrations/supabase/client";
 
-// ─── Generic helpers ───────────────────────────────────────────────────────
 export async function upsertGraphRow(table: string, payload: any): Promise<void> {
-  if (payload?.id) {
-    const { id, ...patch } = payload;
+  const { created_at, updated_at, ...cleanPayload } = payload;
+  if (cleanPayload?.id) {
+    const { id, ...patch } = cleanPayload;
     const { error } = await supabase.from(table as any).update(patch).eq("id", id);
     if (error) throw error;
   } else {
-    const { error } = await supabase.from(table as any).insert([payload]);
+    const { error } = await supabase.from(table as any).insert([cleanPayload]);
     if (error) throw error;
   }
 }
