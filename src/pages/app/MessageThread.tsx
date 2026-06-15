@@ -1,4 +1,4 @@
-﻿import * as React from "react";
+import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 import { useTalent } from "@/hooks/useTalent";
@@ -121,14 +121,19 @@ export default function MessageThread() {
   void loadPeerSession();
   } else {
   const loadAgentSession = async () => {
-  setIsBootstrapping(true);
-  const data = await getAgentByKey(threadKey);
-  if (data) setActiveAgent(data as unknown as AgentRecord);
-  await startOrResumeSession(threadKey);
+    try {
+      setIsBootstrapping(true);
+      const data = await getAgentByKey(threadKey);
+      if (data) setActiveAgent(data as unknown as AgentRecord);
+      await startOrResumeSession(threadKey);
 
-  const threadId = await getMessageThreadIdByTalentAndAgent(talent.id, threadKey);
-  if (threadId) markThreadRead(threadId);
-  setIsBootstrapping(false);
+      const threadId = await getMessageThreadIdByTalentAndAgent(talent.id, threadKey);
+      if (threadId) await markThreadRead(threadId);
+    } catch (err) {
+      console.error("[Digital Workforce] Error loading agent session:", err);
+    } finally {
+      setIsBootstrapping(false);
+    }
   };
   void loadAgentSession();
   }
