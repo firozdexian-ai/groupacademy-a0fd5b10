@@ -1,4 +1,4 @@
-﻿export type Json =
+export type Json =
   | string
   | number
   | boolean
@@ -19559,4 +19559,3 @@ export const Constants = {
     },
   },
 } as const
-
