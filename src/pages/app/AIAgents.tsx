@@ -70,21 +70,46 @@ export default function AIAgents() {
  // =========================================================================
  // DATA ACQUISITION PIPELINE SECURED VIA TANSTACK CACHE CHANNEL
  // =========================================================================
- const { data: dbAgentsRegistry = [], isLoading: isRegistryCacheResolving } = useQuery<DBAgentStats[]>({
- queryKey: ["ai-agents-marketplace-stats"],
- queryFn: async (): Promise<DBAgentStats[]> => {
- const { data: databaseOutputPayload, error: queryHandshakeError } = await supabase
- .from("ai_agents_with_stats")
- .select("*")
- .eq("is_active", true)
- .order("is_featured", { ascending: false })
- .order("total_users", { ascending: false });
+  const { data: dbAgentsRegistry = [], isLoading: isRegistryCacheResolving } = useQuery<DBAgentStats[]>({
+  queryKey: ["ai-agents-marketplace-stats"],
+  queryFn: async (): Promise<DBAgentStats[]> => {
+    try {
+      const { data: databaseOutputPayload, error: queryHandshakeError } = await supabase
+        .from("ai_agents_with_stats")
+        .select("*")
+        .eq("is_active", true)
+        .order("is_featured", { ascending: false })
+        .order("total_users", { ascending: false });
 
- if (queryHandshakeError) throw queryHandshakeError;
- return (databaseOutputPayload as unknown as DBAgentStats[]) ?? [];
- },
- staleTime: 5 * 60 * 1000,
- });
+      if (queryHandshakeError) throw queryHandshakeError;
+      return (databaseOutputPayload as unknown as DBAgentStats[]) ?? [];
+    } catch (err: any) {
+      console.warn("View 'ai_agents_with_stats' query failed, falling back to direct table select:", err);
+      
+      const SAFE_FIELDS = "id, agent_key, name, description, icon, color, bg_color, expertise_areas, is_active, display_order, created_at, updated_at, avatar_url, credit_cost, session_duration_minutes, agent_type, company_id, capabilities, personality_traits, sample_conversations, total_conversations, average_rating, is_featured, category, owner_kind, owner_id, audience, agent_level, connection_fee, message_credit_cost, visibility, marketplace_status, active_prompt_variant, canvas_mode, country_code, profession_line_id, goal, region, language, default_channel";
+      
+      const { data: fallbackPayload, error: fallbackError } = await supabase
+        .from("ai_agents")
+        .select(SAFE_FIELDS)
+        .eq("is_active", true)
+        .order("is_featured", { ascending: false });
+
+      if (fallbackError) {
+        console.error("Fallback query to 'ai_agents' also failed:", fallbackError);
+        throw fallbackError;
+      }
+
+      return (fallbackPayload || []).map(item => ({
+        ...item,
+        total_users: 0,
+        total_messages: 0,
+        avg_rating: 0,
+        review_count: 0
+      })) as unknown as DBAgentStats[];
+    }
+  },
+  staleTime: 5 * 60 * 1000,
+  });
 
  // =========================================================================
  // SANITIZED TRANSACTION DATA COMPILERS

@@ -586,13 +586,17 @@ export async function getAiAgentStatsByKey(agentKey: string) {
       .select("total_users,total_messages,avg_rating,review_count")
       .eq("agent_key", agentKey)
       .maybeSingle();
-    if (error) throw error;
+    if (error) {
+      console.warn("Could not fetch stats from ai_agents_with_stats view, returning default fallback:", error);
+      return { total_users: 0, total_messages: 0, avg_rating: 0, review_count: 0 };
+    }
     return data;
-  } catch (err: unknown) {
-    trackError("agents-repo-getAiAgentStatsByKey-failure", { agentKey, error: err.message });
-    throw err;
+  } catch (err: any) {
+    console.warn("getAiAgentStatsByKey caught exception, returning default fallback:", err);
+    return { total_users: 0, total_messages: 0, avg_rating: 0, review_count: 0 };
   }
 }
+
 
 export async function listAgentChatSessionsForTalentAgent(opts: { talentId: string; agentKey: string }) {
   try {
