@@ -17423,43 +17423,41 @@ export type Database = {
           agent_key: string | null
           agent_level: number | null
           agent_type: string | null
-          allowed_tools: string[] | null
           audience: string | null
           avatar_url: string | null
           average_rating: number | null
           avg_rating: number | null
           bg_color: string | null
-          builder_model: string | null
           canvas_mode: string | null
           capabilities: string[] | null
           category: string | null
           color: string | null
           company_id: string | null
           connection_fee: number | null
+          country_code: string | null
           created_at: string | null
           credit_cost: number | null
-          delivery_credit_cost: number | null
+          default_channel: string | null
           description: string | null
           display_order: number | null
           expertise_areas: string[] | null
+          goal: string | null
           icon: string | null
           id: string | null
           is_active: boolean | null
           is_featured: boolean | null
-          kill_switch: boolean | null
+          language: string | null
           marketplace_status: string | null
           message_credit_cost: number | null
-          model: string | null
-          monthly_target: number | null
           name: string | null
           owner_id: string | null
           owner_kind: string | null
           personality_traits: Json | null
-          prompt_variants: Json | null
+          profession_line_id: string | null
+          region: string | null
           review_count: number | null
           sample_conversations: Json | null
           session_duration_minutes: number | null
-          system_prompt: string | null
           total_conversations: number | null
           total_messages: number | null
           total_users: number | null
@@ -17472,6 +17470,13 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_agents_profession_line_id_fkey"
+            columns: ["profession_line_id"]
+            isOneToOne: false
+            referencedRelation: "profession_categories"
             referencedColumns: ["id"]
           },
         ]
