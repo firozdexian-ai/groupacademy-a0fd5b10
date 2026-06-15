@@ -46,7 +46,7 @@ interface AgentRecord {
 export default function MessageThread() {
  const { threadKey } = useParams<{ threadKey: string }>();
  const navigateHook = useNavigate();
- const { talent } = useTalent();
+ const { talent, isLoading: isTalentLoading } = useTalent();
  const { markThreadRead } = useMessageThreads();
 
  const isSystemThread = threadKey === "system";
@@ -74,70 +74,90 @@ export default function MessageThread() {
  // =========================================================================
  // LIFECYCLE SECTOR: THREAD INGRESS PROTOCOL
  // =========================================================================
- React.useEffect(() => {
-  if (!talent?.id || !threadKey) return;
+  React.useEffect(() => {
+   console.log("[Digital Workforce] useEffect triggered:", { talentId: talent?.id, isTalentLoading, threadKey, isSystemThread, isPeerThread });
+   
+   if (isTalentLoading) return;
 
-  if (isSystemThread) {
-  const loadSystemFeed = async () => {
-  const tid = await ensureSystemThread(talent.id);
-  if (tid) markThreadRead(tid);
-
-  const data = await listTalentSystemFeedNotifications(talent.id, 200);
-  setSystemNotifications(data ?? []);
-  setIsBootstrapping(false);
-  };
-  void loadSystemFeed();
-  } else if (isPeerThread) {
-  const loadPeerSession = async () => {
-  setIsBootstrapping(true);
-  try {
-  const { data: threadRow, error: threadError } = await supabase
-    .from("message_threads")
-    .select("peer_talent_id")
-    .eq("id", threadKey)
-    .single();
-
-  if (!threadError && threadRow?.peer_talent_id) {
-    const { data: talentRow, error: talentError } = await supabase
-      .from("talents")
-      .select("full_name, profile_photo_url")
-      .eq("id", threadRow.peer_talent_id)
-      .single();
-
-    if (!talentError && talentRow) {
-      setActivePeer({
-        name: talentRow.full_name,
-        avatarUrl: talentRow.profile_photo_url,
-      });
-    }
-  }
-  await markThreadRead(threadKey);
-  } catch (error) {
-  console.error("[Digital Workforce] Error loading peer session:", error);
-  } finally {
-  setIsBootstrapping(false);
-  }
-  };
-  void loadPeerSession();
-  } else {
-  const loadAgentSession = async () => {
-    try {
-      setIsBootstrapping(true);
-      const data = await getAgentByKey(threadKey);
-      if (data) setActiveAgent(data as unknown as AgentRecord);
-      await startOrResumeSession(threadKey);
-
-      const threadId = await getMessageThreadIdByTalentAndAgent(talent.id, threadKey);
-      if (threadId) await markThreadRead(threadId);
-    } catch (err) {
-      console.error("[Digital Workforce] Error loading agent session:", err);
-    } finally {
-      setIsBootstrapping(false);
-    }
-  };
-  void loadAgentSession();
-  }
- }, [threadKey, isSystemThread, isPeerThread, talent?.id, markThreadRead, startOrResumeSession]);
+   if (!talent?.id || !threadKey) {
+     console.log("[Digital Workforce] Returning early because talent.id or threadKey is missing", { talent, threadKey });
+     setIsBootstrapping(false);
+     return;
+   }
+ 
+   if (isSystemThread) {
+     const loadSystemFeed = async () => {
+       console.log("[Digital Workforce] Loading system feed...");
+       const tid = await ensureSystemThread(talent.id);
+       if (tid) markThreadRead(tid);
+ 
+       const data = await listTalentSystemFeedNotifications(talent.id, 200);
+       setSystemNotifications(data ?? []);
+       setIsBootstrapping(false);
+       console.log("[Digital Workforce] Loaded system feed.");
+     };
+     void loadSystemFeed();
+   } else if (isPeerThread) {
+     const loadPeerSession = async () => {
+       console.log("[Digital Workforce] Loading peer session:", threadKey);
+       setIsBootstrapping(true);
+       try {
+         const { data: threadRow, error: threadError } = await supabase
+           .from("message_threads")
+           .select("peer_talent_id")
+           .eq("id", threadKey)
+           .single();
+ 
+         if (!threadError && threadRow?.peer_talent_id) {
+           const { data: talentRow, error: talentError } = await supabase
+             .from("talents")
+             .select("full_name, profile_photo_url")
+             .eq("id", threadRow.peer_talent_id)
+             .single();
+ 
+           if (!talentError && talentRow) {
+             setActivePeer({
+               name: talentRow.full_name,
+               avatarUrl: talentRow.profile_photo_url,
+             });
+           }
+         }
+         await markThreadRead(threadKey);
+       } catch (error) {
+         console.error("[Digital Workforce] Error loading peer session:", error);
+       } finally {
+         setIsBootstrapping(false);
+         console.log("[Digital Workforce] Peer session load complete.");
+       }
+     };
+     void loadPeerSession();
+   } else {
+     const loadAgentSession = async () => {
+       console.log("[Digital Workforce] Loading agent session:", threadKey);
+       try {
+         setIsBootstrapping(true);
+         const data = await getAgentByKey(threadKey);
+         console.log("[Digital Workforce] getAgentByKey result:", data);
+         if (data) setActiveAgent(data as unknown as AgentRecord);
+         
+         console.log("[Digital Workforce] Invoking startOrResumeSession...");
+         const sessionResult = await startOrResumeSession(threadKey);
+         console.log("[Digital Workforce] startOrResumeSession result:", sessionResult);
+ 
+         console.log("[Digital Workforce] Invoking getMessageThreadIdByTalentAndAgent...");
+         const threadId = await getMessageThreadIdByTalentAndAgent(talent.id, threadKey);
+         console.log("[Digital Workforce] getMessageThreadIdByTalentAndAgent result:", threadId);
+         if (threadId) await markThreadRead(threadId);
+       } catch (err) {
+         console.error("[Digital Workforce] Error loading agent session:", err);
+       } finally {
+         setIsBootstrapping(false);
+         console.log("[Digital Workforce] Agent session load complete.");
+       }
+     };
+     void loadAgentSession();
+   }
+  }, [threadKey, isSystemThread, isPeerThread, talent?.id, isTalentLoading, markThreadRead, startOrResumeSession]);
 
  // Sync scroll-to-bottom anchor
  React.useEffect(() => {

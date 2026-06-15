@@ -1,10 +1,11 @@
-﻿import React, { createContext, useContext, useMemo, useRef } from "react";
+import React, { createContext, useContext, useMemo, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getTalentRowByUserId, updateTalentById } from "@/domains/talent/repo/talentRepo";
 import { User, Session } from "@supabase/supabase-js";
 import { useAuth } from "@/hooks/useAuth";
 import { Education, Experience, Skill } from "@/types/common";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 /**
  * GroUp Academy: Core Identity & Profile Orchestrator (V5.6.0)
@@ -12,6 +13,7 @@ import { toast } from "sonner";
  * Architecture: Optimized via TanStack Query cache nodes to completely eliminate re-render cycles.
  * Phase: Z0 Code Freeze Hardened (May 2026 Launch Edition).
  */
+
 
 export interface TalentProfile {
   id: string;
@@ -150,8 +152,35 @@ export function TalentProvider({ children }: { children: React.ReactNode }) {
     queryFn: async (): Promise<TalentProfile | null> => {
       // dashboard: EXECUTING_PROFILE_REGISTRY_INGRESS_SELECT
       const data = await getTalentRowByUserId(user!.id);
-      return data ? mapRowToTalent(data) : null;
+      if (data) return mapRowToTalent(data);
+
+      try {
+        console.warn("[Digital Workforce] Profile row missing for user. Auto-bootstrapping talent profile...", user!.id);
+        const { data: newRow, error: insertError } = await supabase
+          .from("talents")
+          .insert({
+            user_id: user!.id,
+            email: user!.email,
+            full_name: user!.user_metadata?.full_name || user!.email?.split("@")[0] || "Seeker",
+            learner_status: "free_learner",
+            onboarding_step: 4
+          })
+          .select()
+          .single();
+
+        if (insertError) {
+          console.error("[Digital Workforce] Auto-bootstrapping failed:", insertError);
+          return null;
+        }
+
+        console.log("[Digital Workforce] Auto-bootstrapping successful!", newRow);
+        return mapRowToTalent(newRow);
+      } catch (err) {
+        console.error("[Digital Workforce] Error during auto-bootstrapping:", err);
+        return null;
+      }
     },
+
   });
 
   // --- ACTION: PROFILE_UPDATE_MUTATION ---

@@ -111,8 +111,14 @@ export default function AgentChat() {
  const establishSecureAgentSessionChannel = async () => {
  try {
  const isSessionAcknowledgeVerified = await startOrResumeSession(unverifiedAgentKeyStr);
- if (isThreadActiveAndValid && isSessionAcknowledgeVerified) {
- setIsSessionInitializing(false);
+ if (isThreadActiveAndValid) {
+   if (isSessionAcknowledgeVerified) {
+     setIsSessionInitializing(false);
+   } else {
+     console.warn("Session activation returned null/falsy");
+     toast.error("Unable to activate chat session. Profile might be incomplete.");
+     executeNavigationHook("/app/agents");
+   }
  }
  } catch (fatalSessionInitException) {
  if (isThreadActiveAndValid) {
