@@ -1,4 +1,4 @@
-﻿import * as React from "react";
+import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Loader2, MessageSquare, ShieldAlert, Zap } from "lucide-react";
 import { AgentChatDialog } from "@/domains/agents/components/chat/AgentChatDialog";
@@ -46,7 +46,7 @@ export default function AgentChat() {
  if (!unverifiedAgentKeyStr) return null;
  const { data: extractedAgentNode, error: agentQueryError } = await supabase
  .from("ai_agents")
- .select("*")
+ .select("id, agent_key, name, description, icon, color, bg_color, avatar_url, credit_cost")
  .eq("agent_key", unverifiedAgentKeyStr)
  .eq("is_active", true)
  .maybeSingle();
@@ -85,6 +85,14 @@ export default function AgentChat() {
  }
  return null;
  }, [databaseAgentRecord, staticFallbackAgentNode]);
+
+ React.useEffect(() => {
+   if (resolvedActiveAgentMetadata) {
+     document.title = `Chat with ${resolvedActiveAgentMetadata.name} | GroUp Academy`;
+   } else {
+     document.title = "AI Agent Chat | GroUp Academy";
+   }
+ }, [resolvedActiveAgentMetadata]);
 
  // =========================================================================
  // LIFECYCLE SECTOR 1: ISOLATED ASYNC CONNECTION INITIALIZATION LOOP
@@ -125,7 +133,7 @@ export default function AgentChat() {
  unverifiedAgentKeyStr,
  isDatabaseAgentResolving,
  isLoadingSessions,
- !!resolvedActiveAgentMetadata,
+ resolvedActiveAgentMetadata,
  executeNavigationHook,
  startOrResumeSession,
  ]);

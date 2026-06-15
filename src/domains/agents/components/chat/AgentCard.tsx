@@ -1,4 +1,4 @@
-﻿import { useMemo } from "react";
+import { useMemo } from "react";
 import { LucideIcon, Coins, Star, Users, Zap } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ interface AgentCardProps {
   agent_key?: string;
   name: string;
   description: string;
-  icon?: LucideIcon;
+  icon?: LucideIcon | string;
   color: string;
   bgColor: string;
   expertise: string[];
@@ -37,7 +37,7 @@ const isHex = (hexString?: string) => !!hexString && /^#([0-9A-F]{3}){1,2}$/i.te
 export function AgentCard({
   name = "Agent",
   description = "No description available.",
-  icon: Icon,
+  icon,
   color,
   bgColor,
   creditCost = 1,
@@ -80,7 +80,7 @@ export function AgentCard({
         <AgentAvatar
           name={name}
           avatarUrl={avatarUrl}
-          icon={Icon}
+          icon={icon}
           bgColor={validatedBgColor}
           iconColor={validatedIconColor}
           size="lg"

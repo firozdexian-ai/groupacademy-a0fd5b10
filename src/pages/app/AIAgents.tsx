@@ -1,4 +1,4 @@
-﻿import * as React from "react";
+import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Bot, Search, Sparkles, MessageCircle, Inbox, type LucideIcon } from "lucide-react";
@@ -59,9 +59,13 @@ interface TransformedAgent {
  * Version: Launch Candidate Â· Phase Z1 Production Contract Locked
  */
 export default function AIAgents() {
- const executeNavigationHook = useNavigate();
- const [textSearchQueryInput, setTextSearchQueryInput] = React.useState<string>("");
- const [selectedCategoryFilter, setSelectedCategoryFilter] = React.useState<AgentCategory>("all");
+  const executeNavigationHook = useNavigate();
+  const [textSearchQueryInput, setTextSearchQueryInput] = React.useState<string>("");
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = React.useState<AgentCategory>("all");
+
+  React.useEffect(() => {
+    document.title = "AI Agents Marketplace | GroUp Academy";
+  }, []);
 
  // =========================================================================
  // DATA ACQUISITION PIPELINE SECURED VIA TANSTACK CACHE CHANNEL
@@ -100,7 +104,7 @@ export default function AIAgents() {
  agent_key: targetIdentificationKeyStr,
  name: agentRecordItem.name,
  description: agentRecordItem.description,
- icon: verifiedStaticMetaRecord?.icon,
+ icon: (isDatabaseInstantiatedNode ? agentRecordItem.icon : verifiedStaticMetaRecord?.icon) as LucideIcon | undefined,
  bgColor: isDatabaseInstantiatedNode ? agentRecordItem.bg_color || "#2A7DDE" : "#2A7DDE",
  color: isDatabaseInstantiatedNode ? agentRecordItem.color || "#2A7DDE" : "#2A7DDE",
  expertise: isDatabaseInstantiatedNode ? agentRecordItem.expertise_areas || [] : [],

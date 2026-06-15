@@ -1,11 +1,26 @@
-﻿import * as React from "react";
+import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, MessageCircle, Star, Users, Coins, Bot, CheckCircle2, Loader2, ShieldAlert } from "lucide-react";
+import * as Icons from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { isAgentConnected, connectAgent } from "@/domains/agents/repo/agentsRepo";
+
+const { ArrowLeft, MessageCircle, Star, Users, Coins, Bot, CheckCircle2, Loader2, ShieldAlert } = Icons;
+
+const getIconComponent = (iconName: string | undefined): Icons.LucideIcon => {
+  if (!iconName) return Icons.Bot;
+
+  const normalized = iconName
+    .split(/[-_]/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join("");
+
+  const iconsRecord = Icons as unknown as Record<string, Icons.LucideIcon>;
+  return iconsRecord[normalized] || iconsRecord[iconName] || Icons.Bot;
+};
+
 import {
  getAiAgentByKey,
  getAiAgentStatsByKey,
@@ -31,6 +46,7 @@ interface AgentProfileRecord {
  connection_fee: number | null;
  delivery_credit_cost: number | null;
  credit_cost: number | null;
+ icon?: string;
 }
 
 interface TelemetryStats {
@@ -51,6 +67,7 @@ export default function AgentProfile() {
  const { talent: authenticatedTalentNode } = useTalent();
 
  const [agentProfileData, setAgentProfileData] = React.useState<AgentProfileRecord | null>(null);
+ const ResolvedIcon = React.useMemo(() => getIconComponent(agentProfileData?.icon || undefined), [agentProfileData]);
  const [telemetryStatsState, setTelemetryStatsState] = React.useState<TelemetryStats>({
  users: 0,
  messages: 0,
@@ -89,6 +106,7 @@ export default function AgentProfile() {
  }
 
  setAgentProfileData(agentRow as unknown as AgentProfileRecord);
+ document.title = `${agentRow.name} - AI Agent | GroUp Academy`;
 
  if (statsRow) {
  setTelemetryStatsState({
@@ -114,11 +132,13 @@ export default function AgentProfile() {
 
  if (!isThreadActiveAndValid) return;
 
- const calculatedMessagesVolume = (sessionRows || []).reduce(
- (accumulatedTotal: number, sessionRowItem: unknown) =>
- accumulatedTotal + (Array.isArray(sessionRowItem.messages) ? sessionRowItem.messages.length : 0),
- 0,
- );
+  const calculatedMessagesVolume = (sessionRows || []).reduce(
+    (accumulatedTotal: number, sessionRowItem: unknown) => {
+      const row = sessionRowItem as { messages?: unknown[] };
+      return accumulatedTotal + (Array.isArray(row.messages) ? row.messages.length : 0);
+    },
+    0,
+  );
 
  setHasSufficientChatFootprint(calculatedMessagesVolume >= 3);
  setIsUplinkConnected(Boolean(networkConnectionPayload));
@@ -259,7 +279,7 @@ export default function AgentProfile() {
  className="text-white text-base rounded-none uppercase block grid place-items-center w-full h-full font-bold"
  style={{ backgroundColor: computedBrandHeadlineHexCode }}
  >
- <Bot className="h-7 w-7 stroke-[2]" />
+ <ResolvedIcon className="h-7 w-7 stroke-[2]" />
  </AvatarFallback>
  </Avatar>
 

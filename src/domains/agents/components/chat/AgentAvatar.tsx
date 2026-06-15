@@ -1,8 +1,10 @@
-﻿import { useMemo } from "react";
+import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Building2, Bot, Sparkles, type LucideIcon } from "lucide-react";
+import * as Icons from "lucide-react";
+
+const { Building2, Bot, Sparkles } = Icons;
 
 /**
  * Group Academy — Agent Avatar Identity Component
@@ -14,7 +16,7 @@ import { Building2, Bot, Sparkles, type LucideIcon } from "lucide-react";
 interface AgentAvatarProps {
   name: string;
   avatarUrl?: string | null;
-  icon?: LucideIcon;
+  icon?: Icons.LucideIcon | string;
   bgColor?: string;
   iconColor?: string;
   size?: "sm" | "md" | "lg" | "xl";
@@ -46,10 +48,23 @@ const telemetryRegistry = {
   xl: "h-4 w-4",
 };
 
+const getIconComponent = (icon: unknown): Icons.LucideIcon | undefined => {
+  if (!icon) return undefined;
+  if (typeof icon !== "string") return icon as Icons.LucideIcon;
+
+  const normalized = icon
+    .split(/[-_]/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join("");
+
+  const iconsRecord = Icons as unknown as Record<string, Icons.LucideIcon>;
+  return iconsRecord[normalized] || iconsRecord[icon] || Icons.Bot;
+};
+
 export function AgentAvatar({
   name = "AI",
   avatarUrl,
-  icon: Icon,
+  icon,
   bgColor,
   iconColor,
   size = "md",
@@ -75,6 +90,8 @@ export function AgentAvatar({
     };
   }, [bgColor, iconColor, isCreatorAgent]);
 
+  const ResolvedIcon = useMemo(() => getIconComponent(icon), [icon]);
+
   return (
     <div className={cn("relative flex-shrink-0 select-none", className)} aria-label={name}>
       <Avatar
@@ -87,8 +104,8 @@ export function AgentAvatar({
       >
         {avatarUrl && <AvatarImage src={avatarUrl} alt={name} className="object-cover" />}
         <AvatarFallback className="font-black uppercase italic tracking-tighter" style={fallbackStyles}>
-          {Icon ? (
-            <Icon className={cn(iconRegistry[size])} />
+          {ResolvedIcon ? (
+            <ResolvedIcon className={cn(iconRegistry[size])} />
           ) : avatarUrl ? (
             <Bot className={cn(iconRegistry[size], "animate-pulse")} />
           ) : (

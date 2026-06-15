@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -64,10 +64,10 @@ const Index = () => {
     const fetchStats = async () => {
       try {
         const [talentsRes, companiesRes, jobsRes, agentsRes] = await Promise.all([
-          supabase.from("talents").select("*", { count: "exact", head: true }),
-          supabase.from("companies").select("*", { count: "exact", head: true }),
-          supabase.from("jobs").select("*", { count: "exact", head: true }),
-          supabase.from("ai_agents").select("*", { count: "exact", head: true }),
+          supabase.from("talents").select("id", { count: "exact", head: true }),
+          supabase.from("companies").select("id", { count: "exact", head: true }),
+          supabase.from("jobs").select("id", { count: "exact", head: true }),
+          supabase.from("ai_agents").select("id", { count: "exact", head: true }),
         ]);
 
         setStats({

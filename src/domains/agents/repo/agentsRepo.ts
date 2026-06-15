@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Group Academy — AI Agents Domain Repository Layer
  * Version: Phase 10j.5 Hardened (Launch Edition)
  * Architecture: Database engine encapsulating row isolation routing gates.
@@ -7,6 +7,49 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { trackError } from "@/lib/errorTracking";
+
+export const SAFE_AGENT_FIELDS = [
+  "id",
+  "agent_key",
+  "name",
+  "description",
+  "icon",
+  "color",
+  "bg_color",
+  "expertise_areas",
+  "is_active",
+  "display_order",
+  "created_at",
+  "updated_at",
+  "avatar_url",
+  "credit_cost",
+  "session_duration_minutes",
+  "agent_type",
+  "company_id",
+  "capabilities",
+  "personality_traits",
+  "sample_conversations",
+  "total_conversations",
+  "average_rating",
+  "is_featured",
+  "category",
+  "owner_kind",
+  "owner_id",
+  "audience",
+  "agent_level",
+  "connection_fee",
+  "message_credit_cost",
+  "visibility",
+  "marketplace_status",
+  "active_prompt_variant",
+  "canvas_mode",
+  "country_code",
+  "profession_line_id",
+  "goal",
+  "region",
+  "language",
+  "default_channel",
+].join(", ");
 
 export interface TalentMarketplaceSummary {
   lifetime_earned: number;
@@ -91,7 +134,7 @@ export async function getAgentsOverview() {
 export async function getStudioBundle() {
   try {
     const [agentsRes, toolsRes] = await Promise.all([
-      supabase.from("ai_agents").select("*").order("display_order", { ascending: true }),
+      supabase.from("admin_ai_agents").select("*").order("display_order", { ascending: true }),
       supabase.from("agent_tools").select("*").order("category"),
     ]);
 
@@ -120,7 +163,7 @@ export async function deleteAgentKnowledgeSource(id: string): Promise<void> {
 export async function listAgentsForInsights() {
   try {
     const { data, error } = await supabase
-      .from("ai_agents")
+      .from("admin_ai_agents")
       .select("id,name,agent_key,active_prompt_variant,prompt_variants");
     if (error) throw error;
     return data ?? [];
@@ -465,7 +508,7 @@ export async function countAiAgentsByTemplateFlag(isTemplate: boolean): Promise<
 export async function listAiAgentsForFleet() {
   try {
     const { data, error } = await supabase
-      .from("ai_agents")
+      .from("admin_ai_agents")
       .select("id,agent_key,name,company_id,is_template,parent_template_id,is_active,kill_switch,avatar_url,audience")
       .order("name");
     if (error) throw error;
@@ -489,7 +532,7 @@ export async function listAiAgentsCompact() {
 
 export async function getAiAgentById(id: string) {
   try {
-    const { data, error } = await supabase.from("ai_agents").select("*").eq("id", id).maybeSingle();
+    const { data, error } = await supabase.from("admin_ai_agents").select("*").eq("id", id).maybeSingle();
     if (error) throw error;
     return data;
   } catch (err: unknown) {
@@ -527,7 +570,7 @@ export async function listAiAgentInstancesMinimal() {
 
 export async function getAiAgentByKey(agentKey: string) {
   try {
-    const { data, error } = await supabase.from("ai_agents").select("*").eq("agent_key", agentKey).maybeSingle();
+    const { data, error } = await supabase.from("ai_agents").select(SAFE_AGENT_FIELDS).eq("agent_key", agentKey).maybeSingle();
     if (error) throw error;
     return data;
   } catch (err: unknown) {
@@ -720,7 +763,7 @@ export async function listAllAgentTools() {
 export async function listAiAgentsForListTab(opts: { agentTypeFilter?: string | string[]; audienceFilter?: string }) {
   try {
     let q = supabase
-      .from("ai_agents")
+      .from("admin_ai_agents")
       .select(
         "id,agent_key,name,description,agent_type,audience,visibility,is_active,total_conversations,credit_cost,message_credit_cost,model",
       )
@@ -796,7 +839,7 @@ export async function listAgentsByMarketplaceStatus(
   opts: { limit?: number; orderBy?: string; ascending?: boolean } = {},
 ) {
   try {
-    let q = supabase.from("ai_agents").select(MARKETPLACE_FIELDS);
+    let q = supabase.from("admin_ai_agents").select(MARKETPLACE_FIELDS);
     q = Array.isArray(status) ? q.in("marketplace_status", status) : q.eq("marketplace_status", status);
     q = q.order(opts.orderBy ?? "created_at", { ascending: opts.ascending ?? true });
     if (opts.limit) q = q.limit(opts.limit);
@@ -812,7 +855,7 @@ export async function listAgentsByMarketplaceStatus(
 
 export async function listAllAgentsOrdered() {
   try {
-    const { data, error } = await supabase.from("ai_agents").select("*").order("display_order", { ascending: true });
+    const { data, error } = await supabase.from("admin_ai_agents").select("*").order("display_order", { ascending: true });
     if (error) throw error;
     return data ?? [];
   } catch (err: unknown) {
