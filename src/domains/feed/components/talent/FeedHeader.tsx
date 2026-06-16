@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Coins, RefreshCw, Trophy } from "lucide-react";
@@ -215,7 +215,7 @@ export function FeedHeader({ talentName, talentPhoto, talentProfession, onRefres
             </SheetTitle>
             <SheetTitle></SheetTitle> {/* Accessibility requirements layout filler element */}
             <SheetDescription className="text-xs text-muted-foreground leading-relaxed">
-              Your level reflects your total lifetime credit activity (balance spent or earned)[cite: 5]. This reflects your ongoing contribution and platform usage independently of your fluid wallet balances[cite: 5].
+              Your level reflects your total lifetime credit activity (balance spent or earned). This reflects your ongoing contribution and platform usage independently of your fluid wallet balances.
             </SheetDescription>
           </SheetHeader>
 
@@ -246,7 +246,7 @@ export function FeedHeader({ talentName, talentPhoto, talentProfession, onRefres
             </div>
 
             <p className="text-xs text-muted-foreground/90 leading-relaxed pl-1 select-text selection:bg-primary/20">
-              Earn platform credits across global categories by participating in community interaction polls, posting verified job listings, or providing peer CV uploads[cite: 4, 5]. Use your balances to activate specialized AI advisor sessions, premium recorded courses, or custom digital profile builders[cite: 4].
+              Earn platform credits across global categories by participating in community interaction polls, posting verified job listings, or providing peer CV uploads. Use your balances to activate specialized AI advisor sessions, premium recorded courses, or custom digital profile builders.
             </p>
           </div>
         </SheetContent>

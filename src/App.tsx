@@ -559,7 +559,7 @@ export default function App() {
                     {/* Study Abroad - Specific Routes First */}
                     <Route path="abroad/study" element={<StudyAbroad />} />
                     <Route path="abroad/study/:id" element={<StudyAbroadDetail />} />
-                    <Route path="abroad/ielts-legacy" element={<IELTSPrep />} />
+                    <Route path="abroad/ielts-legacy" element={<Navigate to="/app/abroad/ielts" replace />} />
                     <Route path="abroad/roadmap" element={<StudyAbroadRoadmap />} />
                     <Route path="abroad/roadmap/:id" element={<StudyAbroadRoadmapResults />} />
 
