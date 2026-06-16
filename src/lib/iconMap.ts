@@ -1,4 +1,4 @@
-﻿import {
+import {
   Briefcase,
   Code,
   DollarSign,
@@ -105,6 +105,7 @@
   Palette,
   Search,
   Headphones,
+  Sparkles,
   type LucideIcon,
 } from "lucide-react";
 
@@ -224,6 +225,7 @@ export const iconMap: Record<string, LucideIcon> = {
   upload: Upload,
   search: Search,
   headphones: Headphones,
+  sparkles: Sparkles,
 };
 
 export const defaultIcon = Briefcase;

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Group Academy — Agents Domain Export Engine (Barrel)
  */
 export { AGENT_REGISTRY, AGENT_BY_ID, getAgent, AgentChatScreen } from "./registry";
@@ -102,4 +102,7 @@ export type {
   TriggerAgentPitchRequest,
   TriggerAgentPitchResponse,
 } from "@/edge/contracts/agents";
+
+export { useTalentAgents } from "./hooks/useTalentAgents";
+export type { TalentAgent } from "./hooks/useTalentAgents";
 

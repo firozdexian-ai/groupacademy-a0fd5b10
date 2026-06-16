@@ -467,7 +467,7 @@ export default function App() {
                     <Route path="languages/:code/instructors" element={<LanguageInstructorsPage />} />
                     <Route path="agents" element={<AIAgents />} />
                     <Route path="my-agents" element={<MyAgents />} />
-                    <Route path="agent-marketplace" element={<ComingSoonGate featureKey="agent-marketplace" title="Agent Marketplace coming soon" description="A curated marketplace of AI agents built by our community is on the way. Join the waitlist for first access." secondaryCtaLabel="Explore AI Agents" secondaryCtaHref="/app/agents" />} />
+                    <Route path="agent-marketplace" element={<Navigate to="/app/agents" replace />} />
                     <Route path="gigs" element={<Gigs />} />
                     <Route path="gigs/new" element={<NewGigWizard />} />
                     <Route path="gigs/appeals" element={<GigAppeals />} />

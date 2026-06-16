@@ -1,5 +1,4 @@
-﻿import { lazy, type ComponentType, type LazyExoticComponent } from "react";
-import { AI_AGENTS, type AIAgent, getAgentById } from "@/lib/constants/agents";
+import { lazy, type ComponentType, type LazyExoticComponent } from "react";
 import { ADMIN_AGENTS, ADMIN_AGENTS_BY_KEY, type AdminAgent } from "@/lib/adminAgents";
 import {
   GRO10X_AGENTS,
@@ -36,13 +35,6 @@ export interface AgentRegistryEntry {
 export const AgentChatScreen = lazy(() => import("@/pages/app/AgentChat"));
 
 export const AGENT_REGISTRY: AgentRegistryEntry[] = [
-  ...AI_AGENTS.map<AgentRegistryEntry>((a) => ({
-    id: a.id,
-    scope: "talent",
-    label: a.name,
-    edge: "agent-runtime",
-    ui: AgentChatScreen,
-  })),
   ...ADMIN_AGENTS.map<AgentRegistryEntry>((a) => ({
     id: a.key,
     scope: "admin",
@@ -67,14 +59,12 @@ export function getAgent(scope: AgentScope, id: string): AgentRegistryEntry | un
 
 // Historical workspace compatibility layer preserved for legacy component entry points.
 export {
-  AI_AGENTS,
-  getAgentById,
   ADMIN_AGENTS,
   ADMIN_AGENTS_BY_KEY,
   GRO10X_AGENTS,
   GRO10X_AGENT_BY_KEY,
   getGro10xAgentMeta,
 };
-export type { AIAgent, AdminAgent, Gro10xAgent };
+export type { AdminAgent, Gro10xAgent };
 
 

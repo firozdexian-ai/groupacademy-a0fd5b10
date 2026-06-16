@@ -1,7 +1,6 @@
-﻿import { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { AI_AGENTS } from "@/lib/constants/agents";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -45,11 +44,6 @@ type Rule = {
   is_active: boolean | null;
 };
 
-const agentLabel = (key: string | null | undefined) => {
-  if (!key) return "Global (unknown Assistant)";
-  return AI_AGENTS.find((a) => a.id === key)?.name ?? key;
-};
-
 const maskToken = (t: string) => (!t ? "—" : t.length <= 8 ? "••••" : `••••${t.slice(-4)}`);
 
 // ─── BOT INTEGRATIONS CREDENTIALS SUB-PANEL ───────────────────────────
@@ -66,6 +60,26 @@ function BotCredentialsPanel() {
   });
   const [reveal, setReveal] = useState(false);
 
+  const agentsQuery = useQuery({
+    queryKey: ["all_active_ai_agents_basics"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("ai_agents")
+        .select("id, name, agent_key")
+        .eq("is_active", true)
+        .order("name");
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  const dbAgents = agentsQuery.data || [];
+
+  const agentLabel = (key: string | null | undefined) => {
+    if (!key) return "Global (unknown Assistant)";
+    return dbAgents.find((a) => a.agent_key === key)?.name ?? key;
+  };
+
   const listQ = useQuery({
     queryKey: ["agent_bot_credentials"],
     queryFn: async () => {
@@ -76,7 +90,7 @@ function BotCredentialsPanel() {
   });
 
   const used = new Set((listQ.data ?? []).map((c) => c.agent_key));
-  const available = AI_AGENTS.filter((a) => editing?.agent_key === a.id || !used.has(a.id));
+  const available = dbAgents.filter((a) => editing?.agent_key === a.agent_key || !used.has(a.agent_key));
 
   const save = useMutation({
     mutationFn: async () => {
@@ -180,7 +194,7 @@ function BotCredentialsPanel() {
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
                     {available.map((a) => (
-                      <SelectItem key={a.id} value={a.id} className="text-sm font-medium">
+                      <SelectItem key={a.agent_key} value={a.agent_key} className="text-sm font-medium">
                         {a.name}
                       </SelectItem>
                     ))}
@@ -329,6 +343,26 @@ function RoutingRulesPanel() {
     description: "",
     is_active: true,
   });
+
+  const agentsQuery = useQuery({
+    queryKey: ["all_active_ai_agents_basics"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("ai_agents")
+        .select("id, name, agent_key")
+        .eq("is_active", true)
+        .order("name");
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  const dbAgents = agentsQuery.data || [];
+
+  const agentLabel = (key: string | null | undefined) => {
+    if (!key || key === ANY_AGENT) return "Global (unknown Assistant)";
+    return dbAgents.find((a) => a.agent_key === key)?.name ?? key;
+  };
 
   const listQ = useQuery({
     queryKey: ["agent_routing_rules"],
@@ -489,8 +523,8 @@ function RoutingRulesPanel() {
                     <SelectItem value={ANY_AGENT} className="text-sm font-medium">
                       Global (unknown Assistant)
                     </SelectItem>
-                    {AI_AGENTS.map((a) => (
-                      <SelectItem key={a.id} value={a.id} className="text-sm font-medium">
+                    {dbAgents.map((a) => (
+                      <SelectItem key={a.agent_key} value={a.agent_key} className="text-sm font-medium">
                         {a.name}
                       </SelectItem>
                     ))}

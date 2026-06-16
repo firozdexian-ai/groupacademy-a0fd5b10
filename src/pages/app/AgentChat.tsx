@@ -5,7 +5,6 @@ import { AgentChatDialog } from "@/domains/agents/components/chat/AgentChatDialo
 import { useAgentRuntime } from "@/domains/agents/hooks/useAgentRuntime";
 import { useCredits } from "@/domains/finance/hooks/useCredits";
 import { toast } from "sonner";
-import { getAgentById } from "@/lib/constants/agents";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getIcon } from "@/lib/iconMap";
@@ -58,10 +57,6 @@ export default function AgentChat() {
  staleTime: 10 * 60 * 1000,
  });
 
- const staticFallbackAgentNode = React.useMemo(() => {
- return unverifiedAgentKeyStr ? getAgentById(unverifiedAgentKeyStr) : null;
- }, [unverifiedAgentKeyStr]);
-
  const resolvedActiveAgentMetadata = React.useMemo<AgentMetadata | null>(() => {
  if (databaseAgentRecord) {
  return {
@@ -70,21 +65,11 @@ export default function AgentChat() {
  iconColor: databaseAgentRecord.color || "text-primary-foreground",
  iconName: databaseAgentRecord.icon || "MessageSquare",
  avatarUrl: databaseAgentRecord.avatar_url,
- creditCost: databaseAgentRecord.credit_cost,
- };
- }
- if (staticFallbackAgentNode) {
- return {
- name: staticFallbackAgentNode.name,
- color: staticFallbackAgentNode.bgColor,
- iconColor: staticFallbackAgentNode.iconColor,
- iconName: "MessageSquare",
- avatarUrl: null,
- creditCost: 1,
+ creditCost: databaseAgentRecord.credit_cost ?? 1,
  };
  }
  return null;
- }, [databaseAgentRecord, staticFallbackAgentNode]);
+ }, [databaseAgentRecord]);
 
  React.useEffect(() => {
    if (resolvedActiveAgentMetadata) {

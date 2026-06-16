@@ -9,7 +9,7 @@ import { AgentCard } from "@/domains/agents/components/chat/AgentCard";
 import { AgentFilters, AgentCategory } from "@/domains/agents/components/chat/AgentFilters";
 import { BannerCarousel } from "@/components/BannerCarousel";
 import { supabase } from "@/integrations/supabase/client";
-import { AI_AGENTS, getAgentById } from "@/lib/constants/agents";
+import { getIcon } from "@/lib/iconMap";
 import { cn } from "@/lib/utils";
 
 // =========================================================================
@@ -114,35 +114,31 @@ export default function AIAgents() {
  // =========================================================================
  // SANITIZED TRANSACTION DATA COMPILERS
  // =========================================================================
- const compiledTransformedAgents = React.useMemo<TransformedAgent[]>(() => {
- const baselineInventorySource = dbAgentsRegistry.length > 0 
- ? dbAgentsRegistry 
- : (AI_AGENTS as unknown as DBAgentStats[]);
+  const compiledTransformedAgents = React.useMemo<TransformedAgent[]>(() => {
+    return dbAgentsRegistry.map((agentRecordItem) => {
+      const targetIdentificationKeyStr = agentRecordItem.agent_key;
+      const rawIconName = agentRecordItem.icon || "Briefcase";
+      const normalizedIconName = rawIconName.toLowerCase();
 
- return baselineInventorySource.map((agentRecordItem) => {
- const isDatabaseInstantiatedNode = "agent_key" in agentRecordItem;
- const targetIdentificationKeyStr = isDatabaseInstantiatedNode ? agentRecordItem.agent_key : (agentRecordItem as unknown).id;
- const verifiedStaticMetaRecord = getAgentById(targetIdentificationKeyStr);
-
- return {
- id: agentRecordItem.id,
- agent_key: targetIdentificationKeyStr,
- name: agentRecordItem.name,
- description: agentRecordItem.description,
- icon: (isDatabaseInstantiatedNode ? agentRecordItem.icon : verifiedStaticMetaRecord?.icon) as LucideIcon | undefined,
- bgColor: isDatabaseInstantiatedNode ? agentRecordItem.bg_color || "#2A7DDE" : "#2A7DDE",
- color: isDatabaseInstantiatedNode ? agentRecordItem.color || "#2A7DDE" : "#2A7DDE",
- expertise: isDatabaseInstantiatedNode ? agentRecordItem.expertise_areas || [] : [],
- creditCost: isDatabaseInstantiatedNode ? agentRecordItem.credit_cost ?? 1 : 1,
- category: (isDatabaseInstantiatedNode ? agentRecordItem.category || "career" : "career") as AgentCategory,
- avatarUrl: isDatabaseInstantiatedNode ? agentRecordItem.avatar_url : null,
- isCompanyAgent: isDatabaseInstantiatedNode ? agentRecordItem.agent_type === "company" : false,
- isFeatured: isDatabaseInstantiatedNode ? !!agentRecordItem.is_featured : false,
- users: Number(agentRecordItem.total_users) || 0,
- rating: Number(agentRecordItem.avg_rating) || 0,
- };
- });
- }, [dbAgentsRegistry]);
+      return {
+        id: agentRecordItem.id,
+        agent_key: targetIdentificationKeyStr,
+        name: agentRecordItem.name,
+        description: agentRecordItem.description,
+        icon: getIcon(normalizedIconName),
+        bgColor: agentRecordItem.bg_color || "bg-primary/10",
+        color: agentRecordItem.color || "text-primary",
+        expertise: agentRecordItem.expertise_areas || [],
+        creditCost: agentRecordItem.credit_cost ?? 1,
+        category: (agentRecordItem.category || "general") as AgentCategory,
+        avatarUrl: agentRecordItem.avatar_url,
+        isCompanyAgent: agentRecordItem.agent_type === "company",
+        isFeatured: !!agentRecordItem.is_featured,
+        users: Number(agentRecordItem.total_users) || 0,
+        rating: Number(agentRecordItem.avg_rating) || 0,
+      };
+    });
+  }, [dbAgentsRegistry]);
 
  const processedFilteredAgents = React.useMemo<TransformedAgent[]>(() => {
  const sanitizedQueryStr = textSearchQueryInput.trim().toLowerCase();
