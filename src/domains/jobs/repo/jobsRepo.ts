@@ -752,11 +752,12 @@ export async function searchPublicActiveJobs(
   filters: PublicJobSearchFilters,
   rangeFrom: number,
   rangeTo: number,
-) {
+): Promise<{ rows: any[]; count: number }> {
   let q = supabase
     .from("jobs")
     .select(
       `id, title, company_name, company_logo_url, location, job_type, experience_level, is_featured, created_at, deadline, salary_range_min, salary_range_max, salary_currency`,
+      { count: "exact" }
     )
     .eq("is_active", true)
     .or("deadline.is.null,deadline.gte.now()");
@@ -796,11 +797,14 @@ export async function searchPublicActiveJobs(
   if (filters.sort === "hot") q = q.order("is_featured", { ascending: false });
   else if (filters.sort === "expiring") q = q.order("deadline", { ascending: true });
 
-  const { data, error } = await q
+  const { data, count, error } = await q
     .order("created_at", { ascending: false })
     .range(rangeFrom, rangeTo);
   if (error) throw error;
-  return (data ?? []) as unknown[];
+  return {
+    rows: (data ?? []) as any[],
+    count: count ?? 0,
+  };
 }
 
 

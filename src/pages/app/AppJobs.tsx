@@ -49,6 +49,7 @@ export default function AppJobs() {
  const [filtersOpen, setFiltersOpen] = React.useState<boolean>(false);
 
  const [jobs, setJobs] = React.useState<JobWithSalary[]>([]);
+ const [totalCount, setTotalCount] = React.useState<number>(0);
  const [loading, setLoading] = React.useState<boolean>(true);
  const [loadingMore, setLoadingMore] = React.useState<boolean>(false);
  const [page, setPage] = React.useState<number>(0);
@@ -94,9 +95,10 @@ export default function AppJobs() {
  to,
  );
 
- const rows = (result as unknown as JobWithSalary[]) || [];
+ const rows = (result.rows as JobWithSalary[]) || [];
  setHasMore(rows.length === PAGE_SIZE);
  setJobs((prev) => (append ? [...prev, ...rows] : rows));
+ setTotalCount(result.count);
  setPage(targetPage);
  } catch (err) {
  console.error("Failed to load jobs:", err);
@@ -157,7 +159,7 @@ export default function AppJobs() {
  <p className="text-xs sm:text-sm text-muted-foreground pl-[3.4rem]">
  {loading
  ? "Loading jobs…"
- : `${filteredJobs.length} ${filteredJobs.length === 1 ? "job" : "jobs"} matching your filters.`}
+ : `${totalCount} ${totalCount === 1 ? "job" : "jobs"} matching your filters.`}
  </p>
  </header>
 
