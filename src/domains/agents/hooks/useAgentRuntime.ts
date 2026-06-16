@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getAccessToken } from "@/lib/auth";
@@ -249,7 +249,10 @@ export function useAgentRuntime(
           }
         }
 
-        if (!assistantBuffer) setMessages((prev) => prev.slice(0, -1));
+        if (!assistantBuffer) {
+          setMessages((prev) => prev.slice(0, -1));
+          toast.error("No response from agent — you were not charged.");
+        }
       } catch (err) {
         console.error("Runtime stream connection error:", err);
         toast.error("Connection lost. Please try again.");

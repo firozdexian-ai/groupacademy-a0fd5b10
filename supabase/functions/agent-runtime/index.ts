@@ -1,4 +1,4 @@
-﻿// Agent OS — Unified Runtime
+// Agent OS — Unified Runtime
 // Single edge function that powers all agent conversations across talent / company / admin / headless.
 // - Loads agent config + allowed tools + KB
 // - Charges connection fee on first contact, per-message + per-tool fees afterward
@@ -161,11 +161,14 @@ serve(async (req) => {
       }
     }
 
-    // Per-message fee (talent-only in MVP)
+    // Per-message fee pre-flight check (talent-only in MVP)
     const msgCost = isFree ? 0 : Number(agent.message_credit_cost ?? 0);
     if (msgCost > 0 && subjectKind === "talent") {
-      const charge = await chargeTalent(admin, subjectId!, msgCost, "agent_message", agent.agent_key, `Message: ${agent.name}`);
-      if (!charge.ok) return json({ error: "INSUFFICIENT_CREDITS", required: msgCost, available: charge.balance }, 402);
+      const { data: row } = await admin.from("talent_credits").select("balance").eq("talent_id", subjectId).maybeSingle();
+      const balance = Number(row?.balance ?? 0);
+      if (balance < msgCost) {
+        return json({ error: "INSUFFICIENT_CREDITS", required: msgCost, available: balance }, 402);
+      }
     }
 
     // Resolve / create thread
@@ -450,7 +453,7 @@ serve(async (req) => {
     const invKeys = Array.from(invalidations);
     const { readable, writable } = new TransformStream();
     pipeAndPersist(aiResp.body!, writable, admin, {
-      threadId: threadId!, agentId: agent.id, agentKey: agent.agent_key,
+      threadId: threadId!, agentId: agent.id, agentKey: agent.agent_key, agentName: agent.name,
       subjectKind, subjectId: subjectId!, variant, msgCost, invalidationKeys: invKeys,
     }).catch(err => console.error("[agent-runtime] persist error", err));
 
@@ -625,7 +628,7 @@ async function pipeAndPersist(
   src: ReadableStream<Uint8Array>,
   dst: WritableStream<Uint8Array>,
   admin: unknown,
-  ctx: { threadId: string; agentId: string; agentKey: string; subjectKind: string; subjectId: string; variant: string; msgCost: number; invalidationKeys?: string[] },
+  ctx: { threadId: string; agentId: string; agentKey: string; agentName: string; subjectKind: string; subjectId: string; variant: string; msgCost: number; invalidationKeys?: string[] },
 ) {
   const reader = src.getReader();
   const writer = dst.getWriter();
@@ -673,18 +676,31 @@ async function pipeAndPersist(
 
   // Persist assistant turn + ledger event
   if (assistantText) {
-    await admin.from("agent_messages").insert({
-      thread_id: ctx.threadId, role: "assistant", content: assistantText,
-      tokens_out: tokensOut, credit_cost: ctx.msgCost, prompt_variant: ctx.variant,
-    });
-    await admin.from("agent_credit_events").insert({
-      agent_id: ctx.agentId, thread_id: ctx.threadId,
-      subject_kind: ctx.subjectKind, subject_id: ctx.subjectId,
-      event_kind: "message", credits: ctx.msgCost,
-      tokens_out: tokensOut, prompt_variant: ctx.variant,
-    });
-    await admin.from("agent_threads").update({ last_message_at: new Date().toISOString() }).eq("id", ctx.threadId);
-    await admin.rpc("increment_agent_conversations", { p_agent_key: ctx.agentKey });
+    let chargeSuccessful = true;
+
+    // Per-message fee deduction (talent-only in MVP) - commit on success
+    if (ctx.msgCost > 0 && ctx.subjectKind === "talent") {
+      const charge = await chargeTalent(admin, ctx.subjectId, ctx.msgCost, "agent_message", ctx.agentKey, `Message: ${ctx.agentName}`);
+      if (!charge.ok) {
+        console.error(`[agent-runtime] Commit-on-success charge failed for talent ${ctx.subjectId}. Required: ${ctx.msgCost}`);
+        chargeSuccessful = false;
+      }
+    }
+
+    if (chargeSuccessful) {
+      await admin.from("agent_messages").insert({
+        thread_id: ctx.threadId, role: "assistant", content: assistantText,
+        tokens_out: tokensOut, credit_cost: ctx.msgCost, prompt_variant: ctx.variant,
+      });
+      await admin.from("agent_credit_events").insert({
+        agent_id: ctx.agentId, thread_id: ctx.threadId,
+        subject_kind: ctx.subjectKind, subject_id: ctx.subjectId,
+        event_kind: "message", credits: ctx.msgCost,
+        tokens_out: tokensOut, prompt_variant: ctx.variant,
+      });
+      await admin.from("agent_threads").update({ last_message_at: new Date().toISOString() }).eq("id", ctx.threadId);
+      await admin.rpc("increment_agent_conversations", { p_agent_key: ctx.agentKey });
+    }
   }
 }
 
@@ -831,6 +847,7 @@ async function runWorkforceInstance(body: RunRequest, admin: unknown): Promise<R
     threadId: threadId!,
     agentId: template.id,
     agentKey: template.agent_key,
+    agentName: agentName,
     subjectKind,
     subjectId,
     variant: "waas",
