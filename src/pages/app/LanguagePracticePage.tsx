@@ -114,58 +114,58 @@ export default function LanguagePracticePage() {
  }, [conversationTurns]);
 
  const handleDispatchMessageSequence = React.useCallback(async () => {
- if (!userTextInputStr.trim() || isInferenceProcessing) return;
+  if (!userTextInputStr.trim() || isInferenceProcessing) return;
 
- if (balance < 1) {
-   toast.error("You need at least 1 credit to practice.");
-   return;
- }
+  if (balance < 1) {
+    toast.error("You need at least 1 credit to practice.");
+    return;
+  }
 
- const sanitizedText = userTextInputStr.trim();
- setUserTextInputStr("");
- setIsInferenceProcessing(true);
+  const sanitizedText = userTextInputStr.trim();
+  setUserTextInputStr("");
+  setIsInferenceProcessing(true);
 
- try {
- const paid = await deductCredits("AI_AGENT_CHAT", undefined, `Language Practice: ${languageCode.toUpperCase()}`);
- if (!paid) {
-   setUserTextInputStr(sanitizedText);
-   setIsInferenceProcessing(false);
-   return;
- }
+  // Append user turn immediately for responsive UI
+  updateConversationTurns((prev) => [...prev, { role: "user", content: sanitizedText }]);
 
- updateConversationTurns((prev) => [...prev, { role: "user", content: sanitizedText }]);
+  try {
+  const data = await aiLanguagePartner({
+  language_code: languageCode.toUpperCase(),
+  cefr_level: activeCefrLevel,
+  message: sanitizedText,
+  session_id: activeSessionId,
+  });
 
- const data = await aiLanguagePartner({
- language_code: languageCode.toUpperCase(),
- cefr_level: activeCefrLevel,
- message: sanitizedText,
- session_id: activeSessionId,
- });
+  if (data?.error) throw new Error(data.error);
 
- if (data?.error) throw new Error(data.error);
+  // Deduct credit only after successful API execution
+  const paid = await deductCredits("AI_AGENT_CHAT", undefined, `Language Practice: ${languageCode.toUpperCase()}`);
+  if (!paid) {
+    throw new Error("Could not process credit deduction.");
+  }
 
- if (data.session_id && data.session_id !== activeSessionId) {
-   updateActiveSessionId(data.session_id);
- }
+  if (data.session_id && data.session_id !== activeSessionId) {
+    updateActiveSessionId(data.session_id);
+  }
 
- updateConversationTurns((prev) => [
- ...prev,
- {
- role: "assistant",
- content: data.reply as string,
- translation_en: data.translation_en as string | undefined,
- },
- ]);
+  updateConversationTurns((prev) => [
+  ...prev,
+  {
+  role: "assistant",
+  content: data.reply as string,
+  translation_en: data.translation_en as string | undefined,
+  },
+  ]);
 
- if (Array.isArray(data.corrections) && data.corrections.length) {
- updateActiveCorrections((prev) => [...prev, ...(data.corrections as Correction[])]);
- }
- } catch (e: any) {
- toast.error(e.message || "Could not send message. Please try again.");
- } finally {
- setIsInferenceProcessing(false);
- }
- }, [userTextInputStr, isInferenceProcessing, activeCefrLevel, activeSessionId, languageCode, balance, deductCredits, updateActiveSessionId, updateConversationTurns, updateActiveCorrections]);
+  if (Array.isArray(data.corrections) && data.corrections.length) {
+  updateActiveCorrections((prev) => [...prev, ...(data.corrections as Correction[])]);
+  }
+  } catch (e: any) {
+  toast.error(e.message || "Could not send message. Please try again.");
+  } finally {
+  setIsInferenceProcessing(false);
+  }
+  }, [userTextInputStr, isInferenceProcessing, activeCefrLevel, activeSessionId, languageCode, balance, deductCredits, updateActiveSessionId, updateConversationTurns, updateActiveCorrections]);
 
  const handleKeyboardInputInterceptor = React.useCallback(
  (e: React.KeyboardEvent<HTMLInputElement>) => {

@@ -193,7 +193,6 @@ const SalaryAnalysisProcessing = lazy(() => import("./pages/SalaryAnalysisProces
 const SalaryAnalysisResults = lazy(() => import("./pages/SalaryAnalysisResults"));
 
 // Study abroad + blog
-const StudyAbroad = lazy(() => import("./pages/app/StudyAbroad"));
 const StudyAbroadDetail = lazy(() => import("./pages/app/StudyAbroadDetail"));
 const StudyAbroadRoadmap = lazy(() => import("./pages/app/StudyAbroadRoadmap"));
 const StudyAbroadRoadmapResults = lazy(() => import("./pages/app/StudyAbroadRoadmapResults"));
@@ -557,7 +556,7 @@ export default function App() {
                     <Route path="tools/portfolio" element={<AppPortfolioRequest />} />
 
                     {/* Study Abroad - Specific Routes First */}
-                    <Route path="abroad/study" element={<StudyAbroad />} />
+                    <Route path="abroad/study" element={<Navigate to="/app/abroad" replace />} />
                     <Route path="abroad/study/:id" element={<StudyAbroadDetail />} />
                     <Route path="abroad/ielts-legacy" element={<Navigate to="/app/abroad/ielts" replace />} />
                     <Route path="abroad/roadmap" element={<StudyAbroadRoadmap />} />

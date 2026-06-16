@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Centralized route definitions for the application.
  * Use these constants instead of hardcoding routes throughout the codebase.
  */
@@ -80,7 +80,7 @@ export const ROUTES = {
     
     // Other
     abroad: '/app/abroad',
-    abroadStudy: '/app/abroad/study',
+    abroadStudy: '/app/abroad',
     abroadStudyDetail: (id: string) => `/app/abroad/study/${id}`,
     abroadIelts: '/app/abroad/ielts',
     abroadRoadmap: '/app/abroad/roadmap',

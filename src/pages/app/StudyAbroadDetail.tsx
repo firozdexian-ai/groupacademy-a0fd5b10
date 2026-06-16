@@ -32,7 +32,7 @@ import { PAGE_SHELL, PAGE_TITLE, PAGE_SUBTITLE, CARD, META_TEXT } from "@/lib/ui
 import { getCountryFlag } from "@/lib/constants/countries";
 import { cn } from "@/lib/utils";
 
-// Production Data Contracts[cite: 8]
+// Production Data Contracts
 interface Program {
  id: string;
  university_name: string;
@@ -115,7 +115,7 @@ export default function StudyAbroadDetail() {
  icon={GraduationCap}
  title="Program not found"
  description="This program may have been removed or is no longer available."
- action={{ label: "Back to programs", onClick: () => navigate("/app/abroad/study") }}
+ action={{ label: "Back to programs", onClick: () => navigate("/app/abroad") }}
  />
  </div>
  );

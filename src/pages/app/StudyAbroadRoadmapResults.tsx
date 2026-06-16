@@ -193,7 +193,7 @@ export default function StudyAbroadRoadmapResults() {
  <Card
  key={idx}
  className={cn(CARD, "cursor-pointer hover:border-primary/40 transition-all")}
- onClick={() => navigate(`/app/abroad/study`)}
+ onClick={() => navigate(`/app/abroad`)}
  >
  <CardContent className="p-8 space-y-4">
  <Badge variant={uni.tier === "reach" ? "destructive" : "secondary"}>{uni.tier}</Badge>

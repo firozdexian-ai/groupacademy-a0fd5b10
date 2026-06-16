@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { isToday, isFuture } from "date-fns";
-import { StudyAbroadSection } from "./StudyAbroadSection";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 import { cn } from "@/lib/utils";
 import { formatEventTime, formatEventLocal, DEFAULT_EVENT_TZ } from "@/lib/eventTime";
@@ -252,7 +251,26 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
         })}
       </nav>
 
-      {eventType === "abroad" && <StudyAbroadSection />}
+       {eventType === "abroad" && (
+        <Card className="rounded-2xl border border-primary/20 bg-primary/5 shadow-sm">
+          <CardContent className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-4 text-left">
+              <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0 border border-primary/10">
+                <Globe className="h-5 w-5 text-primary" />
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-bold text-foreground">Explore Study Abroad Opportunities</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Find destinations, prepare for IELTS, practice language skills, and build your personalized roadmap.
+                </p>
+              </div>
+            </div>
+            <Button size="sm" className="rounded-xl font-bold shadow-md shrink-0 self-start sm:self-auto" onClick={() => navigate("/app/abroad")}>
+              Explore Abroad <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {/* VIEW GRID A: IN-PERSON WORKSHOPS */}
       {eventType === "in_person" && (

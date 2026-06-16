@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Learning domain barrel. Explicit named re-exports only (no `export *`).
  */
 
@@ -69,7 +69,6 @@ export { QuickActionCard } from "./components/talent/QuickActionCard";
 export { QuickStats } from "./components/talent/QuickStats";
 export { ReviewQueueRunner } from "./components/talent/ReviewQueueRunner";
 export { SkillCredentialsPanel } from "./components/talent/SkillCredentialsPanel";
-export { StudyAbroadSection } from "./components/talent/StudyAbroadSection";
 export { TalentMirrorPanel } from "./components/talent/TalentMirrorPanel";
 export { TrackProgressRing } from "./components/talent/TrackProgressRing";
 export { TracksTab } from "./components/talent/TracksTab";
@@ -78,6 +77,4 @@ export { UpcomingSessionsRail } from "./components/talent/UpcomingSessionsRail";
 export { WebinarEnrollPanel } from "./components/talent/WebinarEnrollPanel";
 export { AcademyView } from "./components/talent/views/AcademyView";
 export { MyHubView } from "./components/talent/views/MyHubView";
-export { StudyAbroadView } from "./components/talent/views/StudyAbroadView";
 export { TracksView } from "./components/talent/views/TracksView";
-
