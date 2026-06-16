@@ -1,4 +1,4 @@
-﻿import * as React from "react";
+import * as React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { searchPublicActiveJobs } from "@/domains/jobs/repo/jobsRepo";
 import { useSavedItems } from "@/hooks/useSavedItems";
@@ -87,6 +87,8 @@ export default function AppJobs() {
  search: debouncedQuery ?? null,
  jobTypes: selectedTypes,
  sort: sort === "hot" ? "hot" : sort === "expiring" ? "expiring" : null,
+ experienceLevels: selectedExpLevels,
+ minSalaryK: minSalaryK > 0 ? minSalaryK : null,
  },
  from,
  to,
@@ -103,7 +105,7 @@ export default function AppJobs() {
  setLoadingMore(false);
  }
  },
- [companyFilter, locationFilter, sort, debouncedQuery, selectedTypes],
+ [companyFilter, locationFilter, sort, debouncedQuery, selectedTypes, selectedExpLevels, minSalaryK],
  );
 
  React.useEffect(() => {
@@ -111,29 +113,8 @@ export default function AppJobs() {
  }, [fetchJobs]);
 
  const filteredJobs = React.useMemo<JobWithSalary[]>(() => {
- return jobs.filter((job) => {
- const normalizedLevel = job.experience_level?.replace("_level", "") || job.experience_level;
- const matchesExperience =
- selectedExpLevels.length === 0 ||
- selectedExpLevels.some((lvl) => lvl.replace("_level", "") === normalizedLevel);
-
- let matchesSalary = true;
- if (minSalaryK > 0 && job.salary_range_max) {
- const minUsd = minSalaryK * 1000;
- const maxUsd = job.salary_currency === "BDT" ? job.salary_range_max / 110 : job.salary_range_max;
- matchesSalary = maxUsd >= minUsd;
- }
-
- const matchesLocationScope =
- locationFilter !== "abroad" ||
- ["remote", "international", "abroad", "overseas"].some((term) =>
- job.location?.toLowerCase().includes(term),
- ) ||
- job.job_type === "remote";
-
- return matchesExperience && matchesSalary && matchesLocationScope;
- });
- }, [jobs, selectedExpLevels, minSalaryK, locationFilter]);
+ return jobs;
+ }, [jobs]);
 
  const clearFilters = React.useCallback(() => {
  setQuery("");

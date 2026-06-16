@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Jobs domain repository.
  *
  * Phase 10a: typed wrappers around `supabase.from(...)` for jobs-owned tables
@@ -744,6 +744,8 @@ export interface PublicJobSearchFilters {
   search?: string | null;
   jobTypes?: string[];
   sort?: "hot" | "expiring" | null;
+  experienceLevels?: string[];
+  minSalaryK?: number | null;
 }
 
 export async function searchPublicActiveJobs(
@@ -760,16 +762,37 @@ export async function searchPublicActiveJobs(
     .or("deadline.is.null,deadline.gte.now()");
 
   if (filters.company) q = q.ilike("company_name", `%${filters.company}%`);
-  if (filters.location && filters.location !== "abroad") {
+  
+  if (filters.location === "abroad") {
+    q = q.or("location.ilike.%remote%,location.ilike.%international%,location.ilike.%abroad%,location.ilike.%overseas%,job_type.eq.remote");
+  } else if (filters.location) {
     q = q.ilike("location", `%${filters.location}%`);
   }
+  
   if (filters.search && filters.search.trim()) {
     const s = filters.search.trim();
-    q = q.or(`title.ilike.%${s}%,company_name.ilike.%${s}%`);
+    q = q.textSearch("search_tsv", s, { config: "simple", type: "websearch" });
   }
+  
   if (filters.jobTypes && filters.jobTypes.length) {
-    q = q.in("job_type", filters.jobTypes as unknown);
+    q = q.in("job_type", filters.jobTypes);
   }
+
+  if (filters.experienceLevels && filters.experienceLevels.length) {
+    const queryLevels = filters.experienceLevels.flatMap((lvl) => [
+      lvl,
+      lvl.replace("_level", ""),
+      lvl.replace("_level", "") + "_level",
+    ]);
+    q = q.in("experience_level", queryLevels);
+  }
+
+  if (filters.minSalaryK && filters.minSalaryK > 0) {
+    const minUsd = filters.minSalaryK * 1000;
+    const minBdt = minUsd * 110;
+    q = q.or(`and(salary_currency.eq.BDT,salary_range_max.gte.${minBdt}),and(salary_currency.neq.BDT,salary_range_max.gte.${minUsd})`);
+  }
+  
   if (filters.sort === "hot") q = q.order("is_featured", { ascending: false });
   else if (filters.sort === "expiring") q = q.order("deadline", { ascending: true });
 
@@ -779,6 +802,7 @@ export async function searchPublicActiveJobs(
   if (error) throw error;
   return (data ?? []) as unknown[];
 }
+
 
 // ─── Phase 10j.5g5 ─────────────────────────────────────────────────────────
 export async function getJobTitleById(jobId: string): Promise<string | null> {
@@ -1198,6 +1222,22 @@ export async function listCareerAssessmentLeads(args: {
   if (error) throw error;
   return { rows: (data ?? []) as unknown[], count: count ?? 0 };
 }
+
+export async function getJobScreeningQuestions(jobId: string) {
+  try {
+    const { data, error } = await supabase
+      .from("external_application_questions")
+      .select("questions")
+      .eq("job_id", jobId)
+      .maybeSingle();
+    if (error) throw error;
+    return (data?.questions ?? null) as unknown;
+  } catch (err: any) {
+    trackError("jobs-repo-getJobScreeningQuestions-failure", { jobId, error: err.message });
+    return null;
+  }
+}
+
 
 
 

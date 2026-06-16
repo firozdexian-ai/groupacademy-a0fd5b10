@@ -2,9 +2,10 @@ import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { uploadTalentCv, createTalentCvSignedUrl } from "@/domains/jobs/repo/jobsRepo";
 import {
- getJobForApplication,
- getExistingTalentApplication,
- insertTalentJobApplication,
+  getJobForApplication,
+  getExistingTalentApplication,
+  insertTalentJobApplication,
+  getJobScreeningQuestions,
 } from "@/domains/jobs/repo/jobsRepo";
 import { updateTalentCvUrl } from "@/domains/talent/repo/talentRepo";
 import { useTalent } from "@/hooks/useTalent";
@@ -12,6 +13,7 @@ import { useCredits } from "@/domains/finance/hooks/useCredits";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
@@ -64,26 +66,61 @@ const SUBMISSION_STAGES: SubmissionStage[] = [
  { progress: 85, message: "Almost done..." },
 ];
 
+interface ScreeningQuestion {
+  id: string;
+  label: string;
+  type: "text" | "boolean" | "select";
+  options?: string[];
+  required?: boolean;
+}
+
+const parseScreeningQuestions = (questionsField: any): ScreeningQuestion[] => {
+  if (!questionsField) return [];
+  if (Array.isArray(questionsField)) {
+    return questionsField.map((q: any, idx: number) => {
+      if (typeof q === "string") {
+        return {
+          id: `q_${idx}`,
+          label: q,
+          type: "text",
+          required: true,
+        };
+      }
+      return {
+        id: q.id || `q_${idx}`,
+        label: q.label || q.text || "",
+        type: q.type || "text",
+        options: q.options || [],
+        required: q.required !== false,
+      };
+    });
+  }
+  return [];
+};
+
 /**
  * Job application submission page: CV upload, cover letter, and submit.
  */
 export default function AppJobApplication() {
- const { id: unverifiedJobIdentifierStr } = useParams<{ id: string }>();
- const navigateHook = useNavigate();
- const { talent: talentProfileRecord, refreshTalent } = useTalent();
- const { balance, canAfford, deductCredits, getServiceCost, refreshBalance } = useCredits();
+  const { id: unverifiedJobIdentifierStr } = useParams<{ id: string }>();
+  const navigateHook = useNavigate();
+  const { talent: talentProfileRecord, refreshTalent } = useTalent();
+  const { balance, canAfford, deductCredits, getServiceCost, refreshBalance } = useCredits();
 
- const [jobRecordState, setJobRecordState] = React.useState<Job | null>(null);
- const [isDataLayerLoading, setIsDataLayerLoading] = React.useState<boolean>(true);
- const [isSubmissionInFlight, setIsSubmissionInFlight] = React.useState<boolean>(false);
- const [isApplicationSubmitted, setIsApplicationSubmitted] = React.useState<boolean>(false);
- const [coverLetterInputStr, setCoverLetterInputStr] = React.useState<string>("");
- const [isPurchaseSheetOpen, setIsPurchaseSheetOpen] = React.useState<boolean>(false);
- const [isAIComposerProcessing, setIsAIComposerProcessing] = React.useState<boolean>(false);
- const [submissionProgressValue, setSubmissionProgressValue] = React.useState<number>(0);
- const [submissionProgressMessage, setSubmissionProgressMessage] = React.useState<string>("");
- const [generatedAssessmentId, setGeneratedAssessmentId] = React.useState<string | null>(null);
- const [isCVStorageUploading, setIsCVStorageUploading] = React.useState<boolean>(false);
+  const [jobRecordState, setJobRecordState] = React.useState<Job | null>(null);
+  const [screeningQuestions, setScreeningQuestions] = React.useState<ScreeningQuestion[]>([]);
+  const [answers, setAnswers] = React.useState<Record<string, string>>({});
+  const [isDataLayerLoading, setIsDataLayerLoading] = React.useState<boolean>(true);
+  const [isSubmissionInFlight, setIsSubmissionInFlight] = React.useState<boolean>(false);
+  const [isApplicationSubmitted, setIsApplicationSubmitted] = React.useState<boolean>(false);
+  const [coverLetterInputStr, setCoverLetterInputStr] = React.useState<string>("");
+  const [isPurchaseSheetOpen, setIsPurchaseSheetOpen] = React.useState<boolean>(false);
+  const [isAIComposerProcessing, setIsAIComposerProcessing] = React.useState<boolean>(false);
+  const [submissionProgressValue, setSubmissionProgressValue] = React.useState<number>(0);
+  const [submissionProgressMessage, setSubmissionProgressMessage] = React.useState<string>("");
+  const [generatedAssessmentId, setGeneratedAssessmentId] = React.useState<string | null>(null);
+  const [isCVStorageUploading, ReactIsCVStorageUploading] = React.useState<boolean>(false);
+  const isCVStorageUploading = ReactIsCVStorageUploading;
 
  const submissionExecutionGuardRef = React.useRef<boolean>(false);
  const computedApplicationCost = getServiceCost("JOB_APPLICATION") || 0;
@@ -111,6 +148,11 @@ export default function AppJobApplication() {
 
  if (!isThreadActive) return;
  setJobRecordState(jobQueryPayload as unknown as Job);
+
+ const questionsData = await getJobScreeningQuestions(unverifiedJobIdentifierStr);
+ if (isThreadActive && questionsData) {
+   setScreeningQuestions(parseScreeningQuestions(questionsData));
+ }
 
  if (talentProfileRecord?.id) {
  const existingApplicationRecord = await getExistingTalentApplication(
@@ -194,7 +236,7 @@ export default function AppJobApplication() {
 
  setIsAIComposerProcessing(true);
  try {
- let rpcResponsePayload: unknown = null;
+ let rpcResponsePayload: any = null;
  let edgeFunctionInvokeError: unknown = null;
  try {
  rpcResponsePayload = await enhanceCoverLetter({
@@ -238,6 +280,15 @@ export default function AppJobApplication() {
  return;
  }
 
+ // Validate screening questions
+ for (const q of screeningQuestions) {
+   if (q.required && (!answers[q.id] || !answers[q.id].trim())) {
+     toast.error(`Please answer the required question: "${q.label}"`);
+     document.getElementById(q.id)?.scrollIntoView({ behavior: "smooth" });
+     return;
+   }
+ }
+
  submissionExecutionGuardRef.current = true;
  setIsSubmissionInFlight(true);
  setSubmissionProgressValue(20);
@@ -251,7 +302,8 @@ export default function AppJobApplication() {
  cover_letter: coverLetterInputStr.trim(),
  cv_url: talentProfileRecord.cvUrl,
  delivery_status: "pending",
- });
+ application_answers: answers,
+ } as any);
 
  if (applicationInsertError || !applicationInsertPayload) throw applicationInsertError;
 
@@ -270,7 +322,7 @@ export default function AppJobApplication() {
  setSubmissionProgressValue(65);
  setSubmissionProgressMessage("Preparing your AI interview...");
 
- let assessmentResponsePayload: unknown = null;
+ let assessmentResponsePayload: any = null;
  let assessmentGenerationError: unknown = null;
  try {
  assessmentResponsePayload = await generateJobAssessment({
@@ -303,6 +355,8 @@ export default function AppJobApplication() {
  coverLetterInputStr,
  deductCredits,
  refreshBalance,
+ screeningQuestions,
+ answers,
  ]);
 
  const handleReturnHistoryTrigger = React.useCallback(() => {
@@ -400,39 +454,52 @@ export default function AppJobApplication() {
  }
 
  return (
- <div className="max-w-3xl mx-auto px-4 py-6 space-y-6 text-left antialiased block transform-gpu w-full pb-48">
- {/* Top bar */}
- <header className="flex items-center justify-between select-none leading-none w-full shrink-0">
- <div className="flex items-center gap-3.5 min-w-0">
- <Button
- type="button"
- variant="ghost"
- size="icon" aria-label="Go back"
- className="rounded-lg h-9 w-9 hover:bg-muted cursor-pointer shrink-0 border border-border/5"
- onClick={handleReturnHistoryTrigger}
- >
- <ArrowLeft className="h-4 w-4 stroke-[2.5]" />
- </Button>
- <div className="min-w-0 leading-none space-y-0.5">
- <h1 className="font-bold text-sm sm:text-base uppercase tracking-wide text-foreground truncate block pt-0.5">
- Transmission Submission Protocol
- </h1>
- <p className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-wider block leading-none">
- DEPLOYMENT: STANDARD EMPLOYMENT APPLICATION CONTAINER
- </p>
- </div>
- </div>
+    <div className="max-w-3xl mx-auto px-4 py-6 space-y-6 text-left antialiased block transform-gpu w-full pb-48">
+      {/* Top bar */}
+      <header className="flex items-center justify-between select-none leading-none w-full shrink-0">
+        <div className="flex items-center gap-3.5 min-w-0">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon" aria-label="Go back"
+            className="rounded-lg h-9 w-9 hover:bg-muted cursor-pointer shrink-0 border border-border/5"
+            onClick={handleReturnHistoryTrigger}
+          >
+            <ArrowLeft className="h-4 w-4 stroke-[2.5]" />
+          </Button>
+          <div className="min-w-0 leading-none space-y-0.5">
+            <h1 className="font-bold text-sm sm:text-base uppercase tracking-wide text-foreground truncate block pt-0.5">
+              Transmission Submission Protocol
+            </h1>
+            <p className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-wider block leading-none">
+              DEPLOYMENT: STANDARD EMPLOYMENT APPLICATION CONTAINER
+            </p>
+          </div>
+        </div>
 
- <Badge
- variant="outline"
- className="font-mono text-[9px] font-extrabold uppercase px-2 h-5 tracking-wide rounded bg-primary/5 text-primary border-primary/20 shrink-0 pointer-events-none leading-none pt-0.5"
- >
- ACTIVE PROFILE CONNECTION NODE
- </Badge>
- </header>
+        <Badge
+          variant="outline"
+          className="font-mono text-[9px] font-extrabold uppercase px-2 h-5 tracking-wide rounded bg-primary/5 text-primary border-primary/20 shrink-0 pointer-events-none leading-none pt-0.5"
+        >
+          ACTIVE PROFILE CONNECTION NODE
+        </Badge>
+      </header>
 
- {/* Job summary */}
- <Card className="rounded-xl border border-border/60 bg-card/40 shadow-none overflow-hidden block w-full select-none pointer-events-none">
+      {/* CV Warning Banner */}
+      {!talentProfileRecord?.cvUrl && (
+        <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 flex gap-3 text-left animate-in fade-in slide-in-from-top-4 duration-300">
+          <Zap className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <h4 className="text-xs font-bold text-amber-800 uppercase tracking-wide">Resume (CV) Required</h4>
+            <p className="text-[11px] font-semibold text-amber-700/80 leading-normal">
+              A verified resume document is required to initialize application containers. Please upload your CV below to enable the AI cover letter assistant and proceed with submission.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Job summary */}
+      <Card className="rounded-xl border border-border/60 bg-card/40 shadow-none overflow-hidden block w-full select-none pointer-events-none">
  <CardContent className="p-4 flex items-center gap-3.5 leading-none w-full block">
  <div className="w-12 h-12 rounded-lg bg-background border border-border/40 shadow-inner flex items-center justify-center shrink-0 overflow-hidden">
  {jobRecordState.company_logo_url ? (
@@ -541,42 +608,112 @@ export default function AppJobApplication() {
  </CardContent>
  </Card>
 
- {/* Cover letter */}
- <Card className="rounded-xl border border-border/60 bg-card/10 shadow-none overflow-hidden block w-full">
- <CardHeader className="bg-muted/20 px-4 py-3 border-b border-border/5 flex flex-row items-center justify-between w-full select-none shrink-0 leading-none">
- <CardTitle className="text-[10px] font-mono font-black uppercase tracking-wide flex items-center gap-2 text-foreground/80 leading-none m-0">
- <Sparkles className="w-4 h-4 text-primary stroke-[2.2]" />
- <span>Cover Letter</span>
- </CardTitle>
+  {/* Cover letter */}
+  <Card className="rounded-xl border border-border/60 bg-card/10 shadow-none overflow-hidden block w-full">
+  <CardHeader className="bg-muted/20 px-4 py-3 border-b border-border/5 flex flex-row items-center justify-between w-full select-none shrink-0 leading-none">
+  <CardTitle className="text-[10px] font-mono font-black uppercase tracking-wide flex items-center gap-2 text-foreground/80 leading-none m-0">
+  <Sparkles className="w-4 h-4 text-primary stroke-[2.2]" />
+  <span>Cover Letter</span>
+  </CardTitle>
 
- <Button
- type="button"
- variant="outline"
- size="sm"
- onClick={handleAICoverLetterSynthesisSequence}
- disabled={isAIComposerProcessing || !talentProfileRecord?.cvUrl}
- className="h-8 rounded-lg border border-border/60 font-mono text-[9px] font-extrabold uppercase tracking-wide gap-1.5 bg-background hover:bg-primary/5 cursor-pointer shadow-2xs pt-0.5 flex items-center shrink-0 disabled:opacity-50"
- >
- {isAIComposerProcessing ? (
- <Loader2 className="animate-spin h-3 w-3 stroke-[2.5]" />
- ) : (
- <Zap className="h-3.5 w-3.5 text-primary stroke-[2.2]" />
- )}
- <span>Write with AI</span>
- </Button>
- </CardHeader>
- <CardContent className="p-4 block w-full leading-none">
- <Textarea
- placeholder="Tell the recruiter about your background, why you're interested in this role, and what makes you a great fit..."
- value={coverLetterInputStr}
- onChange={(e) => setCoverLetterInputStr(e.target.value)}
- disabled={isAIComposerProcessing}
- className="min-h-[200px] font-sans text-xs sm:text-sm font-medium leading-relaxed bg-background/50 border border-border/60 focus-visible:ring-1 focus-visible:ring-ring rounded-lg shadow-none p-3 resize-none"
- />
- </CardContent>
- </Card>
+  <Button
+  type="button"
+  variant="outline"
+  size="sm"
+  onClick={handleAICoverLetterSynthesisSequence}
+  disabled={isAIComposerProcessing || !talentProfileRecord?.cvUrl}
+  className="h-8 rounded-lg border border-border/60 font-mono text-[9px] font-extrabold uppercase tracking-wide gap-1.5 bg-background hover:bg-primary/5 cursor-pointer shadow-2xs pt-0.5 flex items-center shrink-0 disabled:opacity-50"
+  >
+  {isAIComposerProcessing ? (
+  <Loader2 className="animate-spin h-3 w-3 stroke-[2.5]" />
+  ) : (
+  <Zap className="h-3.5 w-3.5 text-primary stroke-[2.2]" />
+  )}
+  <span>Write with AI</span>
+  </Button>
+  </CardHeader>
+  <CardContent className="p-4 block w-full leading-none">
+  <Textarea
+  placeholder="Tell the recruiter about your background, why you're interested in this role, and what makes you a great fit..."
+  value={coverLetterInputStr}
+  onChange={(e) => setCoverLetterInputStr(e.target.value)}
+  disabled={isAIComposerProcessing}
+  className="min-h-[200px] font-sans text-xs sm:text-sm font-medium leading-relaxed bg-background/50 border border-border/60 focus-visible:ring-1 focus-visible:ring-ring rounded-lg shadow-none p-3 resize-none"
+  />
+  </CardContent>
+  </Card>
 
- {/* Sticky submit bar */}
+  {/* Screening Questions Card */}
+  {screeningQuestions.length > 0 && (
+    <Card className="rounded-xl border border-border/60 bg-card/10 shadow-none overflow-hidden block w-full">
+      <CardHeader className="bg-muted/20 px-4 py-3 border-b border-border/5 select-none shrink-0 leading-none">
+        <CardTitle className="text-[10px] font-mono font-black uppercase tracking-wide flex items-center gap-2 text-foreground/80 leading-none m-0">
+          <FileText className="w-4 h-4 text-primary stroke-[2.2]" />
+          <span>Screening Questions</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="p-4 block w-full leading-none space-y-4">
+        {screeningQuestions.map((q) => (
+          <div key={q.id} id={q.id} className="space-y-2 text-left">
+            <Label className="text-xs font-bold text-foreground flex items-center gap-1">
+              <span>{q.label}</span>
+              {q.required && <span className="text-destructive">*</span>}
+            </Label>
+            {q.type === "text" && (
+              <Input
+                placeholder="Type your answer here..."
+                value={answers[q.id] || ""}
+                onChange={(e) => setAnswers(prev => ({ ...prev, [q.id]: e.target.value }))}
+                className="font-sans text-xs sm:text-sm font-medium leading-relaxed bg-background/50 border border-border/60 focus-visible:ring-1 focus-visible:ring-ring rounded-lg shadow-none p-3"
+              />
+            )}
+            {q.type === "select" && (
+              <select
+                value={answers[q.id] || ""}
+                onChange={(e) => setAnswers(prev => ({ ...prev, [q.id]: e.target.value }))}
+                className="flex h-10 w-full items-center justify-between rounded-lg border border-border/60 bg-background/50 px-3 py-2 text-xs sm:text-sm font-semibold text-foreground/90 transition-colors duration-150 transform-gpu antialiased outline-none shadow-inner focus:outline-none focus:border-primary focus:ring-1 focus:ring-ring"
+              >
+                <option value="">Select an option...</option>
+                {q.options?.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+            )}
+            {q.type === "boolean" && (
+              <div className="flex gap-6 pt-1">
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    type="radio"
+                    name={q.id}
+                    value="Yes"
+                    checked={answers[q.id] === "Yes"}
+                    onChange={() => setAnswers(prev => ({ ...prev, [q.id]: "Yes" }))}
+                    className="h-4 w-4 accent-primary border-border bg-background cursor-pointer focus:ring-1 focus:ring-primary"
+                  />
+                  <span className="text-xs sm:text-sm font-semibold text-foreground/80">Yes</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    type="radio"
+                    name={q.id}
+                    value="No"
+                    checked={answers[q.id] === "No"}
+                    onChange={() => setAnswers(prev => ({ ...prev, [q.id]: "No" }))}
+                    className="h-4 w-4 accent-primary border-border bg-background cursor-pointer focus:ring-1 focus:ring-primary"
+                  />
+                  <span className="text-xs sm:text-sm font-semibold text-foreground/80">No</span>
+                </label>
+              </div>
+            )}
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  )}
+
+  {/* Sticky submit bar */}
  <div className="fixed bottom-0 left-0 right-0 p-4 sm:p-6 bg-background/95 border-t border-border/40 z-20 shadow-[0_-12px_40px_rgba(0,0,0,0.05)] select-none pb-[max(env(safe-area-inset-bottom),0.75rem)] animate-in fade-in duration-300">
  <div className="max-w-3xl mx-auto space-y-4 block w-full leading-none">
  <div className="flex justify-between items-end px-1 leading-none w-full block shrink-0 select-none pointer-events-none font-mono tracking-tight">

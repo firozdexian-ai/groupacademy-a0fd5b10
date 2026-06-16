@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Jobs domain barrel. Surfaces hooks + typed edge-function client for every
  * shell (talent `/app/jobs`, gro10x `/gro10x/work`, admin `dashboard/jobs`).
  *
@@ -18,14 +18,10 @@ export {
 } from "./hooks/useEmployerPipeline";
 export { useInviteToApply, type InviteToApplyInput } from "./hooks/useJobInvitations";
 export { useJobMatchCached, type JobMatchCache } from "./hooks/useJobMatchCached";
-export { useJobTypeCounts } from "./hooks/useJobTypeCounts";
 export { useJobsHubDashboard, type JobsHubDashboard } from "./hooks/useJobsHubDashboard";
-export { useJobsInField } from "./hooks/useJobsInField";
 export { useRankedJobs, type RankedJob, type MatchReasonType } from "./hooks/useRankedJobs";
-export { useTrendingJobs } from "./hooks/useTrendingJobs";
 
 // Components
-export { AIJobInsights } from "./components/AIJobInsights";
 export { CompanyCard } from "./components/CompanyCard";
 export { CompanyDetailSheet } from "./components/CompanyDetailSheet";
 export { CountryCard } from "./components/CountryCard";
