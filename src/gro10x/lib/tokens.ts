@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Gro10x design tokens — kept minimal and self-contained so the shell
  * looks distinct from GroUp Academy without forking the entire theme.
  * Uses HSL semantic vars matching the rest of the app where useful.
@@ -25,7 +25,7 @@ export type ProGoalKey = typeof PRO_GOALS[number]["key"];
 
 /**
  * Maps a goal to the agents that should be pre-pinned in the inbox.
- * IMPORTANT: every key here must exist in `GRO10X_AGENTS` (lib/agents.ts) —
+ * IMPORTANT: every key here must exist in `GRO10X_AGENTS` (src/gro10x/hooks/useGro10xAgents.ts) —
  * otherwise the inbox seeds rows that render as the generic 🤖 fallback.
  */
 export const GOAL_TO_AGENTS: Record<ProGoalKey, string[]> = {
