@@ -17742,25 +17742,15 @@ export type Database = {
         Args: { p_offer_id: string; p_signed_name: string }
         Returns: Json
       }
-      add_credits:
-        | {
-            Args: {
-              p_amount: number
-              p_description?: string
-              p_talent_id: string
-              p_transaction_type: string
-            }
-            Returns: Json
-          }
-        | {
-            Args: {
-              p_amount: number
-              p_description?: string
-              p_talent_id: string
-              p_transaction_type?: string
-            }
-            Returns: Json
-          }
+      add_credits: {
+        Args: {
+          p_amount: number
+          p_description?: string
+          p_talent_id: string
+          p_transaction_type?: string
+        }
+        Returns: Json
+      }
       add_portfolio_item: {
         Args: {
           p_description?: string
@@ -18020,25 +18010,15 @@ export type Database = {
         Args: { p_note?: string; p_offer_id: string }
         Returns: Json
       }
-      deduct_credits:
-        | {
-            Args: {
-              p_amount: number
-              p_description?: string
-              p_reference_id?: string
-              p_service_type: string
-            }
-            Returns: Json
-          }
-        | {
-            Args: {
-              p_amount: number
-              p_description?: string
-              p_reference_id?: string
-              p_service_type: string
-            }
-            Returns: Json
-          }
+      deduct_credits: {
+        Args: {
+          p_amount: number
+          p_description?: string
+          p_reference_id?: string
+          p_service_type: string
+        }
+        Returns: Json
+      }
       delete_course_project: { Args: { p_project_id: string }; Returns: Json }
       delete_email: {
         Args: { message_id: number; queue_name: string }
