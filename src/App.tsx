@@ -1,4 +1,4 @@
-﻿import { lazy, Suspense } from "react";
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -458,8 +458,8 @@ export default function App() {
                     <Route path="services" element={<Navigate to="/app/jobs?tab=tools" replace />} />
                     <Route path="abroad" element={<AbroadHub />} />
                     <Route path="abroad/destinations/:country" element={<DestinationGate />} />
-                    <Route path="abroad/applications" element={<ComingSoonGate featureKey="abroad-applications" title="Abroad Applications coming soon" description="We're connecting partner consultancies in your destination. Join the waitlist and we'll notify you the moment we open." secondaryCtaLabel="Back to Study Abroad" secondaryCtaHref="/app/abroad" />} />
-                    <Route path="counsellor" element={<ComingSoonGate featureKey="abroad-counsellor" title="Abroad Counsellor coming soon" description="Our certified abroad counsellors are coming online. Sign up to claim an early slot." secondaryCtaLabel="Back to Study Abroad" secondaryCtaHref="/app/abroad" />} />
+                    <Route path="abroad/applications" element={<AbroadApplications />} />
+                    <Route path="abroad/counsellor" element={<AbroadCounsellor />} />
                     <Route path="abroad/ielts" element={<IELTSCoach />} />
                     <Route path="abroad/ielts/mock/:section" element={<IELTSMockRunner />} />
                     <Route path="abroad/ielts/results/:id" element={<IELTSResults />} />

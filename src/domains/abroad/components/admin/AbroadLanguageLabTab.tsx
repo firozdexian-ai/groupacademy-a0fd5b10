@@ -1,4 +1,4 @@
-﻿import { useAbroadGraph } from "./hooks/useAbroadGraph";
+import { useAbroadGraph } from "./hooks/useAbroadGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Languages, Activity, Mic, Users, Trophy } from "lucide-react";
@@ -35,7 +35,7 @@ export function AbroadLanguageLabTab() {
             <h2 className="text-2xl font-bold tracking-tight text-foreground">Language Lab Analytics</h2>
           </div>
           <p className="text-xs text-muted-foreground">
-            Real-Time Proficiency Tracking & IELTS Evaluation Telemetry[cite: 2, 4]
+            Real-Time Proficiency Tracking & IELTS Evaluation Telemetry
           </p>
         </div>
       </header>
@@ -93,8 +93,7 @@ export function AbroadLanguageLabTab() {
                 </h3>
                 <p className="text-xs text-muted-foreground max-w-md mx-auto leading-relaxed">
                   The language metrics console is collecting student audio submission attempts and essay grades. Live
-                  telemetry metrics are compiled dynamically through the primary IELTS evaluation frameworks[cite: 2,
-                  4].
+                  telemetry metrics are compiled dynamically through the primary IELTS evaluation frameworks.
                 </p>
               </div>
             </CardContent>

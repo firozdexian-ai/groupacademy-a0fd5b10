@@ -1,4 +1,4 @@
-﻿import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useMemo, useEffect } from "react";
 import {
   Flag,
@@ -311,7 +311,7 @@ const navGroups: NavGroup[] = [
       { title: "Destinations", icon: Globe, value: "abroad-destinations" },
       { title: "Applications", icon: ClipboardList, value: "abroad-applications" },
       { title: "Uni Programs", icon: GraduationCap, value: "abroad-programs" },
-      { title: "IELTS Prompts", icon: Mic, value: "abroad-ielts-prompts" },
+      { title: "IELTS Mock Attempts", icon: Mic, value: "abroad-ielts-mock-attempts" },
       { title: "IELTS Resources", icon: BookOpen, value: "abroad-ielts-resources" },
       { title: "Language Lab", icon: Languages, value: "abroad-language-lab" },
       { title: "Roadmap Leads", icon: Map, value: "abroad-roadmap-leads" },

@@ -4,6 +4,7 @@
  * Security Profile: Restricts execution boundaries, enforces tenant/user filters, handles transactional state mapping.
  */
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser, getCurrentUserId } from "@/lib/auth";
 
 // ─── GENERIC SYSTEM GRAPH HELPERS ─────────────────────────────────────────
 export async function upsertGraphRow(table: string, payload: unknown): Promise<void> {
@@ -198,10 +199,13 @@ export async function listActiveProgramsForCountry(countryCode: string, limit = 
 }
 
 export async function listDestinationAgentMessages(countryCode: string, limit = 40) {
+  // Ensure the user only sees their own messages (privacy fix)
+  const userId = await getCurrentUserId();
   const { data, error } = await supabase
     .from("destination_agent_messages")
     .select("role, content")
     .eq("country_code", countryCode)
+    .eq("user_id", userId)
     .order("created_at", { ascending: true })
     .limit(limit);
 

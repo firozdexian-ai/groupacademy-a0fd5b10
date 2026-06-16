@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useAbroadGraph } from "./hooks/useAbroadGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,7 @@ export function AbroadDestinationsTab() {
             <h2 className="text-2xl font-bold tracking-tight text-foreground">Destination Partners</h2>
           </div>
           <p className="text-xs text-muted-foreground">
-            Vetted Destination Agent Networks & Regional Offices[cite: 2, 4]
+            Vetted Destination Agent Networks & Regional Offices
           </p>
         </div>
         <Button
@@ -162,7 +162,7 @@ export function AbroadDestinationsTab() {
               <Globe className="h-5 w-5 text-primary" /> Manage Regional Agency
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
-              Update regional partner network permissions and assignment routing[cite: 2, 4].
+              Update regional partner network permissions and assignment routing.
             </DialogDescription>
           </DialogHeader>
 

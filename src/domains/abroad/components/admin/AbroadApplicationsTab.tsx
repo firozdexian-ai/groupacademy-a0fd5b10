@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useAbroadGraph } from "./hooks/useAbroadGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,8 +15,8 @@ import { cn } from "@/lib/utils";
 /**
  * Group Academy — Abroad Group Tab: Applications Management
  * Version: Phase 10i.2 Hardened (Production Candidate Edition)
- * Surface: /dashboard?tab=applications (Admin Command Center Layout)[cite: 2, 4]
- * Operations Mode: Human-in-the-loop validation console for global student intakes[cite: 3].
+ * Surface: /dashboard?tab=applications (Admin Command Center Layout)
+ * Operations Mode: Human-in-the-loop validation console for global student intakes.
  */
 
 export function AbroadApplicationsTab() {
@@ -37,7 +37,7 @@ export function AbroadApplicationsTab() {
             <ClipboardList className="h-6 w-6 text-blue-500" />
             <h2 className="text-2xl font-bold tracking-tight text-foreground">Study Abroad Applications</h2>
           </div>
-          <p className="text-xs text-muted-foreground">Global Admissions & Placement Ledger[cite: 6]</p>
+          <p className="text-xs text-muted-foreground">Global Admissions & Placement Ledger</p>
         </div>
         <Button
           onClick={() => {
@@ -173,7 +173,7 @@ export function AbroadApplicationsTab() {
               <ClipboardList className="h-5 w-5 text-blue-600" /> Review Application File
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
-              Update the current workflow status of this student intake pipeline[cite: 6].
+              Update the current workflow status of this student intake pipeline.
             </DialogDescription>
           </DialogHeader>
 

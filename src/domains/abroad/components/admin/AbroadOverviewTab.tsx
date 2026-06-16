@@ -20,8 +20,8 @@ import { cn } from "@/lib/utils";
 /**
  * Group Academy — Career Abroad Management Dashboard: Overview Tab
  * Version: Phase 10i.2 Hardened (Production Candidate Edition)
- * Surface: /dashboard?tab=overview (Admin Command Center Cockpit)[cite: 2, 4]
- * Operations Mode: Real-time macro aggregator managing international admissions workflows[cite: 2, 4].
+ * Surface: /dashboard?tab=applications (Admin Command Center Layout)
+ * Operations Mode: Real-time macro aggregator managing international admissions workflows.
  */
 
 export function AbroadOverviewTab() {
@@ -35,7 +35,7 @@ export function AbroadOverviewTab() {
     });
   }
 
-  // Pure data computation models preserved completely[cite: 4]
+  // Pure data computation models preserved completely
   const activePrograms = useMemo(() => {
     return data?.programs?.filter((p) => p.status === "active") || [];
   }, [data?.programs]);
@@ -61,7 +61,7 @@ export function AbroadOverviewTab() {
             <h2 className="text-2xl font-bold tracking-tight text-foreground">Abroad Command Console</h2>
           </div>
           <p className="text-xs text-muted-foreground">
-            Global Admissions Intake, Language Labs, & Regional Placements[cite: 2, 4]
+            Global Admissions Intake, Language Labs, & Regional Placements
           </p>
         </div>
         {totalPendingActions > 0 && (

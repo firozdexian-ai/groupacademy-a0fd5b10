@@ -1,4 +1,4 @@
-﻿import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useApplicationMessages } from "@/domains/jobs";
 import { getCurrentUser } from "@/lib/auth";
 import { toast } from "sonner";
@@ -28,7 +28,7 @@ export function ApplicationMessageThread({ applicationId, actorRole }: Applicati
   const [isSending, setIsSending] = useState(false);
   const [activeUserId, setActiveUserId] = useState<string | null>(null);
 
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   // --- SENSOR: SECURITY_IDENTITY_INGRESS_SYNC ---
   useEffect(() => {
@@ -46,10 +46,10 @@ export function ApplicationMessageThread({ applicationId, actorRole }: Applicati
     };
   }, []);
 
-  // Structural scroll synchronization rules anchor container alignments seamlessly
+  // Scroll to bottom on new messages
   useEffect(() => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
 
@@ -105,7 +105,6 @@ export function ApplicationMessageThread({ applicationId, actorRole }: Applicati
     <div className="flex flex-col h-full min-h-[350px] bg-card/10 rounded-2xl border-2 overflow-hidden select-none text-left">
       {/* dashboard: THREAD_MATRIX_VIEWPORT */}
       <div
-        ref={scrollContainerRef}
         className="flex-1 overflow-y-auto space-y-4 p-4 bg-muted/5 scrollbar-thin scroll-smooth"
       >
         {loading ? (
@@ -155,6 +154,7 @@ export function ApplicationMessageThread({ applicationId, actorRole }: Applicati
             );
           })
         )}
+        <div ref={bottomRef} />
       </div>
 
       {/* dashboard: COMPOSER_COMMAND_INGRESS_BAR */}

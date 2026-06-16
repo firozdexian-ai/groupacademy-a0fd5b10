@@ -1,4 +1,4 @@
-﻿import * as React from "react";
+import * as React from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { listActiveLanguageInstructorsByCode } from "@/domains/abroad/repo/abroadRepo";
@@ -12,6 +12,7 @@ import { ShieldCheck, Calendar, Clock, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PAGE_SHELL, CARD, META_TEXT } from "@/lib/uiTokens";
 import { InlineSpinner } from "@/components/common/InlineSpinner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 
 // =========================================================================
 // DETERMINISTIC COMPONENT DATA TYPE CONTRACTS
@@ -47,30 +48,39 @@ export default function LanguageInstructorsPage() {
  });
 
  const [isBookingPending, setIsBookingPending] = React.useState<boolean>(false);
+ const [bookingModalOpen, setBookingModalOpen] = React.useState(false);
+ const [bookingTime, setBookingTime] = React.useState("");
+ const [selectedInstructor, setSelectedInstructor] = React.useState<InstructorRecord | null>(null);
 
  const handleBookingTransaction = async (instructor: InstructorRecord) => {
- // In production, replace prompt with a controlled DatePicker or TimeSlot picker
- const proposedTimeStr = prompt(`Schedule session with ${instructor.display_name} (ISO format):`);
- if (!proposedTimeStr) return;
+   setSelectedInstructor(instructor);
+   setBookingModalOpen(true);
+ };
 
- setIsBookingPending(true);
- try {
- const data = await bookLanguageSession({
- instructor_user_id: instructor.user_id,
- language_code: languageCode.toUpperCase(),
- scheduled_at: proposedTimeStr,
- duration_mins: 30,
- });
-
-      if (data?.error) throw new Error(data.error);
-
-      toast.success("Booking confirmed. Check your calendar for details.");
-    } catch (e: unknown) {
-      toast.error(e.message || "Couldn't book the session.");
-    } finally {
-      setIsBookingPending(false);
-    }
-  };
+ const confirmBooking = async () => {
+   if (!selectedInstructor) return;
+   if (!bookingTime) {
+     toast.error("Please select a time.");
+     return;
+   }
+   setIsBookingPending(true);
+   try {
+     const data = await bookLanguageSession({
+       instructor_user_id: selectedInstructor.user_id,
+       language_code: languageCode.toUpperCase(),
+       scheduled_at: bookingTime,
+       duration_mins: 30,
+     });
+     if (data?.error) throw new Error(data.error);
+     toast.success("Booking confirmed. Check your calendar for details.");
+     setBookingModalOpen(false);
+     setBookingTime("");
+   } catch (e: any) {
+     toast.error(e.message || "Couldn't book the session.");
+   } finally {
+     setIsBookingPending(false);
+   }
+ };
 
   return (
     <div className={cn(PAGE_SHELL, "max-w-3xl mx-auto space-y-4")}>
@@ -127,8 +137,27 @@ export default function LanguageInstructorsPage() {
  ))}
  </div>
  )}
+
+    <Dialog open={bookingModalOpen} onOpenChange={setBookingModalOpen}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Schedule Session with {selectedInstructor?.display_name}</DialogTitle>
+          <DialogDescription>Enter ISO format date and time for the session.</DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4 py-2">
+          <input
+            type="datetime-local"
+            value={bookingTime}
+            onChange={(e) => setBookingTime(e.target.value)}
+            className="w-full rounded-lg border border-muted p-2"
+          />
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setBookingModalOpen(false)} disabled={isBookingPending}>Cancel</Button>
+          <Button onClick={confirmBooking} disabled={isBookingPending || !bookingTime}>Confirm</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
  </div>
  );
 }
-
-

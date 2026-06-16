@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 /**
  * Group Academy — Career Abroad Administrative Routing Map
@@ -27,7 +27,7 @@ export const ROUTES: Record<string, React.LazyExoticComponent<unknown>> = {
       default: (m as unknown).AbroadProgramsTab ?? m.default,
     })),
   ),
-  "abroad-ielts-prompts": React.lazy(() =>
+  "abroad-ielts-mock-attempts": React.lazy(() =>
     import("@/domains/abroad/components/admin/AbroadIELTSPromptsTab").then((m) => ({
       default: (m as unknown).AbroadIELTSPromptsTab ?? m.default,
     })),
@@ -54,7 +54,7 @@ export const TITLES: Record<string, string> = {
   "abroad-destinations": "Destination agents",
   "abroad-applications": "Applications",
   "abroad-programs": "University programs",
-  "abroad-ielts-prompts": "IELTS prompts",
+  "abroad-ielts-mock-attempts": "IELTS mock attempts",
   "abroad-ielts-resources": "IELTS resources",
   "abroad-language-lab": "Language lab",
   "abroad-roadmap-leads": "Roadmap leads",
