@@ -1745,6 +1745,7 @@ export type Database = {
           total_conversations: number | null
           updated_at: string | null
           visibility: string
+          review_notes: string | null
         }
         Insert: {
           active_prompt_variant?: string
@@ -1797,6 +1798,7 @@ export type Database = {
           total_conversations?: number | null
           updated_at?: string | null
           visibility?: string
+          review_notes?: string | null
         }
         Update: {
           active_prompt_variant?: string
@@ -1849,6 +1851,7 @@ export type Database = {
           total_conversations?: number | null
           updated_at?: string | null
           visibility?: string
+          review_notes?: string | null
         }
         Relationships: [
           {

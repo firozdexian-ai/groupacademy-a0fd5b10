@@ -49,6 +49,7 @@ export const SAFE_AGENT_FIELDS = [
   "region",
   "language",
   "default_channel",
+  "review_notes",
 ].join(", ");
 
 export interface TalentMarketplaceSummary {
@@ -628,7 +629,7 @@ export async function listOwnedAiAgentsForTalent(talentId: string) {
   try {
     const { data, error } = await supabase
       .from("ai_agents")
-      .select("id,name,agent_key,description,marketplace_status,visibility,is_active,total_conversations")
+      .select("id,name,agent_key,description,marketplace_status,visibility,is_active,total_conversations,review_notes")
       .eq("owner_kind", "talent")
       .eq("owner_id", talentId);
     if (error) throw error;

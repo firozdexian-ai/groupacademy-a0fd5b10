@@ -1,4 +1,4 @@
-﻿import * as React from "react";
+import * as React from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -33,6 +33,7 @@ interface SummaryRecord {
 export default function MyAgents() {
  const { talent } = useTalent();
  const queryClient = useQueryClient();
+ const [isOnboardingOpen, setIsOnboardingOpen] = React.useState(false);
 
  // Unified dashboard state fetching
  const {
@@ -96,11 +97,14 @@ export default function MyAgents() {
 
  <div className="flex flex-wrap gap-2">
  <CreatorOnboardingDialog
- open={false}
- onOpenChange={() => {}}
- onCreated={() => queryClient.invalidateQueries({ queryKey: ["talent-agent-dashboard"] })}
+ open={isOnboardingOpen}
+ onOpenChange={setIsOnboardingOpen}
+ onCreated={() => {
+ queryClient.invalidateQueries({ queryKey: ["talent-agent-dashboard"] });
+ setIsOnboardingOpen(false);
+ }}
  />
- <Button>
+ <Button onClick={() => setIsOnboardingOpen(true)}>
  <Rocket className="h-4 w-4 mr-2" />
  Become a builder
  </Button>
@@ -117,14 +121,50 @@ export default function MyAgents() {
  <TabsTrigger value="payouts">Payouts</TabsTrigger>
  </TabsList>
 
- <TabsContent value="agents" className="space-y-3">
- {agents.map((a: unknown) => (
- <Card key={a.id} className="p-4">
- <h3 className="font-semibold">{a.name}</h3>
- <p className="text-xs text-muted-foreground mt-1">{a.description}</p>
+ <TabsContent value="agents" className="space-y-4">
+ {agents.length === 0 ? (
+ <Card className="p-8 text-center space-y-4 border-dashed">
+ <Bot className="h-12 w-12 mx-auto text-muted-foreground animate-pulse" />
+ <div className="space-y-2">
+ <h3 className="font-semibold text-lg">No AI Agents Yet</h3>
+ <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+ You haven't built any AI agents yet. Click "Become a builder" to submit your first agent. Once submitted, it will appear here as "Pending Review" until approved by our admins.
+ </p>
+ </div>
+ <Button onClick={() => setIsOnboardingOpen(true)} variant="outline" size="sm">
+ <PlusCircle className="h-4 w-4 mr-2" />
+ Create Agent
+ </Button>
  </Card>
- ))}
-  </TabsContent>
+ ) : (
+ agents.map((a: any) => (
+ <Card key={a.id} className="p-5 space-y-3 hover:shadow-sm transition-shadow">
+ <div className="flex items-start justify-between">
+ <div className="space-y-1">
+ <h3 className="font-semibold text-base flex items-center gap-2">
+ {a.name}
+ <Badge className={cn("text-[10px] font-semibold px-2 py-0.5 border-none rounded-full select-none", getStatusBadgeStyles(a.marketplace_status))}>
+ {getStatusLabel(a.marketplace_status)}
+ </Badge>
+ </h3>
+ <p className="text-xs text-muted-foreground">{a.description}</p>
+ </div>
+ {a.marketplace_status === "approved" && (
+ <Button asChild size="sm" variant="outline">
+ <Link to={`/app/agents/${a.agent_key}`}>Chat</Link>
+ </Button>
+ )}
+ </div>
+ {a.review_notes && (
+ <div className="p-3 rounded-md bg-amber-50/50 border border-amber-100/50 text-xs text-amber-800 space-y-1 text-left">
+ <span className="font-semibold block">Reviewer Feedback:</span>
+ <p className="leading-relaxed">{a.review_notes}</p>
+ </div>
+ )}
+ </Card>
+ ))
+ )}
+ </TabsContent>
   <TabsContent value="earnings" className="space-y-3">
    <ComingSoonGate
     featureKey="my-agents-earnings"
@@ -172,4 +212,28 @@ function SummaryTile({
  );
 }
 
+function getStatusBadgeStyles(status: string | null | undefined): string {
+  switch (status) {
+    case "approved":
+      return "bg-emerald-500/10 text-emerald-700";
+    case "pending":
+      return "bg-amber-500/10 text-amber-700";
+    case "rejected":
+      return "bg-rose-500/10 text-rose-700";
+    default:
+      return "bg-slate-100 text-slate-700";
+  }
+}
 
+function getStatusLabel(status: string | null | undefined): string {
+  switch (status) {
+    case "approved":
+      return "Approved";
+    case "pending":
+      return "Pending Review";
+    case "rejected":
+      return "Rejected";
+    default:
+      return "Draft";
+  }
+}
