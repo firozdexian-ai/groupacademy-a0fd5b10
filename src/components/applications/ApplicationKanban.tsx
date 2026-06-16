@@ -1,4 +1,4 @@
-﻿import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +7,8 @@ import { ApplicationKanbanCard } from "./ApplicationKanbanCard";
 import { ApplicationDetailSheet } from "./ApplicationDetailSheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Loader2, KanbanSquare, Layers } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { supabase } from "@/lib/supabase";
 
 /**
  * GroUp Academy: B2B Sourcing Kanban Board Grid (V5.6.0)
@@ -74,6 +76,43 @@ export function ApplicationKanban({ companyId, jobId, showWithdrawn = false }: A
     return laneMap;
   }, [apps, activeLanesStructure]);
 
+  const [dragOverLane, setDragOverLane] = useState<string | null>(null);
+
+  const handleDropCard = useCallback(
+    async (appId: string, targetStatus: PipelineStatus) => {
+      try {
+        await move(appId, targetStatus);
+      } catch (err: any) {
+        console.error("Kanban drop transition failed:", err);
+      }
+    },
+    [move]
+  );
+
+  // Realtime subscription for pipeline updates
+  useEffect(() => {
+    if (!companyId) return;
+
+    const channel = supabase
+      .channel("kanban-pipeline-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "job_applications",
+        },
+        () => {
+          reload();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [companyId, jobId, reload]);
+
   // --- HANDLER: ATOMIC_MUTATION_STATE_TRANSITION ---
   const handleStageTransitionHandshake = useCallback(
     async (targetStatus: PipelineStatus) => {
@@ -89,11 +128,10 @@ export function ApplicationKanban({ companyId, jobId, showWithdrawn = false }: A
         // dashboard: EXECUTING_BACKEND_PIPELINE_MUTATION_TRANSFER
         await move(targetApplicationId, targetStatus);
       } catch (err: unknown) {
-        // Digital Workforce Anomaly Trigger: Crucial for trapping backend status validation updates
-        console.error("[Digital Workforce] ANOMALY: Kanban layout transition request failed.", {
+        console.error("[Kanban] Error: Kanban layout transition request failed.", {
           applicationId: targetApplicationId,
           targetStatus,
-          message: err.message,
+          message: (err as any).message,
         });
       }
     },
@@ -171,10 +209,32 @@ export function ApplicationKanban({ companyId, jobId, showWithdrawn = false }: A
         <div className="flex gap-4 pb-2">
           {activeLanesStructure.map((lane) => {
             const laneApplicationsList = aggregatedGroupedMap.get(lane.key) || [];
+            const isOver = dragOverLane === lane.key;
             return (
               <div
                 key={lane.key}
-                className="w-72 shrink-0 flex flex-col bg-card/20 rounded-2xl border border-border/40 p-3 min-h-[450px]"
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  if (dragOverLane !== lane.key) {
+                    setDragOverLane(lane.key);
+                  }
+                }}
+                onDragLeave={() => {
+                  if (dragOverLane === lane.key) {
+                    setDragOverLane(null);
+                  }
+                }}
+                onDrop={(e) => {
+                  setDragOverLane(null);
+                  const appId = e.dataTransfer.getData("text/plain");
+                  if (appId) {
+                    handleDropCard(appId, lane.key);
+                  }
+                }}
+                className={cn(
+                  "w-72 shrink-0 flex flex-col rounded-2xl border p-3 min-h-[450px] transition-all duration-200",
+                  isOver ? "border-primary bg-primary/5 ring-1 ring-primary/25 scale-[1.01]" : "border-border/40 bg-card/20"
+                )}
               >
                 {/* dashboard: LANE_TITLE_METRICS_HEADER */}
                 <div className="flex items-center justify-between mb-3 px-1 border-b pb-2 border-border/10">

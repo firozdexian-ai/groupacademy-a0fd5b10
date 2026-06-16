@@ -1,15 +1,13 @@
-﻿import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCurrentUser } from "@/lib/auth";
 import { notifyHiringEvent } from "@/domains/jobs/api/jobsApi";
 import { insertJobInvitation } from "@/domains/jobs/repo/jobsRepo";
 import { EdgeFunctionError } from "@/edge/EdgeFunctionError";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
 
 /**
- * GroUp Academy: Talent Sourcing & Invitation Engine (V5.6.0)
- * CTO Reference: Primary handler for outbound recruiter-to-talent engagement.
- * Architecture: Digital Workforce enabled - logs communication faults to Admin OS.
- * Phase: Z0 Code Freeze Hardened (2026 Launch Edition).
+ * Architecture: Scoped to active recruiter company workspace.
  */
 
 export interface InviteToApplyInput {
@@ -31,6 +29,22 @@ export function useInviteToApply() {
       const user = await getCurrentUser();
       if (!user) throw new Error("AUTH_REQUIRED: Please sign in to invite talent.");
 
+      // Check if candidate is already invited to this job
+      const { data: existing, error: checkError } = await supabase
+        .from("job_invitations")
+        .select("id")
+        .eq("job_id", input.job_id)
+        .eq("talent_id", input.talent_id)
+        .in("status", ["pending", "sent"])
+        .maybeSingle();
+
+      if (checkError) {
+        console.error("Failed to check duplicate invitations:", checkError);
+      }
+      if (existing) {
+        throw new Error("Candidate has already been invited to this job.");
+      }
+
       // dashboard: EXECUTING_JOB_INVITATION_INSERT
       let data: { id: string };
       try {
@@ -42,7 +56,7 @@ export function useInviteToApply() {
           invited_by: user.id,
         });
       } catch (error: unknown) {
-        console.error("[Digital Workforce] FAULT: job_invitations insert failed.", error);
+        console.error("[Job Invitations] Error: job_invitations insert failed.", error);
         throw error;
       }
 
@@ -54,13 +68,12 @@ export function useInviteToApply() {
           ref: { invitation_id: data.id },
         });
       } catch (err) {
-        // Digital Workforce Anomaly Trigger:
         // We log this but don't fail the mutation, as the record was saved.
         const message =
           err instanceof EdgeFunctionError ? err.message : String(err);
         console.error(
-          "[Digital Workforce] ANOMALY: notify-hiring-event failed for job_invitation.",
-          { invitation_id: data.id, message },
+          "[Job Invitations] Warning: notify-hiring-event failed for job_invitation.",
+          { invitation_id: data.id, message }
         );
       }
 

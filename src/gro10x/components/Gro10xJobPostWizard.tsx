@@ -1,4 +1,5 @@
-﻿import { useState } from "react";
+import * as React from "react";
+import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useGro10xCompanyId } from "../hooks/useGro10xCompanyId";
@@ -7,11 +8,13 @@ import { GRO10X_PANEL, GRO10X_MUTED } from "../lib/tokens";
 import { X, Loader2, Plus, Briefcase } from "lucide-react";
 import { toast } from "sonner";
 import { getCompanyNameAndLogo } from "@/domains/companies/repo/companiesRepo";
-import { insertJobReturningId } from "@/domains/jobs/repo/jobsRepo";
+import { insertJobReturningId, updateJob } from "@/domains/jobs/repo/jobsRepo";
+import { supabase } from "@/lib/supabase";
 
 interface Props {
   open: boolean;
   onClose: () => void;
+  job?: any; // If provided, wizard is in Edit Mode
 }
 
 interface FormState {
@@ -26,6 +29,11 @@ interface FormState {
   job_type: "full_time" | "part_time" | "contract" | "internship" | "freelance";
   experience_level: "entry" | "mid" | "senior" | "lead";
   publish: boolean;
+  application_deadline: string; // YYYY-MM-DD
+  profession_category_id: string;
+  skills: string; // comma-separated
+  application_type: "email" | "external";
+  application_email: string;
 }
 
 const EMPTY: FormState = {
@@ -40,28 +48,96 @@ const EMPTY: FormState = {
   job_type: "full_time",
   experience_level: "mid",
   publish: false,
+  application_deadline: "",
+  profession_category_id: "",
+  skills: "",
+  application_type: "email",
+  application_email: "",
 };
 
 /**
- * Manual "Post a Job" wizard for employers — bypasses chat and inserts directly
- * into `jobs` for the active company.
+ * Manual "Post / Edit a Job" wizard for employers — bypasses chat.
  */
-export default function Gro10xJobPostWizard({ open, onClose }: Props) {
+export default function Gro10xJobPostWizard({ open, onClose, job }: Props) {
   const { user } = useAuth();
   const { data: companyId } = useGro10xCompanyId();
   const qc = useQueryClient();
   const [form, setForm] = useState<FormState>(EMPTY);
+  const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);
 
   const set = <K extends keyof FormState>(k: K, v: FormState[K]) =>
     setForm((prev) => ({ ...prev, [k]: v }));
 
+  // Load profession categories
+  React.useEffect(() => {
+    if (!open) return;
+    supabase
+      .from("profession_categories")
+      .select("id, name")
+      .order("name", { ascending: true })
+      .then(({ data }) => {
+        if (data) setCategories(data);
+      });
+  }, [open]);
+
+  // Load editing job details if present
+  React.useEffect(() => {
+    if (open && job) {
+      setForm({
+        title: job.title || "",
+        description: job.description || "",
+        location: job.location || "",
+        salary_min: job.salary_range_min ? String(job.salary_range_min) : "",
+        salary_max: job.salary_range_max ? String(job.salary_range_max) : "",
+        salary_currency: job.salary_currency || "BDT",
+        vacancies: String(job.vacancies || 1),
+        requirements: Array.isArray(job.requirements) ? job.requirements.join("\n") : "",
+        job_type: job.job_type || "full_time",
+        experience_level: job.experience_level || "mid",
+        publish: job.is_active || false,
+        application_deadline: job.deadline ? job.deadline.split("T")[0] : "",
+        profession_category_id: job.profession_category_id || "",
+        skills: Array.isArray(job.skills) ? job.skills.join(", ") : "",
+        application_type: job.application_type || "email",
+        application_email: job.application_email || "",
+      });
+    } else if (open) {
+      setForm(EMPTY);
+    }
+  }, [job, open]);
+
   const mutation = useMutation({
     mutationFn: async () => {
       if (!companyId) throw new Error("No active company workspace.");
-      if (!form.title.trim()) throw new Error("Title is required.");
-      if (!form.description.trim()) throw new Error("Description is required.");
+      if (form.title.trim().length < 4) throw new Error("Title must be at least 4 characters.");
+      if (form.description.trim().length < 80) throw new Error("Description must be at least 80 characters.");
 
-      // Resolve company name (jobs.company_name is NOT NULL)
+      const salaryMin = form.salary_min ? parseFloat(form.salary_min.replace(/,/g, "")) : null;
+      const salaryMax = form.salary_max ? parseFloat(form.salary_max.replace(/,/g, "")) : null;
+
+      if (salaryMin !== null && isNaN(salaryMin)) throw new Error("Minimum salary must be a valid number.");
+      if (salaryMax !== null && isNaN(salaryMax)) throw new Error("Maximum salary must be a valid number.");
+      if (salaryMin !== null && salaryMax !== null && salaryMin > salaryMax) {
+        throw new Error("Minimum salary cannot exceed maximum salary.");
+      }
+
+      if (form.application_deadline) {
+        const deadlineDate = new Date(form.application_deadline);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (deadlineDate <= today) {
+          throw new Error("Application deadline must be in the future.");
+        }
+      }
+
+      if (form.application_type === "email" && form.application_email.trim()) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(form.application_email.trim())) {
+          throw new Error("Please enter a valid application email.");
+        }
+      }
+
+      // Resolve company name
       const co = await getCompanyNameAndLogo(companyId);
 
       const reqs = form.requirements
@@ -69,7 +145,12 @@ export default function Gro10xJobPostWizard({ open, onClose }: Props) {
         .map((s) => s.trim())
         .filter(Boolean);
 
-      const payload: unknown = {
+      const skillsArr = form.skills
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+      const payload: any = {
         company_id: companyId,
         company_name: co?.name ?? "Company",
         company_logo_url: co?.logo_url ?? null,
@@ -77,28 +158,37 @@ export default function Gro10xJobPostWizard({ open, onClose }: Props) {
         description: form.description.trim(),
         location: form.location.trim() || null,
         requirements: reqs,
+        skills: skillsArr,
         job_type: form.job_type,
         experience_level: form.experience_level,
         vacancies: Math.max(1, parseInt(form.vacancies || "1", 10)),
         salary_currency: form.salary_currency || "BDT",
-        salary_range_min: form.salary_min ? parseInt(form.salary_min, 10) : null,
-        salary_range_max: form.salary_max ? parseInt(form.salary_max, 10) : null,
+        salary_range_min: salaryMin,
+        salary_range_max: salaryMax,
         is_active: form.publish,
         posted_by: user?.id ?? null,
         job_kind: "employer",
-        application_type: "email",
+        application_type: form.application_type,
+        application_email: form.application_email.trim() || null,
+        deadline: form.application_deadline ? new Date(form.application_deadline).toISOString() : null,
+        profession_category_id: form.profession_category_id || null,
       };
 
-      return await insertJobReturningId(payload);
+      if (job?.id) {
+        await updateJob(job.id, payload);
+        return job.id;
+      } else {
+        return await insertJobReturningId(payload);
+      }
     },
     onSuccess: () => {
-      toast.success(form.publish ? "Job published" : "Draft saved");
+      toast.success(job ? "Job updated" : (form.publish ? "Job published" : "Draft saved"));
       qc.invalidateQueries({ queryKey: employerJobsQueryKey(companyId) });
       setForm(EMPTY);
       onClose();
     },
-    onError: (err: unknown) => {
-      toast.error(err?.message ?? "Failed to create job");
+    onError: (err: any) => {
+      toast.error(err?.message ?? "Failed to save job");
     },
   });
 
@@ -112,9 +202,10 @@ export default function Gro10xJobPostWizard({ open, onClose }: Props) {
         <header className="sticky top-0 z-10 bg-[#0B1220]/95 backdrop-blur-md border-b border-white/5 px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Briefcase className="h-4 w-4 text-[#33E1E4]" />
-            <h2 className="text-sm font-semibold">Post a Job</h2>
+            <h2 className="text-sm font-semibold">{job ? "Edit Job" : "Post a Job"}</h2>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="rounded-full p-1.5 bg-white/5 hover:bg-white/10"
             aria-label="Close"
@@ -158,11 +249,48 @@ export default function Gro10xJobPostWizard({ open, onClose }: Props) {
             <textarea
               value={form.requirements}
               onChange={(e) => set("requirements", e.target.value)}
-              rows={4}
+              rows={3}
               placeholder={"5+ years React\nTypeScript fluency\nRemote-friendly"}
               className={inputCls}
             />
           </Field>
+
+          <Field
+            label="Skills"
+            hint="Comma-separated tags — e.g. React, TypeScript, GraphQL"
+          >
+            <input
+              value={form.skills}
+              onChange={(e) => set("skills", e.target.value)}
+              placeholder="React, TypeScript, Tailwind"
+              className={inputCls}
+            />
+          </Field>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Profession Category">
+              <select
+                value={form.profession_category_id}
+                onChange={(e) => set("profession_category_id", e.target.value)}
+                className={inputCls}
+              >
+                <option value="">Select a category…</option>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Application Deadline">
+              <input
+                type="date"
+                value={form.application_deadline}
+                onChange={(e) => set("application_deadline", e.target.value)}
+                className={inputCls}
+              />
+            </Field>
+          </div>
 
           <div className="grid grid-cols-2 gap-3">
             <Field label="Location">
@@ -187,8 +315,7 @@ export default function Gro10xJobPostWizard({ open, onClose }: Props) {
           <div className="grid grid-cols-3 gap-3">
             <Field label="Min salary">
               <input
-                type="number"
-                min={0}
+                type="text"
                 value={form.salary_min}
                 onChange={(e) => set("salary_min", e.target.value)}
                 placeholder="0"
@@ -197,8 +324,7 @@ export default function Gro10xJobPostWizard({ open, onClose }: Props) {
             </Field>
             <Field label="Max salary">
               <input
-                type="number"
-                min={0}
+                type="text"
                 value={form.salary_max}
                 onChange={(e) => set("salary_max", e.target.value)}
                 placeholder="0"
@@ -250,7 +376,28 @@ export default function Gro10xJobPostWizard({ open, onClose }: Props) {
             </Field>
           </div>
 
-          <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Application Type">
+              <select
+                value={form.application_type}
+                onChange={(e) => set("application_type", e.target.value as FormState["application_type"])}
+                className={inputCls}
+              >
+                <option value="email">Email</option>
+                <option value="external">External Link</option>
+              </select>
+            </Field>
+            <Field label={form.application_type === "email" ? "Application Email" : "Application Link"}>
+              <input
+                value={form.application_email}
+                onChange={(e) => set("application_email", e.target.value)}
+                placeholder={form.application_type === "email" ? "recruiter@company.com" : "https://company.com/apply"}
+                className={inputCls}
+              />
+            </Field>
+          </div>
+
+          <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer pt-1">
             <input
               type="checkbox"
               checked={form.publish}
@@ -271,14 +418,12 @@ export default function Gro10xJobPostWizard({ open, onClose }: Props) {
             <button
               type="submit"
               disabled={mutation.isPending || !companyId}
-              className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-[#33E1E4] text-[#06121A] px-5 py-2 text-xs font-semibold disabled:opacity-50"
+              className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-[#33E1E4] text-[#06121A] px-5 py-2 text-xs font-semibold disabled:opacity-50 cursor-pointer"
             >
               {mutation.isPending ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <Plus className="h-3.5 w-3.5" />
-              )}
-              {form.publish ? "Publish job" : "Save draft"}
+              ) : null}
+              {job ? "Save changes" : (form.publish ? "Publish job" : "Save draft")}
             </button>
           </div>
         </form>
@@ -307,5 +452,3 @@ function Field({
     </div>
   );
 }
-
-

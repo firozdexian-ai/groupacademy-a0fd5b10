@@ -1242,6 +1242,26 @@ export async function getJobScreeningQuestions(jobId: string) {
   }
 }
 
+export async function getCompanyEngagedTalents(
+  companyId: string,
+  limit = 20,
+  offset = 0
+): Promise<any[]> {
+  try {
+    const { data, error } = await supabase
+      .rpc("get_company_engaged_talents", {
+        p_company_id: companyId,
+        p_limit: limit,
+        p_offset: offset
+      });
+    if (error) throw error;
+    return data ?? [];
+  } catch (err: any) {
+    trackError("jobs-repo-getCompanyEngagedTalents-failure", { companyId, error: err.message });
+    return [];
+  }
+}
+
 
 
 

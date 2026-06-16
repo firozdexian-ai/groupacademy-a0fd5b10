@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { createTalentCvSignedUrl } from "@/domains/jobs/repo/jobsRepo";
@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Download, Loader2, ShieldCheck, FileText, MessageSquare, Briefcase } from "lucide-react";
+import { Download, Loader2, ShieldCheck, FileText, MessageSquare, Briefcase, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NEXT_STATUS_CONFIGS: { key: PipelineStatus; label: string; variant: "default" | "secondary" | "destructive" }[] =
@@ -224,6 +224,17 @@ export function ApplicationDetailSheet({
                 </Badge>
               )}
             </div>
+
+            {application.ai_match_rationale && (
+              <div className="p-3.5 rounded-xl border border-primary/20 bg-primary/5 space-y-1.5 text-left">
+                <Label className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1">
+                  <Sparkles className="h-3 w-3" /> AI Match Rationale
+                </Label>
+                <p className="text-[11px] font-medium text-foreground/80 leading-normal">
+                  {application.ai_match_rationale}
+                </p>
+              </div>
+            )}
 
             {application.cover_letter && (
               <div className="p-4 rounded-xl border bg-muted/5 space-y-2">

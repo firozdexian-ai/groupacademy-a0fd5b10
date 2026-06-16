@@ -1,4 +1,4 @@
-﻿import { useMemo } from "react";
+import { useMemo } from "react";
 import { formatDistanceToNow, isValid } from "date-fns";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -49,10 +49,14 @@ export function ApplicationKanbanCard({ app, onClick, className }: ApplicationKa
     <Card
       role="button"
       tabIndex={0}
+      draggable={true}
+      onDragStart={(e) => {
+        e.dataTransfer.setData("text/plain", app.id);
+      }}
       onClick={onClick}
       onKeyDown={(e) => e.key === "Enter" && onClick()}
       className={cn(
-        "p-4 cursor-pointer hover:bg-accent/40 bg-card border-2 border-border/20 rounded-[20px] transition-all duration-300 space-y-3 shadow-sm select-none group text-left relative focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 hover:shadow-md",
+        "p-4 cursor-pointer hover:bg-accent/40 bg-card border-2 border-border/20 rounded-[20px] transition-all duration-300 space-y-3 shadow-sm select-none group text-left relative focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 hover:shadow-md active:opacity-50",
         className,
       )}
     >

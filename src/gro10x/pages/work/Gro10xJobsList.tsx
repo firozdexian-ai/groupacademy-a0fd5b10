@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useGro10xCompanyId } from "../../hooks/useGro10xCompanyId";
@@ -8,7 +8,7 @@ import {
   type EmployerJobRow,
 } from "../../hooks/useEmployerJobsDashboard";
 import { GRO10X_PANEL, GRO10X_MUTED } from "../../lib/tokens";
-import { Briefcase, Loader2, Pause, Play, X, Plus, Users } from "lucide-react";
+import { Briefcase, Loader2, Pause, Play, X, Plus, Users, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import Gro10xJobPostWizard from "../../components/Gro10xJobPostWizard";
 import { companyAgentTools } from "@/domains/agents/api/agentsApi";
@@ -20,6 +20,7 @@ export default function Gro10xJobsList() {
   const [filter, setFilter] = useState<"all" | "active" | "draft">("all");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [wizardOpen, setWizardOpen] = useState(false);
+  const [editingJob, setEditingJob] = useState<any>(null);
 
   const mutate = useMutation({
     mutationFn: async ({ tool, job_id }: { tool: string; job_id: string }) => {
@@ -86,8 +87,11 @@ export default function Gro10xJobsList() {
         <FilterChip active={filter === "active"} onClick={() => setFilter("active")}>Live</FilterChip>
         <FilterChip active={filter === "draft"} onClick={() => setFilter("draft")}>Draft</FilterChip>
         <button
-          onClick={() => setWizardOpen(true)}
-          className="ml-auto inline-flex items-center gap-1 rounded-full bg-[#33E1E4] text-[#06121A] px-3 py-1.5 text-xs font-semibold"
+          onClick={() => {
+            setEditingJob(null);
+            setWizardOpen(true);
+          }}
+          className="ml-auto inline-flex items-center gap-1 rounded-full bg-[#33E1E4] text-[#06121A] px-3 py-1.5 text-xs font-semibold cursor-pointer"
         >
           <Plus className="h-3 w-3" /> Post a Job
         </button>
@@ -104,8 +108,11 @@ export default function Gro10xJobsList() {
           <Briefcase className="h-10 w-10 mx-auto text-slate-500 mb-3" />
           <p className="text-sm text-slate-400 mb-3">No jobs yet.</p>
           <button
-            onClick={() => setWizardOpen(true)}
-            className="inline-flex items-center gap-1 rounded-full bg-[#33E1E4] text-[#06121A] px-4 py-2 text-xs font-semibold"
+            onClick={() => {
+              setEditingJob(null);
+              setWizardOpen(true);
+            }}
+            className="inline-flex items-center gap-1 rounded-full bg-[#33E1E4] text-[#06121A] px-4 py-2 text-xs font-semibold cursor-pointer"
           >
             <Plus className="h-3 w-3" /> Post your first job
           </button>
@@ -153,6 +160,17 @@ export default function Gro10xJobsList() {
 
               <div className="ml-auto flex items-center gap-1">
                 <button
+                  onClick={() => {
+                    setEditingJob(j);
+                    setWizardOpen(true);
+                  }}
+                  className="rounded-full p-1.5 bg-white/5 border border-white/10 hover:bg-white/10"
+                  aria-label="Edit"
+                  title="Edit job"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </button>
+                <button
                   onClick={() => toggleActive(j)}
                   disabled={busyId === j.id}
                   className="rounded-full p-1.5 bg-white/5 border border-white/10 hover:bg-white/10 disabled:opacity-40"
@@ -182,7 +200,14 @@ export default function Gro10xJobsList() {
         ))}
       </ul>
 
-      <Gro10xJobPostWizard open={wizardOpen} onClose={() => setWizardOpen(false)} />
+      <Gro10xJobPostWizard
+        open={wizardOpen}
+        job={editingJob}
+        onClose={() => {
+          setWizardOpen(false);
+          setEditingJob(null);
+        }}
+      />
     </div>
   );
 }

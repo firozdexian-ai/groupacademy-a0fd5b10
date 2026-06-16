@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { listJobsByCompanyAndStatus } from "@/domains/jobs/repo/jobsRepo";
 import { useInviteToApply } from "@/domains/jobs";
@@ -16,8 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 import { toast } from "sonner";
-import { Loader2, Zap, ShieldCheck, MailPlus } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Loader2, MailPlus, ShieldCheck } from "lucide-react";
 
 interface InviteToApplyDialogProps {
   open: boolean;
@@ -32,9 +31,7 @@ interface ActiveJobNode {
 }
 
 /**
- * GroUp Academy: Employer Job Invitation Dispatch Gateway Terminal (InviteToApplyDialog)
- * An authoritative operational sandbox managing async invitation routing, telemetry checks, and corporate ledger sync tasks.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Recruiter dialog to invite a candidate to apply for an active job opening.
  */
 export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }: InviteToApplyDialogProps) {
   const queryClient = useQueryClient();
@@ -47,7 +44,6 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
   const [saving, setSaving] = useState(false);
   const [fetchingJobs, setFetchingJobs] = useState(false);
 
-  // Synchronize component lifecycles to safely reject background thread state writes
   useEffect(() => {
     isMountedRef.current = true;
     if (open) {
@@ -58,7 +54,6 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
     };
   }, [open, companyId, talentId]);
 
-  // Secure Ingress Pass: Fetch active institutional openings defensively with explicit cleanups
   useEffect(() => {
     let isRequestActive = true;
     if (!open || !companyId) return;
@@ -97,18 +92,16 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
     return jobs.filter((jobItem) => jobItem && typeof jobItem.id === "string");
   }, [jobs]);
 
-  const handleExecutiveInvitationSubmit = async () => {
+  const handleInvitationSubmit = async () => {
     const targetSelectedJobId = jobId;
     if (!targetSelectedJobId) {
-      toast.error("Selection Fault: You must specify a target active corporate opening to deploy an invitation.");
+      toast.error("Please select an active job opening to invite the candidate.");
       return;
     }
 
     setSaving(true);
     trackEvent("job_invitation_dispatch_initiated", { targetSelectedJobId });
-    const dynamicToastTrackerId = toast.loading(
-      "Processing cryptography handshake parameters over secure tracking rows…",
-    );
+    const dynamicToastTrackerId = toast.loading("Sending invitation...");
 
     try {
       await jobInvitationMutation.mutateAsync({
@@ -118,17 +111,15 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
         note: note.trim() || null,
       });
 
-      // Automated Efficiency: Synchronize cache streams immediately to avoid state drift across layouts
       await queryClient.invalidateQueries({ queryKey: ["job-invitations"] });
       await queryClient.invalidateQueries({ queryKey: ["talent-profile", talentId] });
 
       if (isMountedRef.current) {
-        toast.success("Ecosystem invitation pipeline successfully broadcast to target talent node.", {
+        toast.success("Invitation sent successfully.", {
           id: dynamicToastTrackerId,
         });
         trackEvent("job_invitation_dispatch_success", { targetSelectedJobId });
 
-        // Form field baseline resets
         setJobId("");
         setNote("");
         onOpenChange(false);
@@ -145,7 +136,7 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
         targetSelectedJobId,
       });
 
-      toast.error(`Ecosystem write validation error: ${formattedExceptionMsgStr}`, { id: dynamicToastTrackerId });
+      toast.error(formattedExceptionMsgStr, { id: dynamicToastTrackerId });
     } finally {
       if (isMountedRef.current) {
         setSaving(false);
@@ -163,30 +154,27 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
         }
       }}
     >
-      <DialogContent className="sm:max-w-md rounded-xl border border-border/40 bg-card/95 backdrop-blur-xl shadow-2xl p-5 sm:p-6 text-left antialiased overflow-hidden transform-gpu select-none sm:select-text flex flex-col justify-center">
-        {/* dashboard LEVEL 1: TOP PANEL TRACK HEADING CONTAINER */}
+      <DialogContent className="sm:max-w-md rounded-xl border border-border/40 bg-card/95 backdrop-blur-xl shadow-2xl p-5 sm:p-6 text-left antialiased overflow-hidden flex flex-col justify-center">
         <DialogHeader className="mb-4 text-left select-none shrink-0 leading-none w-full">
           <div className="flex items-center gap-2.5 leading-none w-full">
             <div className="h-7 w-7 rounded-lg bg-primary/10 border border-primary/5 text-primary flex items-center justify-center shrink-0 shadow-inner">
-              <MailPlus className="h-4 w-4 text-primary stroke-[2.2] animate-pulse" />
+              <MailPlus className="h-4 w-4 text-primary stroke-[2.2]" />
             </div>
             <div className="min-w-0 flex flex-col justify-center leading-none flex-1">
               <DialogTitle className="text-sm sm:text-base font-bold text-foreground uppercase tracking-wide leading-none">
-                Authorize Talent Pipeline Invitation
+                Invite Candidate to Apply
               </DialogTitle>
-              <DialogDescription className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 leading-none pt-1">
-                Deploy dynamic application invitations with contextual communication note attachments
+              <DialogDescription className="text-[10px] font-semibold tracking-wider text-muted-foreground/60 leading-none pt-1">
+                Select one of your active job openings and send a personalized invitation.
               </DialogDescription>
             </div>
           </div>
         </DialogHeader>
 
-        {/* dashboard LEVEL 2: COMPOSITE INPUT ENTRY SCHEMATIC MATRIX FORMS */}
         <div className="space-y-4 w-full min-w-0 font-bold text-xs tracking-tight text-foreground/90">
-          {/* JOB SPECIFICATION OPENINGS SELECT COMPONENT */}
           <div className="space-y-1.5 text-left w-full min-w-0">
             <Label className="text-[10px] font-extrabold uppercase tracking-wide text-primary block pl-0.5 leading-none select-none">
-              Target Position Placement Node *
+              Target Job Opening *
             </Label>
             <Select
               value={jobId}
@@ -200,16 +188,16 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
                 {fetchingJobs ? (
                   <span className="flex items-center gap-2 text-muted-foreground/40 italic">
                     <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                    <span>Parsing tracking records...</span>
+                    <span>Loading jobs...</span>
                   </span>
                 ) : (
-                  <SelectValue placeholder="Pick an active structural corporate vacancy..." />
+                  <SelectValue placeholder="Select an active job opening..." />
                 )}
               </SelectTrigger>
               <SelectContent className="rounded-xl border border-border/40 bg-background font-bold text-xs max-h-60">
                 {safeJobsCollection.length === 0 && !fetchingJobs ? (
-                  <p className="text-[10px] font-mono font-bold text-center py-3 uppercase tracking-wide text-muted-foreground/40 italic">
-                    No operational vacancy slots found.
+                  <p className="text-[10px] font-semibold text-center py-3 uppercase tracking-wide text-muted-foreground/40 italic">
+                    No active job openings found.
                   </p>
                 ) : (
                   safeJobsCollection.map((jobNodeItem) => (
@@ -226,10 +214,9 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
             </Select>
           </div>
 
-          {/* PERSONAL COMMUNICATION SUMMARY TEXT AREA ROW */}
           <div className="space-y-1.5 text-left w-full min-w-0">
             <Label className="text-[10px] font-extrabold uppercase tracking-wide text-primary block pl-0.5 leading-none select-none">
-              Personalized Ingress Note Summary{" "}
+              Personal Note{" "}
               <span className="text-muted-foreground/40 font-normal lowercase tracking-normal">(optional)</span>
             </Label>
             <Textarea
@@ -237,14 +224,13 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
               value={note}
               disabled={saving}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Inject precise conversion messaging notes detailing platform alignment, salary parities, or custom deliverables…"
+              placeholder="Explain why they are a great fit, salary details, or next steps..."
               className="w-full rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3.5 leading-relaxed resize-none shadow-inner"
               maxLength={400}
             />
           </div>
         </div>
 
-        {/* dashboard LEVEL 3: FOOTER DISPATCH ACTION STRIP CONTROL BUTTON ROW */}
         <DialogFooter className="mt-5 gap-2.5 sm:gap-0 select-none border-t border-border/10 pt-4 w-full shrink-0 flex items-center justify-end font-bold text-xs">
           <Button
             variant="ghost"
@@ -253,37 +239,29 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
             disabled={saving}
             className="h-9 px-4 rounded-xl text-muted-foreground hover:text-foreground font-bold uppercase text-[10px] tracking-wide shrink-0 transition-colors cursor-pointer"
           >
-            Abort Ingress
+            Cancel
           </Button>
 
           <Button
             type="button"
-            onClick={handleExecutiveInvitationSubmit}
+            onClick={handleInvitationSubmit}
             disabled={saving || !jobId || fetchingJobs}
             className="h-9 px-5 rounded-xl font-bold text-xs uppercase tracking-wider shadow-md transform-gpu active:scale-[0.995] transition-transform flex items-center justify-center cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90 gap-1.5"
           >
             {saving ? (
               <>
                 <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                <span>Syncing Pipeline Ledger…</span>
+                <span>Sending...</span>
               </>
             ) : (
               <>
                 <ShieldCheck className="h-4 w-4 stroke-[2.5]" />
-                <span>Transmit Secure Invitation</span>
+                <span>Send Invitation</span>
               </>
             )}
           </Button>
         </DialogFooter>
-
-        {/* dashboard LEVEL 4: RECTILINEAR OVERLAY BOTTOM METRIC LOG OMNIPRESENCE SHIELD */}
-        <div className="shrink-0 pt-2 mt-4 border-t border-border/10 select-none shadow-none pointer-events-none tracking-normal font-bold text-[9px] text-muted-foreground/40 font-mono leading-none uppercase w-full flex items-center justify-center gap-1.5 h-6">
-          <Zap className="h-3.5 w-3.5 text-amber-500 fill-amber-500/10 stroke-[2.2] shrink-0 animate-pulse" />
-          <span>Talent attraction acquisition protocol transmission calibration sync core complete</span>
-        </div>
       </DialogContent>
     </Dialog>
   );
 }
-
-

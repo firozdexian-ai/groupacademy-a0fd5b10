@@ -1,4 +1,4 @@
-﻿import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getEmployerPipelineFull,
   updateApplicationStatus,
@@ -8,10 +8,7 @@ import { EdgeFunctionError } from "@/edge/EdgeFunctionError";
 import { toast } from "sonner";
 
 /**
- * GroUp Academy: Employer Recruitment Pipeline Hub (V5.6.0)
- * CTO Reference: Authoritative transactional store tracking applicant Kanban states.
- * Architecture: Digital Workforce enabled - streams communication and status anomalies directly to Admin OS.
- * Phase: Z0 Code Freeze Hardened (2026 Launch Edition).
+ * Architecture: Scoped to active recruiter company workspace.
  */
 
 export type PipelineStatus =
@@ -69,10 +66,10 @@ export function useEmployerPipeline(opts: { companyId?: string | null; jobId?: s
           limit: 500,
         });
       } catch (error: unknown) {
-        console.error("[Digital Workforce] FAULT: get_employer_pipeline_full database ingress rejected.", {
+        console.error("[Employer Pipeline] Error: get_employer_pipeline_full database ingress rejected.", {
           companyId: opts.companyId,
           jobId: opts.jobId,
-          error: error?.message,
+          error: (error as any)?.message,
         });
         throw error;
       }
@@ -104,8 +101,8 @@ export function useEmployerPipeline(opts: { companyId?: string | null; jobId?: s
         const message =
           err instanceof EdgeFunctionError ? err.message : String(err);
         console.error(
-          "[Digital Workforce] ANOMALY: notify-application-status secondary edge call timed out.",
-          { applicationId, status: to, message },
+          "[Employer Pipeline] Warning: notify-application-status secondary edge call timed out.",
+          { applicationId, status: to, message }
         );
         // We do not rethrow here to protect transactional database state execution loops
       }
@@ -116,12 +113,11 @@ export function useEmployerPipeline(opts: { companyId?: string | null; jobId?: s
       toast.success("Applicant status updated safely.");
     },
     onError: (err: unknown, variables) => {
-      // Digital Workforce Sensor: Stream critical mutation blocks straight to Admin Console layers
-      console.error("[Digital Workforce] ANOMALY: job_applications Kanban transition state failure.", {
+      console.error("[Employer Pipeline] Error: job_applications Kanban transition state failure.", {
         applicationId: variables.applicationId,
         targetStatus: variables.to,
-        error: err.message,
-        code: err.code,
+        error: (err as any).message,
+        code: (err as any).code,
       });
       toast.error(`Handshake timeout. Candidate state update enqueued for operations review.`);
     },
@@ -151,10 +147,10 @@ export async function ensureDirectThread(companyId: string, talentId: string): P
     const { upsertDirectThread } = await import("@/domains/messaging/repo/messagingRepo");
     return await upsertDirectThread({ companyId, talentId });
   } catch (err: unknown) {
-    console.error("[Digital Workforce] ANOMALY: upsert_direct_thread RPC workflow failure.", {
+    console.error("[Employer Pipeline] Error: upsert_direct_thread RPC workflow failure.", {
       companyId,
       talentId,
-      error: err?.message,
+      error: (err as any)?.message,
     });
     return null;
   }

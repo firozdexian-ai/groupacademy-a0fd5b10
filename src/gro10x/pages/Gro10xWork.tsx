@@ -1,7 +1,8 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { GRO10X_MUTED } from "../lib/tokens";
+import { useGro10xCompanyId } from "../hooks/useGro10xCompanyId";
 import Gro10xJobsList from "./work/Gro10xJobsList";
 import Gro10xShortlist from "./work/Gro10xShortlist";
 import Gro10xTalents from "./work/Gro10xTalents";
@@ -20,8 +21,8 @@ export default function Gro10xWork() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>("hiring");
-  // Extract company_id from user metadata for People tab
-  const companyId = (user as unknown)?.user_metadata?.company_id as string | undefined;
+  // Resolve companyId via query hook
+  const { data: companyId } = useGro10xCompanyId();
 
   if (!user) {
     return (

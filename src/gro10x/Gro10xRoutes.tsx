@@ -27,7 +27,6 @@ const Gro10xCRM = lazy(() => import("./pages/Gro10xCRM"));
 const Gro10xOfferings = lazy(() => import("./pages/Gro10xOfferings"));
 const Gro10xSourcing = lazy(() => import("./pages/sourcing/Gro10xSourcing"));
 const Gro10xSourcingLists = lazy(() => import("./pages/sourcing/Gro10xSourcingLists"));
-const Gro10xProjects = lazy(() => import("./pages/work/Gro10xProjects"));
 const Gro10xGigBids = lazy(() => import("./pages/work/Gro10xGigBids"));
 
 /**
@@ -71,7 +70,6 @@ export function Gro10xRoutes() {
           <Route path="offerings" element={<ComingSoonGate featureKey="gro10x-offerings" title="Offerings — coming soon" description="Publish your products and services to the Gro10x marketplace. Join the waitlist for early access." secondaryCtaLabel="Back to Inbox" secondaryCtaHref="/gro10x/inbox" />} />
           <Route path="sourcing" element={<Gro10xSourcing />} />
           <Route path="sourcing/lists" element={<Gro10xSourcingLists />} />
-          <Route path="work/projects" element={<ComingSoonGate featureKey="gro10x-projects" title="Managed Projects — coming soon" description="Fund milestones, manage escrow, and ship multi-talent projects end-to-end. Join the waitlist for early access." secondaryCtaLabel="Back to Activities" secondaryCtaHref="/gro10x/work" />} />
           <Route path="work/gigs/:gigId/bids" element={<Gro10xGigBids />} />
         </Route>
 
