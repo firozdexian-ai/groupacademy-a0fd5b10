@@ -1,12 +1,14 @@
-﻿import { useNavigate, useParams, useSearchParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams, useLocation } from "react-router-dom";
 import { ArrowLeft, Send } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import { useAuth } from "@/hooks/useAuth";
 import { useGro10xThreads } from "../hooks/useGro10xThreads";
 import { useAgentRuntime, type AgentRuntimeContext } from "@/domains/agents/hooks/useAgentRuntime";
-import { getAgentMeta } from "../lib/agents";
+import { useGro10xAgents, getAgentMeta } from "../hooks/useGro10xAgents";
+import { useCompanyCreditsBalance } from "../hooks/useCompanyCreditsBalance";
 import { GRO10X_PANEL } from "../lib/tokens";
+import { toast } from "sonner";
 
 /**
  * Gro10x Chat — wires the Gro10x agent_key to the unified agent-runtime
@@ -24,7 +26,14 @@ export default function Gro10xChat() {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const { companyId, bumpThread, markRead, pinAgent } = useGro10xThreads();
-  const meta = getAgentMeta(agentKey);
+  
+  const { data: dbAgents = [] } = useGro10xAgents([agentKey]);
+  const meta = useMemo(() => {
+    const dbAgent = dbAgents.find((a) => a.key === agentKey);
+    return dbAgent ?? getAgentMeta(agentKey);
+  }, [dbAgents, agentKey]);
+
+  const { data: companyBalance = 0 } = useCompanyCreditsBalance(companyId);
 
   const subject = companyId ? ({ kind: "company", id: companyId } as const) : undefined;
   const contextProvider = useCallback((): AgentRuntimeContext => {
@@ -73,6 +82,12 @@ export default function Gro10xChat() {
   const handleSend = async () => {
     const text = input.trim();
     if (!text || isStreaming) return;
+
+    if (runtime.perResponseCost > 0 && companyBalance < runtime.perResponseCost) {
+      toast.error("Top up Gro10x credits to continue");
+      return;
+    }
+
     setInput("");
     await sendMessage(text);
   };

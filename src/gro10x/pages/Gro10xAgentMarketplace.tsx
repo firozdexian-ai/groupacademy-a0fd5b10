@@ -1,6 +1,6 @@
-﻿import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { GRO10X_MUTED, PRO_GOALS } from "../lib/tokens";
-import { GRO10X_AGENTS } from "../lib/agents";
+import { useGro10xAgents } from "../hooks/useGro10xAgents";
 import { useGro10xThreads } from "../hooks/useGro10xThreads";
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
@@ -9,6 +9,7 @@ import { toast } from "sonner";
 export default function Gro10xAgentMarketplace() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { data: dbAgents = [] } = useGro10xAgents();
   const { threads, pinAgent, companyId } = useGro10xThreads();
   const pinnedKeys = new Set(threads.map((t) => t.agent_key));
   const [busy, setBusy] = useState<string | null>(null);
@@ -39,8 +40,8 @@ export default function Gro10xAgentMarketplace() {
   };
 
   const visible = filter
-    ? GRO10X_AGENTS.filter((a) => a.goals.includes(filter))
-    : GRO10X_AGENTS;
+    ? dbAgents.filter((a) => a.goals.includes(filter))
+    : dbAgents;
 
   return (
     <div className="max-w-md md:max-w-5xl mx-auto">

@@ -146,28 +146,41 @@ serve(async (req) => {
 
       if (!existingConn) {
         const fee = Number(agent.connection_fee);
-        // Companies are not billed in MVP — talent-only charges
+        let feePaid = 0;
         if (subjectKind === "talent") {
           const charge = await chargeTalent(admin, subjectId!, fee, "agent_connection", agent.agent_key, `Connection: ${agent.name}`);
           if (!charge.ok) return json({ error: "INSUFFICIENT_CREDITS_CONNECTION", required: fee, available: charge.balance }, 402);
+          feePaid = fee;
+        } else if (subjectKind === "company") {
+          const charge = await chargeCompany(admin, subjectId!, fee, "agent_connection", agent.agent_key, `Connection: ${agent.name}`);
+          if (!charge.ok) return json({ error: "INSUFFICIENT_CREDITS_CONNECTION", required: fee, available: charge.balance }, 402);
+          feePaid = fee;
         }
         await admin.from("agent_connections").insert({
-          agent_id: agent.id, subject_kind: subjectKind, subject_id: subjectId, fee_paid: subjectKind === "talent" ? fee : 0,
+          agent_id: agent.id, subject_kind: subjectKind, subject_id: subjectId, fee_paid: feePaid,
         });
         await admin.from("agent_credit_events").insert({
           agent_id: agent.id, subject_kind: subjectKind, subject_id: subjectId,
-          event_kind: "connection", credits: subjectKind === "talent" ? fee : 0,
+          event_kind: "connection", credits: feePaid,
         });
       }
     }
 
-    // Per-message fee pre-flight check (talent-only in MVP)
+    // Per-message fee pre-flight check
     const msgCost = isFree ? 0 : Number(agent.message_credit_cost ?? 0);
-    if (msgCost > 0 && subjectKind === "talent") {
-      const { data: row } = await admin.from("talent_credits").select("balance").eq("talent_id", subjectId).maybeSingle();
-      const balance = Number(row?.balance ?? 0);
-      if (balance < msgCost) {
-        return json({ error: "INSUFFICIENT_CREDITS", required: msgCost, available: balance }, 402);
+    if (msgCost > 0) {
+      if (subjectKind === "talent") {
+        const { data: row } = await admin.from("talent_credits").select("balance").eq("talent_id", subjectId).maybeSingle();
+        const balance = Number(row?.balance ?? 0);
+        if (balance < msgCost) {
+          return json({ error: "INSUFFICIENT_CREDITS", required: msgCost, available: balance }, 402);
+        }
+      } else if (subjectKind === "company") {
+        const { data: row } = await admin.from("company_credits").select("balance").eq("company_id", subjectId).maybeSingle();
+        const balance = Number(row?.balance ?? 0);
+        if (balance < msgCost) {
+          return json({ error: "INSUFFICIENT_CREDITS", required: msgCost, available: balance }, 402);
+        }
       }
     }
 
@@ -586,6 +599,19 @@ async function chargeTalent(admin: unknown, talentId: string, amount: number, tx
   return { ok: true as const, balance: next };
 }
 
+async function chargeCompany(admin: unknown, companyId: string, amount: number, txnType: string, serviceType: string, description: string) {
+  const { data: row } = await admin.from("company_credits").select("balance").eq("company_id", companyId).maybeSingle();
+  const current = Number(row?.balance ?? 0);
+  if (current < amount) return { ok: false as const, balance: current };
+  const next = current - amount;
+  await admin.from("company_credits").update({ balance: next }).eq("company_id", companyId);
+  await admin.from("company_credit_transactions").insert({
+    company_id: companyId, amount: -amount, balance_after: next,
+    transaction_type: txnType, service_type: serviceType, description,
+  });
+  return { ok: true as const, balance: next };
+}
+
 async function loadTools(admin: unknown, keys: string[], agentLevel: number) {
   if (!keys?.length) return [] as unknown[];
   const { data } = await admin
@@ -678,12 +704,20 @@ async function pipeAndPersist(
   if (assistantText) {
     let chargeSuccessful = true;
 
-    // Per-message fee deduction (talent-only in MVP) - commit on success
-    if (ctx.msgCost > 0 && ctx.subjectKind === "talent") {
-      const charge = await chargeTalent(admin, ctx.subjectId, ctx.msgCost, "agent_message", ctx.agentKey, `Message: ${ctx.agentName}`);
-      if (!charge.ok) {
-        console.error(`[agent-runtime] Commit-on-success charge failed for talent ${ctx.subjectId}. Required: ${ctx.msgCost}`);
-        chargeSuccessful = false;
+    // Per-message fee deduction - commit on success
+    if (ctx.msgCost > 0) {
+      if (ctx.subjectKind === "talent") {
+        const charge = await chargeTalent(admin, ctx.subjectId, ctx.msgCost, "agent_message", ctx.agentKey, `Message: ${ctx.agentName}`);
+        if (!charge.ok) {
+          console.error(`[agent-runtime] Commit-on-success charge failed for talent ${ctx.subjectId}. Required: ${ctx.msgCost}`);
+          chargeSuccessful = false;
+        }
+      } else if (ctx.subjectKind === "company") {
+        const charge = await chargeCompany(admin, ctx.subjectId, ctx.msgCost, "agent_message", ctx.agentKey, `Message: ${ctx.agentName}`);
+        if (!charge.ok) {
+          console.error(`[agent-runtime] Commit-on-success charge failed for company ${ctx.subjectId}. Required: ${ctx.msgCost}`);
+          chargeSuccessful = false;
+        }
       }
     }
 

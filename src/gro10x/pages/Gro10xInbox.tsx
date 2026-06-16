@@ -1,9 +1,9 @@
-﻿import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Search, Plus, Building2 } from "lucide-react";
 import { GRO10X_PANEL, GRO10X_MUTED } from "../lib/tokens";
 import { useGro10xThreads } from "../hooks/useGro10xThreads";
-import { getAgentMeta } from "../lib/agents";
-import { useState, useMemo } from "react";
+import { useGro10xAgents, getAgentMeta } from "../hooks/useGro10xAgents";
+import { useState, useMemo, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Gro10xLoading } from "../components/Gro10xLoading";
 
@@ -23,18 +23,26 @@ export default function Gro10xInbox() {
   const [q, setQ] = useState("");
   const navigate = useNavigate();
 
+  const extraKeys = useMemo(() => threads.map((t) => t.agent_key), [threads]);
+  const { data: dbAgents = [] } = useGro10xAgents(extraKeys);
+  const dbAgentsMap = useMemo(() => new Map(dbAgents.map((a) => [a.key, a])), [dbAgents]);
+
+  const resolveMeta = useCallback((key: string) => {
+    return dbAgentsMap.get(key) ?? getAgentMeta(key);
+  }, [dbAgentsMap]);
+
   const filtered = useMemo(() => {
     if (!q.trim()) return threads;
     const needle = q.toLowerCase();
     return threads.filter((t) => {
-      const meta = getAgentMeta(t.agent_key);
+      const meta = resolveMeta(t.agent_key);
       return (
         t.agent_key.includes(needle) ||
         meta.name.toLowerCase().includes(needle) ||
         (t.last_message ?? "").toLowerCase().includes(needle)
       );
     });
-  }, [threads, q]);
+  }, [threads, q, resolveMeta]);
 
   if (!user) {
     return (
@@ -114,7 +122,7 @@ export default function Gro10xInbox() {
           </p>
           <ul className="divide-y divide-white/5">
             {filtered.map((t) => {
-              const meta = getAgentMeta(t.agent_key);
+              const meta = resolveMeta(t.agent_key);
               return (
                 <li key={t.id}>
                   <Link

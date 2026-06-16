@@ -1,9 +1,9 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useActiveCompany } from "../hooks/useActiveCompany";
-import { getAgentMeta } from "../lib/agents";
+import { getAgentMeta } from "../hooks/useGro10xAgents";
 import { GRO10X_BG, GRO10X_TEXT } from "../lib/tokens";
 import { listPinnedAgentKeys } from "@/domains/agents/repo/agentsRepo";
 

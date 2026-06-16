@@ -1,4 +1,4 @@
-﻿import { lazy, Suspense } from "react";
+import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Gro10xAppShell } from "./components/Gro10xAppShell";
 import { PageLoadingSkeleton } from "@/components/ui/page-loading-skeleton";
@@ -58,7 +58,7 @@ export function Gro10xRoutes() {
           <Route path="page" element={<Gro10xCompanyPage />} />
           <Route path="page/:companyId" element={<Gro10xCompanyPage />} />
           <Route path="me" element={<Gro10xMe />} />
-          <Route path="agents" element={<ComingSoonGate featureKey="gro10x-agents" title="Agent Marketplace — coming soon" description="Hire AI agents to run sourcing, screening, and outreach for your team. Join the waitlist for early access." secondaryCtaLabel="Back to Inbox" secondaryCtaHref="/gro10x/inbox" />} />
+          <Route path="agents" element={<Gro10xAgentMarketplace />} />
           <Route path="work" element={<Gro10xWork />} />
           <Route path="work/jobs/:jobId/applicants" element={<Gro10xJobApplicants />} />
           <Route path="work/applications" element={<Gro10xApplications />} />

@@ -149,15 +149,28 @@ export function useAgentRuntime(
 
       // Pre-Flight validation gate: Verification of fractional credit balance models
       if (perResponseCost > 0) {
-        const { data: credits } = await supabase
-          .from("talent_credits")
-          .select("balance")
-          .eq("talent_id", talent.id)
-          .single();
+        if (subject?.kind === "company") {
+          const { data: credits } = await supabase
+            .from("company_credits")
+            .select("balance")
+            .eq("company_id", subject.id)
+            .single();
 
-        if (!credits || credits.balance < perResponseCost) {
-          toast.error(`Insufficient balance: ${perResponseCost} credits required to send message.`);
-          return;
+          if (!credits || credits.balance < perResponseCost) {
+            toast.error("Top up Gro10x credits to continue");
+            return;
+          }
+        } else {
+          const { data: credits } = await supabase
+            .from("talent_credits")
+            .select("balance")
+            .eq("talent_id", talent.id)
+            .single();
+
+          if (!credits || credits.balance < perResponseCost) {
+            toast.error(`Insufficient balance: ${perResponseCost} credits required to send message.`);
+            return;
+          }
         }
       }
 
@@ -189,8 +202,17 @@ export function useAgentRuntime(
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          const { message } = handleAIError(errorData, response.status);
-          toast.error(message);
+          if (response.status === 402 || errorData.error === "INSUFFICIENT_CREDITS" || errorData.error === "INSUFFICIENT_CREDITS_CONNECTION") {
+            if (subject?.kind === "company") {
+              toast.error("Top up Gro10x credits to continue");
+            } else {
+              const reqFee = errorData.required ?? perResponseCost;
+              toast.error(`Insufficient balance: ${reqFee} credits required to send message.`);
+            }
+          } else {
+            const { message } = handleAIError(errorData, response.status);
+            toast.error(message);
+          }
           setMessages((prev) => prev.slice(0, -2));
           return;
         }
