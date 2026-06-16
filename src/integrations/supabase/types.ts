@@ -1739,6 +1739,7 @@ export type Database = {
           profession_line_id: string | null
           prompt_variants: Json
           region: string | null
+          review_notes: string | null
           sample_conversations: Json | null
           session_duration_minutes: number | null
           system_prompt: string
@@ -1791,6 +1792,7 @@ export type Database = {
           profession_line_id?: string | null
           prompt_variants?: Json
           region?: string | null
+          review_notes?: string | null
           sample_conversations?: Json | null
           session_duration_minutes?: number | null
           system_prompt: string
@@ -1843,6 +1845,7 @@ export type Database = {
           profession_line_id?: string | null
           prompt_variants?: Json
           region?: string | null
+          review_notes?: string | null
           sample_conversations?: Json | null
           session_duration_minutes?: number | null
           system_prompt?: string
