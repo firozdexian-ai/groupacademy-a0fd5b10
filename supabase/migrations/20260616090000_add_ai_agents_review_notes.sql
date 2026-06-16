@@ -1,9 +1,15 @@
--- Migration to add review_notes column and seed the 9 canonical talent agents into public.ai_agents
+-- Migration to add review_notes column, adjust CHECK constraint, and seed the 9 canonical talent agents into public.ai_agents
 -- Handled idempotently to ensure sandbox environment databases are populated correctly
 
+-- 1. Add review_notes column if not exists
 ALTER TABLE public.ai_agents
   ADD COLUMN IF NOT EXISTS review_notes text;
 
+-- 2. Drop and update agent_type CHECK constraint to allow 'talent'
+ALTER TABLE public.ai_agents DROP CONSTRAINT IF EXISTS ai_agents_agent_type_check;
+ALTER TABLE public.ai_agents ADD CONSTRAINT ai_agents_agent_type_check CHECK (agent_type IN ('platform', 'company', 'specialized', 'talent'));
+
+-- 3. Seed/Upsert the 9 platform mentors with lowercase icon keys matching getIcon() registry
 INSERT INTO public.ai_agents (
   agent_key,
   name,
