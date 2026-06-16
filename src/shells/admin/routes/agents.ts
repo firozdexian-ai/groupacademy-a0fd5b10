@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 /**
  * AI Agents Domain Routing Registry — Agent OS Command Center
@@ -24,6 +24,9 @@ export const ROUTES: Record<string, React.LazyExoticComponent<unknown>> = {
     import("@/domains/agents/components/dashboard/AgentsOverviewTab").then((m) => ({ default: m.AgentsOverviewTab })),
   ),
   "agents-channels": React.lazy(() =>
+    import("@/domains/agents/components/dashboard/AgentChannelsTab").then((m) => ({ default: m.AgentChannelsTab })),
+  ),
+  "agents-triggers": React.lazy(() =>
     import("@/domains/agents/components/dashboard/AgentTriggers").then((m) => ({ default: m.AgentTriggers })),
   ),
   "agents-multichannel": React.lazy(() =>
@@ -64,7 +67,8 @@ export const ROUTES: Record<string, React.LazyExoticComponent<unknown>> = {
 export const TITLES: Record<string, string> = {
   "agent-outreach": "Agent Outreach",
   "agents-overview": "Agents Overview",
-  "agents-channels": "Channels & Triggers",
+  "agents-channels": "Channels & Connectors",
+  "agents-triggers": "Event Triggers",
   "agents-multichannel": "Routing",
   "agents-command-center": "Workforce Command Center",
   "agents-tools": "Tools & Connectors",

@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   getStudioBundle,
   updateAiAgent,
@@ -6,6 +6,7 @@ import {
   deactivateAiAgent,
   deleteAgentKnowledgeSource,
   listAgentKnowledgeSources,
+  syncAgentToolBindings,
 } from "@/domains/agents/repo/agentsRepo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -46,6 +47,9 @@ import {
 import { cn } from "@/lib/utils";
 import { AgentBrainPanel } from "@/domains/agents/components/dashboard/AgentBrainPanel";
 import { ingestAgentKnowledge } from "@/domains/agents/api/agentsApi";
+import { useAuth } from "@/hooks/useAuth";
+import { useAgentRuntime } from "@/domains/agents/hooks/useAgentRuntime";
+import { AgentChatDialog } from "@/domains/agents/components/chat/AgentChatDialog";
 
 interface AgentRow {
   id: string;
@@ -115,7 +119,13 @@ export function AgentStudio() {
     setSaving(true);
     try {
       await updateAiAgent(selected.id, patch);
-    } catch (error: unknown) {
+      if (patch.allowed_tools) {
+        const toolIds = patch.allowed_tools
+          .map((key) => tools.find((t) => t.tool_key === key)?.id)
+          .filter(Boolean) as string[];
+        await syncAgentToolBindings(selected.id, toolIds);
+      }
+    } catch (error: any) {
       setSaving(false);
       toast.error(error.message || "Something went wrong while updating configurations.");
       return;
@@ -310,6 +320,7 @@ function AgentDetailPanel({
   onDelete: () => void;
 }) {
   const [form, setForm] = useState(agent);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   useEffect(() => setForm(agent), [agent.id]);
 
   const toggleTool = (key: string) => {
@@ -330,6 +341,7 @@ function AgentDetailPanel({
   }, [tools]);
 
   return (
+    <>
     <Card className="rounded-2xl border border-border/60 shadow-sm overflow-hidden bg-card/40 backdrop-blur-xl flex flex-col">
       <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-500 to-indigo-500 rounded-t-2xl" />
 
@@ -350,6 +362,16 @@ function AgentDetailPanel({
             </div>
           </div>
           <div className="flex items-center gap-3 shrink-0 bg-background/50 p-1.5 rounded-xl border border-border/40 shadow-sm">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setIsPreviewOpen(true)}
+              className="h-8 rounded-lg text-xs font-semibold px-3 gap-1 hover:bg-muted"
+            >
+              <TerminalSquare className="h-3.5 w-3.5" />
+              <span>Try it</span>
+            </Button>
+            <div className="w-px h-5 bg-border/60" />
             <div className="flex items-center gap-2 px-1.5">
               <Switch
                 checked={!!form.is_active}
@@ -651,6 +673,14 @@ function AgentDetailPanel({
         </Tabs>
       </CardContent>
     </Card>
+    <AgentPreviewDialog
+      agentKey={agent.agent_key}
+      agentName={agent.name}
+      avatarUrl={agent.avatar_url}
+      open={isPreviewOpen}
+      onClose={() => setIsPreviewOpen(false)}
+    />
+    </>
   );
 }
 
@@ -1020,6 +1050,68 @@ function CreateAgentDialog({
               <Plus className="h-4 w-4" /> Create Agent Node
             </Button>
           </DialogFooter>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function AgentPreviewDialog({
+  agentKey,
+  agentName,
+  avatarUrl,
+  open,
+  onClose,
+}: {
+  agentKey: string;
+  agentName: string;
+  avatarUrl: string | null;
+  open: boolean;
+  onClose: () => void;
+}) {
+  const { user } = useAuth();
+  const subjectOverride = useMemo(() => {
+    return user?.id ? ({ kind: "admin" as const, id: user.id } as const) : undefined;
+  }, [user?.id]);
+
+  const runtime = useAgentRuntime(subjectOverride);
+  const { messages, isStreaming, sendMessage, startOrResumeSession, endSession } = runtime;
+
+  useEffect(() => {
+    if (open && agentKey) {
+      void startOrResumeSession(agentKey);
+    } else {
+      void endSession();
+    }
+  }, [open, agentKey, startOrResumeSession, endSession]);
+
+  const DynamicIcon = Bot;
+
+  return (
+    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
+      <DialogContent className="max-w-2xl h-[80vh] flex flex-col p-0 overflow-hidden bg-background">
+        <DialogHeader className="p-4 border-b border-border/40">
+          <DialogTitle>Dry-Run Sandbox: {agentName}</DialogTitle>
+          <DialogDescription>
+            Test your prompt variants and tool configurations as an administrator.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="flex-1 min-h-0 relative">
+          <AgentChatDialog
+            agent={{
+              id: agentKey,
+              name: agentName,
+              color: "bg-primary",
+              avatarUrl: avatarUrl,
+              icon: <DynamicIcon className="h-4 w-4 shrink-0 text-primary-foreground" />,
+            }}
+            messages={messages}
+            isStreaming={isStreaming}
+            onSendMessage={sendMessage}
+            onBack={onClose}
+            onEndSession={endSession}
+            perResponseCost={0}
+          />
         </div>
       </DialogContent>
     </Dialog>

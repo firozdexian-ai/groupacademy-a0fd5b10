@@ -1,9 +1,10 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   listPayoutRequestsByStatus,
   markPayoutPaid,
   updatePayoutRequestStatus,
   insertNotification,
+  getPayoutReconciliationLedger,
 } from "@/domains/agents/repo/agentsRepo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,7 +20,7 @@ import { cn } from "@/lib/utils";
 /**
  * Group Academy — Career Guidance System: Agent Creator Financial Payout Management Panel
  * Version: Phase 10j.5 Hardened (Production Candidate)
- * Surface: /dashboard/command-center?tab=payouts (Operator Financial Administration Area)
+ * Surface: /dashboard/command-center?tab=payouts (Operator Financial Administrative Area)
  * Operations Mode: Automated Efficiency ledger processing system disbursements across status boundaries.
  */
 
@@ -41,19 +42,26 @@ const STATUSES = ["pending", "approved", "paid", "rejected"] as const;
 export function AgentPayoutsManager() {
   const [tab, setTab] = useState<(typeof STATUSES)[number]>("pending");
   const [rows, setRows] = useState<PayoutRow[]>([]);
+  const [reconciliationRows, setReconciliationRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [reconciliationLoading, setReconciliationLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
 
   async function load() {
     setLoading(true);
+    setReconciliationLoading(true);
     try {
       const data = await listPayoutRequestsByStatus(tab);
       setRows((data as PayoutRow[]) ?? []);
-    } catch (err: unknown) {
+
+      const ledger = await getPayoutReconciliationLedger();
+      setReconciliationRows(ledger ?? []);
+    } catch (err: any) {
       trackError("agent-payouts-manager-load-failure", { error: err.message, tab });
       toast.error("Failed to load payout records ledger");
     } finally {
       setLoading(false);
+      setReconciliationLoading(false);
     }
   }
 
@@ -89,7 +97,7 @@ export function AgentPayoutsManager() {
 
       toast.success(`Transaction committed: Status marked as ${status}`);
       await load();
-    } catch (err: unknown) {
+    } catch (err: any) {
       trackError("agent-payouts-manager-update-failure", { error: err.message, id: row.id, status });
       toast.error(err.message || "Financial transaction processing operation dropped");
     } finally {
@@ -113,167 +121,236 @@ export function AgentPayoutsManager() {
         </div>
       </header>
 
-      <Tabs value={tab} onValueChange={(v) => setTab(v as (typeof STATUSES)[number])} className="w-full">
-        <TabsList className="bg-muted/40 border border-border p-1 mb-4 w-full md:w-auto flex flex-col md:flex-row h-auto gap-1 rounded-xl">
-          {STATUSES.map((s) => (
-            <TabsTrigger
-              key={s}
-              value={s}
-              className="rounded-lg font-semibold text-xs tracking-tight py-2 px-5 capitalize flex-1 md:flex-none"
-            >
-              {s}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
+        <div className="xl:col-span-2 space-y-6">
+          <Tabs value={tab} onValueChange={(v) => setTab(v as (typeof STATUSES)[number])} className="w-full">
+            <TabsList className="bg-muted/40 border border-border p-1 mb-4 w-full md:w-auto flex flex-col md:flex-row h-auto gap-1 rounded-xl">
+              {STATUSES.map((s) => (
+                <TabsTrigger
+                  key={s}
+                  value={s}
+                  className="rounded-lg font-semibold text-xs tracking-tight py-2 px-5 capitalize flex-1 md:flex-none"
+                >
+                  {s}
+                </TabsTrigger>
+              ))}
+            </TabsList>
 
-        <TabsContent value={tab} className="animate-in slide-in-from-bottom-2 duration-200 focus-visible:outline-none">
-          <Card className="rounded-2xl border border-border/60 shadow-sm overflow-hidden bg-card flex flex-col">
-            <div
-              className={cn(
-                "h-1 w-full transition-all duration-300",
-                tab === "pending"
-                  ? "bg-amber-500"
-                  : tab === "approved"
-                    ? "bg-blue-500"
-                    : tab === "paid"
-                      ? "bg-emerald-500"
-                      : "bg-destructive",
-              )}
-            />
+            <TabsContent value={tab} className="animate-in slide-in-from-bottom-2 duration-200 focus-visible:outline-none">
+              <Card className="rounded-2xl border border-border/60 shadow-sm overflow-hidden bg-card flex flex-col">
+                <div
+                  className={cn(
+                    "h-1 w-full transition-all duration-300",
+                    tab === "pending"
+                      ? "bg-amber-500"
+                      : tab === "approved"
+                        ? "bg-blue-500"
+                        : tab === "paid"
+                          ? "bg-emerald-500"
+                          : "bg-destructive",
+                  )}
+                />
 
+                <CardHeader className="p-5 border-b border-border/40 bg-muted/20">
+                  <CardTitle className="text-xs font-bold uppercase tracking-wider flex items-center gap-2 text-muted-foreground/80">
+                    <Activity className="h-4 w-4 text-primary" /> Requests Overview &mdash;{" "}
+                    <span className="capitalize">{tab}</span> ({rows.length})
+                  </CardTitle>
+                </CardHeader>
+
+                <CardContent className="p-0 bg-background/50">
+                  {loading ? (
+                    <div className="p-5 space-y-3">
+                      {[1, 2, 3].map((i) => (
+                        <Skeleton key={i} className="h-16 w-full rounded-xl border border-border/40 bg-muted/30" />
+                      ))}
+                    </div>
+                  ) : rows.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-16 text-muted-foreground/40 space-y-2">
+                      <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground/30">
+                        <ShieldCheck className="h-5 w-5" />
+                      </div>
+                      <p className="text-xs font-medium text-center">
+                        Payout Queue Clear. No records match the {tab} filter parameters.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader className="bg-muted/30">
+                          <TableRow className="border-b border-border/60">
+                            <TableHead className="px-5 py-3 text-xs font-bold text-foreground">Creator Profile</TableHead>
+                            <TableHead className="text-right text-xs font-bold text-foreground">
+                              Disbursement Amount
+                            </TableHead>
+                            <TableHead className="text-xs font-bold text-foreground">Payment Route</TableHead>
+                            <TableHead className="text-xs font-bold text-foreground max-w-[200px]">
+                              Notes / Context
+                            </TableHead>
+                            <TableHead className="text-xs font-bold text-foreground">Submission Date</TableHead>
+                            <TableHead className="px-5 text-right text-xs font-bold text-foreground">
+                              Processing Action
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {rows.map((r) => (
+                            <TableRow
+                              key={r.id}
+                              className="hover:bg-primary/[0.01] border-b border-border/40 last:border-none group"
+                            >
+                              <TableCell className="px-5 py-3">
+                                <div className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors leading-none">
+                                  {r.talent?.full_name ?? "Unknown User"}
+                                </div>
+                                <div className="text-[11px] font-medium text-muted-foreground mt-1">{r.talent?.email}</div>
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <div className="inline-flex items-center gap-1.5 font-bold text-base text-foreground tabular-nums">
+                                  <Coins className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                                  {Number(r.amount_credits).toLocaleString(undefined, { minimumFractionDigits: 1 })}
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <Badge
+                                  variant="outline"
+                                  className="text-[10px] font-semibold tracking-wide border-border bg-background px-2 py-0 rounded text-muted-foreground"
+                                >
+                                  {r.payout_method}
+                                </Badge>
+                              </TableCell>
+                              <TableCell
+                                className="text-xs text-muted-foreground/90 max-w-[200px] truncate font-medium"
+                                title={(r.payout_details as { note?: string })?.note ?? "—"}
+                              >
+                                {(r.payout_details as { note?: string })?.note ?? "—"}
+                              </TableCell>
+                              <TableCell className="text-xs text-muted-foreground/70 font-medium whitespace-nowrap">
+                                {new Date(r.created_at).toLocaleDateString(undefined, { dateStyle: "medium" })}
+                              </TableCell>
+                              <TableCell className="px-5 py-3 text-right">
+                                <div className="flex justify-end gap-1.5 sm:self-center">
+                                  {tab === "pending" && (
+                                    <>
+                                      <Button
+                                        size="sm"
+                                        onClick={() => update(r, "approved")}
+                                        disabled={busyId === r.id}
+                                        className="h-8 rounded-lg font-semibold text-xs tracking-wide bg-blue-600 hover:bg-blue-700 text-white gap-1.5 shadow-sm px-3"
+                                      >
+                                        {busyId === r.id ? (
+                                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                        ) : (
+                                          <Check className="h-3.5 w-3.5" />
+                                        )}
+                                        Approve Request
+                                      </Button>
+                                      <Button
+                                        size="icon"
+                                        variant="outline"
+                                        onClick={() => update(r, "rejected")}
+                                        disabled={busyId === r.id}
+                                        className="h-8 w-8 rounded-lg text-rose-600 border-border hover:bg-rose-500/10 hover:border-rose-300 transition-colors"
+                                        aria-label="Reject request"
+                                      >
+                                        <X className="h-3.5 w-3.5" />
+                                      </Button>
+                                    </>
+                                  )}
+                                  {tab === "approved" && (
+                                    <Button
+                                      size="sm"
+                                      onClick={() => update(r, "paid")}
+                                      disabled={busyId === r.id}
+                                      className="h-8 rounded-lg font-semibold text-xs tracking-wide bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 shadow-sm px-3"
+                                    >
+                                      {busyId === r.id ? (
+                                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                      ) : (
+                                        <Banknote className="h-3.5 w-3.5" />
+                                      )}
+                                      Mark Disbursed
+                                    </Button>
+                                  )}
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        <div>
+          <Card className="rounded-2xl border border-border/60 shadow-sm overflow-hidden bg-card flex flex-col h-full">
+            <div className="h-1 w-full bg-emerald-500" />
             <CardHeader className="p-5 border-b border-border/40 bg-muted/20">
               <CardTitle className="text-xs font-bold uppercase tracking-wider flex items-center gap-2 text-muted-foreground/80">
-                <Activity className="h-4 w-4 text-primary" /> Requests Overview &mdash;{" "}
-                <span className="capitalize">{tab}</span> ({rows.length})
+                <Banknote className="h-4 w-4 text-emerald-600" /> Lifetime Reconciliation
               </CardTitle>
             </CardHeader>
-
-            <CardContent className="p-0 bg-background/50">
-              {loading ? (
+            <CardContent className="p-0 bg-background/50 flex-1 overflow-x-auto">
+              {reconciliationLoading ? (
                 <div className="p-5 space-y-3">
                   {[1, 2, 3].map((i) => (
-                    <Skeleton key={i} className="h-16 w-full rounded-xl border border-border/40 bg-muted/30" />
+                    <Skeleton key={i} className="h-12 w-full rounded-xl bg-muted/30" />
                   ))}
                 </div>
-              ) : rows.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-16 text-muted-foreground/40 space-y-2">
-                  <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground/30">
-                    <ShieldCheck className="h-5 w-5" />
-                  </div>
-                  <p className="text-xs font-medium text-center">
-                    Payout Queue Clear. No records match the {tab} filter parameters.
-                  </p>
+              ) : reconciliationRows.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground/40 space-y-2">
+                  <p className="text-xs font-medium text-center">No creator earnings tracked yet.</p>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader className="bg-muted/30">
-                      <TableRow className="border-b border-border/60">
-                        <TableHead className="px-5 py-3 text-xs font-bold text-foreground">Creator Profile</TableHead>
-                        <TableHead className="text-right text-xs font-bold text-foreground">
-                          Disbursement Amount
-                        </TableHead>
-                        <TableHead className="text-xs font-bold text-foreground">Payment Route</TableHead>
-                        <TableHead className="text-xs font-bold text-foreground max-w-[200px]">
-                          Notes / Context
-                        </TableHead>
-                        <TableHead className="text-xs font-bold text-foreground">Submission Date</TableHead>
-                        <TableHead className="px-5 text-right text-xs font-bold text-foreground">
-                          Processing Action
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {rows.map((r) => (
-                        <TableRow
-                          key={r.id}
-                          className="hover:bg-primary/[0.01] border-b border-border/40 last:border-none group"
-                        >
-                          <TableCell className="px-5 py-3">
-                            <div className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors leading-none">
-                              {r.talent?.full_name ?? "Unknown User"}
+                <Table>
+                  <TableHeader className="bg-muted/20">
+                    <TableRow className="border-b border-border/40">
+                      <TableHead className="text-xs font-bold px-4 py-2">Creator</TableHead>
+                      <TableHead className="text-right text-xs font-bold px-4 py-2 flex-1">Earnings</TableHead>
+                      <TableHead className="text-right text-xs font-bold px-4 py-2">Paid/Pend</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {reconciliationRows.map((r) => {
+                      const hasDiscrepancy = r.totalRequested > r.totalEarned;
+                      return (
+                        <TableRow key={r.talentId} className="hover:bg-primary/[0.01] border-b border-border/30 last:border-none">
+                          <TableCell className="px-4 py-3">
+                            <div className="font-semibold text-xs text-foreground truncate max-w-[120px]">{r.fullName}</div>
+                            <div className="text-[10px] text-muted-foreground truncate max-w-[120px]">{r.email}</div>
+                          </TableCell>
+                          <TableCell className="text-right px-4 py-3 font-mono text-xs font-bold text-foreground">
+                            {Number(r.totalEarned).toLocaleString(undefined, { maximumFractionDigits: 1 })}
+                          </TableCell>
+                          <TableCell className="text-right px-4 py-3">
+                            <div className="font-mono text-[11px] font-semibold text-emerald-600">
+                              {Number(r.totalPaid).toLocaleString(undefined, { maximumFractionDigits: 1 })}
                             </div>
-                            <div className="text-[11px] font-medium text-muted-foreground mt-1">{r.talent?.email}</div>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="inline-flex items-center gap-1.5 font-bold text-base text-foreground tabular-nums">
-                              <Coins className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-                              {Number(r.amount_credits).toLocaleString(undefined, { minimumFractionDigits: 1 })}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge
-                              variant="outline"
-                              className="text-[10px] font-semibold tracking-wide border-border bg-background px-2 py-0 rounded text-muted-foreground"
-                            >
-                              {r.payout_method}
-                            </Badge>
-                          </TableCell>
-                          <TableCell
-                            className="text-xs text-muted-foreground/90 max-w-[200px] truncate font-medium"
-                            title={(r.payout_details as { note?: string })?.note ?? "—"}
-                          >
-                            {(r.payout_details as { note?: string })?.note ?? "—"}
-                          </TableCell>
-                          <TableCell className="text-xs text-muted-foreground/70 font-medium whitespace-nowrap">
-                            {new Date(r.created_at).toLocaleDateString(undefined, { dateStyle: "medium" })}
-                          </TableCell>
-                          <TableCell className="px-5 py-3 text-right">
-                            <div className="flex justify-end gap-1.5 sm:self-center">
-                              {tab === "pending" && (
-                                <>
-                                  <Button
-                                    size="sm"
-                                    onClick={() => update(r, "approved")}
-                                    disabled={busyId === r.id}
-                                    className="h-8 rounded-lg font-semibold text-xs tracking-wide bg-blue-600 hover:bg-blue-700 text-white gap-1.5 shadow-sm px-3"
-                                  >
-                                    {busyId === r.id ? (
-                                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                    ) : (
-                                      <Check className="h-3.5 w-3.5" />
-                                    )}
-                                    Approve Request
-                                  </Button>
-                                  <Button
-                                    size="icon"
-                                    variant="outline"
-                                    onClick={() => update(r, "rejected")}
-                                    disabled={busyId === r.id}
-                                    className="h-8 w-8 rounded-lg text-rose-600 border-border hover:bg-rose-500/10 hover:border-rose-300 transition-colors"
-                                    aria-label="Reject request"
-                                  >
-                                    <X className="h-3.5 w-3.5" />
-                                  </Button>
-                                </>
-                              )}
-                              {tab === "approved" && (
-                                <Button
-                                  size="sm"
-                                  onClick={() => update(r, "paid")}
-                                  disabled={busyId === r.id}
-                                  className="h-8 rounded-lg font-semibold text-xs tracking-wide bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 shadow-sm px-3"
-                                >
-                                  {busyId === r.id ? (
-                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                  ) : (
-                                    <Banknote className="h-3.5 w-3.5" />
-                                  )}
-                                  Mark Disbursed
-                                </Button>
-                              )}
-                            </div>
+                            {r.pendingAmount > 0 && (
+                              <div className="font-mono text-[9px] text-amber-600 font-medium mt-0.5">
+                                +{Number(r.pendingAmount).toLocaleString(undefined, { maximumFractionDigits: 1 })} pend
+                              </div>
+                            )}
+                            {hasDiscrepancy && (
+                              <Badge variant="outline" className="text-[8px] bg-red-500/10 text-red-600 border-none font-bold px-1 py-0 mt-1 select-none">
+                                Audit Req
+                              </Badge>
+                            )}
                           </TableCell>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
               )}
             </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
+        </div>
+      </div>
     </div>
   );
 }

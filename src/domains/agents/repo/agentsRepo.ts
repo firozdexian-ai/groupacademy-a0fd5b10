@@ -770,7 +770,7 @@ export async function listAiAgentsForListTab(opts: { agentTypeFilter?: string | 
     let q = supabase
       .from("admin_ai_agents")
       .select(
-        "id,agent_key,name,description,agent_type,audience,visibility,is_active,total_conversations,credit_cost,message_credit_cost,model",
+        "id,agent_key,name,description,agent_type,audience,visibility,is_active,total_conversations,credit_cost,message_credit_cost,model,owner_kind,owner_id,connection_fee,marketplace_status",
       )
       .order("total_conversations", { ascending: false })
       .limit(200);
@@ -784,7 +784,7 @@ export async function listAiAgentsForListTab(opts: { agentTypeFilter?: string | 
     const { data, error } = await q;
     if (error) throw error;
     return data ?? [];
-  } catch (err: unknown) {
+  } catch (err: any) {
     trackError("agents-repo-listAiAgentsForListTab-failure", { opts, error: err.message });
     throw err;
   }
@@ -956,5 +956,189 @@ export async function listTopActiveAgentsForQuickActions(limit = 15) {
     throw err;
   }
 }
+
+export async function listAgentToolBindings(agentId: string) {
+  try {
+    const { data, error } = await supabase
+      .from("agent_tool_bindings")
+      .select(`
+        agent_id,
+        tool_id,
+        created_at,
+        agent_tools (
+          id,
+          tool_key,
+          name,
+          description,
+          category
+        )
+      `)
+      .eq("agent_id", agentId);
+    if (error) throw error;
+    return data ?? [];
+  } catch (err: unknown) {
+    trackError("agents-repo-listAgentToolBindings-failure", { agentId, error: err.message });
+    throw err;
+  }
+}
+
+export async function attachAgentTool(agentId: string, toolId: string) {
+  try {
+    const { data, error } = await supabase
+      .from("agent_tool_bindings")
+      .insert({ agent_id: agentId, tool_id: toolId })
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  } catch (err: unknown) {
+    trackError("agents-repo-attachAgentTool-failure", { agentId, toolId, error: err.message });
+    throw err;
+  }
+}
+
+export async function detachAgentTool(agentId: string, toolId: string) {
+  try {
+    const { error } = await supabase
+      .from("agent_tool_bindings")
+      .delete()
+      .eq("agent_id", agentId)
+      .eq("tool_id", toolId);
+    if (error) throw error;
+  } catch (err: unknown) {
+    trackError("agents-repo-detachAgentTool-failure", { agentId, toolId, error: err.message });
+    throw err;
+  }
+}
+
+export async function syncAgentToolBindings(agentId: string, toolIds: string[]) {
+  try {
+    const { error: deleteErr } = await supabase
+      .from("agent_tool_bindings")
+      .delete()
+      .eq("agent_id", agentId);
+    if (deleteErr) throw deleteErr;
+
+    if (toolIds.length > 0) {
+      const rows = toolIds.map((toolId) => ({ agent_id: agentId, tool_id: toolId }));
+      const { error: insertErr } = await supabase
+        .from("agent_tool_bindings")
+        .insert(rows);
+      if (insertErr) throw insertErr;
+    }
+  } catch (err: unknown) {
+    trackError("agents-repo-syncAgentToolBindings-failure", { agentId, toolIds, error: err.message });
+    throw err;
+  }
+}
+
+export async function getUgcMetadata(agentIds: string[], ownerIds: string[]) {
+  try {
+    let talents: { id: string; full_name: string | null }[] = [];
+    if (ownerIds.length > 0) {
+      const { data, error } = await supabase
+        .from("talents")
+        .select("id, full_name")
+        .in("id", ownerIds);
+      if (error) throw error;
+      talents = data ?? [];
+    }
+
+    let earnings: { agent_id: string; gross_credits: number }[] = [];
+    if (agentIds.length > 0) {
+      const { data, error } = await supabase
+        .from("agent_marketplace_earnings")
+        .select("agent_id, gross_credits")
+        .in("agent_id", agentIds);
+      if (error) throw error;
+      earnings = data ?? [];
+    }
+
+    return {
+      talents,
+      earnings,
+    };
+  } catch (err: any) {
+    trackError("agents-repo-getUgcMetadata-failure", { agentIds, ownerIds, error: err.message });
+    throw err;
+  }
+}
+
+export async function getPayoutReconciliationLedger() {
+  try {
+    const { data: earningsData, error: earningsErr } = await supabase
+      .from("agent_marketplace_earnings")
+      .select("builder_id, builder_share")
+      .eq("builder_kind", "talent");
+    if (earningsErr) throw earningsErr;
+
+    const { data: payoutsData, error: payoutsErr } = await supabase
+      .from("agent_payout_requests")
+      .select("talent_id, amount_credits, status, talent:talents(full_name, email)");
+    if (payoutsErr) throw payoutsErr;
+
+    const ledgerMap: Record<string, {
+      talentId: string;
+      fullName: string;
+      email: string;
+      totalEarned: number;
+      totalRequested: number;
+      totalPaid: number;
+      pendingAmount: number;
+    }> = {};
+
+    earningsData?.forEach((e) => {
+      const builderId = e.builder_id;
+      if (!builderId) return;
+      if (!ledgerMap[builderId]) {
+        ledgerMap[builderId] = {
+          talentId: builderId,
+          fullName: "Unknown Creator",
+          email: "",
+          totalEarned: 0,
+          totalRequested: 0,
+          totalPaid: 0,
+          pendingAmount: 0,
+        };
+      }
+      ledgerMap[builderId].totalEarned += Number(e.builder_share || 0);
+    });
+
+    payoutsData?.forEach((p) => {
+      const talentId = p.talent_id;
+      if (!talentId) return;
+      if (!ledgerMap[talentId]) {
+        ledgerMap[talentId] = {
+          talentId,
+          fullName: p.talent?.full_name || "Unknown Creator",
+          email: p.talent?.email || "",
+          totalEarned: 0,
+          totalRequested: 0,
+          totalPaid: 0,
+          pendingAmount: 0,
+        };
+      } else {
+        if (p.talent?.full_name) ledgerMap[talentId].fullName = p.talent.full_name;
+        if (p.talent?.email) ledgerMap[talentId].email = p.talent.email;
+      }
+
+      const amt = Number(p.amount_credits || 0);
+      ledgerMap[talentId].totalRequested += amt;
+      if (p.status === "paid") {
+        ledgerMap[talentId].totalPaid += amt;
+      } else if (p.status === "pending" || p.status === "approved") {
+        ledgerMap[talentId].pendingAmount += amt;
+      }
+    });
+
+    return Object.values(ledgerMap);
+  } catch (err: any) {
+    trackError("agents-repo-getPayoutReconciliationLedger-failure", { error: err.message });
+    throw err;
+  }
+}
+
+
+
 
 
