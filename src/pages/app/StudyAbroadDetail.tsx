@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getStudyAbroadProgramById } from "@/domains/abroad/repo/abroadRepo";
@@ -123,7 +123,7 @@ export default function StudyAbroadDetail() {
  const requirements = Array.isArray(program.requirements) ? program.requirements : [];
 
  return (
- <div className={PAGE_SHELL}>
+ <div className={cn(PAGE_SHELL, program.url ? "pb-24" : "")}>
  <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="-ml-4 rounded-xl">
  <ArrowLeft className="h-4 w-4 mr-2" /> Back to Programs
  </Button>

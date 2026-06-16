@@ -1,4 +1,4 @@
-﻿import * as React from "react";
+import * as React from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -235,7 +235,7 @@ export default function DestinationAgentPage() {
  </Card>
 
  {/* dashboard LEVEL 2: IMMERSIVE STREAM MESSAGING LOGS SCRIP LAUNCH CHANNELS */}
- <ScrollArea className="flex-1 px-4 block w-full overflow-y-auto" ref={scrollContainerViewportRef}>
+ <ScrollArea className="flex-1 px-4 block w-full" ref={scrollContainerViewportRef}>
  <div className="space-y-3 block w-full pb-4">
  {chatMessagesList.length === 0 && (
  <Card className="rounded-lg border border-border/40 bg-muted/20 shadow-none overflow-hidden block w-full select-none transform-gpu animate-in fade-in duration-200">

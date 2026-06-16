@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { insertRoadmapContactLead, insertStudyAbroadRoadmap } from "@/domains/abroad/repo/abroadRepo";
@@ -21,6 +21,8 @@ import { COUNTRIES, getCountryFlag } from "@/lib/constants/countries";
 import { CREDIT_CONFIG } from "@/lib/creditPricing";
 import { cn } from "@/lib/utils";
 import { InlineSpinner } from "@/components/common/InlineSpinner";
+import { useCurrencyRates } from "@/hooks/useCurrencyRates";
+import { formatMoney } from "@/lib/currency";
 
 /**
  * Group Academy — Career Abroad Study Roadmap Intake Wizard
@@ -54,6 +56,7 @@ export function RoadmapIntakeForm() {
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const serviceCost = CREDIT_CONFIG.SERVICES.STUDY_ABROAD_ROADMAP?.cost || 100;
+  const { rates } = useCurrencyRates();
 
   const [formData, setFormData] = useState({
     targetCountries: [] as string[],
@@ -319,6 +322,14 @@ export function RoadmapIntakeForm() {
             <div className="grid grid-cols-1 gap-3">
               {BUDGET_NODES.map((b) => {
                 const isSelected = formData.budgetLevel === b.value;
+                let subtext = b.sub;
+                if (b.value === "low") {
+                  subtext = `Under ${formatMoney(15000, talent?.country, rates)}/year tuition`;
+                } else if (b.value === "medium") {
+                  subtext = `${formatMoney(15000, talent?.country, rates)} – ${formatMoney(35000, talent?.country, rates)}/year`;
+                } else if (b.value === "high") {
+                  subtext = `${formatMoney(35000, talent?.country, rates)}+/year`;
+                }
                 return (
                   <button
                     key={b.value}
@@ -337,7 +348,7 @@ export function RoadmapIntakeForm() {
                       {isSelected && <ShieldCheck className="h-4 w-4 text-primary" />}
                     </div>
                     <p className="text-[10px] font-medium text-muted-foreground/60 uppercase tracking-widest">
-                      {b.sub}
+                      {subtext}
                     </p>
                   </button>
                 );

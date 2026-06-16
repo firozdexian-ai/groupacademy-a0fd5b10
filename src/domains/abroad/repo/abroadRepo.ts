@@ -330,5 +330,17 @@ export async function insertInstructorConnectionRequest(payload: {
   return { error };
 }
 
+export async function getIeltsPromptById(promptId: string) {
+  const { data, error } = await supabase
+    .from("ielts_prompts")
+    .select("id, prompt_text, section, difficulty, task_type")
+    .eq("id", promptId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+}
+
+
 
 

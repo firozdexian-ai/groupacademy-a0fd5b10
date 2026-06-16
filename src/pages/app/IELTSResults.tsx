@@ -1,9 +1,10 @@
-﻿import * as React from "react";
-import { useParams } from "react-router-dom";
+import * as React from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ShieldCheck, Target, Zap, ChevronRight, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -38,6 +39,7 @@ interface MockAttemptRecord {
  */
 export default function IELTSResults() {
  const { id: unverifiedAttemptIdStr } = useParams<{ id: string }>();
+ const navigate = useNavigate();
 
  const { data: attemptRecordPayload, isLoading: isAttemptCacheResolving } = useQuery({
  queryKey: ["app-ielts-attempt-result-node", unverifiedAttemptIdStr],
@@ -169,7 +171,15 @@ export default function IELTSResults() {
  </CardContent>
  </Card>
  )}
- </div>
+
+  <div className="flex gap-3 pt-6 w-full select-none">
+    <Button variant="outline" className="flex-1 rounded-xl font-bold" onClick={() => navigate("/app/abroad/ielts")}>
+      Back to IELTS Coach
+    </Button>
+    <Button className="flex-1 rounded-xl font-bold" onClick={() => navigate(`/app/abroad/ielts/mock/${activeAttemptNode.section}`)}>
+      Retry Practice
+    </Button>
+  </div>
+  </div>
  );
 }
-

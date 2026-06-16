@@ -1,8 +1,10 @@
-﻿import * as React from "react";
+import * as React from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { getCurrentUser } from "@/lib/auth";
 import { uploadIeltsAudio } from "@/domains/learning/repo/learningRepo";
 import { aiIeltsEvaluate } from "@/domains/abroad/api/abroadApi";
+import { getIeltsPromptById } from "@/domains/abroad/repo/abroadRepo";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -34,6 +36,15 @@ export default function IELTSMockRunner() {
 
  const promptId = searchParams.get("prompt") ?? null;
  const isAudioSectionFlag = unverifiedSectionStr === "speaking";
+
+ const { data: promptData, isLoading: isPromptLoading } = useQuery({
+   queryKey: ["app-ielts-prompt-detail", promptId],
+   queryFn: async () => {
+     if (!promptId) return null;
+     return await getIeltsPromptById(promptId);
+   },
+   enabled: !!promptId,
+ });
 
  const [responseTextInputStr, setResponseTextInputStr] = React.useState<string>("");
  const [isSubmissionPending, setIsSubmissionPending] = React.useState<boolean>(false);
@@ -135,14 +146,22 @@ export default function IELTSMockRunner() {
  Question Prompt
  </div>
  <div className="text-sm font-medium text-foreground/80 leading-relaxed italic block">
- {unverifiedSectionStr === "writing" &&
- "Some believe technology simplifies existence, whereas others claim it induces lethargy. Debate these perspectives and formulate your independent stance."}
- {unverifiedSectionStr === "speaking" &&
- "Detail a location you desire to travel. Articulate the geography, travel infrastructure, activities planned, and justification for this travel itinerary."}
- {(unverifiedSectionStr === "reading" || unverifiedSectionStr === "listening") &&
- "Read the passage carefully and answer the questions."}
- {unverifiedSectionStr === "full" &&
- "Take a full practice test covering all four sections: listening, reading, writing, and speaking."}
+ {isPromptLoading ? (
+   <InlineSpinner size="sm" />
+ ) : promptData?.prompt_text ? (
+   promptData.prompt_text
+ ) : (
+   <>
+     {unverifiedSectionStr === "writing" &&
+       "Some believe technology simplifies existence, whereas others claim it induces lethargy. Debate these perspectives and formulate your independent stance."}
+     {unverifiedSectionStr === "speaking" &&
+       "Detail a location you desire to travel. Articulate the geography, travel infrastructure, activities planned, and justification for this travel itinerary."}
+     {(unverifiedSectionStr === "reading" || unverifiedSectionStr === "listening") &&
+       "Read the passage carefully and answer the questions."}
+     {unverifiedSectionStr === "full" &&
+       "Take a full practice test covering all four sections: listening, reading, writing, and speaking."}
+   </>
+ )}
  </div>
  </Card>
 

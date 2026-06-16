@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getStudyAbroadRoadmapById } from "@/domains/abroad/repo/abroadRepo";
 import { adminSupportAssistant } from "@/domains/agents/api/agentsApi";
@@ -141,52 +141,52 @@ export default function StudyAbroadRoadmapResults() {
  </div>
  </header>
 
- {/* Readiness summary */}
- <Card className={cn(CARD, "relative overflow-hidden")}>
- <CardHeader className="p-10 border-b bg-muted/20">
- <CardTitle className="text-3xl font-black uppercase italic">Your readiness</CardTitle>
- </CardHeader>
- <CardContent className="p-10 grid md:grid-cols-2 gap-12">
- <div className="space-y-6">
- <h4 className={SECTION_TITLE}>Your strengths</h4>
- {res.profileSummary.strengths.map((s, i) => (
- <div
- key={i}
- className="flex gap-4 p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 italic text-sm"
- >
- {s}
- </div>
- ))}
- </div>
- <div className="space-y-6">
- <h4 className={SECTION_TITLE}>Gaps to close</h4>
- {res.profileSummary.gaps.map((g, i) => (
- <div
- key={i}
- className="flex gap-4 p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10 italic text-sm"
- >
- {g}
- </div>
- ))}
- </div>
- </CardContent>
- </Card>
+  {/* Readiness summary */}
+  <Card className={cn(CARD, "relative overflow-hidden")}>
+  <CardHeader className="p-6 md:p-10 border-b bg-muted/20">
+  <CardTitle className="text-3xl font-black uppercase italic">Your readiness</CardTitle>
+  </CardHeader>
+  <CardContent className="p-6 md:p-10 grid md:grid-cols-2 gap-6 md:gap-12">
+  <div className="space-y-6">
+  <h4 className={SECTION_TITLE}>Your strengths</h4>
+  {res.profileSummary.strengths.map((s, i) => (
+  <div
+  key={i}
+  className="flex gap-4 p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 italic text-sm"
+  >
+  {s}
+  </div>
+  ))}
+  </div>
+  <div className="space-y-6">
+  <h4 className={SECTION_TITLE}>Gaps to close</h4>
+  {res.profileSummary.gaps.map((g, i) => (
+  <div
+  key={i}
+  className="flex gap-4 p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10 italic text-sm"
+  >
+  {g}
+  </div>
+  ))}
+  </div>
+  </CardContent>
+  </Card>
 
- <Tabs defaultValue="universities" className="w-full space-y-8">
- <TabsList className="grid w-full grid-cols-4 h-16 bg-muted/30 rounded-2xl p-1.5 shadow-sm">
- <TabsTrigger value="universities" className="rounded-xl font-black text-[9px] uppercase tracking-widest">
- Universities
- </TabsTrigger>
- <TabsTrigger value="timeline" className="rounded-xl font-black text-[9px] uppercase tracking-widest">
- Timeline
- </TabsTrigger>
- <TabsTrigger value="documents" className="rounded-xl font-black text-[9px] uppercase tracking-widest">
- Documents
- </TabsTrigger>
- <TabsTrigger value="budget" className="rounded-xl font-black text-[9px] uppercase tracking-widest">
- Budget
- </TabsTrigger>
- </TabsList>
+  <Tabs defaultValue="universities" className="w-full space-y-8">
+  <TabsList className="grid w-full grid-cols-4 h-12 sm:h-16 bg-muted/30 rounded-xl sm:rounded-2xl p-1 shadow-sm">
+  <TabsTrigger value="universities" className="rounded-lg sm:rounded-xl font-black text-[8px] sm:text-[9px] px-1 uppercase tracking-wider sm:tracking-widest">
+  Universities
+  </TabsTrigger>
+  <TabsTrigger value="timeline" className="rounded-lg sm:rounded-xl font-black text-[8px] sm:text-[9px] px-1 uppercase tracking-wider sm:tracking-widest">
+  Timeline
+  </TabsTrigger>
+  <TabsTrigger value="documents" className="rounded-lg sm:rounded-xl font-black text-[8px] sm:text-[9px] px-1 uppercase tracking-wider sm:tracking-widest">
+  Documents
+  </TabsTrigger>
+  <TabsTrigger value="budget" className="rounded-lg sm:rounded-xl font-black text-[8px] sm:text-[9px] px-1 uppercase tracking-wider sm:tracking-widest">
+  Budget
+  </TabsTrigger>
+  </TabsList>
 
  <TabsContent value="universities" className="grid md:grid-cols-2 gap-6">
  {res.recommendedUniversities.map((uni, idx) => (

@@ -1,4 +1,4 @@
-﻿import * as React from "react";
+import * as React from "react";
 import { useParams } from "react-router-dom";
 import { aiLanguagePartner } from "@/domains/abroad/api/abroadApi";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,6 +12,7 @@ import ReactMarkdown from "react-markdown";
 import { cn } from "@/lib/utils";
 import { PAGE_SHELL, CARD } from "@/lib/uiTokens";
 import { InlineSpinner } from "@/components/common/InlineSpinner";
+import { useCredits } from "@/domains/finance/hooks/useCredits";
 
 // =========================================================================
 // DETERMINISTIC COMPONENT DATA TYPE CONTRACTS
@@ -43,6 +44,7 @@ interface AIResponsePayload {
  */
 export default function LanguagePracticePage() {
  const { code: languageCode = "en" } = useParams<{ code: string }>();
+ const { balance, deductCredits } = useCredits();
 
  const [activeCefrLevel, setActiveCefrLevel] = React.useState<string>("B1");
  const [conversationTurns, setConversationTurns] = React.useState<Turn[]>([]);
@@ -54,23 +56,85 @@ export default function LanguagePracticePage() {
 
  const scrollViewportRef = React.useRef<HTMLDivElement>(null);
 
+ // Sync state from localStorage when languageCode changes
+ React.useEffect(() => {
+   const storedSessionId = localStorage.getItem(`lang_session_id_${languageCode}`) || null;
+   setActiveSessionId(storedSessionId);
+
+   try {
+     const storedTurns = localStorage.getItem(`lang_turns_${languageCode}`);
+     setConversationTurns(storedTurns ? JSON.parse(storedTurns) : []);
+   } catch {
+     setConversationTurns([]);
+   }
+
+   try {
+     const storedCorrections = localStorage.getItem(`lang_corrections_${languageCode}`);
+     setActiveCorrections(storedCorrections ? JSON.parse(storedCorrections) : []);
+   } catch {
+     setActiveCorrections([]);
+   }
+ }, [languageCode]);
+
+ // Helper methods to update state AND localStorage
+ const updateActiveSessionId = React.useCallback((id: string | null) => {
+   setActiveSessionId(id);
+   if (id) {
+     localStorage.setItem(`lang_session_id_${languageCode}`, id);
+   } else {
+     localStorage.removeItem(`lang_session_id_${languageCode}`);
+   }
+ }, [languageCode]);
+
+ const updateConversationTurns = React.useCallback((newTurns: Turn[] | ((prev: Turn[]) => Turn[])) => {
+   setConversationTurns((prev) => {
+     const resolved = typeof newTurns === "function" ? newTurns(prev) : newTurns;
+     localStorage.setItem(`lang_turns_${languageCode}`, JSON.stringify(resolved));
+     return resolved;
+   });
+ }, [languageCode]);
+
+ const updateActiveCorrections = React.useCallback((newCorrections: Correction[] | ((prev: Correction[]) => Correction[])) => {
+   setActiveCorrections((prev) => {
+     const resolved = typeof newCorrections === "function" ? newCorrections(prev) : newCorrections;
+     localStorage.setItem(`lang_corrections_${languageCode}`, JSON.stringify(resolved));
+     return resolved;
+   });
+ }, [languageCode]);
+
  // Auto-scroll viewport behavior anchored to message stream growth
  React.useEffect(() => {
- if (scrollViewportRef.current) {
- const scrollElement = scrollViewportRef.current;
- scrollElement.scrollTo({ top: scrollElement.scrollHeight, behavior: "smooth" });
- }
+   if (scrollViewportRef.current) {
+     const scrollElement = scrollViewportRef.current;
+     const innerViewport = scrollElement.querySelector("[data-radix-scroll-area-viewport]");
+     if (innerViewport) {
+       innerViewport.scrollTo({ top: innerViewport.scrollHeight, behavior: "smooth" });
+     }
+   }
  }, [conversationTurns]);
 
  const handleDispatchMessageSequence = React.useCallback(async () => {
  if (!userTextInputStr.trim() || isInferenceProcessing) return;
 
+ if (balance < 1) {
+   toast.error("You need at least 1 credit to practice.");
+   return;
+ }
+
  const sanitizedText = userTextInputStr.trim();
  setUserTextInputStr("");
- setConversationTurns((prev) => [...prev, { role: "user", content: sanitizedText }]);
  setIsInferenceProcessing(true);
 
  try {
+ const paid = await deductCredits("AI_AGENT_CHAT", undefined, `Language Practice: ${languageCode.toUpperCase()}`);
+ if (!paid) {
+   setUserTextInputStr(sanitizedText);
+   setIsInferenceProcessing(false);
+   return;
+ }
+
+ updateConversationTurns((prev) => [...prev, { role: "user", content: sanitizedText }]);
+
  const data = await aiLanguagePartner({
  language_code: languageCode.toUpperCase(),
  cefr_level: activeCefrLevel,
@@ -80,9 +144,11 @@ export default function LanguagePracticePage() {
 
  if (data?.error) throw new Error(data.error);
 
- if (data.session_id && !activeSessionId) setActiveSessionId(data.session_id);
+ if (data.session_id && data.session_id !== activeSessionId) {
+   updateActiveSessionId(data.session_id);
+ }
 
- setConversationTurns((prev) => [
+ updateConversationTurns((prev) => [
  ...prev,
  {
  role: "assistant",
@@ -92,14 +158,14 @@ export default function LanguagePracticePage() {
  ]);
 
  if (Array.isArray(data.corrections) && data.corrections.length) {
- setActiveCorrections((prev) => [...prev, ...(data.corrections as Correction[])]);
+ updateActiveCorrections((prev) => [...prev, ...(data.corrections as Correction[])]);
  }
- } catch (e: unknown) {
+ } catch (e: any) {
  toast.error(e.message || "Could not send message. Please try again.");
  } finally {
  setIsInferenceProcessing(false);
  }
- }, [userTextInputStr, isInferenceProcessing, activeCefrLevel, activeSessionId, languageCode]);
+ }, [userTextInputStr, isInferenceProcessing, activeCefrLevel, activeSessionId, languageCode, balance, deductCredits, updateActiveSessionId, updateConversationTurns, updateActiveCorrections]);
 
  const handleKeyboardInputInterceptor = React.useCallback(
  (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -180,7 +246,7 @@ export default function LanguagePracticePage() {
  <Card className={cn(CARD, "mx-4 mb-2 p-3 max-h-40 overflow-y-auto border-amber-500/20 bg-amber-500/[0.02]")}>
  <div className="text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-2 flex items-center justify-between sticky top-0 bg-inherit pb-1">
  <span>Corrections</span>
- <button onClick={() => setActiveCorrections([])} className="hover:text-destructive transition-colors">
+ <button onClick={() => updateActiveCorrections([])} className="hover:text-destructive transition-colors">
  <EyeOff className="h-3 w-3" />
  </button>
  </div>
