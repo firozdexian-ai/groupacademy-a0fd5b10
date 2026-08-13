@@ -2,8 +2,8 @@
   "id": "/",
   "name": "GroUp Academy",
   "short_name": "GroUp",
-  "description": "AI-powered career acceleration platform. Decode your career potential with AI Mock Interviews, Career Assessments, Salary Analysis, and Job Matching.",
-  "start_url": "/app/feed",
+  "description": "AI-powered career acceleration and learning platform. Access structured courses, expert career tracks, and 24/7 AI career coaching.",
+  "start_url": "/app/learning",
   "scope": "/",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
@@ -46,15 +46,15 @@
   ],
   "shortcuts": [
     {
-      "name": "Find Jobs",
-      "short_name": "Jobs",
-      "url": "/app/jobs",
+      "name": "Browse Courses",
+      "short_name": "Courses",
+      "url": "/app/learning/courses",
       "icons": [{"src": "/icons/icon-192x192.png", "sizes": "192x192"}]
     },
     {
-      "name": "AI Agents",
-      "short_name": "AI",
-      "url": "/app/ai-agents",
+      "name": "AI Coach",
+      "short_name": "Coach",
+      "url": "/app/career-coach",
       "icons": [{"src": "/icons/icon-192x192.png", "sizes": "192x192"}]
     },
     {
@@ -66,39 +66,11 @@
   ],
   "screenshots": [
     {
-      "src": "/screenshots/feed.jpg",
-      "sizes": "1080x2340",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Personalized Career Feed"
-    },
-    {
       "src": "/screenshots/learn.jpg",
       "sizes": "1080x2340",
       "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "Learning & Events"
-    },
-    {
-      "src": "/screenshots/services.jpg",
-      "sizes": "1080x2340",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "AI Career Services"
-    },
-    {
-      "src": "/screenshots/jobs.jpg",
-      "sizes": "1080x2340",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Job Search"
-    },
-    {
-      "src": "/screenshots/abroad.jpg",
-      "sizes": "1080x2340",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Career Abroad"
     },
     {
       "src": "/screenshots/ai-agents.jpg",
@@ -116,7 +88,7 @@
     }
   ],
   "share_target": {
-    "action": "/app/feed",
+    "action": "/app/learning",
     "method": "GET",
     "params": {
       "title": "title",
@@ -124,7 +96,7 @@
       "url": "url"
     }
   },
-  "categories": ["education", "productivity", "business"],
+  "categories": ["education", "productivity"],
   "prefer_related_applications": false,
   "related_applications": []
 }

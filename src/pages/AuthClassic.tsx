@@ -17,12 +17,9 @@ import {
   Eye,
   EyeOff,
   Loader2,
-  Target,
-  Mic,
-  DollarSign,
-  FolderOpen,
+  BookOpen,
+  Bot,
   Gift,
-  CheckCircle,
   ShieldCheck,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -31,7 +28,6 @@ import { PhoneInput } from "@/components/ui/phone-input";
 import logoLight from "@/assets/logo-horizontal-light.png";
 import logoDark from "@/assets/logo-horizontal-dark.png";
 import { cn } from "@/lib/utils";
-import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -165,9 +161,9 @@ const Auth = () => {
   const strength = getPasswordStrength(signupData.password);
 
   const valueProps = [
-    { icon: Target, label: "Career audit", description: "AI-powered skill mapping" },
-    { icon: Mic, label: "Mock interviews", description: "Practice with real-time feedback" },
-    { icon: DollarSign, label: "Salary index", description: "Live market value analysis" },
+    { icon: BookOpen, label: "Expert Courses", description: "Structured career modules" },
+    { icon: Bot, label: "AI Career Coach", description: "Personalized guidance 24/7" },
+    { icon: ShieldCheck, label: "Certificates", description: "Shareable verification" },
     { icon: Gift, label: "250 bonus credits", description: "Welcome reward for new members" },
   ];
 
@@ -237,12 +233,6 @@ const Auth = () => {
                   <CardDescription className="text-sm">Sign in to continue</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <GoogleSignInButton className="mb-4" />
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="flex-1 h-px bg-border" />
-                    <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">or</span>
-                    <div className="flex-1 h-px bg-border" />
-                  </div>
                   <form onSubmit={handleLogin} className="space-y-5">
                     <div className="space-y-1.5">
                       <Label className="text-xs font-medium text-muted-foreground ml-1">
@@ -307,12 +297,6 @@ const Auth = () => {
                   <CardDescription className="text-sm">Get 250 bonus credits to start</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <GoogleSignInButton className="mb-4" label="Sign up with Google" />
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="flex-1 h-px bg-border" />
-                    <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">or</span>
-                    <div className="flex-1 h-px bg-border" />
-                  </div>
                   <form onSubmit={handleSignup} className="space-y-4">
                     <div className="space-y-1.5">
                       <Label className="text-xs font-medium text-muted-foreground ml-1">

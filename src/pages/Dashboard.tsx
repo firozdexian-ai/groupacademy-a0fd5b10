@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, Suspense, useMemo } from "react";
+import React, { useState, useEffect, Suspense, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar, ImpersonationBanner, DashboardTableSkeleton } from "@/platform/admin";
@@ -45,7 +45,7 @@ const Dashboard = () => {
       const allowedByCompanyScope = adminScope === "company";
       if (!allowedByRole && !allowedByCompanyScope) {
         toast.error("You don't have permission to access the administrative command hub.");
-        navigate("/app/feed");
+        navigate("/app/learning", { replace: true });
       }
     }
   }, [user, role, adminScope, authLoading, roleLoading, scopeLoading, navigate]);

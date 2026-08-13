@@ -170,13 +170,11 @@ const Index = () => {
         </section>
 
         {/* Real-time Statistics Banner */}
-        <section className="container mx-auto px-6 -mt-8 mb-16 max-w-5xl">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <section className="container mx-auto px-6 -mt-8 mb-16 max-w-4xl">
+          <div className="grid grid-cols-2 gap-4">
             {[
-              { label: "Professionals", value: stats.talents, icon: Users, color: "text-blue-500" },
-              { label: "Hiring Partners", value: stats.companies, icon: Building2, color: "text-secondary" },
-              { label: "Active Listings", value: stats.jobs, icon: Briefcase, color: "text-emerald-500" },
-              { label: "Specialist Coaches", value: stats.agents, icon: Bot, color: "text-primary" },
+              { label: "Active Learners", value: stats.talents, icon: Users, color: "text-blue-500" },
+              { label: "Specialist AI Coaches", value: stats.agents, icon: Bot, color: "text-primary" },
             ].map((stat, i) => (
               <div
                 key={i}
@@ -217,10 +215,10 @@ const Index = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {[
-                    { icon: Target, text: "Readiness Audit" },
-                    { icon: Mic, text: "Mock Interviews" },
-                    { icon: DollarSign, text: "Salary Indexing" },
-                    { icon: Bot, text: "AI Coaching" },
+                    { icon: Target, text: "Structured Courses" },
+                    { icon: Bot, text: "AI Career Coach" },
+                    { icon: ShieldCheck, text: "Verified Certificates" },
+                    { icon: Sparkles, text: "Skill Mastery" },
                   ].map((f, i) => (
                     <div
                       key={i}
@@ -248,18 +246,18 @@ const Index = () => {
                     <Building2 className="w-7 h-7 text-secondary" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-black tracking-tight uppercase">Employers</h2>
+                    <h2 className="text-2xl font-black tracking-tight uppercase">Institutions</h2>
                     <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
-                      Identify Elite Talent
+                      Partner for Cohort Upskilling
                     </p>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {[
-                    { icon: Globe, text: "Global Sourcing" },
-                    { icon: Zap, text: "Instant Vetting" },
-                    { icon: Search, text: "Smart Filters" },
-                    { icon: BarChart3, text: "Success Intel" },
+                    { icon: Globe, text: "Global Curriculum" },
+                    { icon: Zap, text: "Instant Enrollment" },
+                    { icon: Search, text: "Student Progress" },
+                    { icon: BarChart3, text: "Completion Intel" },
                   ].map((f, i) => (
                     <div
                       key={i}
@@ -271,7 +269,7 @@ const Index = () => {
                   ))}
                 </div>
                 <Button
-                  onClick={() => navigate("/gro10x")}
+                  onClick={() => window.open("https://wa.me/8801819864223?text=Hi%20GroUp%20Academy%2C%20I%20want%20to%20partner%20with%20you", "_blank")}
                   variant="secondary"
                   className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-secondary/10"
                 >
