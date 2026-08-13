@@ -316,8 +316,8 @@ export function OnboardingWizard({
       if (elapsed < 600) await new Promise((r) => setTimeout(r, 600 - elapsed));
 
       if (isMountedRef.current) {
-        toast.success(`You're connected to ${institution.name}`, {
-          description: `Your ${school.name} workspace is ready.`,
+        toast.success("Welcome to GroUp Academy!", {
+          description: "Your learning path is ready. Let's get started.",
           icon: <Sparkles className="h-4 w-4 text-blue-500 stroke-[2.2]" />,
         });
 
@@ -434,14 +434,14 @@ export function OnboardingWizard({
             {step === 1 && (
               <SectionHeader
                 title="Where are you based?"
-                subtitle="We'll show jobs, salaries, and opportunities near you."
+                subtitle="Your AI career coach and learning path will be tailored to your location."
               />
             )}
             {step === 2 && (
               <SectionHeader title="Where are you in your career?" subtitle="Pick the stage that fits you best." />
             )}
             {step === 3 && (
-              <SectionHeader title="Where did you study?" subtitle="Connect with peers and your campus community." />
+              <SectionHeader title="Where did you study?" subtitle="Your AI coach will be personalised to your academic background." />
             )}
             {step === 4 && (
               <SectionHeader

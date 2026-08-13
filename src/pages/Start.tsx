@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
@@ -34,7 +34,7 @@ export default function Start() {
     if (authLoading || accountTypeLoading) return;
     if (user && talent?.onboardingStep === 4) {
       const returnTo = safeReturnTo(searchParams.get("returnTo"));
-      const target = resolvePostAuthRoute(accountType, returnTo) ?? "/app/feed";
+      const target = resolvePostAuthRoute(accountType, returnTo) ?? "/app/learning";
       navigate(target, { replace: true });
     }
   }, [user, authLoading, accountType, accountTypeLoading, navigate, searchParams, talent]);
@@ -71,7 +71,7 @@ export default function Start() {
     return (
       <OnboardingWizard
         onComplete={() => {
-          const target = resolvePostAuthRoute(accountType, null) ?? "/app/feed";
+          const target = resolvePostAuthRoute(accountType, null) ?? "/app/learning";
           navigate(target, { replace: true });
         }}
       />

@@ -1,16 +1,9 @@
-fix: v1.0.0 Surface 2 Auth cleanup
+fix: v1.0.0 Surface 3 Onboarding Wizard cleanup
 
-AuthClassic.tsx:
-- Replace Gift import with Sparkles (no more credits icon)
-- Value Prop #4: "250 bonus credits" → "Free Access / Start learning with no cost or barriers"
-- Banner subtitle: remove "real career opportunities" → "AI coaching and expert-built courses"
-- Signup card subtitle: "Get 250 bonus credits to start" → "Start your learning journey today"
-- Remove dead "Sign in with our assistant" button (navigated nowhere useful)
-- Remove dead "Hiring? Apply for company access" link (bounced to home page)
-- Replace with simple "Back to home" link
+Start.tsx:
+- Replace dead fallback routes /app/feed with /app/learning (x2)
 
-AuthCallback.tsx:
-- Fix fallback route: /app/feed → /app/learning (avoids double-redirect on unknown account type)
-
-ResetPassword.tsx:
-- Fix fallback route: /app/feed → /app/learning (avoids double-redirect after password reset)
+OnboardingWizard.tsx:
+- Step 1 subtitle: remove "jobs, salaries, opportunities" → "Your AI career coach and learning path will be tailored to your location."
+- Step 3 subtitle: remove "connect with peers and campus community" → "Your AI coach will be personalised to your academic background."
+- Completion toast: replace corporate "workspace is ready" with warm "Welcome to GroUp Academy! Your learning path is ready."
