@@ -1,8 +1,7 @@
-fix: v1.0.0 Surface 8 Talent Profile cleanup
+fix: v1.0.0 Surface 9 Shared Infrastructure & Global Cleanup
 
-- Profile: Remove hardcoded "Verified profile" badge and unused ShieldCheck import
-- Profile: Update header back button target to /app/learning
-- Profile: Remove dead feed CTA buttons ("Create post" & "Share an update" → /app/feed)
-- Profile: Fix "unknown updates" copy bug in Activity section
-- Profile: Update About & Skills empty states (remove employer-centric framing)
-- ProfileEdit: Update CV description ("We'll use this for applications" → "We'll use this to auto-fill your profile")
+- NotFound: Remove technical jargon ("Navigation Disrupted" → "Page Not Found", "requested coordinate" → plain English)
+- NotFound: Update button label ("Return to Nexus" → "Go to Home")
+- NotFound: Remove internal CLI footer ("GroUp Academy Terminal • System Integrity Verified")
+- NotFound: Update console.error log to standard 404 message
+- Index: Remove unused companies and jobs fields from stats state

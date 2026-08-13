@@ -44,8 +44,6 @@ const Index = () => {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [stats, setStats] = useState({
     talents: 1240,
-    companies: 42,
-    jobs: 180,
     agents: 9,
     loading: true,
   });
@@ -70,8 +68,6 @@ const Index = () => {
 
         setStats({
           talents: talentsRes.count || 1240,
-          companies: 42,
-          jobs: 180,
           agents: agentsRes.count || 9,
           loading: false,
         });
