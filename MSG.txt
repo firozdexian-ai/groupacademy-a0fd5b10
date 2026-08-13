@@ -1,7 +1,8 @@
-fix: v1.0.0 Surface 7 AI Career Coach cleanup
+fix: v1.0.0 Surface 8 Talent Profile cleanup
 
-- CareerCoach: Replace dead "Find roles for me" starter chip with "Build my study plan"
-- CareerCoach: Remove technical jargon from header subtitle ("OPERATIONAL MODERATOR" → "Your coach")
-- CareerCoach: Simplify loading text ("Initializing Interactive Coach Container..." → "Loading your coach...")
-- CareerCoach: Rewrite opaque error message into clear student-friendly copy
-- GlobalAIBubble: Remove dead "jobs" and "gigs" references from empty state prompt
+- Profile: Remove hardcoded "Verified profile" badge and unused ShieldCheck import
+- Profile: Update header back button target to /app/learning
+- Profile: Remove dead feed CTA buttons ("Create post" & "Share an update" → /app/feed)
+- Profile: Fix "unknown updates" copy bug in Activity section
+- Profile: Update About & Skills empty states (remove employer-centric framing)
+- ProfileEdit: Update CV description ("We'll use this for applications" → "We'll use this to auto-fill your profile")

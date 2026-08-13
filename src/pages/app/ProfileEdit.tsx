@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
  ArrowLeft,
@@ -303,7 +303,7 @@ export default function ProfileEdit() {
  <div>
  <p className="font-medium text-sm">CV uploaded</p>
  <p className="text-xs text-muted-foreground">
- {parsingCV ? "Reading your CV…" : "We'll use this for applications."}
+ {parsingCV ? "Reading your CV…" : "We'll use this to auto-fill your profile."}
  </p>
  </div>
  </div>

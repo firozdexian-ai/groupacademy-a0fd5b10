@@ -1,4 +1,4 @@
-﻿import { useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,7 +16,6 @@ import {
  MapPin,
  Award,
  ArrowLeft,
- ShieldCheck,
  Linkedin,
  Globe,
  Languages as LanguagesIcon,
@@ -217,15 +216,11 @@ export default function Profile() {
  <div className="max-w-xl lg:max-w-5xl mx-auto pb-32 animate-in fade-in duration-300">
  <header className="flex items-center justify-between px-4 py-4 sticky top-0 z-20 bg-background/80 border-b border-border/40">
  <div className="flex items-center gap-3">
- <Button variant="ghost" size="icon" aria-label="Go back" className="h-9 w-9" onClick={() => navigate("/app/feed")}>
+ <Button variant="ghost" size="icon" aria-label="Go back" className="h-9 w-9" onClick={() => navigate("/app/learning")}>
  <ArrowLeft className="h-5 w-5" />
  </Button>
  <div>
  <h1 className="text-lg font-bold">My profile</h1>
- <div className="flex items-center gap-1.5">
- <ShieldCheck className="h-3 w-3 text-emerald-500" />
- <p className="text-[10px] text-muted-foreground">Verified profile</p>
- </div>
  </div>
  </div>
  <Button variant="ghost" size="icon" aria-label="Settings" className="h-9 w-9" onClick={() => navigate("/app/profile/edit")}>
@@ -324,7 +319,7 @@ export default function Profile() {
  {t.currentStatus ? (
  <p className="text-sm text-foreground/80 whitespace-pre-wrap">{t.currentStatus}</p>
  ) : (
- <EmptyState label="Add a short bio so employers know what you do." onAdd={() => setEditingSection("about")} />
+ <EmptyState label="Add a short bio to introduce yourself." onAdd={() => setEditingSection("about")} />
  )}
  </CardContent>
  </Card>
@@ -341,9 +336,6 @@ export default function Profile() {
            </Badge>
          )}
        </div>
-       <Button variant="ghost" size="sm" className="h-8 text-primary font-bold hover:bg-primary/5 rounded-xl px-3" onClick={() => navigate("/app/feed")}>
-         Create post
-       </Button>
      </div>
    </CardHeader>
    <CardContent className="px-5 pb-5 space-y-4">
@@ -353,12 +345,9 @@ export default function Profile() {
        </div>
      ) : myPosts.length === 0 ? (
        <div className="text-center py-6">
-         <p className="text-xs text-muted-foreground mb-4">
-           You haven't shared unknown updates yet. Post your achievements or ask questions to build your presence.
+         <p className="text-xs text-muted-foreground">
+           You haven't shared any updates yet.
          </p>
-         <Button variant="outline" size="sm" className="rounded-xl font-bold" onClick={() => navigate("/app/feed")}>
-           Share an update
-         </Button>
        </div>
      ) : (
        <div className="space-y-4">
@@ -458,7 +447,7 @@ export default function Profile() {
  </CardHeader>
  <CardContent className="px-5 pb-5">
  {(t.skills?.length ?? 0) === 0 ? (
- <EmptyState label="Add the skills employers should know about." onAdd={() => setEditingSection("skills")} />
+ <EmptyState label="Add skills to showcase your expertise." onAdd={() => setEditingSection("skills")} />
  ) : (
  <div className="flex flex-wrap gap-1.5">
  {t.skills.map((s: unknown, i: number) => (
