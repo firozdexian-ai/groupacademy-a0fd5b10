@@ -1,10 +1,9 @@
-﻿import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import {
   listPublicCoursesPaged,
   listUpcomingOfflineSeminarsForTalent,
-  listActiveCompetitions,
 } from "@/domains/learning/repo/learningRepo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,7 +19,6 @@ import {
   Layers,
   Clock,
   MapPin,
-  Trophy,
   Gift,
   Loader2,
 } from "lucide-react";
@@ -31,7 +29,7 @@ import { formatEventTime, formatEventLocal, DEFAULT_EVENT_TZ } from "@/lib/event
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type ContentType = "free_video" | "recorded_course" | "live_webinar" | "batch_class" | "offline_seminar";
-type FilterKey = "all" | "courses" | "live" | "events" | "compete";
+type FilterKey = "all" | "courses" | "live" | "events";
 
 interface Course {
   id: string;
@@ -65,7 +63,6 @@ const filterOptions: { key: FilterKey; icon: unknown; label: string }[] = [
   { key: "courses", icon: BookOpen, label: "Courses" },
   { key: "live", icon: Calendar, label: "Live Classes" },
   { key: "events", icon: MapPin, label: "In-Person" },
-  { key: "compete", icon: Trophy, label: "Competitions" },
 ];
 
 interface CoursesTabProps {
@@ -79,7 +76,6 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
 
   const showCourses = selectedType === "all" || selectedType === "courses" || selectedType === "live";
   const showEvents = selectedType === "all" || selectedType === "events";
-  const showCompete = selectedType === "all" || selectedType === "compete";
 
   // Monitor dynamic academy catalog filter interactions
   useEffect(() => {
@@ -155,25 +151,9 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
     },
   });
 
-  // Query node to fetch active skill challenges
-  const {
-    data: competitions = [],
-    isLoading: competitionsLoading,
-    error: competeFetchError,
-  } = useQuery({
-    queryKey: ["app-academy-competitions"],
-    enabled: showCompete,
-    staleTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: false,
-    queryFn: async () => {
-      const data = await listActiveCompetitions();
-      return data || [];
-    },
-  });
-
   // Dispatch exceptions directly to telemetry collectors safely
   useEffect(() => {
-    const primaryFetchError = coursesFetchError || eventsFetchError || competeFetchError;
+    const primaryFetchError = coursesFetchError || eventsFetchError;
     if (primaryFetchError) {
       trackError(primaryFetchError, {
         component: "CoursesTab",
@@ -181,7 +161,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
         selectedType,
       });
     }
-  }, [coursesFetchError, eventsFetchError, competeFetchError, selectedType]);
+  }, [coursesFetchError, eventsFetchError, selectedType]);
 
   const liveCutoff = Date.now() - 2 * 60 * 60 * 1000;
 
@@ -213,7 +193,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
   );
 
   const isTabLoading =
-    (showCourses && coursesLoading) || (showEvents && eventsLoading) || (showCompete && competitionsLoading);
+    (showCourses && coursesLoading) || (showEvents && eventsLoading);
 
   const renderCourseCard = (course: Course) => {
     if (!course || !course.id) return null;
@@ -576,23 +556,10 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
         </section>
       )}
 
-      {/* Competitions Display Grid */}
-      {!isTabLoading && showCompete && competitions.length > 0 && (
-        <section className="space-y-2.5 w-full">
-          {selectedType === "all" && (
-            <h2 className="text-xs font-bold text-foreground/80 uppercase tracking-wider pl-0.5 select-none leading-none mb-1">
-              Competitions & Challenges
-            </h2>
-          )}
-          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 w-full">{competitions.map(renderCompetitionCard)}</div>
-        </section>
-      )}
-
       {/* Graceful Blank Fallback Layout */}
       {!isTabLoading &&
         ((showCourses && filteredCourses.length === 0) || !showCourses) &&
-        ((showEvents && events.length === 0) || !showEvents) &&
-        ((showCompete && competitions.length === 0) || !showCompete) && (
+        ((showEvents && events.length === 0) || !showEvents) && (
           <div className="py-12 text-center border border-dashed border-border/40 bg-card/40 backdrop-blur-md rounded-2xl p-4 select-none w-full max-w-full flex flex-col justify-center items-center animate-in fade-in duration-300">
             <Gift className="h-6 w-6 text-primary/40 mb-3 animate-pulse stroke-[2.2]" />
             <p className="text-xs sm:text-sm font-bold text-foreground/90 tracking-tight leading-none uppercase tracking-wide">

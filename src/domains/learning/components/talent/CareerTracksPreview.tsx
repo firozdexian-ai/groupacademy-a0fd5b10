@@ -137,9 +137,8 @@ export function CareerTracksPreview() {
   if (tracks.length === 0) return null;
 
   const handleTrackNavigationClick = (trackId: string, trackSlug: string) => {
-    if (!trackSlug) return;
     trackEvent("career_tracks_preview_item_clicked", { trackId, trackSlug });
-    navigate(`/app/learning/tracks/${trackSlug}`);
+    navigate("/app/learning?tab=tracks");
   };
 
   return (

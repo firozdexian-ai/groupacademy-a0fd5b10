@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { listTalentEnrollmentsFull } from "@/domains/learning/repo/learningRepo";
@@ -282,7 +282,7 @@ export function MyCoursesTab({ onBrowseCatalog }: MyCoursesTabProps) {
             No Enrollments Found
           </h3>
           <p className="text-[11px] font-medium text-muted-foreground/70 leading-normal max-w-xs mx-auto mt-1.5 mb-4">
-            You haven't enrolled in unknown educational programs or live cohorts yet.
+            You haven't enrolled in any courses or live cohorts yet.
           </p>
           <Button
             onClick={handleBrowseCatalogFallbackClick}
@@ -307,11 +307,11 @@ export function MyCoursesTab({ onBrowseCatalog }: MyCoursesTabProps) {
               type="button"
               onClick={() => {
                 trackEvent("talent_mirror_shortcut_clicked");
-                navigate("/app/talent-mirror");
+                navigate("/app/profile");
               }}
               className="h-auto p-0 px-0.5 text-[11px] font-bold uppercase tracking-wider text-primary hover:text-primary hover:underline transition-colors flex items-center gap-1 leading-none mt-0.5"
             >
-              <span>View your skill profile</span>
+              <span>View your profile</span>
               <ArrowRight className="h-3 w-3 stroke-[2.5]" />
             </Button>
           </div>

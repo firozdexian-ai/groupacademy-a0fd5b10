@@ -1,1 +1,7 @@
-fix: v1.0.0 Surface 5 Talent Home cleanup
+fix: v1.0.0 Surface 6 Course Experience cleanup
+
+- CareerTracksPreview: Fix dead track card route (/app/learning/tracks/:slug → /app/learning?tab=tracks)
+- UpcomingSessionsRail: Fix dead session join button link (/app/sessions/:id/join → /app/learning/my-courses) and update labels ("Go to My Courses")
+- CoursesTab: Remove broken Competitions filter tab, query, display grid, and unused Trophy import (no competition detail page in v1.0.0)
+- MyCoursesTab: Fix dead talent-mirror link (/app/talent-mirror → /app/profile) and update button label ("View your profile")
+- MyCoursesTab: Fix empty state copy bug ("unknown educational programs" → "any courses")

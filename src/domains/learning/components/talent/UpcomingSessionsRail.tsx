@@ -128,12 +128,12 @@ export function UpcomingSessionsRail() {
                 className="w-full h-8.5 rounded-xl font-bold text-[11px] uppercase tracking-wide shadow-sm select-none mt-3 cursor-pointer transition-transform active:scale-[0.99]"
               >
                 <Link
-                  to={`/app/sessions/${sessionItem.session_id}/join`}
+                  to="/app/learning/my-courses"
                   onClick={() => handleSessionActionClick(sessionItem.session_id, isLiveActiveNode)}
                   className="flex items-center justify-center gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90"
                 >
                   <Video className="h-3.5 w-3.5 shrink-0 stroke-[2.5]" />
-                  <span>{isLiveActiveNode ? "Join now" : "View session"}</span>
+                  <span>{isLiveActiveNode ? "Go to My Courses" : "View in My Courses"}</span>
                 </Link>
               </Button>
             </Card>
