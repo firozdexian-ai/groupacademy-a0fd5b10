@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useLocation } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -305,7 +305,7 @@ export function GlobalAIBubble() {
             {messages.length === 0 && (
               <div className="text-center text-xs text-muted-foreground py-12 italic font-medium">
                 <Sparkles className="h-6 w-6 mx-auto mb-2 text-primary/60 animate-pulse" />
-                Hi! I'm here to help. Ask me anything about jobs, gigs, courses, or your career.
+                Hi! I'm here to help. Ask me anything about your courses or career goals.
               </div>
             )}
 

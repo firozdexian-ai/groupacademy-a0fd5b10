@@ -1,4 +1,4 @@
-﻿import * as React from "react";
+import * as React from "react";
 import { Loader2, Bot, UserX } from "lucide-react";
 import {
  assignCareerCoach,
@@ -149,9 +149,9 @@ export default function CareerCoach() {
  "Review my current CV and give me the 3 most important changes to make.",
  },
  {
- label: "Find roles for me",
+ label: "Build my study plan",
  prompt:
- "Identify open roles that match my skills and explain why each is a fit.",
+ "Based on my goals and current skill level, what should I study next and in what order?",
  },
  {
  label: "Isolate High-Value Competencies",
@@ -173,10 +173,10 @@ export default function CareerCoach() {
  Personal Intelligence Career Coach
  </h1>
  </div>
- <p className="font-mono text-sm font-medium text-muted-foreground/50 uppercase tracking-tight block leading-none pt-1.5">
+ <p className="text-xs font-semibold text-muted-foreground/80 block leading-none pt-1.5">
  {activeCoachInstructor
- ? `OPERATIONAL MODERATOR: ${activeCoachInstructor.name.toUpperCase()} • ASSIGNED TO TARGET LANDMARK: ${resolvedGoalLabelStr ? resolvedGoalLabelStr.toUpperCase() : "GENERAL IMPROVEMENT PROTOCOL"}`
- : "Continuous AI guidance counseling for systemic professional track transitions."}
+ ? `Your coach: ${activeCoachInstructor.name}${resolvedGoalLabelStr ? ` • Goal: ${resolvedGoalLabelStr}` : ""}`
+ : "Get personalized guidance for your career goals."}
  </p>
  </header>
 
@@ -189,7 +189,7 @@ export default function CareerCoach() {
  >
  <div className="flex items-center gap-2.5">
  <Loader2 className="h-4 w-4 animate-spin text-primary shrink-0 stroke-[2.5]" />
- <span>Initializing Interactive Coach Container...</span>
+ <span>Loading your coach...</span>
  </div>
  </div>
  ) : !activeCoachInstructor ? (
@@ -202,12 +202,12 @@ export default function CareerCoach() {
  <UserX className="h-4 w-4 stroke-[2.2]" />
  </div>
  <div className="space-y-1 block leading-none">
- <p className="text-xs font-bold text-foreground uppercase tracking-wide">Coach Allocation Restricted</p>
- <p className="text-[11px] font-semibold text-muted-foreground/50 leading-normal mt-1">
- We could not map an automated career coach instructor node to your workspace profile settings.
+ <p className="text-xs font-bold text-foreground uppercase tracking-wide">No coach assigned yet</p>
+ <p className="text-[11px] font-semibold text-muted-foreground/70 leading-normal mt-1">
+ We couldn't assign your AI Career Coach. This usually resolves after completing your profile.
  </p>
- <p className="font-mono text-[10px] font-black uppercase text-primary pt-2 block">
- Complete discipline settings inside your dossier.
+ <p className="text-[11px] font-bold text-primary pt-2 block">
+ Go to your profile to complete setup.
  </p>
  </div>
  </div>
