@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -220,11 +220,11 @@ export function SkillCredentialsPanel({ compact = false, limit }: { compact?: bo
         <div className="space-y-2 pt-2 border-t border-border/10 w-full select-none text-center">
           {limit && data.length > limit && (
             <Link
-              to="/app/talent-mirror"
+              to="/app/profile"
               onClick={() => trackEvent("skill_credentials_see_all_clicked")}
               className="block w-full text-center text-xs font-bold text-primary hover:underline transition-colors pb-0.5"
             >
-              See all {data.length.toLocaleString()} verified assets &rarr;
+              See all {data.length.toLocaleString()} verified skills &rarr;
             </Link>
           )}
 
@@ -246,7 +246,7 @@ export function SkillCredentialsPanel({ compact = false, limit }: { compact?: bo
               className="w-full h-8 text-xs font-bold text-muted-foreground/80 hover:text-primary rounded-xl flex items-center justify-center gap-1.5 transition-colors border border-dashed border-border/40 bg-muted/10 hover:bg-background hover:border-solid"
             >
               <Lock className="h-3.5 w-3.5 text-muted-foreground/60 stroke-[2.2]" />
-              <span>Publish Credentials over Main Network Profile &rarr;</span>
+              <span>Make my profile public &rarr;</span>
             </Link>
           )}
         </div>

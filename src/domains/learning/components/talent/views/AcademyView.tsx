@@ -1,4 +1,4 @@
-﻿/**
+/**
  * GroUp Academy: Academy Hub Surface (AcademyView)
  * CTO Reference: Authoritative directory for academic tracks and school departments.
  * Version: Launch Candidate Â· Phase Z0 Hardened Â· Patch 0.1
@@ -9,12 +9,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { listAcademiesSchoolsReadiness } from "@/domains/learning/repo/learningRepo";
 import { getIcon } from "@/lib/iconMap";
-import { Globe, Sparkles, GraduationCap, ArrowRight, Users, Briefcase, Rocket } from "lucide-react";
+import { Sparkles, GraduationCap, ArrowRight, Users, Briefcase, Rocket, Bot } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trackEvent } from "@/lib/errorTracking";
-import { useCredits } from "@/domains/finance/hooks/useCredits";
 
 const iconMap: Record<string, unknown> = {
   executive: Users,
@@ -25,7 +24,6 @@ const iconMap: Record<string, unknown> = {
 
 export function AcademyView() {
   const navigate = useNavigate();
-  const { balance } = useCredits();
 
   const { data, isLoading } = useQuery({
     queryKey: ["academies-schools-readiness"],
@@ -49,25 +47,25 @@ export function AcademyView() {
 
   return (
     <div className="space-y-6 antialiased select-none sm:select-text w-full animate-in fade-in duration-300">
-      {/* Credit & Advisor Header */}
+      {/* AI Career Coach CTA */}
       <Card className="rounded-2xl border border-primary/20 bg-primary/5 shadow-sm">
         <CardContent className="p-5 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0 border border-primary/10">
-              <Globe className="h-5 w-5 text-primary" />
+              <Bot className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <p className="text-sm font-bold text-foreground">Planning your journey?</p>
+              <p className="text-sm font-bold text-foreground">Need help choosing a path?</p>
               <p className="text-xs text-muted-foreground">
-                You have {balance} credits available for roadmap generation.
+                Chat with your AI Career Coach and get personalised guidance.
               </p>
             </div>
           </div>
           <Button size="sm" className="rounded-xl font-bold shadow-md" onClick={() => {
-            trackEvent("abroad_advisor_clicked");
-            navigate("/app/agents/abroad-counselor");
+            trackEvent("academy_career_coach_clicked");
+            navigate("/app/career-coach");
           }}>
-            <Sparkles className="h-4 w-4 mr-2" /> Talk to Advisor
+            <Sparkles className="h-4 w-4 mr-2" /> Talk to Coach
           </Button>
         </CardContent>
       </Card>
@@ -125,7 +123,10 @@ export function AcademyView() {
             size="sm"
             variant="secondary"
             className="rounded-xl font-bold"
-            onClick={() => navigate("/dashboard/chat?agent=learn-dean")}
+            onClick={() => {
+              trackEvent("academy_dean_chat_clicked");
+              navigate("/app/career-coach");
+            }}
           >
             Chat
           </Button>

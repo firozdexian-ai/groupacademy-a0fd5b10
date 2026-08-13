@@ -1,4 +1,4 @@
-﻿import { useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -146,7 +146,7 @@ export function CareerTracksPreview() {
     <section className="space-y-4 animate-in fade-in slide-in-from-bottom-3 duration-500 max-w-full w-full select-none sm:select-text antialiased">
       {/* Navigation Section Header */}
       <div className="px-0.5 select-none w-full">
-        <SectionHeader icon={Target} title="Career Tracks" viewAllPath="/app/learning/tracks" />
+        <SectionHeader icon={Target} title="Career Tracks" />
       </div>
 
       {/* Horizontal Multi-Track Portal Scroll Area Container */}
