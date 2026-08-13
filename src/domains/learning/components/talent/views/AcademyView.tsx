@@ -106,32 +106,6 @@ export function AcademyView() {
           ))
         )}
       </div>
-
-      {/* Dean Chat Access Module */}
-      <Card className="rounded-2xl border border-border/20 bg-muted/20">
-        <CardContent className="p-5 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-              <GraduationCap className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <p className="text-sm font-bold">Ask the Dean</p>
-              <p className="text-xs text-muted-foreground">Need help picking your track? Chat with our Dean agent.</p>
-            </div>
-          </div>
-          <Button
-            size="sm"
-            variant="secondary"
-            className="rounded-xl font-bold"
-            onClick={() => {
-              trackEvent("academy_dean_chat_clicked");
-              navigate("/app/career-coach");
-            }}
-          >
-            Chat
-          </Button>
-        </CardContent>
-      </Card>
     </div>
   );
 }

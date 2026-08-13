@@ -1,5 +1,0 @@
-fix: v1.0.0 Surface 4 TalentAppShell cleanup
-
-- TalentAppShell: Remove dead "Verify your profile" item from desktop dropdown menu
-- TalentAppShell: Remove dead "Verify Profile" item from mobile sidebar menu
-- TalentAppShell: Clean up unused ShieldCheck lucide-react import

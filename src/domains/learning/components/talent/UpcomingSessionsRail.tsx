@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
@@ -61,7 +61,7 @@ export function UpcomingSessionsRail() {
       <div className="flex items-center justify-between px-0.5 select-none w-full leading-none">
         <h2 className="text-xs font-bold uppercase tracking-wider text-foreground/80 inline-flex items-center gap-1.5 leading-none">
           <Radio className="h-3.5 w-3.5 text-destructive shrink-0 stroke-[2.2]" />
-          <span>Upcoming Live Synchronous Channels</span>
+          <span>Upcoming Live Sessions</span>
         </h2>
         <Badge
           variant="secondary"
