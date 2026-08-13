@@ -1,4 +1,4 @@
-﻿import * as React from "react";
+import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -35,20 +35,8 @@ export function PublicLayout({ children }: PublicLayoutProps) {
               <button onClick={() => navigate("/courses")} className="hover:text-primary transition-colors">
                 Courses
               </button>
-              <button onClick={() => navigate("/career-services")} className="hover:text-primary transition-colors">
-                Services
-              </button>
-              <button onClick={() => navigate("/pricing")} className="hover:text-primary transition-colors">
-                Pricing
-              </button>
-              <button onClick={() => navigate("/agents")} className="hover:text-primary transition-colors">
-                Agents
-              </button>
               <button onClick={() => navigate("/blog")} className="hover:text-primary transition-colors">
                 Blog
-              </button>
-              <button onClick={() => navigate("/gro10x")} className="bg-primary/15 text-primary hover:bg-primary/20 transition-colors px-2.5 py-1 rounded-md text-[9px]">
-                For Companies
               </button>
             </nav>
             <Button
@@ -84,24 +72,24 @@ export function PublicLayout({ children }: PublicLayoutProps) {
               <img src={logoIcon} alt="GroUp" className="w-10 h-10 grayscale opacity-40" />
               <div className="space-y-1">
                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                  Â© 2026 GroUp Academy. Patent Pending.
+                  © 2026 GroUp Academy. All rights reserved.
                 </p>
                 <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-tighter italic opacity-60">
-                  Career Intelligence Verified
+                  Learn. Grow. Get Certified.
                 </p>
               </div>
             </div>
             <nav className="flex flex-wrap justify-center items-center gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
-              {["courses", "career-services", "pricing", "agents", "blog", "gro10x"].map((path) => (
+              {[
+                { label: "Courses", path: "/courses" },
+                { label: "Blog", path: "/blog" },
+              ].map((item) => (
                 <button
-                  key={path}
-                  onClick={() => navigate(path === "gro10x" ? "/gro10x" : `/${path}`)}
-                  className={cn(
-                    "hover:text-primary transition-colors",
-                    path === "gro10x" && "text-primary font-black"
-                  )}
+                  key={item.path}
+                  onClick={() => navigate(item.path)}
+                  className="hover:text-primary transition-colors"
                 >
-                  {path === "gro10x" ? "For Companies" : path.replace("-", " ")}
+                  {item.label}
                 </button>
               ))}
             </nav>

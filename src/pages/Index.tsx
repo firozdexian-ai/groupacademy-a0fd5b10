@@ -63,17 +63,15 @@ const Index = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [talentsRes, companiesRes, jobsRes, agentsRes] = await Promise.all([
+        const [talentsRes, agentsRes] = await Promise.all([
           supabase.from("talents").select("id", { count: "exact", head: true }),
-          supabase.from("companies").select("id", { count: "exact", head: true }),
-          supabase.from("jobs").select("id", { count: "exact", head: true }),
           supabase.from("ai_agents").select("id", { count: "exact", head: true }),
         ]);
 
         setStats({
           talents: talentsRes.count || 1240,
-          companies: companiesRes.count || 42,
-          jobs: jobsRes.count || 180,
+          companies: 42,
+          jobs: 180,
           agents: agentsRes.count || 9,
           loading: false,
         });
@@ -126,7 +124,7 @@ const Index = () => {
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
     name: "GroUp Academy",
-    description: "AI-powered career acceleration and recruitment ecosystem.",
+    description: "AI-powered career learning platform with expert courses, AI coaching, and verified certificates.",
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
   };
 
@@ -146,12 +144,11 @@ const Index = () => {
             </div>
 
             <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[0.9] max-w-4xl mx-auto">
-              Master the <span className="text-primary">New Rules</span> of the Job Market.
+              Learn the Skills That Actually <span className="text-primary">Get You Hired.</span>
             </h1>
 
             <p className="text-lg md:text-xl text-muted-foreground font-medium max-w-2xl mx-auto leading-relaxed">
-              Recruitment is changing. GroUp Academy gives you the AI tools to assess, prepare, and get hired by global
-              brands.
+              Expert-built courses, AI-powered coaching, and verified certificates — everything you need to advance your career.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
@@ -163,7 +160,7 @@ const Index = () => {
                 Get Started Free <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
               <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-muted/50 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                <ShieldCheck className="w-4 h-4 text-emerald-500" /> +250 Welcome Credits
+                <ShieldCheck className="w-4 h-4 text-emerald-500" /> Free to join · No credit card needed
               </div>
             </div>
           </div>
@@ -233,7 +230,7 @@ const Index = () => {
                   onClick={() => navigate("/start")}
                   className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-xs bg-foreground text-background hover:bg-foreground/90 transition-all"
                 >
-                  Launch Profile
+                  Start Learning Free
                 </Button>
               </div>
             </Card>
@@ -322,7 +319,7 @@ const Index = () => {
             <div className="max-w-xl mx-auto text-center py-12 p-8 rounded-[32px] border-2 border-dashed border-border/40 bg-muted/10">
               <Zap className="w-10 h-10 text-primary mx-auto mb-6 opacity-20" />
               <p className="text-sm font-bold text-muted-foreground/60 uppercase tracking-widest">
-                Lab results pending... Subscribe for updates.
+                Our first articles are coming soon.
               </p>
             </div>
           )}
