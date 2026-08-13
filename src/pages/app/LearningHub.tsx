@@ -23,11 +23,12 @@ export default function LearningHub() {
  const navigate = useNavigate();
  const [searchParams, setSearchParams] = useSearchParams();
 
+ // v1.0.0: study-abroad tab removed, redirect to default tab
  React.useEffect(() => {
   if (searchParams.get("tab") === "study-abroad") {
-   navigate("/app/abroad", { replace: true });
+   setSearchParams({ tab: "my-hub" }, { replace: true });
   }
- }, [searchParams, navigate]);
+ }, [searchParams, navigate, setSearchParams]);
 
  const rawTab = searchParams.get("tab");
  const activeTab: TabKey = (rawTab === "tracks" || rawTab === "academy" ? rawTab : "my-hub");
