@@ -18029,6 +18029,7 @@ export type Database = {
       }
       dm_thread_company_id: { Args: { p_thread_id: string }; Returns: string }
       dm_thread_talent_id: { Args: { p_thread_id: string }; Returns: string }
+      email_queue_dispatch: { Args: never; Returns: undefined }
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
