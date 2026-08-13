@@ -14,7 +14,6 @@ import {
   ArrowLeft,
   Edit2,
   BookOpen,
-  ShieldCheck,
   Share2,
   Globe,
   ChevronRight,
@@ -159,9 +158,6 @@ export function TalentAppShell() {
                 <DropdownMenuItem onClick={() => navigate("/app/profile/edit")} className="cursor-pointer">
                   <Edit2 className="h-4 w-4 mr-2" /> Settings &amp; Privacy
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/app/profile/verify")} className="cursor-pointer">
-                  <ShieldCheck className="h-4 w-4 mr-2" /> Verify your profile
-                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate("/app/learning/my-courses")} className="cursor-pointer">
                   <BookOpen className="h-4 w-4 mr-2" /> My Learning
                 </DropdownMenuItem>
@@ -242,7 +238,6 @@ export function TalentAppShell() {
                         { icon: Bot,           label: "AI Career Coach", path: "/app/career-coach" },
                         { icon: User,          label: "My Profile",   path: "/app/profile" },
                         { icon: Edit2,         label: "Settings",     path: "/app/profile/edit" },
-                        { icon: ShieldCheck,   label: "Verify Profile", path: "/app/profile/verify" },
                       ] as { icon: React.ElementType; label: string; path: string }[]).map(({ icon: Icon, label, path }) => (
                         <button
                           key={path + label}

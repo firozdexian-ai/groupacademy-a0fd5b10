@@ -1,9 +1,5 @@
-fix: v1.0.0 Surface 3 Onboarding Wizard cleanup
+fix: v1.0.0 Surface 4 TalentAppShell cleanup
 
-Start.tsx:
-- Replace dead fallback routes /app/feed with /app/learning (x2)
-
-OnboardingWizard.tsx:
-- Step 1 subtitle: remove "jobs, salaries, opportunities" → "Your AI career coach and learning path will be tailored to your location."
-- Step 3 subtitle: remove "connect with peers and campus community" → "Your AI coach will be personalised to your academic background."
-- Completion toast: replace corporate "workspace is ready" with warm "Welcome to GroUp Academy! Your learning path is ready."
+- TalentAppShell: Remove dead "Verify your profile" item from desktop dropdown menu
+- TalentAppShell: Remove dead "Verify Profile" item from mobile sidebar menu
+- TalentAppShell: Clean up unused ShieldCheck lucide-react import
