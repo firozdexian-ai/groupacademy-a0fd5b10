@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -57,7 +57,7 @@ const AuthCallback = () => {
     void finalizePendingOnboarding();
 
     const dest =
-      resolvePostAuthRoute(accountType, safeReturnTo(params.get("returnTo"))) || "/app/feed";
+      resolvePostAuthRoute(accountType, safeReturnTo(params.get("returnTo"))) || "/app/learning";
     navigate(dest, { replace: true });
   }, [user, authLoading, accountType, accountTypeLoading, navigate, params, retryTick]);
 

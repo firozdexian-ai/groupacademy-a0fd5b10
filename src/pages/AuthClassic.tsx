@@ -19,7 +19,7 @@ import {
   Loader2,
   BookOpen,
   Bot,
-  Gift,
+  Sparkles,
   ShieldCheck,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -164,7 +164,7 @@ const Auth = () => {
     { icon: BookOpen, label: "Expert Courses", description: "Structured career modules" },
     { icon: Bot, label: "AI Career Coach", description: "Personalized guidance 24/7" },
     { icon: ShieldCheck, label: "Certificates", description: "Shareable verification" },
-    { icon: Gift, label: "250 bonus credits", description: "Welcome reward for new members" },
+    { icon: Sparkles, label: "Free Access", description: "Start learning with no cost or barriers" },
   ];
 
   if (authLoading)
@@ -189,7 +189,7 @@ const Auth = () => {
             career with AI.
           </h2>
           <p className="text-white/70 text-lg font-medium max-w-sm">
-            Join the platform where AI mentors and real career opportunities meet.
+            The platform where AI coaching and expert-built courses meet.
           </p>
         </div>
         <div className="grid grid-cols-2 gap-8 relative z-10">
@@ -294,7 +294,7 @@ const Auth = () => {
               <Card className="rounded-2xl border-border/40 shadow-2xl">
                 <CardHeader>
                   <CardTitle className="text-xl font-bold tracking-tight">Create your account</CardTitle>
-                  <CardDescription className="text-sm">Get 250 bonus credits to start</CardDescription>
+                  <CardDescription className="text-sm">Start your learning journey today</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleSignup} className="space-y-4">
@@ -384,25 +384,12 @@ const Auth = () => {
             </TabsContent>
           </Tabs>
 
-          <div className="text-center">
-            <button
-              onClick={() => {
-                const params = new URLSearchParams(searchParams);
-                params.delete("tab");
-                navigate(`/auth?${params.toString()}`);
-              }}
-              className="text-xs font-medium text-primary hover:underline"
-            >
-              Prefer to chat? Sign in with our assistant
-            </button>
-          </div>
-
           <div className="text-center pt-2 border-t border-border/40">
             <button
-              onClick={() => navigate("/gro10x/auth")}
+              onClick={() => navigate("/")}
               className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors"
             >
-              Hiring? Apply for company access →
+              ← Back to home
             </button>
           </div>
         </div>

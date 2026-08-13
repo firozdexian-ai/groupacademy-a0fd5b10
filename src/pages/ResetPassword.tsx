@@ -99,7 +99,7 @@ const ResetPassword = () => {
     try {
       await withTimeout(updatePassword(password), TIMEOUTS.AUTH, "Request timed out. Please try again.");
       toast.success("Password updated. You're all set.");
-      const dest = resolvePostAuthRoute(accountType) ?? "/app/feed";
+      const dest = resolvePostAuthRoute(accountType) ?? "/app/learning";
       navigate(dest, { replace: true });
     } catch (error: unknown) {
       toast.error(error.message || "Couldn't update password. Please try again.");
