@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Account-type-aware post-auth routing.
  * Used by Index, Auth pages, and Gro10x signup so each user type lands in
  * the right surface (talent feed, Gro10x B2B inbox, or admin dashboard).
@@ -6,14 +6,14 @@
 export type AccountType = "company" | "admin" | "talent" | "unknown";
 
 export const DEFAULT_ROUTE_BY_TYPE: Record<AccountType, string> = {
-  company: "/gro10x/inbox",
+  company: "/",           // v1.0.0: B2B deferred, redirect to home
   admin: "/dashboard",
-  talent: "/app/feed",
-  unknown: "/app/feed",
+  talent: "/app/learning", // v1.0.0: feed deferred, learning is home
+  unknown: "/app/learning",
 };
 
 export function getDefaultRouteFor(type: AccountType): string {
-  return DEFAULT_ROUTE_BY_TYPE[type] ?? "/app/feed";
+  return DEFAULT_ROUTE_BY_TYPE[type] ?? "/app/learning";
 }
 
 /**

@@ -37,69 +37,69 @@ export const OUTREACH_TEMPLATES: Record<OutreachProduct, OutreachTemplate> = {
     },
     emailSubject: (name: string) => `${name}, Welcome to GroUp Academy! 🚀`,
     emailTemplate: (name: string, country?: string) =>
-      `Hi ${name},\n\nWelcome to GroUp Academy — your global career acceleration partner!\n\nWhether you are based in ${country || "the region"} or looking for international roles, we provide the AI-powered infrastructure to help you stand out.\n\nExplore our suite:\n• Digital Portfolio Website\n• AI Mock Interviews (Industry-specific)\n• Salary Benchmarking\n• Expert AI Agent Network\n\nComplete your profile: https://groupacademy.lovable.app/auth\n\nBest regards,\nGroUp Academy Team`,
+      `Hi ${name},\n\nWelcome to GroUp Academy — your global career acceleration partner!\n\nWhether you are based in ${country || "the region"} or looking for international roles, we provide the AI-powered infrastructure to help you stand out.\n\nExplore our suite:\n• Digital Portfolio Website\n• AI Mock Interviews (Industry-specific)\n• Salary Benchmarking\n• Expert AI Agent Network\n\nComplete your profile: https://groupacademy.online/auth\n\nBest regards,\nGroUp Academy Team`,
     linkedinTemplate: (name: string) =>
-      `Hi ${name}! �� I noticed your background and wanted to welcome you to GroUp Academy. We�ve built an AI-powered platform to help professionals like you automate their career growth. Check us out: https://groupacademy.lovable.app`,
+      `Hi ${name}! �� I noticed your background and wanted to welcome you to GroUp Academy. We�ve built an AI-powered platform to help professionals like you automate their career growth. Check us out: https://groupacademy.online`,
   },
   ai_agent: {
     name: "AI Agents",
     icon: "bot",
     color: "indigo",
     template: (name: string) =>
-      `Hi ${name}! �� Have you met our AI Expert Network yet?\n\nWe've deployed 9 specialized AI Agents to help you 24/7:\n��‍�� Career Consultant\n�� CV Coach\n�� Salary Negotiator\n�� Mental Wellness Coach\n\nPick your expert and start a session for just 10 credits!\n\n�� https://groupacademy.lovable.app/app/agents`,
+      `Hi ${name}! �� Have you met our AI Expert Network yet?\n\nWe've deployed 9 specialized AI Agents to help you 24/7:\n��‍�� Career Consultant\n�� CV Coach\n�� Salary Negotiator\n�� Mental Wellness Coach\n\nPick your expert and start a session for just 10 credits!\n\n�� https://groupacademy.online/app/agents`,
     emailSubject: (name: string) => `${name}, meet your new AI Career Coaches ��`,
     emailTemplate: (name: string) =>
-      `Hi ${name},\n\nWhy settle for one career coach when you can have a network? GroUp Academy now features 9 specialized AI Agents available 24/7.\n\nOur experts include:\n� Career Consultant for strategy\n� IELTS Tutor for prep\n� Salary Negotiator for compensation\n� Skill Advisor for learning paths\n\nStart a session today: https://groupacademy.lovable.app/app/agents\n\nBest regards,\nGroUp Academy Team`,
+      `Hi ${name},\n\nWhy settle for one career coach when you can have a network? GroUp Academy now features 9 specialized AI Agents available 24/7.\n\nOur experts include:\n� Career Consultant for strategy\n� IELTS Tutor for prep\n� Salary Negotiator for compensation\n� Skill Advisor for learning paths\n\nStart a session today: https://groupacademy.online/app/agents\n\nBest regards,\nGroUp Academy Team`,
   },
   portfolio: {
     name: "Portfolio",
     icon: "briefcase",
     color: "purple",
     template: (name: string) =>
-      `Hi ${name}! 👋 I noticed your impressive experience. Have you created your digital portfolio yet?\n\nRecruiters spend only 6 seconds on a CV. A live portfolio website makes you stand out immediately.\n\n🎁 Limited offer: First 1000 requests are FREE!\n\nRequest yours here:\n👉 https://groupacademy.lovable.app/app/portfolio-request`,
+      `Hi ${name}! 👋 I noticed your impressive experience. Have you created your digital portfolio yet?\n\nRecruiters spend only 6 seconds on a CV. A live portfolio website makes you stand out immediately.\n\n🎁 Limited offer: First 1000 requests are FREE!\n\nRequest yours here:\n👉 https://groupacademy.online/app/portfolio-request`,
     emailSubject: (name: string) => `${name}, stand out with a professional Portfolio Website 🎨`,
     emailTemplate: (name: string) =>
-      `Hi ${name},\n\nRecruiters spend seconds on a CV. We want to give you minutes of their attention. At GroUp Academy, we build stunning digital portfolios that highlight your work and achievements.\n\n🎁 Limited offer: 1,000 FREE spots available.\n\nSecure yours: https://groupacademy.lovable.app/app/portfolio-request`,
+      `Hi ${name},\n\nRecruiters spend seconds on a CV. We want to give you minutes of their attention. At GroUp Academy, we build stunning digital portfolios that highlight your work and achievements.\n\n🎁 Limited offer: 1,000 FREE spots available.\n\nSecure yours: https://groupacademy.online/app/portfolio-request`,
   },
   mock_interview: {
     name: "Mock Interview",
     icon: "mic",
     color: "green",
     template: (name: string, country?: string, jobTitle?: string) =>
-      `Hi ${name}! 👋 Preparing for a role${jobTitle ? ` as a ${jobTitle}` : ""}?\n\nOur AI Interview Coach generates role-specific questions and provides instant feedback on your answers.\n\nAce your next interview:\n👉 https://groupacademy.lovable.app/app/mock-interview`,
+      `Hi ${name}! 👋 Preparing for a role${jobTitle ? ` as a ${jobTitle}` : ""}?\n\nOur AI Interview Coach generates role-specific questions and provides instant feedback on your answers.\n\nAce your next interview:\n👉 https://groupacademy.online/app/mock-interview`,
     emailSubject: (name: string) => `${name}, practice for your next interview with AI 🎯`,
     emailTemplate: (name: string) =>
-      `Hi ${name},\n\nAce your next interview with practice. Our AI tool provides:\n• Role-specific question sets\n• AI-generated feedback reports\n• Scorecards for improvement\n\nStart practicing: https://groupacademy.lovable.app/app/mock-interview`,
+      `Hi ${name},\n\nAce your next interview with practice. Our AI tool provides:\n• Role-specific question sets\n• AI-generated feedback reports\n• Scorecards for improvement\n\nStart practicing: https://groupacademy.online/app/mock-interview`,
   },
   salary_analysis: {
     name: "Salary Analysis",
     icon: "banknote",
     color: "amber",
     template: (name: string) =>
-      `Hi ${name}! 👋 Are you being paid what you're worth?\n\nOur AI Salary Analysis compares your profile against global market data to give you negotiation leverage.\n\nGet your report:\n👉 https://groupacademy.lovable.app/app/salary-analysis`,
+      `Hi ${name}! 👋 Are you being paid what you're worth?\n\nOur AI Salary Analysis compares your profile against global market data to give you negotiation leverage.\n\nGet your report:\n👉 https://groupacademy.online/app/salary-analysis`,
     emailSubject: (name: string) => `${name}, know your true market value 💰`,
     emailTemplate: (name: string) =>
-      `Hi ${name},\n\nDon't leave money on the table. Use our AI Salary Analysis to get data-backed negotiation tips based on your specific industry and years of experience.\n\nView benchmarking: https://groupacademy.lovable.app/app/salary-analysis`,
+      `Hi ${name},\n\nDon't leave money on the table. Use our AI Salary Analysis to get data-backed negotiation tips based on your specific industry and years of experience.\n\nView benchmarking: https://groupacademy.online/app/salary-analysis`,
   },
   career_scorecard: {
     name: "Career Scorecard",
     icon: "clipboard-check",
     color: "teal",
     template: (name: string) =>
-      `Hi ${name}! 👋 How career-ready are you really?\n\nTake our 5-minute AI Assessment and get a detailed PDF Scorecard of your strengths and gaps.\n\nTake the test:\n👉 https://groupacademy.lovable.app/app/career-assessment`,
+      `Hi ${name}! 👋 How career-ready are you really?\n\nTake our 5-minute AI Assessment and get a detailed PDF Scorecard of your strengths and gaps.\n\nTake the test:\n👉 https://groupacademy.online/app/career-assessment`,
     emailSubject: (name: string) => `${name}, check your Career Readiness Score 📊`,
     emailTemplate: (name: string) =>
-      `Hi ${name},\n\nIdentify your professional blind spots. Take our 5-minute Career Readiness Assessment and receive a comprehensive PDF report.\n\nGet your score: https://groupacademy.lovable.app/app/career-assessment`,
+      `Hi ${name},\n\nIdentify your professional blind spots. Take our 5-minute Career Readiness Assessment and receive a comprehensive PDF report.\n\nGet your score: https://groupacademy.online/app/career-assessment`,
   },
   course: {
     name: "Course",
     icon: "graduation-cap",
     color: "rose",
     template: (name: string, country?: string, courseName?: string) =>
-      `Hi ${name}! 👋 Ready to upskill? Based on your profile, I recommend ${courseName ? `"${courseName}"` : "one of our AI-powered courses"}.\n\nEvery course includes a dedicated AI Instructor to answer your questions instantly.\n\nView Courses:\n👉 https://groupacademy.lovable.app/app/courses`,
+      `Hi ${name}! 👋 Ready to upskill? Based on your profile, I recommend ${courseName ? `"${courseName}"` : "one of our AI-powered courses"}.\n\nEvery course includes a dedicated AI Instructor to answer your questions instantly.\n\nView Courses:\n👉 https://groupacademy.online/app/courses`,
     emailSubject: (name: string) => `${name}, start your learning journey 📚`,
     emailTemplate: (name: string, country?: string, courseName?: string) =>
-      `Hi ${name},\n\nLearning never stops at GroUp Academy. We recommend exploring ${courseName ? `"${courseName}"` : "our latest courses"} to boost your market value.\n\nStart learning: https://groupacademy.lovable.app/app/courses`,
+      `Hi ${name},\n\nLearning never stops at GroUp Academy. We recommend exploring ${courseName ? `"${courseName}"` : "our latest courses"} to boost your market value.\n\nStart learning: https://groupacademy.online/app/courses`,
   },
 };
 

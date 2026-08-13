@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { resolveTalentEmailByPhoneVariants } from "@/domains/talent/repo/talentRepo";
-import { lovable } from "@/integrations/lovable";
 import { User, Session } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { isPhoneNumber } from "@/lib/validations";
@@ -183,11 +182,14 @@ export const useAuth = (): AuthState => {
 
   const signInWithGoogle = async () => {
     try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: `${window.location.origin}/auth/callback`,
-        extraParams: { prompt: "select_account" },
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: { prompt: "select_account" },
+        },
       });
-      if (result.error) throw result.error;
+      if (error) throw error;
     } catch (err: unknown) {
       console.error("[useAuth] OAuth failed:", err);
       toast.error("Google sign-in failed. Please try again.");

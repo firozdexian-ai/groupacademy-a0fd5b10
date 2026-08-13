@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { listPublishedBlogPosts } from "@/domains/marketing/repo/marketingRepo";
@@ -51,7 +51,7 @@ export default function PublicBlog() {
       headline: p.title,
       datePublished: p.published_at,
       image: p.featured_image,
-      url: `https://groupacademy.lovable.app/blog/${p.slug}`,
+      url: `https://groupacademy.online/blog/${p.slug}`,
     })),
   };
 
